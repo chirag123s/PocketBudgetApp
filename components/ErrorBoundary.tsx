@@ -28,17 +28,20 @@ class ErrorBoundary extends React.Component<ErrorBoundaryProps, ErrorBoundarySta
 
   componentDidCatch(error: Error, errorInfo: React.ErrorInfo) {
     // Log error details to console
-    console.log('╔══════════════════════════════════════════════════════════╗');
-    console.log('║                   ERROR CAUGHT                           ║');
-    console.log('╚══════════════════════════════════════════════════════════╝');
-    console.log('');
-    console.log('ERROR MESSAGE:', error.toString());
-    console.log('');
-    console.log('ERROR STACK:', error.stack);
-    console.log('');
-    console.log('COMPONENT STACK:', errorInfo.componentStack);
-    console.log('');
-    console.log('═══════════════════════════════════════════════════════════');
+    console.error('╔══════════════════════════════════════════════════════════╗');
+    console.error('║                   ERROR CAUGHT                           ║');
+    console.error('╚══════════════════════════════════════════════════════════╝');
+    console.error('');
+    console.error('ERROR MESSAGE:', error.toString());
+    console.error('ERROR NAME:', error.name);
+    console.error('');
+    console.error('ERROR STACK:', error.stack);
+    console.error('');
+    console.error('COMPONENT STACK:', errorInfo.componentStack);
+    console.error('');
+    console.error('ERROR OBJECT:', JSON.stringify(error, Object.getOwnPropertyNames(error)));
+    console.error('');
+    console.error('═══════════════════════════════════════════════════════════');
 
     this.setState({ errorInfo });
   }
@@ -52,6 +55,8 @@ class ErrorBoundary extends React.Component<ErrorBoundaryProps, ErrorBoundarySta
   };
 
   render() {
+    console.log('🔍 ErrorBoundary render - hasError:', this.state.hasError);
+
     if (this.state.hasError) {
       return (
         <ScrollView style={styles.container} contentContainerStyle={styles.content}>
