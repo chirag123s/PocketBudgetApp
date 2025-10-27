@@ -5,7 +5,6 @@ export default function BudgetLayout() {
     <Stack
       screenOptions={{
         headerShown: false,
-        animation: 'slide_from_right',
       }}
     >
       {/* Budget Setup Wizard */}

@@ -75,7 +75,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   logoContainer: {
-    marginBottom: theme.responsive.spacing.xl,
+    marginBottom: theme.spacing[8],
   },
   logoCircle: {
     width: 128,
@@ -95,14 +95,14 @@ const styles = StyleSheet.create({
     ...theme.typography.styles.h1,
     fontSize: 36,
     color: theme.colors.text.inverse,
-    marginBottom: theme.responsive.spacing.sm,
+    marginBottom: theme.spacing[2],
   },
   tagline: {
     ...theme.typography.styles.body,
     color: theme.colors.text.inverse,
     textAlign: 'center',
     opacity: 0.9,
-    marginBottom: theme.responsive.spacing.xxl,
+    marginBottom: theme.spacing[12],
   },
   loadingContainer: {
     position: 'absolute',
@@ -110,7 +110,7 @@ const styles = StyleSheet.create({
   },
   dotsContainer: {
     flexDirection: 'row',
-    gap: theme.responsive.spacing.sm,
+    gap: theme.spacing[2],
   },
   dot: {
     width: 8,

@@ -1,11 +1,19 @@
+console.log('📦 theme.ts MODULE LOADING');
+
 import { colors } from './colors';
+console.log('✅ colors imported');
+
 import { typography } from './typography';
+console.log('✅ typography imported');
+
 import { spacing, borderRadius, layout } from './spacing';
-import responsive from './responsive';
+console.log('✅ spacing, borderRadius, layout imported');
 
 /**
  * Complete Theme Configuration
  */
+
+console.log('🎨 Creating theme object');
 
 export const theme = {
   colors,
@@ -13,7 +21,6 @@ export const theme = {
   spacing,
   borderRadius,
   layout,
-  responsive,
 
   // Shadows
   shadows: {
@@ -58,5 +65,9 @@ export const theme = {
     easing: 'ease-in-out',
   },
 };
+
+console.log('✅ theme object created successfully');
+console.log('   Checking theme.colors.primary[600]:', theme.colors.primary[600], typeof theme.colors.primary[600]);
+console.log('   Checking theme.colors.background.primary:', theme.colors.background.primary, typeof theme.colors.background.primary);
 
 export type Theme = typeof theme;

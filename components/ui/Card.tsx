@@ -43,10 +43,10 @@ export const Card: React.FC<CardProps> = ({
 const styles = StyleSheet.create({
   card: {
     backgroundColor: theme.colors.background.primary,
-    borderRadius: theme.responsive.scale(20),
+    borderRadius: 20,
     overflow: 'hidden',
   },
   cardWithPadding: {
-    padding: theme.responsive.spacing.md,
+    padding: theme.spacing[4],
   },
 });

@@ -152,17 +152,17 @@ const styles = StyleSheet.create({
     ...theme.shadows.lg,
   },
   handle: {
-    width: theme.responsive.moderateScale(48),
+    width: 48,
     height: 4,
     backgroundColor: theme.colors.border.main,
-    borderRadius: theme.responsive.scale(2),
+    borderRadius: 2,
     alignSelf: 'center',
-    marginTop: theme.responsive.spacing.sm,
-    marginBottom: theme.responsive.spacing.sm,
+    marginTop: theme.spacing[2],
+    marginBottom: theme.spacing[2],
   },
   header: {
-    paddingHorizontal: theme.responsive.getScreenPadding(),
-    paddingVertical: theme.responsive.spacing.md,
+    paddingHorizontal: theme.spacing[6],
+    paddingVertical: theme.spacing[4],
     borderBottomWidth: 1,
     borderBottomColor: theme.colors.border.light,
   },
@@ -170,26 +170,26 @@ const styles = StyleSheet.create({
     ...theme.typography.styles.h3,
   },
   listContent: {
-    paddingHorizontal: theme.responsive.getScreenPadding(),
-    paddingBottom: theme.responsive.spacing.lg,
+    paddingHorizontal: theme.spacing[6],
+    paddingBottom: theme.spacing[6],
   },
   section: {
-    marginTop: theme.responsive.spacing.lg,
+    marginTop: theme.spacing[6],
   },
   sectionLabel: {
     ...theme.typography.styles.label,
-    fontSize: theme.responsive.fontSize.caption,
+    fontSize: 12,
     color: theme.colors.text.secondary,
-    marginBottom: theme.responsive.spacing.sm,
+    marginBottom: theme.spacing[2],
     textTransform: 'uppercase',
   },
   categoryItem: {
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: theme.colors.background.secondary,
-    padding: theme.responsive.spacing.sm,
-    borderRadius: theme.responsive.scale(20),
-    marginBottom: theme.responsive.spacing.sm,
+    padding: theme.spacing[2],
+    borderRadius: 20,
+    marginBottom: theme.spacing[2],
   },
   categoryItemSelected: {
     backgroundColor: theme.colors.primary[50],
@@ -202,8 +202,8 @@ const styles = StyleSheet.create({
     borderColor: theme.colors.primary[600],
   },
   categoryIcon: {
-    fontSize: theme.responsive.fontSize.h3,
-    marginRight: theme.responsive.spacing.sm,
+    fontSize: 24,
+    marginRight: theme.spacing[2],
   },
   categoryName: {
     ...theme.typography.styles.body,
@@ -211,10 +211,10 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   checkmark: {
-    fontSize: theme.responsive.fontSize.h4,
+    fontSize: 20,
     color: theme.colors.primary[600],
   },
   createButtonContainer: {
-    marginTop: theme.responsive.spacing.lg,
+    marginTop: theme.spacing[6],
   },
 });

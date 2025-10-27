@@ -41,6 +41,11 @@ export const Input: React.FC<InputProps> = ({
   containerStyle,
   ...textInputProps
 }) => {
+  // 🔍 Check for string-to-boolean issues
+  if (typeof secureTextEntry !== 'boolean') {
+    console.error('❌ Input prop ERROR: secureTextEntry is', typeof secureTextEntry, '- value:', secureTextEntry);
+  }
+
   const [isFocused, setIsFocused] = useState(false);
   const [isSecure, setIsSecure] = useState(secureTextEntry);
 
@@ -94,21 +99,21 @@ export const Input: React.FC<InputProps> = ({
 
 const styles = StyleSheet.create({
   container: {
-    marginBottom: theme.responsive.spacing.md,
+    marginBottom: theme.spacing[4],
   },
   label: {
     ...theme.typography.styles.label,
-    marginBottom: theme.responsive.spacing.sm,
+    marginBottom: theme.spacing[2],
   },
   inputContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    height: theme.responsive.moderateScale(48),
+    height: 48,
     borderWidth: 1,
     borderColor: theme.colors.border.main,
-    borderRadius: theme.responsive.scale(12),
+    borderRadius: 12,
     backgroundColor: theme.colors.background.primary,
-    paddingHorizontal: theme.responsive.spacing.md,
+    paddingHorizontal: theme.spacing[4],
   },
   inputContainerFocused: {
     borderColor: theme.colors.primary[500],
@@ -123,28 +128,28 @@ const styles = StyleSheet.create({
     paddingVertical: 0, // Remove default padding
   },
   inputWithLeftIcon: {
-    paddingLeft: theme.responsive.spacing.sm,
+    paddingLeft: theme.spacing[2],
   },
   inputWithRightIcon: {
-    paddingRight: theme.responsive.spacing.sm,
+    paddingRight: theme.spacing[2],
   },
   leftIcon: {
-    marginRight: theme.responsive.spacing.sm,
+    marginRight: theme.spacing[2],
   },
   rightIcon: {
-    marginLeft: theme.responsive.spacing.sm,
+    marginLeft: theme.spacing[2],
   },
   iconText: {
-    fontSize: theme.responsive.fontSize.large,
+    fontSize: 18,
   },
   error: {
     ...theme.typography.styles.caption,
     color: theme.colors.danger.main,
-    marginTop: theme.responsive.spacing.xs,
+    marginTop: theme.spacing[1],
   },
   hint: {
     ...theme.typography.styles.caption,
     color: theme.colors.text.tertiary,
-    marginTop: theme.responsive.spacing.xs,
+    marginTop: theme.spacing[1],
   },
 });

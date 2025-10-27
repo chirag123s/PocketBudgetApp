@@ -202,14 +202,14 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    paddingHorizontal: theme.responsive.spacing.md,
-    paddingVertical: theme.responsive.spacing.sm,
+    paddingHorizontal: theme.spacing[4],
+    paddingVertical: theme.spacing[2],
     backgroundColor: theme.colors.background.primary,
     borderBottomWidth: 1,
     borderBottomColor: theme.colors.border.light,
   },
   headerButton: {
-    padding: theme.responsive.spacing.sm,
+    padding: theme.spacing[2],
   },
   headerCenter: {
     flex: 1,
@@ -218,37 +218,37 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   headerIcon: {
-    fontSize: theme.responsive.fontSize.h4,
-    marginRight: theme.responsive.spacing.sm,
+    fontSize: 20,
+    marginRight: theme.spacing[2],
   },
   headerTitle: {
     ...theme.typography.styles.h3,
-    fontSize: theme.responsive.fontSize.large,
+    fontSize: 18,
   },
   overviewCard: {
     backgroundColor: theme.colors.background.primary,
-    paddingHorizontal: theme.responsive.getScreenPadding(),
-    paddingVertical: theme.responsive.spacing.xl,
+    paddingHorizontal: theme.spacing[6],
+    paddingVertical: theme.spacing[8],
     borderBottomWidth: 1,
     borderBottomColor: theme.colors.border.light,
   },
   periodText: {
     ...theme.typography.styles.bodySmall,
     color: theme.colors.text.tertiary,
-    marginBottom: theme.responsive.spacing.sm,
+    marginBottom: theme.spacing[2],
   },
   amountText: {
     fontSize: 36,
     fontWeight: '700',
     color: theme.colors.text.primary,
-    marginBottom: theme.responsive.spacing.sm,
+    marginBottom: theme.spacing[2],
   },
   progressBar: {
     height: 8,
     backgroundColor: theme.colors.background.tertiary,
     borderRadius: theme.borderRadius.full,
     overflow: 'hidden',
-    marginBottom: theme.responsive.spacing.sm,
+    marginBottom: theme.spacing[2],
   },
   progressFill: {
     height: '100%',
@@ -268,25 +268,25 @@ const styles = StyleSheet.create({
     color: theme.colors.text.secondary,
   },
   content: {
-    padding: theme.responsive.getScreenPadding(),
+    padding: theme.spacing[6],
   },
   card: {
     backgroundColor: theme.colors.background.primary,
     borderRadius: theme.borderRadius.xl,
-    padding: theme.responsive.spacing.md,
-    marginBottom: theme.responsive.spacing.md,
+    padding: theme.spacing[4],
+    marginBottom: theme.spacing[4],
     ...theme.shadows.sm,
   },
   cardTitle: {
     ...theme.typography.styles.body,
     fontWeight: '600',
-    marginBottom: theme.responsive.spacing.md,
+    marginBottom: theme.spacing[4],
   },
   cardHeader: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    marginBottom: theme.responsive.spacing.md,
+    marginBottom: theme.spacing[4],
   },
   viewAllText: {
     ...theme.typography.styles.bodySmall,
@@ -297,8 +297,8 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'flex-end',
     justifyContent: 'space-between',
-    height: theme.responsive.moderateScale(128),
-    marginBottom: theme.responsive.spacing.md,
+    height: 128,
+    marginBottom: theme.spacing[4],
   },
   chartBar: {
     flex: 1,
@@ -314,14 +314,14 @@ const styles = StyleSheet.create({
   chartLabel: {
     ...theme.typography.styles.caption,
     color: theme.colors.text.tertiary,
-    marginTop: theme.responsive.spacing.xs,
+    marginTop: theme.spacing[1],
   },
   statsRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     borderTopWidth: 1,
     borderTopColor: theme.colors.border.light,
-    paddingTop: theme.responsive.spacing.sm,
+    paddingTop: theme.spacing[2],
   },
   statItem: {
     flex: 1,
@@ -329,26 +329,26 @@ const styles = StyleSheet.create({
   statLabel: {
     ...theme.typography.styles.caption,
     color: theme.colors.text.tertiary,
-    marginBottom: theme.responsive.spacing.xs,
+    marginBottom: theme.spacing[1],
   },
   statValue: {
     ...theme.typography.styles.body,
     fontWeight: '600',
   },
   transactionsContainer: {
-    gap: theme.responsive.spacing.sm,
+    gap: theme.spacing[2],
   },
   dateLabel: {
     ...theme.typography.styles.caption,
     color: theme.colors.text.tertiary,
     fontWeight: '600',
-    marginBottom: theme.responsive.spacing.sm,
+    marginBottom: theme.spacing[2],
   },
   transactionRow: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    paddingVertical: theme.responsive.spacing.sm,
+    paddingVertical: theme.spacing[2],
   },
   merchantName: {
     ...theme.typography.styles.body,
@@ -360,7 +360,7 @@ const styles = StyleSheet.create({
     color: theme.colors.danger.main,
   },
   merchantsContainer: {
-    gap: theme.responsive.spacing.sm,
+    gap: theme.spacing[2],
   },
   merchantRow: {
     flexDirection: 'row',
@@ -373,13 +373,13 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   rankBadge: {
-    width: theme.responsive.moderateScale(32),
-    height: theme.responsive.moderateScale(32),
+    width: 32,
+    height: 32,
     backgroundColor: theme.colors.background.tertiary,
-    borderRadius: theme.responsive.scale(16),
+    borderRadius: 16,
     alignItems: 'center',
     justifyContent: 'center',
-    marginRight: theme.responsive.spacing.sm,
+    marginRight: theme.spacing[2],
   },
   rankText: {
     ...theme.typography.styles.body,
@@ -391,8 +391,8 @@ const styles = StyleSheet.create({
     fontWeight: '600',
   },
   actionsContainer: {
-    gap: theme.responsive.spacing.sm,
-    marginBottom: theme.responsive.spacing.lg,
+    gap: theme.spacing[2],
+    marginBottom: theme.spacing[6],
   },
   actionButton: {
     marginBottom: 0,
@@ -404,7 +404,7 @@ const styles = StyleSheet.create({
     borderWidth: 2,
     borderColor: theme.colors.border.main,
     borderRadius: theme.borderRadius.xl,
-    padding: theme.responsive.spacing.md,
+    padding: theme.spacing[4],
   },
   premiumActionText: {
     ...theme.typography.styles.button,
@@ -413,20 +413,20 @@ const styles = StyleSheet.create({
   premiumBadge: {
     backgroundColor: theme.colors.warning.light,
     borderRadius: theme.borderRadius.full,
-    paddingHorizontal: theme.responsive.spacing.sm,
+    paddingHorizontal: theme.spacing[2],
     paddingVertical: 4,
   },
   premiumBadgeText: {
     ...theme.typography.styles.caption,
     color: theme.colors.warning.dark,
-    fontSize: theme.responsive.fontSize.caption,
+    fontSize: 12,
     fontWeight: '500',
   },
   secondaryAction: {
     borderWidth: 2,
     borderColor: theme.colors.border.main,
     borderRadius: theme.borderRadius.xl,
-    padding: theme.responsive.spacing.md,
+    padding: theme.spacing[4],
     alignItems: 'center',
   },
   secondaryActionText: {

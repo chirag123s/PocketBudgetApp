@@ -55,8 +55,6 @@ class ErrorBoundary extends React.Component<ErrorBoundaryProps, ErrorBoundarySta
   };
 
   render() {
-    console.log('🔍 ErrorBoundary render - hasError:', this.state.hasError);
-
     if (this.state.hasError) {
       return (
         <ScrollView style={styles.container} contentContainerStyle={styles.content}>
@@ -117,66 +115,66 @@ const styles = StyleSheet.create({
     backgroundColor: theme.colors.background.secondary,
   },
   content: {
-    padding: theme.responsive.spacing.lg,
-    paddingTop: theme.responsive.spacing.xxl,
+    padding: theme.spacing[6],
+    paddingTop: theme.spacing[12],
   },
   header: {
-    marginBottom: theme.responsive.spacing.xl,
+    marginBottom: theme.spacing[8],
   },
   title: {
-    fontSize: theme.responsive.fontSize.h2,
+    fontSize: 28,
     fontWeight: '700',
     color: theme.colors.danger.main,
-    marginBottom: theme.responsive.spacing.sm,
+    marginBottom: theme.spacing[2],
   },
   subtitle: {
-    fontSize: theme.responsive.fontSize.body,
+    fontSize: 16,
     color: theme.colors.text.secondary,
     lineHeight: 24,
   },
   errorCard: {
     backgroundColor: theme.colors.background.primary,
-    borderRadius: theme.responsive.scale(12),
-    padding: theme.responsive.spacing.md,
-    marginBottom: theme.responsive.spacing.md,
+    borderRadius: 12,
+    padding: theme.spacing[4],
+    marginBottom: theme.spacing[4],
     borderLeftWidth: 4,
     borderLeftColor: theme.colors.danger.main,
   },
   errorLabel: {
-    fontSize: theme.responsive.fontSize.bodySmall,
+    fontSize: 14,
     fontWeight: '600',
     color: theme.colors.text.primary,
-    marginBottom: theme.responsive.spacing.sm,
+    marginBottom: theme.spacing[2],
   },
   errorText: {
-    fontSize: theme.responsive.fontSize.bodySmall,
+    fontSize: 14,
     color: theme.colors.danger.dark,
     fontFamily: 'monospace',
     lineHeight: 20,
   },
   stackText: {
-    fontSize: theme.responsive.fontSize.caption,
+    fontSize: 12,
     color: theme.colors.text.secondary,
     fontFamily: 'monospace',
     lineHeight: 18,
   },
   button: {
     backgroundColor: theme.colors.primary[500],
-    borderRadius: theme.responsive.scale(12),
-    padding: theme.responsive.spacing.md,
+    borderRadius: 12,
+    padding: theme.spacing[4],
     alignItems: 'center',
-    marginTop: theme.responsive.spacing.lg,
+    marginTop: theme.spacing[6],
   },
   buttonText: {
-    fontSize: theme.responsive.fontSize.button,
+    fontSize: 16,
     fontWeight: '600',
     color: '#FFFFFF',
   },
   hint: {
-    fontSize: theme.responsive.fontSize.caption,
+    fontSize: 12,
     color: theme.colors.text.tertiary,
     textAlign: 'center',
-    marginTop: theme.responsive.spacing.lg,
+    marginTop: theme.spacing[6],
     fontStyle: 'italic',
   },
 });

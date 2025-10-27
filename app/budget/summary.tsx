@@ -127,61 +127,61 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    paddingHorizontal: theme.responsive.spacing.md,
-    paddingVertical: theme.responsive.spacing.sm,
+    paddingHorizontal: theme.spacing[4],
+    paddingVertical: theme.spacing[2],
     backgroundColor: theme.colors.background.primary,
     borderBottomWidth: 1,
     borderBottomColor: theme.colors.border.light,
   },
   backButton: {
-    padding: theme.responsive.spacing.sm,
+    padding: theme.spacing[2],
   },
   headerTitle: {
     ...theme.typography.styles.h3,
-    fontSize: theme.responsive.fontSize.large,
+    fontSize: 18,
   },
   placeholder: {
-    width: theme.responsive.moderateScale(40),
+    width: 40,
   },
   content: {
-    padding: theme.responsive.getScreenPadding(),
-    paddingBottom: theme.responsive.spacing.xl,
+    padding: theme.spacing[6],
+    paddingBottom: theme.spacing[8],
   },
   card: {
     backgroundColor: theme.colors.background.primary,
     borderRadius: theme.borderRadius.xl,
-    padding: theme.responsive.spacing.md,
-    marginBottom: theme.responsive.spacing.md,
+    padding: theme.spacing[4],
+    marginBottom: theme.spacing[4],
     ...theme.shadows.sm,
   },
   cardLabel: {
     ...theme.typography.styles.label,
-    fontSize: theme.responsive.fontSize.caption,
+    fontSize: 12,
     color: theme.colors.text.tertiary,
     fontWeight: '600',
-    marginBottom: theme.responsive.spacing.sm,
+    marginBottom: theme.spacing[2],
   },
   periodText: {
     ...theme.typography.styles.h4,
-    marginBottom: theme.responsive.spacing.sm,
+    marginBottom: theme.spacing[2],
   },
   badge: {
     backgroundColor: theme.colors.primary[100],
     borderRadius: theme.borderRadius.lg,
-    paddingHorizontal: theme.responsive.spacing.sm,
+    paddingHorizontal: theme.spacing[2],
     paddingVertical: 4,
     alignSelf: 'flex-start',
   },
   badgeText: {
     ...theme.typography.styles.caption,
     color: theme.colors.primary[700],
-    fontSize: theme.responsive.fontSize.caption,
+    fontSize: 12,
     fontWeight: '500',
   },
   summaryRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    paddingVertical: theme.responsive.spacing.sm,
+    paddingVertical: theme.spacing[2],
     borderBottomWidth: 1,
     borderBottomColor: theme.colors.border.light,
   },
@@ -207,7 +207,7 @@ const styles = StyleSheet.create({
     fontWeight: '600',
   },
   categoriesContainer: {
-    gap: theme.responsive.spacing.sm,
+    gap: theme.spacing[2],
   },
   categoryRow: {
     flexDirection: 'row',
@@ -220,8 +220,8 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   categoryIcon: {
-    fontSize: theme.responsive.fontSize.h4,
-    marginRight: theme.responsive.spacing.sm,
+    fontSize: 20,
+    marginRight: theme.spacing[2],
   },
   categoryName: {
     ...theme.typography.styles.body,
@@ -234,18 +234,18 @@ const styles = StyleSheet.create({
   savingsCard: {
     backgroundColor: theme.colors.primary[50],
     borderRadius: theme.borderRadius.xl,
-    padding: theme.responsive.getScreenPadding(),
-    marginBottom: theme.responsive.spacing.lg,
+    padding: theme.spacing[6],
+    marginBottom: theme.spacing[6],
     alignItems: 'center',
   },
   savingsIcon: {
-    fontSize: theme.responsive.moderateScale(40),
-    marginBottom: theme.responsive.spacing.sm,
+    fontSize: 40,
+    marginBottom: theme.spacing[2],
   },
   savingsTitle: {
     ...theme.typography.styles.h3,
     textAlign: 'center',
-    marginBottom: theme.responsive.spacing.xs,
+    marginBottom: theme.spacing[1],
   },
   savingsSubtitle: {
     ...theme.typography.styles.body,
@@ -253,6 +253,6 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
   editButton: {
-    marginBottom: theme.responsive.spacing.sm,
+    marginBottom: theme.spacing[2],
   },
 });

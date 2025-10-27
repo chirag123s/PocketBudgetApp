@@ -119,7 +119,7 @@ export default function AppearanceSettings() {
           </View>
           <Text style={styles.colorLabel}>{accentColor} (Default)</Text>
 
-          <Text style={[styles.sectionLabel, { marginTop: theme.responsive.spacing.lg }]}>
+          <Text style={[styles.sectionLabel, { marginTop: theme.spacing[6] }]}>
             Budget display:
           </Text>
           <View style={styles.optionsGroup}>
@@ -245,41 +245,41 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    paddingHorizontal: theme.responsive.spacing.md,
-    paddingVertical: theme.responsive.spacing.sm,
+    paddingHorizontal: theme.spacing[4],
+    paddingVertical: theme.spacing[2],
     backgroundColor: theme.colors.background.primary,
     borderBottomWidth: 1,
     borderBottomColor: theme.colors.border.light,
   },
   headerButton: {
-    padding: theme.responsive.spacing.sm,
+    padding: theme.spacing[2],
   },
   headerTitle: {
     ...theme.typography.styles.h3,
-    fontSize: theme.responsive.fontSize.large,
+    fontSize: 18,
   },
   placeholder: {
-    width: theme.responsive.moderateScale(40),
+    width: 40,
   },
   content: {
-    padding: theme.responsive.getScreenPadding(),
-    paddingBottom: theme.responsive.spacing.xl,
+    padding: theme.spacing[6],
+    paddingBottom: theme.spacing[8],
   },
   card: {
     backgroundColor: theme.colors.background.primary,
     borderRadius: theme.borderRadius.xl,
-    padding: theme.responsive.getScreenPadding(),
-    marginBottom: theme.responsive.spacing.md,
+    padding: theme.spacing[6],
+    marginBottom: theme.spacing[4],
     ...theme.shadows.sm,
   },
   cardTitle: {
     ...theme.typography.styles.h3,
-    fontSize: theme.responsive.fontSize.large,
-    marginBottom: theme.responsive.spacing.md,
+    fontSize: 18,
+    marginBottom: theme.spacing[4],
   },
   optionsGroup: {
-    gap: theme.responsive.spacing.sm,
-    marginBottom: theme.responsive.spacing.md,
+    gap: theme.spacing[2],
+    marginBottom: theme.spacing[4],
   },
   option: {
     flexDirection: 'row',
@@ -287,26 +287,26 @@ const styles = StyleSheet.create({
     borderWidth: 2,
     borderColor: theme.colors.border.light,
     borderRadius: theme.borderRadius.xl,
-    padding: theme.responsive.spacing.sm,
+    padding: theme.spacing[2],
   },
   optionSelected: {
     backgroundColor: theme.colors.primary[50],
     borderColor: theme.colors.primary[600],
   },
   radioCircle: {
-    width: theme.responsive.scale(20),
-    height: theme.responsive.scale(20),
-    borderRadius: theme.responsive.scale(10),
+    width: 20,
+    height: 20,
+    borderRadius: 10,
     borderWidth: 2,
     borderColor: theme.colors.border.main,
     alignItems: 'center',
     justifyContent: 'center',
-    marginRight: theme.responsive.spacing.sm,
+    marginRight: theme.spacing[2],
   },
   radioCircleInner: {
-    width: theme.responsive.scale(12),
-    height: theme.responsive.scale(12),
-    borderRadius: theme.responsive.scale(6),
+    width: 12,
+    height: 12,
+    borderRadius: 6,
     backgroundColor: theme.colors.primary[600],
   },
   optionText: {
@@ -316,27 +316,27 @@ const styles = StyleSheet.create({
   actionButton: {
     backgroundColor: theme.colors.background.tertiary,
     borderRadius: theme.borderRadius.xl,
-    padding: theme.responsive.spacing.sm,
+    padding: theme.spacing[2],
     alignItems: 'center',
   },
   actionButtonText: {
     ...theme.typography.styles.button,
     color: theme.colors.text.primary,
-    fontSize: theme.responsive.fontSize.bodySmall,
+    fontSize: 14,
   },
   sectionLabel: {
     ...theme.typography.styles.bodySmall,
     color: theme.colors.text.secondary,
-    marginBottom: theme.responsive.spacing.sm,
+    marginBottom: theme.spacing[2],
   },
   colorRow: {
     flexDirection: 'row',
-    gap: theme.responsive.spacing.sm,
-    marginBottom: theme.responsive.spacing.sm,
+    gap: theme.spacing[2],
+    marginBottom: theme.spacing[2],
   },
   colorSwatch: {
-    width: theme.responsive.moderateScale(48),
-    height: theme.responsive.moderateScale(48),
+    width: 48,
+    height: 48,
     borderRadius: theme.borderRadius.xl,
   },
   colorSwatchSelected: {
@@ -349,20 +349,20 @@ const styles = StyleSheet.create({
     textTransform: 'capitalize',
   },
   checkboxGroup: {
-    gap: theme.responsive.spacing.sm,
-    marginBottom: theme.responsive.spacing.md,
+    gap: theme.spacing[2],
+    marginBottom: theme.spacing[4],
   },
   checkboxRow: {
     flexDirection: 'row',
     alignItems: 'center',
   },
   checkbox: {
-    width: theme.responsive.scale(20),
-    height: theme.responsive.scale(20),
+    width: 20,
+    height: 20,
     borderWidth: 2,
     borderColor: theme.colors.border.main,
-    borderRadius: theme.responsive.scale(4),
-    marginRight: theme.responsive.spacing.sm,
+    borderRadius: 4,
+    marginRight: theme.spacing[2],
     alignItems: 'center',
     justifyContent: 'center',
   },

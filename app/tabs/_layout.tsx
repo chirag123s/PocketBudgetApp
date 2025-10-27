@@ -3,10 +3,16 @@ import { Ionicons } from '@expo/vector-icons';
 import { theme } from '@/constants/theme';
 
 export default function TabsLayout() {
+  // 🔍 Check Tabs boolean props
+  const headerShown = false;
+  if (typeof headerShown !== 'boolean') {
+    console.error('❌ Tabs prop ERROR: headerShown is', typeof headerShown, '- value:', headerShown);
+  }
+
   return (
     <Tabs
       screenOptions={{
-        headerShown: false,
+        headerShown: headerShown,
         tabBarActiveTintColor: theme.colors.primary[600],
         tabBarInactiveTintColor: theme.colors.text.tertiary,
         tabBarStyle: {

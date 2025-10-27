@@ -107,37 +107,37 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    paddingHorizontal: theme.responsive.spacing.md,
-    paddingVertical: theme.responsive.spacing.sm,
+    paddingHorizontal: theme.spacing[4],
+    paddingVertical: theme.spacing[2],
     backgroundColor: theme.colors.background.primary,
     borderBottomWidth: 1,
     borderBottomColor: theme.colors.border.light,
   },
   headerButton: {
-    padding: theme.responsive.spacing.sm,
+    padding: theme.spacing[2],
   },
   headerTitle: {
     ...theme.typography.styles.h3,
-    fontSize: theme.responsive.fontSize.large,
+    fontSize: 18,
   },
   placeholder: {
-    width: theme.responsive.moderateScale(40),
+    width: 40,
   },
   content: {
-    padding: theme.responsive.getScreenPadding(),
-    paddingBottom: theme.responsive.spacing.xl,
+    padding: theme.spacing[6],
+    paddingBottom: theme.spacing[8],
   },
   searchCard: {
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: theme.colors.background.primary,
     borderRadius: theme.borderRadius.xl,
-    padding: theme.responsive.spacing.md,
-    marginBottom: theme.responsive.spacing.lg,
+    padding: theme.spacing[4],
+    marginBottom: theme.spacing[6],
     ...theme.shadows.sm,
   },
   searchIcon: {
-    marginRight: theme.responsive.spacing.sm,
+    marginRight: theme.spacing[2],
   },
   searchInput: {
     flex: 1,
@@ -147,17 +147,17 @@ const styles = StyleSheet.create({
   card: {
     backgroundColor: theme.colors.background.primary,
     borderRadius: theme.borderRadius.xl,
-    padding: theme.responsive.getScreenPadding(),
-    marginBottom: theme.responsive.spacing.md,
+    padding: theme.spacing[6],
+    marginBottom: theme.spacing[4],
     ...theme.shadows.sm,
   },
   cardTitle: {
     ...theme.typography.styles.h3,
-    fontSize: theme.responsive.fontSize.large,
-    marginBottom: theme.responsive.spacing.md,
+    fontSize: 18,
+    marginBottom: theme.spacing[4],
   },
   topicsList: {
-    gap: theme.responsive.spacing.sm,
+    gap: theme.spacing[2],
   },
   topicItem: {
     flexDirection: 'row',
@@ -165,19 +165,19 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     backgroundColor: theme.colors.background.tertiary,
     borderRadius: theme.borderRadius.xl,
-    padding: theme.responsive.spacing.sm,
+    padding: theme.spacing[2],
   },
   topicText: {
     ...theme.typography.styles.body,
     flex: 1,
   },
   actionsContainer: {
-    gap: theme.responsive.spacing.sm,
+    gap: theme.spacing[2],
   },
   primaryButton: {
     backgroundColor: theme.colors.primary[600],
     borderRadius: theme.borderRadius.xl,
-    padding: theme.responsive.spacing.md,
+    padding: theme.spacing[4],
     alignItems: 'center',
     ...theme.shadows.lg,
   },
@@ -189,7 +189,7 @@ const styles = StyleSheet.create({
   secondaryButton: {
     backgroundColor: theme.colors.background.tertiary,
     borderRadius: theme.borderRadius.xl,
-    padding: theme.responsive.spacing.sm,
+    padding: theme.spacing[2],
     alignItems: 'center',
   },
   secondaryButtonText: {

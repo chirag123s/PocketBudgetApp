@@ -33,6 +33,14 @@ export const Screen: React.FC<ScreenProps> = ({
   noPadding = false,
   backgroundColor = theme.colors.background.secondary,
 }) => {
+  // 🔍 Check for string-to-boolean issues
+  if (typeof scrollable !== 'boolean') {
+    console.error('❌ Screen prop ERROR: scrollable is', typeof scrollable, '- value:', scrollable);
+  }
+  if (typeof noPadding !== 'boolean') {
+    console.error('❌ Screen prop ERROR: noPadding is', typeof noPadding, '- value:', noPadding);
+  }
+
   const contentStyle = [
     styles.content,
     !noPadding && styles.contentWithPadding,
@@ -41,6 +49,12 @@ export const Screen: React.FC<ScreenProps> = ({
 
   // On web, we use a regular View. On native, we use SafeAreaView
   const Container = Platform.OS === 'web' ? View : SafeAreaView;
+
+  // 🔍 Check ScrollView props
+  const showsVerticalScrollIndicator = false;
+  if (typeof showsVerticalScrollIndicator !== 'boolean') {
+    console.error('❌ ScrollView prop ERROR: showsVerticalScrollIndicator is', typeof showsVerticalScrollIndicator);
+  }
 
   return (
     <Container style={styles.container}>
@@ -51,7 +65,7 @@ export const Screen: React.FC<ScreenProps> = ({
         {scrollable ? (
           <ScrollView
             contentContainerStyle={contentStyle}
-            showsVerticalScrollIndicator={false}
+            showsVerticalScrollIndicator={showsVerticalScrollIndicator}
           >
             {children}
           </ScrollView>
@@ -74,6 +88,6 @@ const styles = StyleSheet.create({
     flexGrow: 1,
   },
   contentWithPadding: {
-    padding: theme.responsive.getScreenPadding(),
+    padding: theme.spacing[6],
   },
 });

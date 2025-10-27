@@ -52,6 +52,17 @@ export const Button: React.FC<ButtonProps> = ({
   style,
   textStyle,
 }) => {
+  // 🔍 Check for string-to-boolean issues
+  if (typeof disabled !== 'boolean') {
+    console.error('❌ Button prop ERROR: disabled is', typeof disabled, '- value:', disabled);
+  }
+  if (typeof loading !== 'boolean') {
+    console.error('❌ Button prop ERROR: loading is', typeof loading, '- value:', loading);
+  }
+  if (typeof fullWidth !== 'boolean') {
+    console.error('❌ Button prop ERROR: fullWidth is', typeof fullWidth, '- value:', fullWidth);
+  }
+
   const isDisabled = disabled || loading;
 
   const buttonStyles = [
@@ -99,22 +110,22 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    borderRadius: theme.responsive.scale(20),
-    gap: theme.responsive.spacing.sm,
+    borderRadius: 20,
+    gap: theme.spacing[2],
   },
 
   // Sizes
   small: {
-    height: theme.responsive.moderateScale(40),
-    paddingHorizontal: theme.responsive.spacing.md,
+    height: 40,
+    paddingHorizontal: theme.spacing[4],
   },
   medium: {
-    height: theme.responsive.moderateScale(48),
-    paddingHorizontal: theme.responsive.spacing.lg,
+    height: 48,
+    paddingHorizontal: theme.spacing[6],
   },
   large: {
-    height: theme.responsive.moderateScale(56),
-    paddingHorizontal: theme.responsive.spacing.xl,
+    height: 56,
+    paddingHorizontal: theme.spacing[8],
   },
 
   // Variants
@@ -162,13 +173,13 @@ const styles = StyleSheet.create({
     color: theme.colors.text.inverse,
   },
   text_small: {
-    fontSize: theme.responsive.fontSize.bodySmall,
+    fontSize: 14,
   },
   text_medium: {
-    fontSize: theme.responsive.fontSize.button,
+    fontSize: 16,
   },
   text_large: {
-    fontSize: theme.responsive.fontSize.large,
+    fontSize: 18,
   },
   textDisabled: {
     color: theme.colors.neutral[400],

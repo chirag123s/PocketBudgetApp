@@ -132,14 +132,14 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    paddingHorizontal: theme.responsive.spacing.md,
-    paddingVertical: theme.responsive.spacing.sm,
+    paddingHorizontal: theme.spacing[4],
+    paddingVertical: theme.spacing[2],
     backgroundColor: theme.colors.background.primary,
     borderBottomWidth: 1,
     borderBottomColor: theme.colors.border.light,
   },
   backButton: {
-    padding: theme.responsive.spacing.sm,
+    padding: theme.spacing[2],
   },
   headerCenter: {
     flex: 1,
@@ -147,34 +147,34 @@ const styles = StyleSheet.create({
   },
   headerTitle: {
     ...theme.typography.styles.h3,
-    fontSize: theme.responsive.fontSize.large,
+    fontSize: 18,
   },
   headerSubtitle: {
     ...theme.typography.styles.caption,
     color: theme.colors.text.tertiary,
-    marginTop: theme.responsive.spacing.xs,
+    marginTop: theme.spacing[1],
   },
   placeholder: {
-    width: theme.responsive.moderateScale(40),
+    width: 40,
   },
   content: {
-    padding: theme.responsive.getScreenPadding(),
-    paddingBottom: theme.responsive.spacing.xl,
+    padding: theme.spacing[6],
+    paddingBottom: theme.spacing[8],
   },
   question: {
     ...theme.typography.styles.h2,
-    fontSize: theme.responsive.fontSize.h4,
+    fontSize: 20,
     textAlign: 'center',
-    marginBottom: theme.responsive.spacing.lg,
+    marginBottom: theme.spacing[6],
   },
   optionsContainer: {
-    gap: theme.responsive.spacing.sm,
-    marginBottom: theme.responsive.spacing.lg,
+    gap: theme.spacing[2],
+    marginBottom: theme.spacing[6],
   },
   periodOption: {
     backgroundColor: theme.colors.background.primary,
     borderRadius: theme.borderRadius.xl,
-    padding: theme.responsive.spacing.md,
+    padding: theme.spacing[4],
     borderWidth: 2,
     borderColor: theme.colors.border.light,
   },
@@ -192,22 +192,22 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   radioCircle: {
-    width: theme.responsive.scale(20),
-    height: theme.responsive.scale(20),
-    borderRadius: theme.responsive.scale(10),
+    width: 20,
+    height: 20,
+    borderRadius: 10,
     borderWidth: 2,
     borderColor: theme.colors.border.main,
     alignItems: 'center',
     justifyContent: 'center',
-    marginRight: theme.responsive.spacing.sm,
+    marginRight: theme.spacing[2],
   },
   radioCircleSelected: {
     borderColor: theme.colors.primary[500],
   },
   radioCircleInner: {
-    width: theme.responsive.scale(12),
-    height: theme.responsive.scale(12),
-    borderRadius: theme.responsive.scale(6),
+    width: 12,
+    height: 12,
+    borderRadius: 6,
     backgroundColor: theme.colors.primary[500],
   },
   periodText: {
@@ -216,7 +216,7 @@ const styles = StyleSheet.create({
   periodTitle: {
     ...theme.typography.styles.body,
     fontWeight: '600',
-    marginBottom: theme.responsive.spacing.xs,
+    marginBottom: theme.spacing[1],
   },
   periodSubtitle: {
     ...theme.typography.styles.bodySmall,
@@ -225,13 +225,13 @@ const styles = StyleSheet.create({
   badge: {
     backgroundColor: theme.colors.primary[100],
     borderRadius: theme.borderRadius.full,
-    paddingHorizontal: theme.responsive.spacing.sm,
+    paddingHorizontal: theme.spacing[2],
     paddingVertical: 4,
   },
   badgeText: {
     ...theme.typography.styles.caption,
     color: theme.colors.primary[700],
-    fontSize: theme.responsive.fontSize.caption,
+    fontSize: 12,
     fontWeight: '500',
   },
   infoBox: {
@@ -239,16 +239,16 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: theme.colors.primary[200],
     borderRadius: theme.borderRadius.xl,
-    padding: theme.responsive.spacing.md,
-    marginBottom: theme.responsive.spacing.lg,
+    padding: theme.spacing[4],
+    marginBottom: theme.spacing[6],
   },
   infoContent: {
     flexDirection: 'row',
     alignItems: 'flex-start',
   },
   infoIcon: {
-    fontSize: theme.responsive.fontSize.h3,
-    marginRight: theme.responsive.spacing.sm,
+    fontSize: 24,
+    marginRight: theme.spacing[2],
   },
   infoTextContainer: {
     flex: 1,
@@ -257,7 +257,7 @@ const styles = StyleSheet.create({
     ...theme.typography.styles.body,
     fontWeight: '600',
     color: theme.colors.primary[900],
-    marginBottom: theme.responsive.spacing.xs,
+    marginBottom: theme.spacing[1],
   },
   infoDescription: {
     ...theme.typography.styles.bodySmall,

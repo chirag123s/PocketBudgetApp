@@ -56,23 +56,23 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    padding: theme.responsive.spacing.lg,
+    padding: theme.spacing[6],
   },
   iconContainer: {
-    marginBottom: theme.responsive.spacing.md,
+    marginBottom: theme.spacing[4],
   },
   title: {
     ...theme.typography.styles.h3,
     textAlign: 'center',
-    marginBottom: theme.responsive.spacing.sm,
+    marginBottom: theme.spacing[2],
   },
   description: {
     ...theme.typography.styles.body,
     textAlign: 'center',
     color: theme.colors.text.secondary,
-    marginBottom: theme.responsive.spacing.lg,
+    marginBottom: theme.spacing[6],
   },
   button: {
-    minWidth: theme.responsive.moderateScale(200),
+    minWidth: 200,
   },
 });

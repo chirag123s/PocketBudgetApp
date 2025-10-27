@@ -14,6 +14,7 @@ interface AuthContextType {
   completeOnboarding: () => Promise<void>;
   updateUser: (user: Partial<User>) => Promise<void>;
   enableGuestMode: () => Promise<void>;
+  clearAllData: () => Promise<void>; // For testing/debugging
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -31,16 +32,25 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const checkAuthStatus = async () => {
     try {
+      console.log('🔍 AuthContext: Checking stored auth data...');
       const [token, onboardingComplete, guestMode] = await Promise.all([
         storage.getItem('authToken'),
         storage.getItem('onboardingComplete'),
         storage.getItem('guestMode'),
       ]);
 
+      console.log('🔍 AuthContext: Retrieved data:', {
+        token: token ? `${token.substring(0, 20)}...` : null,
+        onboardingComplete,
+        guestMode,
+      });
+
       if (guestMode === 'true') {
+        console.log('✅ AuthContext: Guest mode detected - setting up guest session');
         setIsGuestMode(true);
         setHasCompletedOnboarding(true); // Guest mode skips onboarding
       } else if (token) {
+        console.log('✅ AuthContext: Auth token found - auto-logging in user');
         // Fetch user data with token
         // For now, create a mock user
         const mockUser: User = {
@@ -55,12 +65,18 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         setUser(mockUser);
 
         if (onboardingComplete === 'true') {
+          console.log('✅ AuthContext: Onboarding complete - user is fully set up');
           setHasCompletedOnboarding(true);
+        } else {
+          console.log('⚠️ AuthContext: User needs to complete onboarding');
         }
+      } else {
+        console.log('ℹ️ AuthContext: No stored auth data - user needs to login');
       }
     } catch (error) {
-      console.error('Auth check failed:', error);
+      console.error('❌ AuthContext: Auth check failed:', error);
     } finally {
+      console.log('✅ AuthContext: Auth check complete - setting isLoading to false');
       setIsLoading(false);
     }
   };
@@ -156,6 +172,24 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
   };
 
+  const clearAllData = async () => {
+    try {
+      console.log('🗑️ AuthContext: Clearing all stored data...');
+      await Promise.all([
+        storage.deleteItem('authToken'),
+        storage.deleteItem('onboardingComplete'),
+        storage.deleteItem('guestMode'),
+      ]);
+      setUser(null);
+      setIsGuestMode(false);
+      setHasCompletedOnboarding(false);
+      console.log('✅ AuthContext: All data cleared');
+    } catch (error) {
+      console.error('❌ Clear data error:', error);
+      throw error;
+    }
+  };
+
   return (
     <AuthContext.Provider
       value={{
@@ -170,6 +204,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         completeOnboarding,
         updateUser,
         enableGuestMode,
+        clearAllData,
       }}
     >
       {children}
