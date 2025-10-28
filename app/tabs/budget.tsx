@@ -1,189 +1,261 @@
-import React from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, ScrollView } from 'react-native';
+import React, { useState } from 'react';
+import { View, Text, StyleSheet, TouchableOpacity, ScrollView, StatusBar } from 'react-native';
 import { useRouter } from 'expo-router';
 import { Screen } from '@/components/layout/Screen';
-import { Button } from '@/components/ui/Button';
 import { theme } from '@/constants/theme';
 import { responsive, ms } from '@/constants/responsive';
 import { Ionicons } from '@expo/vector-icons';
-import { LinearGradient } from 'expo-linear-gradient';
+import Svg, { Circle } from 'react-native-svg';
+import { Button } from '@/components/ui/Button';
 
-// Sample data (will be replaced with actual data from context)
-const sampleBudgetData = {
-  totalBudget: 4500,
-  totalSpent: 2847.32,
-  categories: [
-    { id: 1, name: 'Groceries', spent: 487.23, budget: 600, emoji: '🛒', color: '#10B981' },
-    { id: 2, name: 'Transport', spent: 243.15, budget: 300, emoji: '🚗', color: '#3B82F6' },
-    { id: 3, name: 'Entertainment', spent: 189.45, budget: 200, emoji: '🎬', color: '#8B5CF6' },
-    { id: 4, name: 'Dining Out', spent: 312.78, budget: 400, emoji: '🍽️', color: '#F59E0B' },
-    { id: 5, name: 'Shopping', spent: 156.90, budget: 300, emoji: '🛍️', color: '#EC4899' },
-    { id: 6, name: 'Health', spent: 89.50, budget: 200, emoji: '🏥', color: '#EF4444' },
-    { id: 7, name: 'Bills', spent: 1368.31, budget: 1500, emoji: '📄', color: '#6366F1' },
-  ],
+// Color Palette - Using theme colors
+const colors = {
+  // Primary Palette
+  primaryDark: theme.colors.info.dark,
+  primary: theme.colors.info.main,
+  primaryLight: theme.colors.info.light,
+
+  // Neutral Palette
+  neutralBg: theme.colors.background.secondary,
+  neutralWhite: theme.colors.background.primary,
+  neutralDarkest: theme.colors.text.primary,
+  neutralDark: theme.colors.text.secondary,
+  neutralMedium: theme.colors.text.tertiary,
+
+  // Functional Palette
+  functionalSuccess: theme.colors.success.main,
+  functionalWarning: theme.colors.warning.main,
+  functionalError: theme.colors.danger.main,
 };
+
+interface BudgetCategory {
+  id: string;
+  name: string;
+  icon: keyof typeof Ionicons.glyphMap;
+  spent: number;
+  total: number;
+  color: string;
+}
 
 export default function BudgetTab() {
   const router = useRouter();
+  const [selectedPeriod, setSelectedPeriod] = useState<'weekly' | 'monthly' | 'custom'>('monthly');
 
-  const budgetPercentage = (sampleBudgetData.totalSpent / sampleBudgetData.totalBudget) * 100;
-  const remaining = sampleBudgetData.totalBudget - sampleBudgetData.totalSpent;
+  // Sample budget data
+  const totalSpent = 1890.50;
+  const totalBudget = 2500;
+  const remaining = totalBudget - totalSpent;
+  const percentage = Math.round((totalSpent / totalBudget) * 100);
+
+  const categories: BudgetCategory[] = [
+    { id: '1', name: 'Groceries', icon: 'cart-outline', spent: 450.20, total: 600, color: colors.functionalSuccess },
+    { id: '2', name: 'Transport', icon: 'bus-outline', spent: 195, total: 200, color: colors.functionalWarning },
+    { id: '3', name: 'Entertainment', icon: 'film-outline', spent: 315.50, total: 250, color: colors.functionalError },
+    { id: '4', name: 'Utilities', icon: 'bulb-outline', spent: 230, total: 300, color: colors.primary },
+  ];
+
+  const getProgressColor = (spent: number, total: number) => {
+    const percent = (spent / total) * 100;
+    if (spent > total) return colors.functionalError;
+    if (percent >= 95) return colors.functionalWarning;
+    return colors.functionalSuccess;
+  };
+
+  // SVG Circle calculations for progress indicator
+  const size = ms(120);
+  const strokeWidth = ms(12);
+  const radius = (size - strokeWidth) / 2;
+  const circumference = radius * 2 * Math.PI;
+  const strokeDashoffset = circumference - (percentage / 100) * circumference;
 
   return (
-    <Screen edges={['top']} noPadding backgroundColor={theme.colors.background.secondary}>
+    <Screen scrollable={false} noPadding backgroundColor={colors.neutralBg} edges={['top']}>
+      <StatusBar barStyle="dark-content" backgroundColor={colors.neutralBg} />
+
       {/* Header */}
       <View style={styles.header}>
         <Text style={styles.headerTitle}>Budget</Text>
         <TouchableOpacity style={styles.headerButton}>
-          <Ionicons name="settings-outline" size={24} color={theme.colors.text.primary} />
+          <Ionicons name="settings-outline" size={24} color={colors.neutralDarkest} />
         </TouchableOpacity>
       </View>
 
-      <ScrollView contentContainerStyle={styles.content}>
-        {/* Summary Card */}
-        <LinearGradient
-          colors={[theme.colors.primary[400], theme.colors.primary[600]]}
-          style={styles.summaryCard}
-        >
-          <View style={styles.summaryHeader}>
-            <View>
-              <Text style={styles.summaryPeriod}>January 2025</Text>
-              <Text style={styles.summaryAmount}>${remaining.toFixed(2)}</Text>
-              <Text style={styles.summaryLabel}>Remaining</Text>
-            </View>
-            <TouchableOpacity style={styles.periodButton}>
-              <Ionicons name="calendar-outline" size={20} color="#FFFFFF" />
+      <ScrollView style={styles.scrollView} showsVerticalScrollIndicator={false}>
+        <View style={styles.content}>
+          {/* Period Selector */}
+          <View style={styles.periodSelector}>
+            <TouchableOpacity
+              style={[styles.periodButton, selectedPeriod === 'weekly' && styles.periodButtonActive]}
+              onPress={() => setSelectedPeriod('weekly')}
+            >
+              <Text style={[styles.periodText, selectedPeriod === 'weekly' && styles.periodTextActive]}>
+                Weekly
+              </Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={[styles.periodButton, selectedPeriod === 'monthly' && styles.periodButtonActive]}
+              onPress={() => setSelectedPeriod('monthly')}
+            >
+              <Text style={[styles.periodText, selectedPeriod === 'monthly' && styles.periodTextActive]}>
+                Monthly
+              </Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={[styles.periodButton, selectedPeriod === 'custom' && styles.periodButtonActive]}
+              onPress={() => setSelectedPeriod('custom')}
+            >
+              <Text style={[styles.periodText, selectedPeriod === 'custom' && styles.periodTextActive]}>
+                Custom
+              </Text>
             </TouchableOpacity>
           </View>
 
-          {/* Progress Bar */}
-          <View style={styles.progressContainer}>
-            <View style={styles.progressBackground}>
-              <View style={[styles.progressFill, { width: `${Math.min(budgetPercentage, 100)}%` }]} />
+          {/* Total Budget Card */}
+          <View style={styles.totalCard}>
+            <View style={styles.cardHeader}>
+              <View>
+                <Text style={styles.cardLabel}>Total Budget</Text>
+                <Text style={styles.cardPeriod}>Jan 1 - Jan 31, 2025</Text>
+              </View>
+              <View style={styles.circularProgress}>
+                <Svg width={size} height={size}>
+                  {/* Background Circle */}
+                  <Circle
+                    cx={size / 2}
+                    cy={size / 2}
+                    r={radius}
+                    stroke={colors.neutralBg}
+                    strokeWidth={strokeWidth}
+                    fill="none"
+                  />
+                  {/* Progress Circle */}
+                  <Circle
+                    cx={size / 2}
+                    cy={size / 2}
+                    r={radius}
+                    stroke={percentage >= 100 ? colors.functionalError : percentage >= 80 ? colors.functionalWarning : colors.functionalSuccess}
+                    strokeWidth={strokeWidth}
+                    fill="none"
+                    strokeDasharray={circumference}
+                    strokeDashoffset={strokeDashoffset}
+                    strokeLinecap="round"
+                    rotation="-90"
+                    origin={`${size / 2}, ${size / 2}`}
+                  />
+                </Svg>
+                <View style={styles.progressCenter}>
+                  <Text style={styles.progressPercentage}>{percentage}%</Text>
+                </View>
+              </View>
+            </View>
+
+            <View style={styles.budgetStats}>
+              <View style={styles.budgetStat}>
+                <Text style={styles.budgetStatLabel}>Spent</Text>
+                <Text style={styles.budgetStatValue}>${totalSpent.toFixed(2)}</Text>
+              </View>
+              <View style={styles.budgetStat}>
+                <Text style={styles.budgetStatLabel}>Budget</Text>
+                <Text style={styles.budgetStatValue}>${totalBudget.toFixed(2)}</Text>
+              </View>
+              <View style={styles.budgetStat}>
+                <Text style={styles.budgetStatLabel}>Remaining</Text>
+                <Text style={[styles.budgetStatValue, { color: remaining >= 0 ? colors.functionalSuccess : colors.functionalError }]}>
+                  ${Math.abs(remaining).toFixed(2)}
+                </Text>
+              </View>
+            </View>
+
+            {/* Progress Bar */}
+            <View style={styles.progressBar}>
+              <View
+                style={[
+                  styles.progressBarFill,
+                  {
+                    width: `${Math.min(percentage, 100)}%`,
+                    backgroundColor: percentage >= 100 ? colors.functionalError : percentage >= 80 ? colors.functionalWarning : colors.functionalSuccess
+                  }
+                ]}
+              />
             </View>
           </View>
 
-          <View style={styles.summaryStats}>
-            <View style={styles.statColumn}>
-              <Text style={styles.statLabel}>Spent</Text>
-              <Text style={styles.statValue}>${sampleBudgetData.totalSpent.toFixed(2)}</Text>
+          {/* Alerts Card */}
+          <View style={styles.alertsCard}>
+            <View style={styles.alertItem}>
+              <Ionicons name="alert-circle" size={20} color={colors.functionalError} />
+              <Text style={styles.alertText}>
+                <Text style={styles.alertBold}>Entertainment</Text> is over budget by $65.50
+              </Text>
             </View>
-            <View style={styles.statColumn}>
-              <Text style={styles.statLabel}>Budget</Text>
-              <Text style={styles.statValue}>${sampleBudgetData.totalBudget.toFixed(2)}</Text>
-            </View>
-            <View style={styles.statColumn}>
-              <Text style={styles.statLabel}>Progress</Text>
-              <Text style={styles.statValue}>{budgetPercentage.toFixed(0)}%</Text>
+            <View style={styles.alertItem}>
+              <Ionicons name="warning" size={20} color={colors.functionalWarning} />
+              <Text style={styles.alertText}>
+                <Text style={styles.alertBold}>Transport</Text> is at 97% of budget
+              </Text>
             </View>
           </View>
-        </LinearGradient>
 
-        {/* Categories Section */}
-        <View style={styles.categoriesSection}>
-          <View style={styles.sectionHeader}>
-            <Text style={styles.sectionTitle}>All Categories</Text>
-            <Text style={styles.categoryCount}>{sampleBudgetData.categories.length} categories</Text>
+          {/* Action Buttons */}
+          <View style={styles.actionButtonsRow}>
+            <TouchableOpacity style={styles.actionBtn}>
+              <Ionicons name="create-outline" size={20} color={colors.primary} />
+              <Text style={styles.actionBtnText}>Adjust Budgets</Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.actionBtn}>
+              <Ionicons name="stats-chart" size={20} color={colors.primary} />
+              <Text style={styles.actionBtnText}>View Spending</Text>
+            </TouchableOpacity>
           </View>
 
-          {sampleBudgetData.categories.map((category) => {
-            const percentage = (category.spent / category.budget) * 100;
-            const remaining = category.budget - category.spent;
-            const status = percentage >= 100 ? 'over' : percentage >= 80 ? 'warning' : 'good';
+          {/* Category Breakdown */}
+          <View style={styles.categoryBreakdown}>
+            <Text style={styles.sectionTitle}>Category Breakdown</Text>
 
-            return (
-              <View key={category.id} style={styles.categoryCard}>
-                <View style={styles.categoryHeader}>
-                  <View style={styles.categoryTitleRow}>
-                    <Text style={styles.categoryEmoji}>{category.emoji}</Text>
-                    <View style={styles.categoryInfo}>
-                      <Text style={styles.categoryName}>{category.name}</Text>
-                      <Text style={[
-                        styles.categoryRemaining,
-                        status === 'over' && styles.categoryRemainingOver
-                      ]}>
-                        {status === 'over' ? 'Over by' : 'Remaining'}: ${Math.abs(remaining).toFixed(2)}
+            {categories.map((category) => {
+              const categoryPercentage = Math.round((category.spent / category.total) * 100);
+              const progressColor = getProgressColor(category.spent, category.total);
+
+              return (
+                <TouchableOpacity key={category.id} style={styles.categoryCard}>
+                  <View style={styles.categoryTop}>
+                    <View style={styles.categoryLeft}>
+                      <View style={[styles.categoryIconContainer, { backgroundColor: `${category.color}20` }]}>
+                        <Ionicons name={category.icon} size={24} color={category.color} />
+                      </View>
+                      <View style={styles.categoryInfo}>
+                        <Text style={styles.categoryName}>{category.name}</Text>
+                        <Text style={styles.categoryAmount}>
+                          ${category.spent.toFixed(2)} <Text style={styles.categoryTotal}>of ${category.total.toFixed(2)}</Text>
+                        </Text>
+                      </View>
+                    </View>
+                    <View style={styles.categoryRight}>
+                      <Text style={[styles.categoryPercentage, { color: progressColor }]}>
+                        {categoryPercentage}%
                       </Text>
                     </View>
                   </View>
-                  <View style={styles.categoryActions}>
-                    <TouchableOpacity style={styles.actionIconButton}>
-                      <Ionicons name="create-outline" size={20} color={theme.colors.text.secondary} />
-                    </TouchableOpacity>
+
+                  {/* Category Progress Bar */}
+                  <View style={styles.categoryProgress}>
+                    <View
+                      style={[
+                        styles.categoryProgressFill,
+                        {
+                          width: `${Math.min(categoryPercentage, 100)}%`,
+                          backgroundColor: progressColor
+                        }
+                      ]}
+                    />
                   </View>
-                </View>
+                </TouchableOpacity>
+              );
+            })}
+          </View>
 
-                {/* Progress Bar */}
-                <View style={styles.categoryProgressBackground}>
-                  <View
-                    style={[
-                      styles.categoryProgressFill,
-                      {
-                        width: `${Math.min(percentage, 100)}%`,
-                        backgroundColor: status === 'over'
-                          ? theme.colors.danger.main
-                          : status === 'warning'
-                          ? theme.colors.warning.main
-                          : category.color
-                      }
-                    ]}
-                  />
-                </View>
-
-                {/* Amounts */}
-                <View style={styles.categoryAmounts}>
-                  <Text style={styles.categorySpent}>
-                    ${category.spent.toFixed(2)} spent
-                  </Text>
-                  <Text style={styles.categoryBudget}>
-                    of ${category.budget.toFixed(2)}
-                  </Text>
-                  <Text style={[
-                    styles.categoryPercentage,
-                    status === 'over' && styles.categoryPercentageOver,
-                    status === 'warning' && styles.categoryPercentageWarning
-                  ]}>
-                    {percentage.toFixed(0)}%
-                  </Text>
-                </View>
-
-                {/* Action Buttons */}
-                <View style={styles.categoryButtons}>
-                  <TouchableOpacity style={styles.categoryButton}>
-                    <Ionicons name="list-outline" size={16} color={theme.colors.primary[600]} />
-                    <Text style={styles.categoryButtonText}>View Transactions</Text>
-                  </TouchableOpacity>
-                  <TouchableOpacity style={styles.categoryButton}>
-                    <Ionicons name="create-outline" size={16} color={theme.colors.primary[600]} />
-                    <Text style={styles.categoryButtonText}>Edit Budget</Text>
-                  </TouchableOpacity>
-                </View>
-              </View>
-            );
-          })}
-        </View>
-
-        {/* Action Buttons */}
-        <View style={styles.actionButtons}>
-          <Button
-            variant="primary"
-            fullWidth
-            size="large"
-            onPress={() => {}}
-          >
-            <Ionicons name="add" size={20} color="#FFFFFF" style={{ marginRight: 8 }} />
-            Add Category
-          </Button>
-
-          <Button
-            variant="secondary"
-            fullWidth
-            size="large"
-            onPress={() => {}}
-          >
-            <Ionicons name="settings-outline" size={20} color={theme.colors.text.primary} style={{ marginRight: 8 }} />
-            Budget Settings
-          </Button>
+          {/* Bottom spacing */}
+          <View style={{ height: responsive.spacing[20] }} />
         </View>
       </ScrollView>
     </Screen>
@@ -191,233 +263,241 @@ export default function BudgetTab() {
 }
 
 const styles = StyleSheet.create({
+  scrollView: {
+    flex: 1,
+  },
   header: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    paddingHorizontal: responsive.spacing[6],
-    paddingVertical: responsive.spacing[4],
-    backgroundColor: theme.colors.background.primary,
-    borderBottomWidth: 1,
-    borderBottomColor: theme.colors.border.light,
+    paddingHorizontal: responsive.spacing[4],
+    paddingVertical: responsive.spacing[3],
+    backgroundColor: colors.neutralBg,
   },
   headerTitle: {
-    ...theme.typography.styles.h2,
-    fontSize: responsive.fontSize.h4,
-    lineHeight: responsive.fontSize.h4 * 1.5,
+    fontSize: responsive.fontSize.xl,
+    fontWeight: '700',
+    color: colors.neutralDarkest,
   },
   headerButton: {
-    padding: responsive.spacing[2],
+    width: ms(40),
+    height: ms(40),
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   content: {
-    padding: responsive.spacing[6],
-    paddingBottom: responsive.spacing[8],
-  },
-  summaryCard: {
-    borderRadius: theme.borderRadius.xl,
-    padding: responsive.spacing[6],
-    marginBottom: responsive.spacing[6],
-    ...theme.shadows.lg,
-  },
-  summaryHeader: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'flex-start',
-    marginBottom: responsive.spacing[4],
-  },
-  summaryPeriod: {
-    fontSize: responsive.fontSize.sm,
-    lineHeight: responsive.fontSize.sm * 1.5,
-    fontWeight: '600',
-    color: '#FFFFFF',
-    opacity: 0.9,
-    marginBottom: responsive.spacing[2],
-  },
-  summaryAmount: {
-    fontSize: responsive.fontSize.h2,
-    lineHeight: responsive.fontSize.h2 * 1.5,
-    fontWeight: '700',
-    color: '#FFFFFF',
-    marginBottom: 4,
-  },
-  summaryLabel: {
-    fontSize: responsive.fontSize.sm,
-    lineHeight: responsive.fontSize.sm * 1.5,
-    color: '#FFFFFF',
-    opacity: 0.8,
-  },
-  periodButton: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    backgroundColor: 'rgba(255, 255, 255, 0.2)',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  progressContainer: {
-    marginBottom: responsive.spacing[4],
-  },
-  progressBackground: {
-    height: 8,
-    backgroundColor: 'rgba(255, 255, 255, 0.3)',
-    borderRadius: 4,
-    overflow: 'hidden',
-  },
-  progressFill: {
-    height: '100%',
-    backgroundColor: '#FFFFFF',
-    borderRadius: 4,
-  },
-  summaryStats: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-  },
-  statColumn: {
-    flex: 1,
-  },
-  statLabel: {
-    fontSize: responsive.fontSize.xs,
-    lineHeight: responsive.fontSize.xs * 1.5,
-    color: '#FFFFFF',
-    opacity: 0.8,
-    marginBottom: 4,
-  },
-  statValue: {
-    fontSize: responsive.fontSize.md,
-    lineHeight: responsive.fontSize.md * 1.5,
-    fontWeight: '700',
-    color: '#FFFFFF',
-  },
-  categoriesSection: {
-    marginBottom: responsive.spacing[6],
-  },
-  sectionHeader: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: responsive.spacing[4],
-  },
-  sectionTitle: {
-    ...theme.typography.styles.h3,
-    fontSize: responsive.fontSize.lg,
-    lineHeight: responsive.fontSize.lg * 1.5,
-  },
-  categoryCount: {
-    ...theme.typography.styles.bodySmall,
-    color: theme.colors.text.secondary,
-  },
-  categoryCard: {
-    backgroundColor: theme.colors.background.primary,
-    borderRadius: theme.borderRadius.xl,
     padding: responsive.spacing[4],
-    marginBottom: responsive.spacing[4],
+    gap: responsive.spacing[4],
+  },
+  // Period Selector
+  periodSelector: {
+    flexDirection: 'row',
+    backgroundColor: colors.neutralWhite,
+    borderRadius: theme.borderRadius.xl,
+    padding: responsive.spacing[1],
+    gap: responsive.spacing[1],
     ...theme.shadows.sm,
   },
-  categoryHeader: {
+  periodButton: {
+    flex: 1,
+    paddingVertical: responsive.spacing[2],
+    paddingHorizontal: responsive.spacing[3],
+    borderRadius: theme.borderRadius.lg,
+    alignItems: 'center',
+  },
+  periodButtonActive: {
+    backgroundColor: colors.primary,
+  },
+  periodText: {
+    fontSize: responsive.fontSize.sm,
+    fontWeight: '600',
+    color: colors.neutralDark,
+  },
+  periodTextActive: {
+    color: colors.neutralWhite,
+  },
+  // Total Budget Card
+  totalCard: {
+    backgroundColor: colors.neutralWhite,
+    borderRadius: theme.borderRadius.xl,
+    padding: responsive.spacing[5],
+    gap: responsive.spacing[4],
+    ...theme.shadows.sm,
+  },
+  cardHeader: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: responsive.spacing[2],
   },
-  categoryTitleRow: {
+  cardLabel: {
+    fontSize: responsive.fontSize.sm,
+    fontWeight: '600',
+    color: colors.neutralDark,
+    marginBottom: responsive.spacing[1],
+  },
+  cardPeriod: {
+    fontSize: responsive.fontSize.xs,
+    color: colors.neutralMedium,
+  },
+  circularProgress: {
+    position: 'relative',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  progressCenter: {
+    position: 'absolute',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  progressPercentage: {
+    fontSize: responsive.fontSize.h3,
+    fontWeight: '700',
+    color: colors.neutralDarkest,
+  },
+  budgetStats: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    paddingTop: responsive.spacing[3],
+    borderTopWidth: 1,
+    borderTopColor: `${colors.neutralMedium}20`,
+  },
+  budgetStat: {
+    flex: 1,
+    alignItems: 'center',
+  },
+  budgetStatLabel: {
+    fontSize: responsive.fontSize.xs,
+    color: colors.neutralMedium,
+    marginBottom: responsive.spacing[1],
+  },
+  budgetStatValue: {
+    fontSize: responsive.fontSize.md,
+    fontWeight: '700',
+    color: colors.neutralDarkest,
+  },
+  progressBar: {
+    height: ms(8),
+    backgroundColor: colors.neutralBg,
+    borderRadius: ms(4),
+    overflow: 'hidden',
+  },
+  progressBarFill: {
+    height: '100%',
+    borderRadius: ms(4),
+  },
+  // Alerts Card
+  alertsCard: {
+    backgroundColor: colors.neutralWhite,
+    borderRadius: theme.borderRadius.xl,
+    padding: responsive.spacing[4],
+    gap: responsive.spacing[3],
+    ...theme.shadows.sm,
+  },
+  alertItem: {
     flexDirection: 'row',
     alignItems: 'center',
+    gap: responsive.spacing[2],
+  },
+  alertText: {
+    fontSize: responsive.fontSize.sm,
+    color: colors.neutralDark,
     flex: 1,
   },
-  categoryEmoji: {
-    fontSize: responsive.fontSize.h3,
-    lineHeight: responsive.fontSize.h3 * 1.5,
-    marginRight: responsive.spacing[2],
+  alertBold: {
+    fontWeight: '700',
+    color: colors.neutralDarkest,
+  },
+  // Action Buttons
+  actionButtonsRow: {
+    flexDirection: 'row',
+    gap: responsive.spacing[3],
+  },
+  actionBtn: {
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: colors.neutralWhite,
+    borderRadius: theme.borderRadius.xl,
+    paddingVertical: responsive.spacing[3],
+    paddingHorizontal: responsive.spacing[3],
+    gap: responsive.spacing[2],
+    ...theme.shadows.sm,
+  },
+  actionBtnText: {
+    fontSize: responsive.fontSize.sm,
+    fontWeight: '600',
+    color: colors.primary,
+  },
+  // Category Breakdown
+  categoryBreakdown: {
+    gap: responsive.spacing[3],
+  },
+  sectionTitle: {
+    fontSize: responsive.fontSize.lg,
+    fontWeight: '700',
+    color: colors.neutralDarkest,
+    marginBottom: responsive.spacing[2],
+  },
+  categoryCard: {
+    backgroundColor: colors.neutralWhite,
+    borderRadius: theme.borderRadius.xl,
+    padding: responsive.spacing[4],
+    gap: responsive.spacing[3],
+    ...theme.shadows.sm,
+  },
+  categoryTop: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+  categoryLeft: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: responsive.spacing[3],
+    flex: 1,
+  },
+  categoryIconContainer: {
+    width: ms(48),
+    height: ms(48),
+    borderRadius: ms(24),
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   categoryInfo: {
     flex: 1,
   },
   categoryName: {
-    ...theme.typography.styles.body,
     fontSize: responsive.fontSize.md,
-    lineHeight: responsive.fontSize.md * 1.5,
     fontWeight: '600',
-    marginBottom: 4,
+    color: colors.neutralDarkest,
+    marginBottom: responsive.spacing[1],
   },
-  categoryRemaining: {
-    ...theme.typography.styles.bodySmall,
-    color: theme.colors.text.secondary,
+  categoryAmount: {
+    fontSize: responsive.fontSize.sm,
+    fontWeight: '700',
+    color: colors.neutralDarkest,
   },
-  categoryRemainingOver: {
-    color: theme.colors.danger.main,
-    fontWeight: '600',
+  categoryTotal: {
+    fontSize: responsive.fontSize.sm,
+    fontWeight: '400',
+    color: colors.neutralDark,
   },
-  categoryActions: {
-    flexDirection: 'row',
-    gap: responsive.spacing[2],
+  categoryRight: {
+    alignItems: 'flex-end',
   },
-  actionIconButton: {
-    width: 36,
-    height: 36,
-    borderRadius: 18,
-    backgroundColor: theme.colors.background.tertiary,
-    alignItems: 'center',
-    justifyContent: 'center',
+  categoryPercentage: {
+    fontSize: responsive.fontSize.lg,
+    fontWeight: '700',
   },
-  categoryProgressBackground: {
-    height: 8,
-    backgroundColor: theme.colors.background.tertiary,
-    borderRadius: 4,
+  categoryProgress: {
+    height: ms(8),
+    backgroundColor: colors.neutralBg,
+    borderRadius: ms(4),
     overflow: 'hidden',
-    marginBottom: responsive.spacing[2],
   },
   categoryProgressFill: {
     height: '100%',
-    borderRadius: 4,
-  },
-  categoryAmounts: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: responsive.spacing[2],
-  },
-  categorySpent: {
-    ...theme.typography.styles.bodySmall,
-    fontWeight: '600',
-    color: theme.colors.text.primary,
-  },
-  categoryBudget: {
-    ...theme.typography.styles.bodySmall,
-    color: theme.colors.text.secondary,
-    marginLeft: 4,
-    flex: 1,
-  },
-  categoryPercentage: {
-    ...theme.typography.styles.bodySmall,
-    fontWeight: '700',
-    color: theme.colors.text.secondary,
-  },
-  categoryPercentageOver: {
-    color: theme.colors.danger.main,
-  },
-  categoryPercentageWarning: {
-    color: theme.colors.warning.main,
-  },
-  categoryButtons: {
-    flexDirection: 'row',
-    gap: responsive.spacing[2],
-  },
-  categoryButton: {
-    flex: 1,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: theme.colors.background.tertiary,
-    borderRadius: theme.borderRadius.xl,
-    paddingVertical: responsive.spacing[2],
-    paddingHorizontal: responsive.spacing[2],
-  },
-  categoryButtonText: {
-    ...theme.typography.styles.bodySmall,
-    fontWeight: '600',
-    color: theme.colors.primary[600],
-    marginLeft: 4,
-  },
-  actionButtons: {
-    gap: responsive.spacing[2],
+    borderRadius: ms(4),
   },
 });

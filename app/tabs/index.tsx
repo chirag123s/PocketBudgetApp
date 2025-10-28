@@ -1,500 +1,531 @@
 import React from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, ScrollView } from 'react-native';
-import { useRouter } from 'expo-router';
+import {
+  View,
+  Text,
+  ScrollView,
+  TouchableOpacity,
+  StyleSheet,
+  StatusBar,
+} from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
 import { Screen } from '@/components/layout/Screen';
 import { theme } from '@/constants/theme';
 import { responsive, ms } from '@/constants/responsive';
-import { Ionicons } from '@expo/vector-icons';
-import { LinearGradient } from 'expo-linear-gradient';
 
-// Sample data (will be replaced with actual data from context)
-const sampleData = {
-  totalBudget: 4500,
-  totalSpent: 2847.32,
-  categories: [
-    { name: 'Groceries', spent: 487.23, budget: 600, emoji: '🛒', color: '#10B981' },
-    { name: 'Transport', spent: 243.15, budget: 300, emoji: '🚗', color: '#3B82F6' },
-    { name: 'Entertainment', spent: 189.45, budget: 200, emoji: '🎬', color: '#8B5CF6' },
-  ],
-  upcomingBills: [
-    { name: 'Rent', amount: 1800, due: 'Feb 1', emoji: '🏠', color: '#EF4444' },
-    { name: 'Internet', amount: 89, due: 'Feb 5', emoji: '📡', color: '#3B82F6' },
-  ],
-  recentTransactions: [
-    { name: 'Woolworths', amount: -87.32, category: 'Groceries', date: 'Today', emoji: '🛒' },
-    { name: 'Salary', amount: 3500, category: 'Income', date: 'Yesterday', emoji: '💰' },
-    { name: 'Uber', amount: -24.50, category: 'Transport', date: 'Yesterday', emoji: '🚗' },
-  ],
+// Color Palette - Using theme colors
+const colors = {
+  // Primary Palette
+  primaryDark: theme.colors.info.dark,
+  primary: theme.colors.info.main,
+  primaryLight: theme.colors.info.light,
+
+  // Secondary Palette
+  secondaryGreen: theme.colors.success.main,
+  secondaryRed: '#FF6B6B',
+  secondaryYellow: theme.colors.warning.main,
+
+  // Neutral Palette
+  neutralBg: theme.colors.background.secondary,
+  neutralWhite: theme.colors.background.primary,
+  neutralDarkest: theme.colors.text.primary,
+  neutralDark: theme.colors.text.secondary,
+  neutralMedium: theme.colors.text.tertiary,
+
+  // Functional Palette
+  functionalSuccess: theme.colors.success.main,
+  functionalWarning: theme.colors.warning.main,
+  functionalError: theme.colors.danger.main,
 };
 
-export default function HomeTab() {
-  const router = useRouter();
+interface Transaction {
+  id: string;
+  merchant: string;
+  amount: number;
+  date: string;
+  category: 'groceries' | 'dining' | 'fuel' | 'other';
+  icon: string;
+  color: string;
+}
 
-  const budgetPercentage = (sampleData.totalSpent / sampleData.totalBudget) * 100;
-  const remaining = sampleData.totalBudget - sampleData.totalSpent;
+interface BudgetItem {
+  category: string;
+  spent: number;
+  total: number;
+  status: 'good' | 'warning' | 'over';
+}
+
+const DashboardScreen: React.FC = () => {
+  const transactions: Transaction[] = [
+    {
+      id: '1',
+      merchant: 'Woolworths',
+      amount: 84.50,
+      date: 'Today',
+      category: 'groceries',
+      icon: 'cart-outline',
+      color: colors.primary,
+    },
+    {
+      id: '2',
+      merchant: "Grill'd",
+      amount: 42.10,
+      date: 'Yesterday',
+      category: 'dining',
+      icon: 'restaurant-outline',
+      color: colors.secondaryYellow,
+    },
+    {
+      id: '3',
+      merchant: 'BP Connect',
+      amount: 65.30,
+      date: '2 days ago',
+      category: 'fuel',
+      icon: 'car-outline',
+      color: colors.secondaryRed,
+    },
+  ];
+
+  const budgetItems: BudgetItem[] = [
+    { category: 'Groceries', spent: 190, total: 500, status: 'good' },
+    { category: 'Shopping', spent: 550, total: 500, status: 'over' },
+    { category: 'Entertainment', spent: 80, total: 200, status: 'warning' },
+  ];
+
+  const getProgressColor = (status: string) => {
+    switch (status) {
+      case 'good':
+        return colors.functionalSuccess;
+      case 'warning':
+        return colors.functionalWarning;
+      case 'over':
+        return colors.functionalError;
+      default:
+        return colors.primary;
+    }
+  };
+
+  const getIconBackgroundColor = (color: string) => {
+    if (color === colors.primary) return `${colors.primary}1A`;
+    if (color === colors.secondaryYellow) return `${colors.secondaryYellow}33`;
+    if (color === colors.secondaryRed) return `${colors.secondaryRed}33`;
+    return `${colors.primary}1A`;
+  };
 
   return (
-    <Screen edges={['top']} noPadding backgroundColor={theme.colors.background.secondary}>
-      {/* Header */}
-      <View style={styles.header}>
-        <View>
-          <Text style={styles.greeting}>Good morning</Text>
-          <Text style={styles.userName}>John</Text>
+    <Screen
+      scrollable={false}
+      noPadding
+      backgroundColor={colors.neutralBg}
+      edges={['top']}
+    >
+      <StatusBar barStyle="dark-content" backgroundColor={colors.neutralBg} />
+
+      <ScrollView style={styles.scrollView} showsVerticalScrollIndicator={false}>
+        {/* Header */}
+        <View style={styles.header}>
+          <View style={styles.headerLeft}>
+            <View style={styles.profilePic}>
+              <Text style={styles.profileInitial}>A</Text>
+            </View>
+            <Text style={styles.greeting}>Good morning, Alex</Text>
+          </View>
+          <TouchableOpacity style={styles.notificationButton}>
+            <Ionicons name="notifications-outline" size={24} color={colors.neutralDark} />
+          </TouchableOpacity>
         </View>
-        <TouchableOpacity style={styles.notificationButton}>
-          <Ionicons name="notifications-outline" size={24} color={theme.colors.text.primary} />
-          <View style={styles.notificationBadge} />
-        </TouchableOpacity>
-      </View>
 
-      <ScrollView contentContainerStyle={styles.content}>
-        {/* Quick Summary Card */}
-        <LinearGradient
-          colors={[theme.colors.primary[400], theme.colors.primary[600]]}
-          style={styles.summaryCard}
-        >
-          <Text style={styles.summaryTitle}>January Budget</Text>
-          <Text style={styles.summaryAmount}>${remaining.toFixed(2)}</Text>
-          <Text style={styles.summaryLabel}>Remaining of ${sampleData.totalBudget.toFixed(2)}</Text>
-
-          {/* Progress Bar */}
-          <View style={styles.progressBarContainer}>
-            <View style={styles.progressBarBackground}>
-              <View style={[styles.progressBarFill, { width: `${budgetPercentage}%` }]} />
-            </View>
-            <Text style={styles.progressPercentage}>{budgetPercentage.toFixed(0)}%</Text>
+        {/* Stats Cards */}
+        <View style={styles.statsContainer}>
+          <View style={[styles.statCard, styles.cardShadow]}>
+            <Text style={styles.statLabel}>Net Worth</Text>
+            <Text style={styles.statValue}>$42,831.50</Text>
+            <Text style={styles.statChange}>+2.1%</Text>
           </View>
-
-          <View style={styles.summaryStats}>
-            <View style={styles.statItem}>
-              <Text style={styles.statLabel}>Spent</Text>
-              <Text style={styles.statValue}>${sampleData.totalSpent.toFixed(2)}</Text>
-            </View>
-            <View style={styles.statDivider} />
-            <View style={styles.statItem}>
-              <Text style={styles.statLabel}>Days left</Text>
-              <Text style={styles.statValue}>12</Text>
-            </View>
+          <View style={[styles.statCard, styles.cardShadow]}>
+            <Text style={styles.statLabel}>Total Spent</Text>
+            <Text style={styles.statValue}>$1,850.75</Text>
+            <Text style={[styles.statChange, { color: colors.functionalError }]}>
+              +5.0%
+            </Text>
           </View>
-        </LinearGradient>
+        </View>
 
-        {/* Top Spending Categories */}
-        <View style={styles.section}>
-          <View style={styles.sectionHeader}>
-            <Text style={styles.sectionTitle}>Top Spending</Text>
-            <TouchableOpacity onPress={() => router.push('/tabs/budget')}>
-              <Text style={styles.seeAllText}>See all</Text>
+        {/* Spending Chart Card */}
+        <View style={[styles.spendingCard, styles.cardShadow]}>
+          <View style={styles.spendingHeader}>
+            <Text style={styles.sectionTitle}>Spending</Text>
+            <TouchableOpacity style={styles.dropdownButton}>
+              <Text style={styles.dropdownText}>This Month</Text>
+              <Ionicons name="chevron-down" size={16} color={colors.primary} />
             </TouchableOpacity>
           </View>
 
-          {sampleData.categories.map((category, index) => {
-            const categoryPercentage = (category.spent / category.budget) * 100;
-            return (
-              <TouchableOpacity key={index} style={styles.categoryCard}>
-                <View style={styles.categoryHeader}>
-                  <View style={styles.categoryInfo}>
-                    <Text style={styles.categoryEmoji}>{category.emoji}</Text>
-                    <View>
-                      <Text style={styles.categoryName}>{category.name}</Text>
-                      <Text style={styles.categoryAmount}>
-                        ${category.spent.toFixed(2)} of ${category.budget.toFixed(2)}
-                      </Text>
-                    </View>
-                  </View>
-                  <Text style={[
-                    styles.categoryPercentage,
-                    categoryPercentage >= 100 && styles.categoryPercentageOver
-                  ]}>
-                    {categoryPercentage.toFixed(0)}%
-                  </Text>
-                </View>
-                <View style={styles.categoryProgressBackground}>
-                  <View
-                    style={[
-                      styles.categoryProgressFill,
-                      {
-                        width: `${Math.min(categoryPercentage, 100)}%`,
-                        backgroundColor: categoryPercentage >= 100
-                          ? theme.colors.danger.main
-                          : categoryPercentage >= 80
-                          ? theme.colors.warning.main
-                          : category.color
-                      }
-                    ]}
-                  />
-                </View>
-              </TouchableOpacity>
-            );
-          })}
-        </View>
-
-        {/* Upcoming Bills */}
-        <View style={styles.section}>
-          <View style={styles.sectionHeader}>
-            <Text style={styles.sectionTitle}>Upcoming Bills</Text>
-            <TouchableOpacity>
-              <Text style={styles.seeAllText}>See all</Text>
-            </TouchableOpacity>
-          </View>
-
-          {sampleData.upcomingBills.map((bill, index) => (
-            <View key={index} style={styles.billCard}>
-              <View style={styles.billInfo}>
-                <Text style={styles.billEmoji}>{bill.emoji}</Text>
-                <View>
-                  <Text style={styles.billName}>{bill.name}</Text>
-                  <Text style={styles.billDue}>Due {bill.due}</Text>
+          <View style={styles.chartContainer}>
+            {/* Simplified Circle Progress */}
+            <View style={styles.circleProgress}>
+              <View style={styles.circleOuter}>
+                <View style={styles.circleInner}>
+                  <Text style={styles.circleAmount}>$1.8k</Text>
                 </View>
               </View>
-              <Text style={styles.billAmount}>${bill.amount.toFixed(2)}</Text>
+            </View>
+
+            {/* Legend */}
+            <View style={styles.legend}>
+              <View style={styles.legendItem}>
+                <View style={[styles.legendDot, { backgroundColor: colors.primary }]} />
+                <Text style={styles.legendLabel}>Groceries</Text>
+                <Text style={styles.legendAmount}>$840</Text>
+              </View>
+              <View style={styles.legendItem}>
+                <View style={[styles.legendDot, { backgroundColor: colors.secondaryRed }]} />
+                <Text style={styles.legendLabel}>Shopping</Text>
+                <Text style={styles.legendAmount}>$550</Text>
+              </View>
+              <View style={styles.legendItem}>
+                <View style={[styles.legendDot, { backgroundColor: colors.secondaryYellow }]} />
+                <Text style={styles.legendLabel}>Transport</Text>
+                <Text style={styles.legendAmount}>$210</Text>
+              </View>
+              <View style={styles.legendItem}>
+                <View style={[styles.legendDot, { backgroundColor: colors.primaryLight }]} />
+                <Text style={styles.legendLabel}>Other</Text>
+                <Text style={styles.legendAmount}>$250.75</Text>
+              </View>
+            </View>
+          </View>
+        </View>
+
+        {/* Budget Progress */}
+        <Text style={styles.sectionHeading}>Budget Progress</Text>
+        <View style={styles.budgetContainer}>
+          {budgetItems.map((item, index) => (
+            <View key={index} style={[styles.budgetCard, styles.cardShadow]}>
+              <View style={styles.budgetHeader}>
+                <Text style={styles.budgetCategory}>{item.category}</Text>
+                {item.status === 'over' ? (
+                  <Text style={styles.budgetOverText}>
+                    ${item.spent - item.total} over budget!
+                  </Text>
+                ) : (
+                  <Text style={styles.budgetRemaining}>
+                    ${item.total - item.spent} left of ${item.total}
+                  </Text>
+                )}
+              </View>
+              <View style={styles.progressBar}>
+                <View
+                  style={[
+                    styles.progressFill,
+                    {
+                      width: `${Math.min((item.spent / item.total) * 100, 100)}%`,
+                      backgroundColor: getProgressColor(item.status),
+                    },
+                  ]}
+                />
+              </View>
             </View>
           ))}
         </View>
 
         {/* Recent Transactions */}
-        <View style={styles.section}>
-          <View style={styles.sectionHeader}>
-            <Text style={styles.sectionTitle}>Recent Transactions</Text>
-            <TouchableOpacity onPress={() => router.push('/tabs/transactions')}>
-              <Text style={styles.seeAllText}>See all</Text>
-            </TouchableOpacity>
-          </View>
+        <View style={styles.transactionsHeader}>
+          <Text style={styles.sectionHeading}>Recent Transactions</Text>
+          <TouchableOpacity>
+            <Text style={styles.viewAllButton}>View All</Text>
+          </TouchableOpacity>
+        </View>
 
-          {sampleData.recentTransactions.map((transaction, index) => (
-            <TouchableOpacity key={index} style={styles.transactionCard}>
-              <View style={styles.transactionInfo}>
-                <Text style={styles.transactionEmoji}>{transaction.emoji}</Text>
-                <View>
-                  <Text style={styles.transactionName}>{transaction.name}</Text>
-                  <Text style={styles.transactionCategory}>{transaction.category}</Text>
+        <View style={[styles.transactionsCard, styles.cardShadow]}>
+          {transactions.map((transaction, index) => (
+            <View key={transaction.id}>
+              <TouchableOpacity style={styles.transactionItem}>
+                <View
+                  style={[
+                    styles.transactionIcon,
+                    { backgroundColor: getIconBackgroundColor(transaction.color) },
+                  ]}
+                >
+                  <Ionicons
+                    name={transaction.icon as any}
+                    size={20}
+                    color={transaction.color}
+                  />
                 </View>
-              </View>
-              <View style={styles.transactionRight}>
-                <Text style={[
-                  styles.transactionAmount,
-                  transaction.amount > 0 ? styles.transactionAmountPositive : styles.transactionAmountNegative
-                ]}>
-                  {transaction.amount > 0 ? '+' : ''}${Math.abs(transaction.amount).toFixed(2)}
+                <View style={styles.transactionDetails}>
+                  <Text style={styles.transactionMerchant}>{transaction.merchant}</Text>
+                  <Text style={styles.transactionDate}>{transaction.date}</Text>
+                </View>
+                <Text style={styles.transactionAmount}>
+                  -${transaction.amount.toFixed(2)}
                 </Text>
-                <Text style={styles.transactionDate}>{transaction.date}</Text>
-              </View>
-            </TouchableOpacity>
+              </TouchableOpacity>
+              {index < transactions.length - 1 && <View style={styles.divider} />}
+            </View>
           ))}
         </View>
 
-        {/* Quick Actions */}
-        <View style={styles.quickActions}>
-          <TouchableOpacity style={styles.actionButton}>
-            <View style={[styles.actionIcon, { backgroundColor: theme.colors.primary[100] }]}>
-              <Ionicons name="add" size={24} color={theme.colors.primary[600]} />
-            </View>
-            <Text style={styles.actionText}>Add Transaction</Text>
-          </TouchableOpacity>
-
-          <TouchableOpacity style={styles.actionButton}>
-            <View style={[styles.actionIcon, { backgroundColor: '#DBEAFE' }]}>
-              <Ionicons name="wallet" size={24} color="#2563EB" />
-            </View>
-            <Text style={styles.actionText}>Edit Budget</Text>
-          </TouchableOpacity>
-
-          <TouchableOpacity style={styles.actionButton}>
-            <View style={[styles.actionIcon, { backgroundColor: '#FEF3C7' }]}>
-              <Ionicons name="stats-chart" size={24} color="#F59E0B" />
-            </View>
-            <Text style={styles.actionText}>View Charts</Text>
-          </TouchableOpacity>
-        </View>
+        {/* Bottom spacing */}
+        <View style={{ height: responsive.spacing[4] }} />
       </ScrollView>
     </Screen>
   );
-}
+};
 
 const styles = StyleSheet.create({
+  scrollView: {
+    flex: 1,
+  },
   header: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    paddingHorizontal: responsive.spacing[6],
-    paddingVertical: responsive.spacing[4],
-    backgroundColor: theme.colors.background.primary,
-    borderBottomWidth: 1,
-    borderBottomColor: theme.colors.border.light,
+    paddingHorizontal: responsive.spacing[4],
+    paddingVertical: responsive.spacing[3],
+    backgroundColor: colors.neutralBg,
+  },
+  headerLeft: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: responsive.spacing[3],
+  },
+  profilePic: {
+    width: ms(40),
+    height: ms(40),
+    borderRadius: ms(20),
+    backgroundColor: colors.primary,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  profileInitial: {
+    color: colors.neutralWhite,
+    fontSize: responsive.fontSize.lg,
+    fontWeight: '600',
   },
   greeting: {
-    ...theme.typography.styles.bodySmall,
-    color: theme.colors.text.secondary,
-  },
-  userName: {
-    ...theme.typography.styles.h2,
-    fontSize: responsive.fontSize.h4,
-    lineHeight: responsive.fontSize.h4 * 1.5,
+    fontSize: responsive.fontSize.lg,
+    fontWeight: '700',
+    color: colors.neutralDarkest,
   },
   notificationButton: {
-    position: 'relative',
     padding: responsive.spacing[2],
   },
-  notificationBadge: {
-    position: 'absolute',
-    top: 8,
-    right: 8,
-    width: 8,
-    height: 8,
-    borderRadius: 4,
-    backgroundColor: theme.colors.danger.main,
+  statsContainer: {
+    flexDirection: 'row',
+    paddingHorizontal: responsive.spacing[4],
+    gap: responsive.spacing[4],
+    marginTop: responsive.spacing[1],
   },
-  content: {
-    padding: responsive.spacing[6],
-    paddingBottom: responsive.spacing[8],
-  },
-  summaryCard: {
+  statCard: {
+    flex: 1,
+    backgroundColor: colors.neutralWhite,
     borderRadius: theme.borderRadius.xl,
-    padding: responsive.spacing[6],
-    marginBottom: responsive.spacing[6],
-    ...theme.shadows.lg,
+    padding: responsive.spacing[4],
+    gap: responsive.spacing[2],
   },
-  summaryTitle: {
-    fontSize: responsive.fontSize.md,
-    lineHeight: responsive.fontSize.md * 1.5,
-    fontWeight: '600',
-    color: '#FFFFFF',
-    opacity: 0.9,
-    marginBottom: responsive.spacing[2],
-  },
-  summaryAmount: {
-    fontSize: responsive.fontSize.h3,
-    lineHeight: responsive.fontSize.h3 * 1.5,
-    fontWeight: '700',
-    color: '#FFFFFF',
-  },
-  summaryLabel: {
-    fontSize: responsive.fontSize.sm,
-    lineHeight: responsive.fontSize.sm * 1.5,
-    color: '#FFFFFF',
-    opacity: 0.8,
-    marginBottom: responsive.spacing[4],
-  },
-  progressBarContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: responsive.spacing[4],
-  },
-  progressBarBackground: {
-    flex: 1,
-    height: 8,
-    backgroundColor: 'rgba(255, 255, 255, 0.3)',
-    borderRadius: 4,
-    overflow: 'hidden',
-    marginRight: responsive.spacing[2],
-  },
-  progressBarFill: {
-    height: '100%',
-    backgroundColor: '#FFFFFF',
-    borderRadius: 4,
-  },
-  progressPercentage: {
-    fontSize: responsive.fontSize.sm,
-    lineHeight: responsive.fontSize.sm * 1.5,
-    fontWeight: '600',
-    color: '#FFFFFF',
-    width: 40,
-  },
-  summaryStats: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  statItem: {
-    flex: 1,
-  },
-  statDivider: {
-    width: 1,
-    height: 32,
-    backgroundColor: 'rgba(255, 255, 255, 0.3)',
-    marginHorizontal: responsive.spacing[4],
+  cardShadow: {
+    ...theme.shadows.sm,
   },
   statLabel: {
-    fontSize: responsive.fontSize.xs,
-    lineHeight: responsive.fontSize.xs * 1.5,
-    color: '#FFFFFF',
-    opacity: 0.8,
-    marginBottom: 4,
+    fontSize: responsive.fontSize.sm,
+    fontWeight: '500',
+    color: colors.neutralDark,
   },
   statValue: {
-    fontSize: responsive.fontSize.lg,
-    lineHeight: responsive.fontSize.lg * 1.5,
+    fontSize: responsive.fontSize.h4,
     fontWeight: '700',
-    color: '#FFFFFF',
+    color: colors.neutralDarkest,
   },
-  section: {
-    marginBottom: responsive.spacing[6],
+  statChange: {
+    fontSize: responsive.fontSize.sm,
+    fontWeight: '500',
+    color: colors.functionalSuccess,
   },
-  sectionHeader: {
+  spendingCard: {
+    marginHorizontal: responsive.spacing[4],
+    marginTop: responsive.spacing[4],
+    backgroundColor: colors.neutralWhite,
+    borderRadius: theme.borderRadius.xl,
+    padding: responsive.spacing[5],
+  },
+  spendingHeader: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
     marginBottom: responsive.spacing[4],
   },
   sectionTitle: {
-    ...theme.typography.styles.h3,
     fontSize: responsive.fontSize.lg,
-    lineHeight: responsive.fontSize.lg * 1.5,
-  },
-  seeAllText: {
-    ...theme.typography.styles.bodySmall,
-    color: theme.colors.primary[600],
-    fontWeight: '600',
-  },
-  categoryCard: {
-    backgroundColor: theme.colors.background.primary,
-    borderRadius: theme.borderRadius.xl,
-    padding: responsive.spacing[4],
-    marginBottom: responsive.spacing[2],
-    ...theme.shadows.sm,
-  },
-  categoryHeader: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: responsive.spacing[2],
-  },
-  categoryInfo: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    flex: 1,
-  },
-  categoryEmoji: {
-    fontSize: responsive.fontSize.h4,
-    lineHeight: responsive.fontSize.h4 * 1.5,
-    marginRight: responsive.spacing[2],
-  },
-  categoryName: {
-    ...theme.typography.styles.body,
-    fontWeight: '600',
-    marginBottom: 2,
-  },
-  categoryAmount: {
-    ...theme.typography.styles.bodySmall,
-    color: theme.colors.text.secondary,
-  },
-  categoryPercentage: {
-    ...theme.typography.styles.body,
     fontWeight: '700',
-    color: theme.colors.text.secondary,
+    color: colors.neutralDarkest,
   },
-  categoryPercentageOver: {
-    color: theme.colors.danger.main,
-  },
-  categoryProgressBackground: {
-    height: 6,
-    backgroundColor: theme.colors.background.tertiary,
-    borderRadius: 3,
-    overflow: 'hidden',
-  },
-  categoryProgressFill: {
-    height: '100%',
-    borderRadius: 3,
-  },
-  billCard: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    backgroundColor: theme.colors.background.primary,
-    borderRadius: theme.borderRadius.xl,
-    padding: responsive.spacing[4],
-    marginBottom: responsive.spacing[2],
-    ...theme.shadows.sm,
-  },
-  billInfo: {
+  dropdownButton: {
     flexDirection: 'row',
     alignItems: 'center',
-    flex: 1,
+    gap: responsive.spacing[1],
   },
-  billEmoji: {
-    fontSize: responsive.fontSize.h4,
-    lineHeight: responsive.fontSize.h4 * 1.5,
-    marginRight: responsive.spacing[2],
+  dropdownText: {
+    fontSize: responsive.fontSize.sm,
+    fontWeight: '500',
+    color: colors.primary,
   },
-  billName: {
-    ...theme.typography.styles.body,
-    fontWeight: '600',
-    marginBottom: 2,
+  chartContainer: {
+    flexDirection: 'row',
+    gap: responsive.spacing[4],
   },
-  billDue: {
-    ...theme.typography.styles.bodySmall,
-    color: theme.colors.text.secondary,
+  circleProgress: {
+    width: ms(96),
+    height: ms(96),
+    justifyContent: 'center',
+    alignItems: 'center',
   },
-  billAmount: {
-    ...theme.typography.styles.body,
+  circleOuter: {
+    width: ms(96),
+    height: ms(96),
+    borderRadius: ms(48),
+    borderWidth: ms(8),
+    borderColor: colors.neutralBg,
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderLeftColor: colors.primary,
+    borderTopColor: colors.primary,
+    transform: [{ rotate: '135deg' }],
+  },
+  circleInner: {
+    transform: [{ rotate: '-135deg' }],
+  },
+  circleAmount: {
+    fontSize: responsive.fontSize.xl,
     fontWeight: '700',
-    color: theme.colors.text.primary,
+    color: colors.neutralDarkest,
   },
-  transactionCard: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    backgroundColor: theme.colors.background.primary,
-    borderRadius: theme.borderRadius.xl,
-    padding: responsive.spacing[4],
-    marginBottom: responsive.spacing[2],
-    ...theme.shadows.sm,
-  },
-  transactionInfo: {
-    flexDirection: 'row',
-    alignItems: 'center',
+  legend: {
     flex: 1,
-  },
-  transactionEmoji: {
-    fontSize: responsive.fontSize.h4,
-    lineHeight: responsive.fontSize.h4 * 1.5,
-    marginRight: responsive.spacing[2],
-  },
-  transactionName: {
-    ...theme.typography.styles.body,
-    fontWeight: '600',
-    marginBottom: 2,
-  },
-  transactionCategory: {
-    ...theme.typography.styles.bodySmall,
-    color: theme.colors.text.secondary,
-  },
-  transactionRight: {
-    alignItems: 'flex-end',
-  },
-  transactionAmount: {
-    ...theme.typography.styles.body,
-    fontWeight: '700',
-    marginBottom: 2,
-  },
-  transactionAmountPositive: {
-    color: theme.colors.success.main,
-  },
-  transactionAmountNegative: {
-    color: theme.colors.text.primary,
-  },
-  transactionDate: {
-    ...theme.typography.styles.bodySmall,
-    color: theme.colors.text.secondary,
-  },
-  quickActions: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
     gap: responsive.spacing[2],
   },
-  actionButton: {
+  legendItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: responsive.spacing[2],
+  },
+  legendDot: {
+    width: ms(10),
+    height: ms(10),
+    borderRadius: ms(5),
+  },
+  legendLabel: {
     flex: 1,
-    alignItems: 'center',
+    fontSize: responsive.fontSize.sm,
+    color: colors.neutralDark,
   },
-  actionIcon: {
-    width: 56,
-    height: 56,
-    borderRadius: 28,
+  legendAmount: {
+    fontSize: responsive.fontSize.sm,
+    fontWeight: '600',
+    color: colors.neutralDarkest,
+  },
+  sectionHeading: {
+    fontSize: responsive.fontSize.lg,
+    fontWeight: '700',
+    color: colors.neutralDarkest,
+    paddingHorizontal: responsive.spacing[4],
+    paddingTop: responsive.spacing[6],
+    paddingBottom: responsive.spacing[3],
+  },
+  budgetContainer: {
+    paddingHorizontal: responsive.spacing[4],
+    gap: responsive.spacing[3],
+  },
+  budgetCard: {
+    backgroundColor: colors.neutralWhite,
+    borderRadius: theme.borderRadius.xl,
+    padding: responsive.spacing[4],
+    gap: responsive.spacing[2],
+  },
+  budgetHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'baseline',
+  },
+  budgetCategory: {
+    fontSize: responsive.fontSize.md,
+    fontWeight: '600',
+    color: colors.neutralDarkest,
+  },
+  budgetRemaining: {
+    fontSize: responsive.fontSize.sm,
+    fontWeight: '500',
+    color: colors.neutralDark,
+  },
+  budgetOverText: {
+    fontSize: responsive.fontSize.sm,
+    fontWeight: '700',
+    color: colors.functionalError,
+  },
+  progressBar: {
+    width: '100%',
+    height: ms(10),
+    backgroundColor: colors.neutralBg,
+    borderRadius: ms(5),
+    overflow: 'hidden',
+  },
+  progressFill: {
+    height: '100%',
+    borderRadius: ms(5),
+  },
+  transactionsHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
     alignItems: 'center',
+    paddingHorizontal: responsive.spacing[4],
+    paddingTop: responsive.spacing[6],
+    paddingBottom: responsive.spacing[3],
+  },
+  viewAllButton: {
+    fontSize: responsive.fontSize.sm,
+    fontWeight: '700',
+    color: colors.primary,
+  },
+  transactionsCard: {
+    marginHorizontal: responsive.spacing[4],
+    backgroundColor: colors.neutralWhite,
+    borderRadius: theme.borderRadius.xl,
+    padding: responsive.spacing[4],
+  },
+  transactionItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: responsive.spacing[4],
+    paddingVertical: responsive.spacing[3],
+  },
+  transactionIcon: {
+    width: ms(40),
+    height: ms(40),
+    borderRadius: ms(20),
     justifyContent: 'center',
-    marginBottom: responsive.spacing[2],
+    alignItems: 'center',
   },
-  actionText: {
-    ...theme.typography.styles.bodySmall,
-    textAlign: 'center',
-    color: theme.colors.text.secondary,
+  transactionDetails: {
+    flex: 1,
+    gap: responsive.spacing[1],
+  },
+  transactionMerchant: {
+    fontSize: responsive.fontSize.md,
+    fontWeight: '600',
+    color: colors.neutralDarkest,
+  },
+  transactionDate: {
+    fontSize: responsive.fontSize.sm,
+    color: colors.neutralDark,
+  },
+  transactionAmount: {
+    fontSize: responsive.fontSize.md,
+    fontWeight: '700',
+    color: colors.neutralDarkest,
+  },
+  divider: {
+    height: 1,
+    backgroundColor: colors.neutralBg,
   },
 });
+
+export default DashboardScreen;

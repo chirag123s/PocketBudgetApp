@@ -1,5 +1,5 @@
-import React from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, ScrollView, Alert } from 'react-native';
+import React, { useState } from 'react';
+import { View, Text, StyleSheet, TouchableOpacity, ScrollView, Alert, Switch, StatusBar } from 'react-native';
 import { useRouter } from 'expo-router';
 import { Screen } from '@/components/layout/Screen';
 import { theme } from '@/constants/theme';
@@ -14,29 +14,34 @@ interface SettingsItem {
   icon: keyof typeof Ionicons.glyphMap;
   route?: string;
   badge?: string;
+  hasToggle?: boolean;
 }
 
-const settingsData = {
-  account: [
-    { title: 'Profile', icon: 'person-outline' as const, route: '/settings/profile' },
-    { title: 'Subscription', icon: 'card-outline' as const, route: '/settings/subscription', badge: 'Free' },
-    { title: 'Notifications', icon: 'notifications-outline' as const, route: '/settings/notifications' },
-    { title: 'Security & Privacy', icon: 'lock-closed-outline' as const, route: '/settings/security' },
-  ],
-  app: [
-    { title: 'Appearance', icon: 'color-palette-outline' as const, route: '/settings/appearance' },
-    { title: 'Export Data', icon: 'download-outline' as const, route: '/settings/export' },
-  ],
-  support: [
-    { title: 'Help Center', icon: 'help-circle-outline' as const, route: '/settings/help' },
-    { title: 'Contact Support', icon: 'chatbubble-outline' as const, route: '/settings/contact' },
-    { title: 'About', icon: 'information-circle-outline' as const, route: '/settings/about' },
-  ],
+// Color Palette - Using theme colors
+const colors = {
+  // Primary Palette
+  primaryDark: theme.colors.info.dark,
+  primary: theme.colors.info.main,
+  primaryLight: theme.colors.info.light,
+
+  // Neutral Palette
+  neutralBg: theme.colors.background.secondary,
+  neutralWhite: theme.colors.background.primary,
+  neutralDarkest: theme.colors.text.primary,
+  neutralDark: theme.colors.text.secondary,
+  neutralMedium: theme.colors.text.tertiary,
+
+  // Functional Palette
+  functionalSuccess: theme.colors.success.main,
+  functionalWarning: theme.colors.warning.main,
+  functionalError: theme.colors.danger.main,
 };
 
 export default function SettingsTab() {
   const router = useRouter();
   const { clearAllData } = useAuth();
+  const [notificationsEnabled, setNotificationsEnabled] = useState(true);
+  const [biometricLockEnabled, setBiometricLockEnabled] = useState(false);
 
   const handleNavigation = (route?: string) => {
     if (route) {
@@ -88,149 +93,241 @@ export default function SettingsTab() {
   };
 
   return (
-    <Screen edges={['top']} noPadding backgroundColor={theme.colors.background.secondary}>
+    <Screen scrollable={false} noPadding backgroundColor={colors.neutralBg} edges={['top']}>
+      <StatusBar barStyle="dark-content" backgroundColor={colors.neutralBg} />
+
       {/* Header */}
       <View style={styles.header}>
         <Text style={styles.headerTitle}>Settings</Text>
       </View>
 
-      <ScrollView contentContainerStyle={styles.content}>
+      <ScrollView style={styles.scrollView} showsVerticalScrollIndicator={false}>
         {/* Profile Card */}
         <TouchableOpacity
           style={styles.profileCard}
           onPress={() => handleNavigation('/settings/profile')}
         >
           <LinearGradient
-            colors={[theme.colors.primary[400], theme.colors.primary[600]]}
+            colors={[colors.primary, colors.primaryDark]}
             style={styles.avatar}
           >
-            <Text style={styles.avatarText}>JS</Text>
+            <Text style={styles.avatarText}>A</Text>
           </LinearGradient>
           <View style={styles.profileInfo}>
-            <Text style={styles.profileName}>John Smith</Text>
-            <Text style={styles.profileEmail}>john@email.com</Text>
+            <Text style={styles.profileName}>Alex Johnson</Text>
+            <Text style={styles.profileEmail}>alex@email.com</Text>
           </View>
-          <Ionicons name="chevron-forward" size={24} color={theme.colors.text.tertiary} />
+          <Ionicons name="chevron-forward" size={24} color={colors.neutralMedium} />
         </TouchableOpacity>
 
-        {/* Account Section */}
-        <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Account</Text>
-          <View style={styles.card}>
-            {settingsData.account.map((item, index) => (
-              <View key={index}>
-                <TouchableOpacity
-                  style={styles.settingsItem}
-                  onPress={() => handleNavigation(item.route)}
-                >
-                  <View style={styles.settingsItemLeft}>
-                    <View style={styles.iconContainer}>
-                      <Ionicons name={item.icon} size={20} color={theme.colors.primary[600]} />
-                    </View>
-                    <Text style={styles.settingsItemText}>{item.title}</Text>
-                  </View>
-                  <View style={styles.settingsItemRight}>
-                    {item.badge && (
-                      <View style={styles.badge}>
-                        <Text style={styles.badgeText}>{item.badge}</Text>
-                      </View>
-                    )}
-                    <Ionicons name="chevron-forward" size={20} color={theme.colors.text.tertiary} />
-                  </View>
-                </TouchableOpacity>
-                {index < settingsData.account.length - 1 && <View style={styles.divider} />}
-              </View>
-            ))}
-          </View>
-        </View>
-
-        {/* App Settings Section */}
-        <View style={styles.section}>
-          <Text style={styles.sectionTitle}>App Settings</Text>
-          <View style={styles.card}>
-            {settingsData.app.map((item, index) => (
-              <View key={index}>
-                <TouchableOpacity
-                  style={styles.settingsItem}
-                  onPress={() => handleNavigation(item.route)}
-                >
-                  <View style={styles.settingsItemLeft}>
-                    <View style={styles.iconContainer}>
-                      <Ionicons name={item.icon} size={20} color={theme.colors.primary[600]} />
-                    </View>
-                    <Text style={styles.settingsItemText}>{item.title}</Text>
-                  </View>
-                  <Ionicons name="chevron-forward" size={20} color={theme.colors.text.tertiary} />
-                </TouchableOpacity>
-                {index < settingsData.app.length - 1 && <View style={styles.divider} />}
-              </View>
-            ))}
-          </View>
-        </View>
-
-        {/* Support Section */}
-        <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Support</Text>
-          <View style={styles.card}>
-            {settingsData.support.map((item, index) => (
-              <View key={index}>
-                <TouchableOpacity
-                  style={styles.settingsItem}
-                  onPress={() => handleNavigation(item.route)}
-                >
-                  <View style={styles.settingsItemLeft}>
-                    <View style={styles.iconContainer}>
-                      <Ionicons name={item.icon} size={20} color={theme.colors.primary[600]} />
-                    </View>
-                    <Text style={styles.settingsItemText}>{item.title}</Text>
-                  </View>
-                  <Ionicons name="chevron-forward" size={20} color={theme.colors.text.tertiary} />
-                </TouchableOpacity>
-                {index < settingsData.support.length - 1 && <View style={styles.divider} />}
-              </View>
-            ))}
-          </View>
-        </View>
-
-        {/* Upgrade to Premium */}
+        {/* Premium Upgrade Card */}
         <TouchableOpacity
           style={styles.upgradeCard}
           onPress={() => handleNavigation('/settings/upgrade')}
         >
           <LinearGradient
-            colors={[theme.colors.primary[400], theme.colors.primary[600]]}
+            colors={[colors.primary, colors.primaryDark]}
             style={styles.upgradeGradient}
+            start={{ x: 0, y: 0 }}
+            end={{ x: 1, y: 1 }}
           >
             <View style={styles.upgradeContent}>
               <View style={styles.upgradeLeft}>
-                <Text style={styles.upgradeIcon}>⭐</Text>
-                <View>
+                <View style={styles.upgradeIconContainer}>
+                  <Text style={styles.upgradeIcon}>⭐</Text>
+                </View>
+                <View style={styles.upgradeTextContainer}>
                   <Text style={styles.upgradeTitle}>Upgrade to Premium</Text>
                   <Text style={styles.upgradeSubtitle}>
-                    Unlock unlimited budgets & more
+                    Unlock unlimited budgets & features
                   </Text>
                 </View>
               </View>
-              <Ionicons name="arrow-forward" size={24} color="#FFFFFF" />
+              <Ionicons name="arrow-forward" size={24} color={colors.neutralWhite} />
             </View>
           </LinearGradient>
         </TouchableOpacity>
 
+        {/* Account Section */}
+        <View style={styles.section}>
+          <Text style={styles.sectionTitle}>ACCOUNT</Text>
+          <View style={styles.card}>
+            <TouchableOpacity
+              style={styles.settingsItem}
+              onPress={() => handleNavigation('/settings/profile')}
+            >
+              <View style={styles.settingsItemLeft}>
+                <View style={styles.iconContainer}>
+                  <Ionicons name="person-outline" size={20} color={colors.primary} />
+                </View>
+                <Text style={styles.settingsItemText}>Profile</Text>
+              </View>
+              <Ionicons name="chevron-forward" size={20} color={colors.neutralMedium} />
+            </TouchableOpacity>
+            <View style={styles.divider} />
+            <TouchableOpacity
+              style={styles.settingsItem}
+              onPress={() => handleNavigation('/settings/subscription')}
+            >
+              <View style={styles.settingsItemLeft}>
+                <View style={styles.iconContainer}>
+                  <Ionicons name="card-outline" size={20} color={colors.primary} />
+                </View>
+                <Text style={styles.settingsItemText}>Subscription</Text>
+              </View>
+              <View style={styles.settingsItemRight}>
+                <View style={styles.badge}>
+                  <Text style={styles.badgeText}>Free</Text>
+                </View>
+                <Ionicons name="chevron-forward" size={20} color={colors.neutralMedium} />
+              </View>
+            </TouchableOpacity>
+          </View>
+        </View>
+
+        {/* Preferences Section */}
+        <View style={styles.section}>
+          <Text style={styles.sectionTitle}>PREFERENCES</Text>
+          <View style={styles.card}>
+            <View style={styles.settingsItem}>
+              <View style={styles.settingsItemLeft}>
+                <View style={styles.iconContainer}>
+                  <Ionicons name="notifications-outline" size={20} color={colors.primary} />
+                </View>
+                <Text style={styles.settingsItemText}>Notifications</Text>
+              </View>
+              <Switch
+                value={notificationsEnabled}
+                onValueChange={setNotificationsEnabled}
+                trackColor={{ false: colors.neutralMedium, true: colors.primary }}
+                thumbColor={colors.neutralWhite}
+                ios_backgroundColor={colors.neutralMedium}
+              />
+            </View>
+            <View style={styles.divider} />
+            <TouchableOpacity
+              style={styles.settingsItem}
+              onPress={() => handleNavigation('/settings/appearance')}
+            >
+              <View style={styles.settingsItemLeft}>
+                <View style={styles.iconContainer}>
+                  <Ionicons name="color-palette-outline" size={20} color={colors.primary} />
+                </View>
+                <Text style={styles.settingsItemText}>Appearance</Text>
+              </View>
+              <Ionicons name="chevron-forward" size={20} color={colors.neutralMedium} />
+            </TouchableOpacity>
+          </View>
+        </View>
+
+        {/* Security Section */}
+        <View style={styles.section}>
+          <Text style={styles.sectionTitle}>SECURITY</Text>
+          <View style={styles.card}>
+            <View style={styles.settingsItem}>
+              <View style={styles.settingsItemLeft}>
+                <View style={styles.iconContainer}>
+                  <Ionicons name="finger-print" size={20} color={colors.primary} />
+                </View>
+                <Text style={styles.settingsItemText}>Biometric Lock</Text>
+              </View>
+              <Switch
+                value={biometricLockEnabled}
+                onValueChange={setBiometricLockEnabled}
+                trackColor={{ false: colors.neutralMedium, true: colors.primary }}
+                thumbColor={colors.neutralWhite}
+                ios_backgroundColor={colors.neutralMedium}
+              />
+            </View>
+            <View style={styles.divider} />
+            <TouchableOpacity
+              style={styles.settingsItem}
+              onPress={() => handleNavigation('/settings/security')}
+            >
+              <View style={styles.settingsItemLeft}>
+                <View style={styles.iconContainer}>
+                  <Ionicons name="lock-closed-outline" size={20} color={colors.primary} />
+                </View>
+                <Text style={styles.settingsItemText}>Security & Privacy</Text>
+              </View>
+              <Ionicons name="chevron-forward" size={20} color={colors.neutralMedium} />
+            </TouchableOpacity>
+            <View style={styles.divider} />
+            <TouchableOpacity
+              style={styles.settingsItem}
+              onPress={() => handleNavigation('/settings/export')}
+            >
+              <View style={styles.settingsItemLeft}>
+                <View style={styles.iconContainer}>
+                  <Ionicons name="download-outline" size={20} color={colors.primary} />
+                </View>
+                <Text style={styles.settingsItemText}>Export Data</Text>
+              </View>
+              <Ionicons name="chevron-forward" size={20} color={colors.neutralMedium} />
+            </TouchableOpacity>
+          </View>
+        </View>
+
+        {/* Support & Legal Section */}
+        <View style={styles.section}>
+          <Text style={styles.sectionTitle}>SUPPORT & LEGAL</Text>
+          <View style={styles.card}>
+            <TouchableOpacity
+              style={styles.settingsItem}
+              onPress={() => handleNavigation('/settings/help')}
+            >
+              <View style={styles.settingsItemLeft}>
+                <View style={styles.iconContainer}>
+                  <Ionicons name="help-circle-outline" size={20} color={colors.primary} />
+                </View>
+                <Text style={styles.settingsItemText}>Help Center</Text>
+              </View>
+              <Ionicons name="chevron-forward" size={20} color={colors.neutralMedium} />
+            </TouchableOpacity>
+            <View style={styles.divider} />
+            <TouchableOpacity
+              style={styles.settingsItem}
+              onPress={() => handleNavigation('/settings/contact')}
+            >
+              <View style={styles.settingsItemLeft}>
+                <View style={styles.iconContainer}>
+                  <Ionicons name="chatbubble-outline" size={20} color={colors.primary} />
+                </View>
+                <Text style={styles.settingsItemText}>Contact Support</Text>
+              </View>
+              <Ionicons name="chevron-forward" size={20} color={colors.neutralMedium} />
+            </TouchableOpacity>
+            <View style={styles.divider} />
+            <TouchableOpacity
+              style={styles.settingsItem}
+              onPress={() => handleNavigation('/settings/about')}
+            >
+              <View style={styles.settingsItemLeft}>
+                <View style={styles.iconContainer}>
+                  <Ionicons name="information-circle-outline" size={20} color={colors.primary} />
+                </View>
+                <Text style={styles.settingsItemText}>About</Text>
+              </View>
+              <Ionicons name="chevron-forward" size={20} color={colors.neutralMedium} />
+            </TouchableOpacity>
+          </View>
+        </View>
+
         {/* Developer Section */}
         <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Developer</Text>
+          <Text style={styles.sectionTitle}>DEVELOPER</Text>
           <View style={styles.card}>
             <TouchableOpacity
               style={styles.settingsItem}
               onPress={handleCheckStorage}
             >
               <View style={styles.settingsItemLeft}>
-                <View style={[styles.iconContainer, { backgroundColor: theme.colors.warning.light }]}>
-                  <Ionicons name="bug-outline" size={20} color={theme.colors.warning.dark} />
+                <View style={[styles.iconContainer, { backgroundColor: `${colors.functionalWarning}20` }]}>
+                  <Ionicons name="bug-outline" size={20} color={colors.functionalWarning} />
                 </View>
                 <Text style={styles.settingsItemText}>Check Storage State</Text>
               </View>
-              <Ionicons name="terminal-outline" size={20} color={theme.colors.text.tertiary} />
+              <Ionicons name="terminal-outline" size={20} color={colors.neutralMedium} />
             </TouchableOpacity>
             <View style={styles.divider} />
             <TouchableOpacity
@@ -238,103 +335,150 @@ export default function SettingsTab() {
               onPress={handleClearAllData}
             >
               <View style={styles.settingsItemLeft}>
-                <View style={[styles.iconContainer, { backgroundColor: theme.colors.danger.light }]}>
-                  <Ionicons name="trash-outline" size={20} color={theme.colors.danger.main} />
+                <View style={[styles.iconContainer, { backgroundColor: `${colors.functionalError}20` }]}>
+                  <Ionicons name="trash-outline" size={20} color={colors.functionalError} />
                 </View>
-                <Text style={[styles.settingsItemText, { color: theme.colors.danger.main }]}>
+                <Text style={[styles.settingsItemText, { color: colors.functionalError }]}>
                   Clear All Data
                 </Text>
               </View>
-              <Ionicons name="warning-outline" size={20} color={theme.colors.danger.main} />
+              <Ionicons name="warning-outline" size={20} color={colors.functionalError} />
             </TouchableOpacity>
           </View>
         </View>
 
         {/* Logout Button */}
         <TouchableOpacity style={styles.logoutButton}>
-          <Ionicons name="log-out-outline" size={20} color={theme.colors.danger.main} />
+          <Ionicons name="log-out-outline" size={20} color={colors.functionalError} />
           <Text style={styles.logoutText}>Log Out</Text>
         </TouchableOpacity>
 
         {/* App Version */}
         <Text style={styles.versionText}>Version 1.0.0 (Build 23)</Text>
+
+        {/* Bottom spacing */}
+        <View style={{ height: responsive.spacing[4] }} />
       </ScrollView>
     </Screen>
   );
 }
 
 const styles = StyleSheet.create({
+  scrollView: {
+    flex: 1,
+  },
   header: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    paddingHorizontal: responsive.spacing[6],
-    paddingVertical: responsive.spacing[4],
-    backgroundColor: theme.colors.background.primary,
-    borderBottomWidth: 1,
-    borderBottomColor: theme.colors.border.light,
+    paddingHorizontal: responsive.spacing[4],
+    paddingVertical: responsive.spacing[3],
+    backgroundColor: colors.neutralBg,
   },
   headerTitle: {
-    ...theme.typography.styles.h2,
-    fontSize: responsive.fontSize.h4,
-    lineHeight: responsive.fontSize.h4 * 1.5,
-  },
-  content: {
-    padding: responsive.spacing[6],
-    paddingBottom: responsive.spacing[8],
+    fontSize: responsive.fontSize.xl,
+    fontWeight: '700',
+    color: colors.neutralDarkest,
   },
   profileCard: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: theme.colors.background.primary,
+    backgroundColor: colors.neutralWhite,
     borderRadius: theme.borderRadius.xl,
     padding: responsive.spacing[4],
-    marginBottom: responsive.spacing[6],
+    marginHorizontal: responsive.spacing[4],
+    marginTop: responsive.spacing[4],
+    marginBottom: responsive.spacing[4],
     ...theme.shadows.sm,
   },
   avatar: {
-    width: 56,
-    height: 56,
-    borderRadius: 28,
+    width: ms(56),
+    height: ms(56),
+    borderRadius: ms(28),
     alignItems: 'center',
     justifyContent: 'center',
-    marginRight: responsive.spacing[4],
+    marginRight: responsive.spacing[3],
   },
   avatarText: {
     fontSize: responsive.fontSize.xl,
-    lineHeight: responsive.fontSize.xl * 1.5,
     fontWeight: '700',
-    color: '#FFFFFF',
+    color: colors.neutralWhite,
   },
   profileInfo: {
     flex: 1,
   },
   profileName: {
-    ...theme.typography.styles.body,
     fontSize: responsive.fontSize.lg,
-    lineHeight: responsive.fontSize.lg * 1.5,
     fontWeight: '700',
-    marginBottom: 4,
+    color: colors.neutralDarkest,
+    marginBottom: responsive.spacing[1],
   },
   profileEmail: {
-    ...theme.typography.styles.bodySmall,
-    color: theme.colors.text.secondary,
+    fontSize: responsive.fontSize.sm,
+    color: colors.neutralDark,
+  },
+  upgradeCard: {
+    marginHorizontal: responsive.spacing[4],
+    marginBottom: responsive.spacing[4],
+    borderRadius: theme.borderRadius.xl,
+    overflow: 'hidden',
+    ...theme.shadows.md,
+  },
+  upgradeGradient: {
+    borderRadius: theme.borderRadius.xl,
+  },
+  upgradeContent: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    padding: responsive.spacing[5],
+  },
+  upgradeLeft: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    flex: 1,
+    gap: responsive.spacing[3],
+  },
+  upgradeIconContainer: {
+    width: ms(48),
+    height: ms(48),
+    borderRadius: ms(24),
+    backgroundColor: 'rgba(255, 255, 255, 0.2)',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  upgradeIcon: {
+    fontSize: responsive.fontSize.h3,
+  },
+  upgradeTextContainer: {
+    flex: 1,
+  },
+  upgradeTitle: {
+    fontSize: responsive.fontSize.lg,
+    fontWeight: '700',
+    color: colors.neutralWhite,
+    marginBottom: responsive.spacing[1],
+  },
+  upgradeSubtitle: {
+    fontSize: responsive.fontSize.sm,
+    color: colors.neutralWhite,
+    opacity: 0.9,
   },
   section: {
-    marginBottom: responsive.spacing[6],
+    marginBottom: responsive.spacing[4],
   },
   sectionTitle: {
-    ...theme.typography.styles.bodySmall,
+    fontSize: responsive.fontSize.xs,
     fontWeight: '700',
-    color: theme.colors.text.secondary,
-    textTransform: 'uppercase',
+    color: colors.neutralDark,
     letterSpacing: 0.5,
-    marginBottom: responsive.spacing[2],
-    paddingHorizontal: responsive.spacing[2],
+    marginBottom: responsive.spacing[3],
+    paddingHorizontal: responsive.spacing[4],
   },
   card: {
-    backgroundColor: theme.colors.background.primary,
+    backgroundColor: colors.neutralWhite,
     borderRadius: theme.borderRadius.xl,
+    marginHorizontal: responsive.spacing[4],
     overflow: 'hidden',
     ...theme.shadows.sm,
   },
@@ -348,19 +492,20 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     flex: 1,
+    gap: responsive.spacing[3],
   },
   iconContainer: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    backgroundColor: theme.colors.primary[50],
+    width: ms(40),
+    height: ms(40),
+    borderRadius: ms(20),
+    backgroundColor: `${colors.primary}15`,
     alignItems: 'center',
     justifyContent: 'center',
-    marginRight: responsive.spacing[2],
   },
   settingsItemText: {
-    ...theme.typography.styles.body,
-    fontWeight: '500',
+    fontSize: responsive.fontSize.md,
+    fontWeight: '600',
+    color: colors.neutralDarkest,
   },
   settingsItemRight: {
     flexDirection: 'row',
@@ -368,80 +513,42 @@ const styles = StyleSheet.create({
     gap: responsive.spacing[2],
   },
   badge: {
-    backgroundColor: theme.colors.warning.light,
-    paddingHorizontal: responsive.spacing[2],
-    paddingVertical: 4,
+    backgroundColor: `${colors.functionalWarning}20`,
+    paddingHorizontal: responsive.spacing[3],
+    paddingVertical: responsive.spacing[1],
     borderRadius: theme.borderRadius.md,
   },
   badgeText: {
-    ...theme.typography.styles.bodySmall,
     fontSize: responsive.fontSize.xs,
-    lineHeight: responsive.fontSize.xs * 1.5,
     fontWeight: '700',
-    color: theme.colors.warning.dark,
+    color: colors.functionalWarning,
   },
   divider: {
     height: 1,
-    backgroundColor: theme.colors.border.light,
-    marginLeft: responsive.spacing[4] + 40 + responsive.spacing[2],
-  },
-  upgradeCard: {
-    marginBottom: responsive.spacing[6],
-    borderRadius: theme.borderRadius.xl,
-    overflow: 'hidden',
-    ...theme.shadows.lg,
-  },
-  upgradeGradient: {
-    borderRadius: theme.borderRadius.xl,
-  },
-  upgradeContent: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    padding: responsive.spacing[4],
-  },
-  upgradeLeft: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    flex: 1,
-  },
-  upgradeIcon: {
-    fontSize: responsive.fontSize.h2,
-    lineHeight: responsive.fontSize.h2 * 1.5,
-    marginRight: responsive.spacing[2],
-  },
-  upgradeTitle: {
-    fontSize: responsive.fontSize.md,
-    lineHeight: responsive.fontSize.md * 1.5,
-    fontWeight: '700',
-    color: '#FFFFFF',
-    marginBottom: 4,
-  },
-  upgradeSubtitle: {
-    fontSize: responsive.fontSize.xs,
-    lineHeight: responsive.fontSize.xs * 1.5,
-    color: '#FFFFFF',
-    opacity: 0.9,
+    backgroundColor: colors.neutralBg,
+    marginLeft: responsive.spacing[4] + ms(40) + responsive.spacing[3],
   },
   logoutButton: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: theme.colors.background.primary,
+    backgroundColor: colors.neutralWhite,
     borderRadius: theme.borderRadius.xl,
     padding: responsive.spacing[4],
+    marginHorizontal: responsive.spacing[4],
     marginBottom: responsive.spacing[4],
     gap: responsive.spacing[2],
     ...theme.shadows.sm,
   },
   logoutText: {
-    ...theme.typography.styles.body,
+    fontSize: responsive.fontSize.md,
     fontWeight: '600',
-    color: theme.colors.danger.main,
+    color: colors.functionalError,
   },
   versionText: {
-    ...theme.typography.styles.bodySmall,
-    color: theme.colors.text.tertiary,
+    fontSize: responsive.fontSize.sm,
+    color: colors.neutralMedium,
     textAlign: 'center',
+    marginBottom: responsive.spacing[2],
   },
 });

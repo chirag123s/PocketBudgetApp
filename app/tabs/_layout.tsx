@@ -58,11 +58,11 @@ export default function TabsLayout() {
         }}
       />
       <Tabs.Screen
-        name="charts"
+        name="accounts"
         options={{
-          title: 'Charts',
+          title: 'Accounts',
           tabBarIcon: ({ color, size }) => (
-            <Ionicons name="bar-chart" size={size} color={color} />
+            <Ionicons name="briefcase" size={size} color={color} />
           ),
         }}
       />
@@ -82,6 +82,13 @@ export default function TabsLayout() {
           tabBarIcon: ({ color, size }) => (
             <Ionicons name="settings" size={size} color={color} />
           ),
+        }}
+      />
+      {/* Charts - Hidden from tab bar, accessible via navigation */}
+      <Tabs.Screen
+        name="charts"
+        options={{
+          href: null, // Hide from tab bar
         }}
       />
     </Tabs>

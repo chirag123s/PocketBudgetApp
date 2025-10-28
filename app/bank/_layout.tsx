@@ -13,6 +13,7 @@ export default function BankLayout() {
       <Stack.Screen name="sync-settings" />
       <Stack.Screen name="syncing" />
       <Stack.Screen name="success" />
+      <Stack.Screen name="connected" />
     </Stack>
   );
 }

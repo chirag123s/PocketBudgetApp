@@ -1,176 +1,319 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, ScrollView, TextInput } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, ScrollView, StatusBar } from 'react-native';
 import { useRouter } from 'expo-router';
 import { Screen } from '@/components/layout/Screen';
 import { theme } from '@/constants/theme';
 import { responsive, ms } from '@/constants/responsive';
 import { Ionicons } from '@expo/vector-icons';
 
+// Color Palette - Using theme colors
+const colors = {
+  // Primary Palette
+  primaryDark: theme.colors.info.dark,
+  primary: theme.colors.info.main,
+  primaryLight: theme.colors.info.light,
+
+  // Neutral Palette
+  neutralBg: theme.colors.background.secondary,
+  neutralWhite: theme.colors.background.primary,
+  neutralDarkest: theme.colors.text.primary,
+  neutralDark: theme.colors.text.secondary,
+  neutralMedium: theme.colors.text.tertiary,
+
+  // Functional Palette
+  functionalSuccess: theme.colors.success.main,
+  functionalWarning: theme.colors.warning.main,
+  functionalError: theme.colors.danger.main,
+};
+
 interface Transaction {
-  id: number;
-  name: string;
-  amount: number;
+  id: string;
+  merchant: string;
   category: string;
+  amount: number;
+  time: string;
+  icon: string;
+  isIncome: boolean;
+  hasLogo?: boolean;
+  logoInitial?: string;
+  hasActions?: boolean;
+}
+
+interface TransactionGroup {
   date: string;
-  emoji: string;
-  type: 'expense' | 'income' | 'transfer';
+  transactions: Transaction[];
 }
 
 // Sample data (will be replaced with actual data from context)
-const sampleTransactions: Transaction[] = [
-  { id: 1, name: 'Salary', amount: 3500, category: 'Income', date: 'Today', emoji: '💰', type: 'income' },
-  { id: 2, name: 'Woolworths', amount: -87.32, category: 'Groceries', date: 'Today', emoji: '🛒', type: 'expense' },
-  { id: 3, name: 'Uber', amount: -24.50, category: 'Transport', date: 'Yesterday', emoji: '🚗', type: 'expense' },
-  { id: 4, name: 'Netflix', amount: -15.99, category: 'Entertainment', date: 'Yesterday', emoji: '🎬', type: 'expense' },
-  { id: 5, name: 'Coles', amount: -63.45, category: 'Groceries', date: 'Jan 24', emoji: '🛒', type: 'expense' },
-  { id: 6, name: 'The Coffee Club', amount: -12.80, category: 'Dining Out', date: 'Jan 24', emoji: '☕', type: 'expense' },
-  { id: 7, name: 'Rent', amount: -1800, category: 'Bills', date: 'Jan 23', emoji: '🏠', type: 'expense' },
-  { id: 8, name: 'Petrol', amount: -65.00, category: 'Transport', date: 'Jan 23', emoji: '⛽', type: 'expense' },
+const transactionGroups: TransactionGroup[] = [
+  {
+    date: 'TODAY, 24 JULY 2024',
+    transactions: [
+      {
+        id: '1',
+        merchant: 'Woolworths',
+        category: 'Groceries',
+        amount: 124.50,
+        time: '9:41 AM',
+        icon: 'cart-outline',
+        isIncome: false,
+        hasLogo: true,
+        logoInitial: 'W',
+        hasActions: true,
+      },
+      {
+        id: '2',
+        merchant: 'Bills Beans Cafe',
+        category: 'Coffee',
+        amount: 4.50,
+        time: '8:15 AM',
+        icon: 'cafe-outline',
+        isIncome: false,
+        hasActions: true,
+      },
+    ],
+  },
+  {
+    date: 'YESTERDAY, 23 JULY 2024',
+    transactions: [
+      {
+        id: '3',
+        merchant: 'Opal Card Top Up',
+        category: 'Transport',
+        amount: 20.00,
+        time: '5:30 PM',
+        icon: 'bus-outline',
+        isIncome: false,
+        hasActions: true,
+      },
+    ],
+  },
+  {
+    date: 'FRIDAY, 19 JULY 2024',
+    transactions: [
+      {
+        id: '4',
+        merchant: 'Salary',
+        category: 'Income',
+        amount: 2500.00,
+        time: '19 Jul',
+        icon: 'briefcase-outline',
+        isIncome: true,
+        hasActions: true,
+      },
+      {
+        id: '5',
+        merchant: 'Telstra Bill',
+        category: 'Utilities',
+        amount: 79.00,
+        time: '19 Jul',
+        icon: 'receipt-outline',
+        isIncome: false,
+        hasActions: true,
+      },
+    ],
+  },
 ];
 
-const filterOptions = ['All', 'Expenses', 'Income', 'This Month', 'Last Month'];
+const filterOptions = [
+  { id: 'all', label: 'All', hasDropdown: false },
+  { id: 'month', label: 'This Month', hasDropdown: true },
+  { id: 'category', label: 'Category', hasDropdown: true },
+  { id: 'account', label: 'Account', hasDropdown: true },
+];
 
 export default function TransactionsTab() {
   const router = useRouter();
-  const [searchQuery, setSearchQuery] = useState('');
-  const [selectedFilter, setSelectedFilter] = useState('All');
+  const [expandedTransaction, setExpandedTransaction] = useState<string | null>(null);
+  const [activeFilter, setActiveFilter] = useState('All');
 
-  // Group transactions by date
-  const groupedTransactions = sampleTransactions.reduce((groups, transaction) => {
-    const date = transaction.date;
-    if (!groups[date]) {
-      groups[date] = [];
-    }
-    groups[date].push(transaction);
-    return groups;
-  }, {} as Record<string, Transaction[]>);
+  const toggleExpanded = (id: string) => {
+    setExpandedTransaction(expandedTransaction === id ? null : id);
+  };
+
+  const handleNavigateToCharts = () => {
+    router.push('/tabs/charts');
+  };
+
+  const handleAddTransaction = () => {
+    // TODO: Navigate to add transaction screen or open modal
+    console.log('Add transaction');
+  };
 
   return (
-    <Screen edges={['top']} noPadding backgroundColor={theme.colors.background.secondary}>
+    <Screen scrollable={false} noPadding backgroundColor={colors.neutralBg} edges={['top']}>
+      <StatusBar barStyle="dark-content" backgroundColor={colors.neutralBg} />
+
       {/* Header */}
       <View style={styles.header}>
         <Text style={styles.headerTitle}>Transactions</Text>
-        <TouchableOpacity style={styles.headerButton}>
-          <Ionicons name="filter-outline" size={24} color={theme.colors.text.primary} />
-        </TouchableOpacity>
-      </View>
-
-      {/* Search Bar */}
-      <View style={styles.searchContainer}>
-        <View style={styles.searchBar}>
-          <Ionicons name="search" size={20} color={theme.colors.text.tertiary} />
-          <TextInput
-            style={styles.searchInput}
-            value={searchQuery}
-            onChangeText={setSearchQuery}
-            placeholder="Search transactions..."
-            placeholderTextColor={theme.colors.text.tertiary}
-          />
-          {searchQuery.length > 0 && (
-            <TouchableOpacity onPress={() => setSearchQuery('')}>
-              <Ionicons name="close-circle" size={20} color={theme.colors.text.tertiary} />
-            </TouchableOpacity>
-          )}
+        <View style={styles.headerActions}>
+          <TouchableOpacity style={styles.headerButton} onPress={handleAddTransaction}>
+            <Ionicons name="add-circle" size={24} color={colors.primary} />
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.headerButton}>
+            <Ionicons name="search-outline" size={24} color={colors.neutralDarkest} />
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.headerButton}>
+            <Ionicons name="filter-outline" size={24} color={colors.neutralDarkest} />
+          </TouchableOpacity>
         </View>
       </View>
 
-      {/* Filter Chips */}
-      <ScrollView
-        horizontal
-        showsHorizontalScrollIndicator={false}
-        contentContainerStyle={styles.filterContainer}
-      >
-        {filterOptions.map((filter, index) => (
-          <TouchableOpacity
-            key={index}
-            style={[
-              styles.filterChip,
-              selectedFilter === filter && styles.filterChipActive
-            ]}
-            onPress={() => setSelectedFilter(filter)}
-          >
-            <Text style={[
-              styles.filterChipText,
-              selectedFilter === filter && styles.filterChipTextActive
-            ]}>
-              {filter}
-            </Text>
-          </TouchableOpacity>
-        ))}
-      </ScrollView>
-
-      {/* Transactions List */}
-      <ScrollView contentContainerStyle={styles.content}>
-        {Object.entries(groupedTransactions).map(([date, transactions]) => (
-          <View key={date} style={styles.dateGroup}>
-            <Text style={styles.dateHeader}>{date}</Text>
-
-            {transactions.map((transaction) => (
-              <TouchableOpacity
-                key={transaction.id}
-                style={styles.transactionCard}
-                onPress={() => {}}
+      <ScrollView style={styles.scrollView} showsVerticalScrollIndicator={false}>
+        {/* Filter Chips */}
+        <ScrollView
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          contentContainerStyle={styles.filterScrollContent}
+          style={styles.filterScrollView}
+        >
+          {filterOptions.map((filter, index) => (
+            <TouchableOpacity
+              key={filter.id}
+              style={[
+                styles.filterChip,
+                activeFilter === filter.label && styles.filterChipActive,
+              ]}
+              onPress={() => setActiveFilter(filter.label)}
+            >
+              <Text
+                style={[
+                  styles.filterChipText,
+                  activeFilter === filter.label && styles.filterChipTextActive,
+                ]}
               >
-                <View style={styles.transactionLeft}>
-                  <View style={[
-                    styles.transactionIcon,
-                    {
-                      backgroundColor: transaction.type === 'income'
-                        ? theme.colors.success.light
-                        : transaction.type === 'transfer'
-                        ? theme.colors.info.light
-                        : theme.colors.background.tertiary
-                    }
-                  ]}>
-                    <Text style={styles.transactionEmoji}>{transaction.emoji}</Text>
-                  </View>
-                  <View style={styles.transactionInfo}>
-                    <Text style={styles.transactionName}>{transaction.name}</Text>
-                    <Text style={styles.transactionCategory}>{transaction.category}</Text>
-                  </View>
-                </View>
+                {filter.label}
+              </Text>
+              {filter.hasDropdown && (
+                <Ionicons
+                  name="chevron-down"
+                  size={16}
+                  color={activeFilter === filter.label ? theme.colors.text.inverse : theme.colors.text.secondary}
+                />
+              )}
+            </TouchableOpacity>
+          ))}
+        </ScrollView>
 
-                <View style={styles.transactionRight}>
-                  <Text style={[
-                    styles.transactionAmount,
-                    transaction.type === 'income' && styles.transactionAmountIncome,
-                    transaction.type === 'expense' && styles.transactionAmountExpense,
-                    transaction.type === 'transfer' && styles.transactionAmountTransfer
-                  ]}>
-                    {transaction.type === 'income' ? '+' : ''}
-                    ${Math.abs(transaction.amount).toFixed(2)}
-                  </Text>
-                  <Ionicons
-                    name="chevron-forward"
-                    size={16}
-                    color={theme.colors.text.tertiary}
-                  />
-                </View>
-              </TouchableOpacity>
-            ))}
-          </View>
-        ))}
+        {/* Transactions List */}
+        <View style={styles.transactionsContainer}>
+          {transactionGroups.map((group, groupIndex) => (
+            <View key={groupIndex} style={styles.transactionGroup}>
+              {/* Date Header */}
+              <Text style={styles.dateHeader}>{group.date}</Text>
 
-        {/* Empty State */}
-        {sampleTransactions.length === 0 && (
-          <View style={styles.emptyState}>
-            <Ionicons name="receipt-outline" size={64} color={theme.colors.text.tertiary} />
-            <Text style={styles.emptyStateTitle}>No transactions yet</Text>
-            <Text style={styles.emptyStateText}>
-              Start tracking your spending by adding your first transaction
-            </Text>
-          </View>
-        )}
+              {/* Transactions */}
+              {group.transactions.map((transaction) => (
+                <View key={transaction.id}>
+                  <TouchableOpacity
+                    style={[
+                      styles.transactionCard,
+                      transaction.hasActions && expandedTransaction === transaction.id && styles.transactionCardExpanded,
+                    ]}
+                    onPress={() => transaction.hasActions && toggleExpanded(transaction.id)}
+                    activeOpacity={transaction.hasActions ? 0.7 : 1}
+                  >
+                    {/* Transaction Main Content */}
+                    <View style={styles.transactionMain}>
+                      {/* Icon/Logo */}
+                      {transaction.hasLogo ? (
+                        <View style={styles.transactionLogo}>
+                          <View style={styles.logoPlaceholder}>
+                            <Text style={styles.logoText}>{transaction.logoInitial}</Text>
+                          </View>
+                        </View>
+                      ) : (
+                        <View style={styles.transactionIcon}>
+                          <Ionicons
+                            name={transaction.icon as any}
+                            size={20}
+                            color={transaction.isIncome ? theme.colors.success.main : theme.colors.primary[500]}
+                          />
+                        </View>
+                      )}
+
+                      {/* Details */}
+                      <View style={styles.transactionDetails}>
+                        <Text style={styles.transactionMerchant}>
+                          {transaction.merchant}
+                        </Text>
+                        <View style={styles.categoryRow}>
+                          {transaction.hasLogo && (
+                            <Ionicons
+                              name="pricetag-outline"
+                              size={14}
+                              color={theme.colors.primary[500]}
+                            />
+                          )}
+                          <Text style={styles.transactionCategory}>
+                            {transaction.category}
+                          </Text>
+                        </View>
+                      </View>
+
+                      {/* Amount */}
+                      <View style={styles.transactionAmount}>
+                        <Text
+                          style={[
+                            styles.amount,
+                            transaction.isIncome
+                              ? styles.amountIncome
+                              : styles.amountExpense,
+                          ]}
+                        >
+                          {transaction.isIncome ? '+' : '-'}${transaction.amount.toFixed(2)}
+                        </Text>
+                        <Text style={styles.transactionTime}>{transaction.time}</Text>
+                      </View>
+                    </View>
+
+                    {/* Quick Actions (Expandable) */}
+                    {transaction.hasActions && expandedTransaction === transaction.id && (
+                      <View style={styles.actionsContainer}>
+                        <TouchableOpacity style={styles.actionButton}>
+                          <Ionicons
+                            name="receipt-outline"
+                            size={24}
+                            color={theme.colors.text.secondary}
+                          />
+                          <Text style={styles.actionText}>Attach</Text>
+                        </TouchableOpacity>
+                        <TouchableOpacity style={styles.actionButton}>
+                          <Ionicons
+                            name="pricetag-outline"
+                            size={24}
+                            color={theme.colors.text.secondary}
+                          />
+                          <Text style={styles.actionText}>Categorize</Text>
+                        </TouchableOpacity>
+                        <TouchableOpacity style={styles.actionButton}>
+                          <Ionicons
+                            name="git-branch-outline"
+                            size={24}
+                            color={theme.colors.text.secondary}
+                          />
+                          <Text style={styles.actionText}>Split</Text>
+                        </TouchableOpacity>
+                      </View>
+                    )}
+                  </TouchableOpacity>
+                </View>
+              ))}
+            </View>
+          ))}
+
+          {/* Bottom spacing */}
+          <View style={{ height: responsive.spacing[4] }} />
+        </View>
       </ScrollView>
 
-      {/* Floating Action Button */}
-      <TouchableOpacity
-        style={styles.fab}
-        onPress={() => {}}
-        activeOpacity={0.8}
-      >
-        <Ionicons name="add" size={28} color="#FFFFFF" />
-      </TouchableOpacity>
+      {/* Floating Action Button - Navigate to Charts */}
+      <View style={styles.fabContainer}>
+        <TouchableOpacity style={styles.fab} onPress={handleNavigateToCharts}>
+          <Ionicons name="bar-chart" size={28} color={colors.neutralWhite} />
+        </TouchableOpacity>
+      </View>
     </Screen>
   );
 }
@@ -180,163 +323,191 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    paddingHorizontal: responsive.spacing[6],
-    paddingVertical: responsive.spacing[4],
-    backgroundColor: theme.colors.background.primary,
-    borderBottomWidth: 1,
-    borderBottomColor: theme.colors.border.light,
+    paddingHorizontal: responsive.spacing[4],
+    paddingVertical: responsive.spacing[3],
+    backgroundColor: colors.neutralBg,
   },
   headerTitle: {
-    ...theme.typography.styles.h2,
-    fontSize: responsive.fontSize.h4,
-    lineHeight: responsive.fontSize.h4 * 1.5,
+    fontSize: responsive.fontSize.xl,
+    fontWeight: '700',
+    color: colors.neutralDarkest,
+  },
+  headerActions: {
+    flexDirection: 'row',
+    gap: responsive.spacing[2],
   },
   headerButton: {
-    padding: responsive.spacing[2],
-  },
-  searchContainer: {
-    paddingHorizontal: responsive.spacing[6],
-    paddingTop: responsive.spacing[4],
-    paddingBottom: responsive.spacing[2],
-    backgroundColor: theme.colors.background.primary,
-  },
-  searchBar: {
-    flexDirection: 'row',
+    width: ms(40),
+    height: ms(40),
+    justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: theme.colors.background.secondary,
-    borderRadius: theme.borderRadius.xl,
-    paddingHorizontal: responsive.spacing[4],
-    paddingVertical: responsive.spacing[2],
-    gap: responsive.spacing[2],
   },
-  searchInput: {
+  scrollView: {
     flex: 1,
-    ...theme.typography.styles.body,
-    color: theme.colors.text.primary,
   },
-  filterContainer: {
-    paddingHorizontal: responsive.spacing[6],
-    paddingVertical: responsive.spacing[2],
-    backgroundColor: theme.colors.background.primary,
-    gap: responsive.spacing[2],
+  filterScrollView: {
+    flexGrow: 0,
+    paddingVertical: responsive.spacing[4],
+  },
+  filterScrollContent: {
+    paddingLeft: responsive.spacing[4],
+    paddingRight: responsive.spacing[4],
   },
   filterChip: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    height: ms(36),
     paddingHorizontal: responsive.spacing[4],
-    paddingVertical: responsive.spacing[2],
-    borderRadius: theme.borderRadius.full,
-    backgroundColor: theme.colors.background.tertiary,
+    borderRadius: ms(18),
+    borderWidth: 1,
+    borderColor: `${theme.colors.text.tertiary}66`,
+    backgroundColor: theme.colors.background.primary,
+    gap: responsive.spacing[2],
     marginRight: responsive.spacing[2],
   },
   filterChipActive: {
-    backgroundColor: theme.colors.primary[600],
+    backgroundColor: theme.colors.primary[500],
+    borderColor: theme.colors.primary[500],
   },
   filterChipText: {
-    ...theme.typography.styles.bodySmall,
-    fontWeight: '600',
+    fontSize: responsive.fontSize.sm,
+    fontWeight: '500',
     color: theme.colors.text.secondary,
   },
   filterChipTextActive: {
-    color: '#FFFFFF',
+    color: theme.colors.text.inverse,
   },
-  content: {
-    padding: responsive.spacing[6],
-    paddingBottom: 100, // Space for FAB
+  transactionsContainer: {
+    paddingHorizontal: responsive.spacing[4],
+    paddingTop: responsive.spacing[4],
   },
-  dateGroup: {
-    marginBottom: responsive.spacing[6],
+  transactionGroup: {
+    marginBottom: responsive.spacing[4],
   },
   dateHeader: {
-    ...theme.typography.styles.bodySmall,
+    fontSize: responsive.fontSize.xs,
     fontWeight: '700',
-    color: theme.colors.text.secondary,
-    textTransform: 'uppercase',
     letterSpacing: 0.5,
-    marginBottom: responsive.spacing[2],
-    paddingHorizontal: responsive.spacing[2],
+    color: theme.colors.text.tertiary,
+    marginBottom: responsive.spacing[4],
   },
   transactionCard: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
     backgroundColor: theme.colors.background.primary,
-    borderRadius: theme.borderRadius.xl,
-    padding: responsive.spacing[4],
-    marginBottom: responsive.spacing[2],
+    borderRadius: theme.borderRadius.lg,
+    marginBottom: responsive.spacing[3],
+    borderWidth: 1,
+    borderColor: `${theme.colors.text.tertiary}33`,
     ...theme.shadows.sm,
+    overflow: 'hidden',
   },
-  transactionLeft: {
+  transactionCardExpanded: {
+    // Additional styling if needed
+  },
+  transactionMain: {
     flexDirection: 'row',
+    alignItems: 'flex-start',
+    padding: responsive.spacing[4],
+    gap: responsive.spacing[4],
+  },
+  transactionLogo: {
+    width: ms(40),
+    height: ms(40),
+    borderRadius: ms(20),
+    overflow: 'hidden',
+  },
+  logoPlaceholder: {
+    width: ms(40),
+    height: ms(40),
+    borderRadius: ms(20),
+    backgroundColor: theme.colors.success.main,
+    justifyContent: 'center',
     alignItems: 'center',
-    flex: 1,
+  },
+  logoText: {
+    fontSize: responsive.fontSize.lg,
+    fontWeight: '700',
+    color: theme.colors.text.inverse,
   },
   transactionIcon: {
-    width: 48,
-    height: 48,
-    borderRadius: 24,
-    alignItems: 'center',
+    width: ms(40),
+    height: ms(40),
+    borderRadius: ms(20),
+    backgroundColor: theme.colors.background.secondary,
     justifyContent: 'center',
-    marginRight: responsive.spacing[2],
+    alignItems: 'center',
   },
-  transactionEmoji: {
-    fontSize: responsive.fontSize.h4,
-    lineHeight: responsive.fontSize.h4 * 1.5,
-  },
-  transactionInfo: {
+  transactionDetails: {
     flex: 1,
+    gap: responsive.spacing[1],
   },
-  transactionName: {
-    ...theme.typography.styles.body,
-    fontWeight: '600',
-    marginBottom: 4,
+  transactionMerchant: {
+    fontSize: responsive.fontSize.md,
+    fontWeight: '700',
+    color: theme.colors.text.primary,
   },
-  transactionCategory: {
-    ...theme.typography.styles.bodySmall,
-    color: theme.colors.text.secondary,
-  },
-  transactionRight: {
+  categoryRow: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: responsive.spacing[2],
   },
+  transactionCategory: {
+    fontSize: responsive.fontSize.sm,
+    fontWeight: '500',
+    color: theme.colors.text.secondary,
+  },
   transactionAmount: {
-    ...theme.typography.styles.body,
+    alignItems: 'flex-end',
+  },
+  amount: {
+    fontSize: responsive.fontSize.md,
     fontWeight: '700',
   },
-  transactionAmountIncome: {
+  amountIncome: {
     color: theme.colors.success.main,
   },
-  transactionAmountExpense: {
-    color: theme.colors.text.primary,
+  amountExpense: {
+    color: theme.colors.danger.main,
   },
-  transactionAmountTransfer: {
-    color: theme.colors.info.main,
+  transactionTime: {
+    fontSize: responsive.fontSize.xs,
+    fontWeight: '500',
+    color: theme.colors.text.tertiary,
+    marginTop: responsive.spacing[1],
   },
-  emptyState: {
+  actionsContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    borderTopWidth: 1,
+    borderTopColor: `${theme.colors.text.tertiary}33`,
+    paddingVertical: responsive.spacing[2],
+  },
+  actionButton: {
+    flex: 1,
     alignItems: 'center',
-    justifyContent: 'center',
-    paddingVertical: responsive.spacing[12],
+    paddingVertical: responsive.spacing[1],
+    gap: responsive.spacing[1],
   },
-  emptyStateTitle: {
-    ...theme.typography.styles.h3,
-    marginTop: responsive.spacing[4],
-    marginBottom: responsive.spacing[2],
-  },
-  emptyStateText: {
-    ...theme.typography.styles.body,
+  actionText: {
+    fontSize: responsive.fontSize.xs,
+    fontWeight: '500',
     color: theme.colors.text.secondary,
-    textAlign: 'center',
-    paddingHorizontal: responsive.spacing[8],
+  },
+  fabContainer: {
+    position: 'absolute',
+    bottom: responsive.spacing[6],
+    right: responsive.spacing[6],
   },
   fab: {
-    position: 'absolute',
-    right: 24,
-    bottom: 24,
-    width: 56,
-    height: 56,
-    borderRadius: 28,
-    backgroundColor: theme.colors.primary[600],
-    alignItems: 'center',
+    width: ms(64),
+    height: ms(64),
+    borderRadius: ms(32),
+    backgroundColor: theme.colors.primary[500],
     justifyContent: 'center',
-    ...theme.shadows.lg,
+    alignItems: 'center',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 8,
+    elevation: 8,
   },
 });

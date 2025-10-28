@@ -9,7 +9,8 @@
       "Bash(npx expo install:*)",
       "Bash(npx expo prebuild:*)",
       "Bash(npm install:*)",
-      "Bash(npx expo start:*)"
+      "Bash(npx expo start:*)",
+      "Bash(node scripts/fix-responsive-fonts.js:*)"
     ],
     "deny": [],
     "ask": []
