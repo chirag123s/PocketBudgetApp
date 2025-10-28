@@ -76,7 +76,7 @@ export default function SplashScreen() {
           // Fully set up → Go to main app
           router.replace('/tabs');
         }
-      }, 1000000);
+      }, 2000);
 
       return () => clearTimeout(timer);
     }
@@ -133,7 +133,7 @@ export default function SplashScreen() {
     <GestureDetector gesture={panGesture}>
       <View style={styles.container}>
         <LinearGradient
-          colors={['#1E40AF', '#3B82F6', '#60A5FA']}
+          colors={['#0F172A', '#1E3A8A', '#1E40AF']}
           start={{ x: 0, y: 0 }}
           end={{ x: 1, y: 1 }}
           style={StyleSheet.absoluteFillObject}
@@ -183,7 +183,9 @@ export default function SplashScreen() {
             {/* App Name */}
             <Animated.View style={styles.textContainer}>
               <Text style={styles.appName}>budgetmate</Text>
-              <Text style={styles.tagline}>Your Smart Finance Companion</Text>
+              <Text style={styles.tagline}>
+                Personal Finance Made Simple
+              </Text>
             </Animated.View>
 
             {/* Loading Indicator */}
@@ -533,6 +535,8 @@ const styles = StyleSheet.create({
   tagline: {
     color: 'rgba(255, 255, 255, 0.9)',
     fontSize: 18,
+    textAlign: 'center',
+    lineHeight: 27,
   },
   loadingContainer: {
     flexDirection: 'row',

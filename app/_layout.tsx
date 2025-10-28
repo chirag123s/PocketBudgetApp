@@ -80,10 +80,19 @@ function RootLayoutNav() {
   try {
     return (
       <Stack
-        screenOptions={screenOptions}
+        screenOptions={{
+          ...screenOptions,
+          animation: 'default',
+        }}
       >
         {/* Auth Flow */}
-        <Stack.Screen name="auth" options={{ headerShown: false }} />
+        <Stack.Screen
+          name="auth"
+          options={{
+            headerShown: false,
+            animation: 'fade',
+          }}
+        />
 
         {/* Main App (Tabs) */}
         <Stack.Screen name="tabs" options={{ headerShown: false }} />
