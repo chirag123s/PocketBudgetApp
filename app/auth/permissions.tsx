@@ -6,6 +6,7 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { Screen } from '@/components/layout/Screen';
 import { Button } from '@/components/ui/Button';
 import { theme } from '@/constants/theme';
+import { responsive, wp, hp, ms } from '@/constants/responsive';
 
 type PermissionScreen = 'notifications' | 'biometric';
 
@@ -49,7 +50,7 @@ export default function PermissionsScreen() {
                 colors={[theme.colors.primary[400], theme.colors.primary[600]]}
                 style={styles.gradientCircle}
               >
-                <Ionicons name="notifications" size={64} color="white" />
+                <Ionicons name="notifications" size={ms(64)} color="white" />
               </LinearGradient>
               <View style={styles.badge}>
                 <Text style={styles.badgeText}>3</Text>
@@ -103,7 +104,7 @@ export default function PermissionsScreen() {
               colors={[theme.colors.info.light, theme.colors.info.main]}
               style={styles.gradientCircle}
             >
-              <Ionicons name="finger-print" size={64} color="white" />
+              <Ionicons name="finger-print" size={ms(64)} color="white" />
             </LinearGradient>
           </View>
 
@@ -140,18 +141,21 @@ export default function PermissionsScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: theme.spacing[6],
+    padding: responsive.spacing[6],
+    maxWidth: responsive.layout.maxContentWidth,
+    width: '100%',
+    alignSelf: 'center',
   },
   progressContainer: {
     flexDirection: 'row',
-    gap: theme.spacing[2],
-    marginBottom: theme.spacing[6],
+    gap: responsive.spacing[2],
+    marginBottom: responsive.spacing[6],
   },
   progressBar: {
     flex: 1,
-    height: 4,
+    height: ms(4),
     backgroundColor: theme.colors.neutral[200],
-    borderRadius: 2,
+    borderRadius: ms(2),
   },
   progressBarActive: {
     backgroundColor: theme.colors.primary[600],
@@ -162,61 +166,66 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   iconContainer: {
-    marginBottom: theme.spacing[8],
+    marginBottom: responsive.device.isShortDevice ? responsive.spacing[6] : responsive.spacing[8],
     position: 'relative',
   },
   gradientCircle: {
-    width: 128,
-    height: 128,
-    borderRadius: 64,
+    width: ms(128),
+    height: ms(128),
+    borderRadius: ms(64),
     alignItems: 'center',
     justifyContent: 'center',
   },
   badge: {
     position: 'absolute',
-    top: -8,
-    right: -8,
-    width: 32,
-    height: 32,
-    borderRadius: 16,
+    top: ms(-8),
+    right: ms(-8),
+    width: ms(32),
+    height: ms(32),
+    borderRadius: ms(16),
     backgroundColor: theme.colors.danger.main,
     alignItems: 'center',
     justifyContent: 'center',
   },
   badgeText: {
     ...theme.typography.styles.caption,
-    fontSize: 12,
+    fontSize: responsive.fontSize.xs,
+    lineHeight: responsive.fontSize.xs * 1.4,
     color: 'white',
     fontWeight: 'bold',
   },
   title: {
     ...theme.typography.styles.h1,
-    fontSize: 32,
+    fontSize: responsive.fontSize.h2,
+    lineHeight: responsive.fontSize.h2 * 1.3,
     textAlign: 'center',
-    marginBottom: theme.spacing[4],
+    marginBottom: responsive.spacing[4],
   },
   description: {
     ...theme.typography.styles.body,
-    fontSize: 16,
+    fontSize: responsive.fontSize.base,
+    lineHeight: responsive.fontSize.base * 1.5,
     color: theme.colors.text.secondary,
     textAlign: 'center',
-    marginBottom: theme.spacing[12],
-    maxWidth: 320,
+    marginBottom: responsive.device.isShortDevice ? responsive.spacing[8] : responsive.spacing[12],
+    maxWidth: wp(320),
   },
   skipButton: {
-    marginTop: theme.spacing[4],
-    padding: theme.spacing[2],
+    marginTop: responsive.spacing[4],
+    padding: responsive.spacing[2],
   },
   skipText: {
     ...theme.typography.styles.body,
-    fontSize: 16,
+    fontSize: responsive.fontSize.base,
+    lineHeight: responsive.fontSize.base * 1.5,
     color: theme.colors.text.secondary,
   },
   infoText: {
     ...theme.typography.styles.caption,
-    fontSize: 12,
+    fontSize: responsive.fontSize.xs,
+    lineHeight: responsive.fontSize.xs * 1.4,
     color: theme.colors.text.tertiary,
     textAlign: 'center',
-    marginBottom: theme.spacing[4],
+    marginBottom: responsive.spacing[4],
   },
 });

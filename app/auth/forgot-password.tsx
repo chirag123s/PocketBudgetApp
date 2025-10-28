@@ -5,6 +5,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { Screen } from '@/components/layout/Screen';
 import { Button } from '@/components/ui/Button';
 import { theme } from '@/constants/theme';
+import { responsive, wp, hp, ms } from '@/constants/responsive';
 
 type Step = 1 | 2 | 3; // 1: Email Entry, 2: Check Email, 3: New Password
 
@@ -45,7 +46,7 @@ export default function ForgotPasswordScreen() {
             style={styles.backButton}
             onPress={() => router.back()}
           >
-            <Ionicons name="chevron-back" size={24} color={theme.colors.text.primary} />
+            <Ionicons name="chevron-back" size={responsive.layout.iconMd} color={theme.colors.text.primary} />
           </TouchableOpacity>
 
           <View style={styles.content}>
@@ -96,7 +97,7 @@ export default function ForgotPasswordScreen() {
       <Screen scrollable={false}>
         <View style={styles.centerContainer}>
           <View style={styles.iconCircle}>
-            <Ionicons name="mail" size={48} color={theme.colors.primary[600]} />
+            <Ionicons name="mail" size={responsive.layout.iconXl} color={theme.colors.primary[600]} />
           </View>
 
           <Text style={styles.title}>Check your email</Text>
@@ -140,7 +141,7 @@ export default function ForgotPasswordScreen() {
           style={styles.backButton}
           onPress={() => setStep(2)}
         >
-          <Ionicons name="chevron-back" size={24} color={theme.colors.text.primary} />
+          <Ionicons name="chevron-back" size={responsive.layout.iconMd} color={theme.colors.text.primary} />
         </TouchableOpacity>
 
         <Text style={styles.title}>Create New Password</Text>
@@ -167,7 +168,7 @@ export default function ForgotPasswordScreen() {
             >
               <Ionicons
                 name={showPassword ? 'eye-off' : 'eye'}
-                size={20}
+                size={responsive.layout.iconSm}
                 color={theme.colors.text.tertiary}
               />
             </TouchableOpacity>
@@ -185,7 +186,7 @@ export default function ForgotPasswordScreen() {
                 >
                   <Ionicons
                     name={passwordStrength.length ? 'checkmark' : 'close'}
-                    size={12}
+                    size={ms(12)}
                     color={
                       passwordStrength.length
                         ? theme.colors.success.main
@@ -211,7 +212,7 @@ export default function ForgotPasswordScreen() {
                 >
                   <Ionicons
                     name={passwordStrength.number ? 'checkmark' : 'close'}
-                    size={12}
+                    size={ms(12)}
                     color={
                       passwordStrength.number
                         ? theme.colors.success.main
@@ -237,7 +238,7 @@ export default function ForgotPasswordScreen() {
                 >
                   <Ionicons
                     name={passwordStrength.special ? 'checkmark' : 'close'}
-                    size={12}
+                    size={ms(12)}
                     color={
                       passwordStrength.special
                         ? theme.colors.success.main
@@ -277,7 +278,7 @@ export default function ForgotPasswordScreen() {
             >
               <Ionicons
                 name={showConfirmPassword ? 'eye-off' : 'eye'}
-                size={20}
+                size={responsive.layout.iconSm}
                 color={theme.colors.text.tertiary}
               />
             </TouchableOpacity>
@@ -304,53 +305,63 @@ export default function ForgotPasswordScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: theme.spacing[6],
+    padding: responsive.spacing[6],
+    maxWidth: responsive.layout.maxContentWidth,
+    width: '100%',
+    alignSelf: 'center',
   },
   centerContainer: {
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
-    padding: theme.spacing[6],
+    padding: responsive.spacing[6],
+    maxWidth: responsive.layout.maxContentWidth,
+    width: '100%',
+    alignSelf: 'center',
   },
   content: {
     flex: 1,
     justifyContent: 'center',
   },
   backButton: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
+    width: ms(40),
+    height: ms(40),
+    borderRadius: ms(20),
     backgroundColor: theme.colors.background.tertiary,
     alignItems: 'center',
     justifyContent: 'center',
-    marginBottom: theme.spacing[4],
+    marginBottom: responsive.spacing[4],
   },
   title: {
     ...theme.typography.styles.h1,
-    fontSize: 32,
-    marginBottom: theme.spacing[2],
+    fontSize: responsive.fontSize.h2,
+    lineHeight: responsive.fontSize.h2 * 1.3,
+    marginBottom: responsive.spacing[2],
   },
   subtitle: {
     ...theme.typography.styles.body,
-    fontSize: 16,
+    fontSize: responsive.fontSize.base,
+    lineHeight: responsive.fontSize.base * 1.5,
     color: theme.colors.text.secondary,
-    marginBottom: theme.spacing[8],
+    marginBottom: responsive.device.isShortDevice ? responsive.spacing[6] : responsive.spacing[8],
   },
   inputContainer: {
-    marginBottom: theme.spacing[6],
+    marginBottom: responsive.spacing[6],
   },
   label: {
     ...theme.typography.styles.label,
-    fontSize: 14,
-    marginBottom: theme.spacing[2],
+    fontSize: responsive.fontSize.sm,
+    lineHeight: responsive.fontSize.sm * 1.5,
+    marginBottom: responsive.spacing[2],
   },
   input: {
     ...theme.typography.styles.body,
-    fontSize: 16,
-    padding: theme.spacing[4],
+    fontSize: responsive.fontSize.base,
+    lineHeight: responsive.fontSize.base * 1.5,
+    padding: responsive.spacing[4],
     borderWidth: 1,
     borderColor: theme.colors.border.light,
-    borderRadius: 12,
+    borderRadius: responsive.layout.cardRadius,
     backgroundColor: theme.colors.background.primary,
   },
   passwordInputContainer: {
@@ -358,52 +369,56 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     borderWidth: 1,
     borderColor: theme.colors.border.light,
-    borderRadius: 12,
+    borderRadius: responsive.layout.cardRadius,
     backgroundColor: theme.colors.background.primary,
   },
   passwordInput: {
     ...theme.typography.styles.body,
-    fontSize: 16,
+    fontSize: responsive.fontSize.base,
+    lineHeight: responsive.fontSize.base * 1.5,
     flex: 1,
-    padding: theme.spacing[4],
+    padding: responsive.spacing[4],
   },
   eyeButton: {
-    padding: theme.spacing[4],
+    padding: responsive.spacing[4],
   },
   button: {
-    marginBottom: theme.spacing[4],
+    marginBottom: responsive.spacing[4],
   },
   secondaryButton: {
-    padding: theme.spacing[2],
+    padding: responsive.spacing[2],
     alignItems: 'center',
   },
   secondaryButtonText: {
     ...theme.typography.styles.body,
-    fontSize: 16,
+    fontSize: responsive.fontSize.base,
+    lineHeight: responsive.fontSize.base * 1.5,
     color: theme.colors.text.secondary,
   },
   iconCircle: {
-    width: 96,
-    height: 96,
-    borderRadius: 48,
+    width: ms(96),
+    height: ms(96),
+    borderRadius: ms(48),
     backgroundColor: theme.colors.primary[100],
     alignItems: 'center',
     justifyContent: 'center',
-    marginBottom: theme.spacing[6],
+    marginBottom: responsive.spacing[6],
   },
   emailText: {
     ...theme.typography.styles.body,
-    fontSize: 16,
+    fontSize: responsive.fontSize.base,
+    lineHeight: responsive.fontSize.base * 1.5,
     fontWeight: '600',
     color: theme.colors.text.primary,
-    marginBottom: theme.spacing[8],
+    marginBottom: responsive.device.isShortDevice ? responsive.spacing[6] : responsive.spacing[8],
   },
   resendButton: {
-    marginTop: theme.spacing[4],
+    marginTop: responsive.spacing[4],
   },
   resendText: {
     ...theme.typography.styles.body,
-    fontSize: 16,
+    fontSize: responsive.fontSize.base,
+    lineHeight: responsive.fontSize.base * 1.5,
     color: theme.colors.text.secondary,
   },
   resendLink: {
@@ -411,18 +426,18 @@ const styles = StyleSheet.create({
     fontWeight: '600',
   },
   strengthContainer: {
-    marginTop: theme.spacing[2],
-    gap: theme.spacing[2],
+    marginTop: responsive.spacing[2],
+    gap: responsive.spacing[2],
   },
   strengthRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: theme.spacing[2],
+    gap: responsive.spacing[2],
   },
   checkCircle: {
-    width: 16,
-    height: 16,
-    borderRadius: 8,
+    width: ms(16),
+    height: ms(16),
+    borderRadius: ms(8),
     backgroundColor: theme.colors.background.tertiary,
     alignItems: 'center',
     justifyContent: 'center',
@@ -432,7 +447,8 @@ const styles = StyleSheet.create({
   },
   strengthText: {
     ...theme.typography.styles.bodySmall,
-    fontSize: 14,
+    fontSize: responsive.fontSize.sm,
+    lineHeight: responsive.fontSize.sm * 1.5,
     color: theme.colors.text.secondary,
   },
   strengthTextActive: {
@@ -440,8 +456,9 @@ const styles = StyleSheet.create({
   },
   errorText: {
     ...theme.typography.styles.bodySmall,
-    fontSize: 14,
+    fontSize: responsive.fontSize.sm,
+    lineHeight: responsive.fontSize.sm * 1.5,
     color: theme.colors.danger.main,
-    marginTop: theme.spacing[2],
+    marginTop: responsive.spacing[2],
   },
 });

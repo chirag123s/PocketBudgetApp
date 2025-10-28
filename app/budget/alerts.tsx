@@ -4,6 +4,7 @@ import { useRouter } from 'expo-router';
 import { Screen } from '@/components/layout/Screen';
 import { Button } from '@/components/ui/Button';
 import { theme } from '@/constants/theme';
+import { responsive, ms } from '@/constants/responsive';
 import { Ionicons } from '@expo/vector-icons';
 
 type AlertTiming = 'immediate' | 'daily' | 'weekly';
@@ -336,57 +337,60 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    paddingHorizontal: theme.spacing[4],
-    paddingVertical: theme.spacing[2],
+    paddingHorizontal: responsive.spacing[4],
+    paddingVertical: responsive.spacing[2],
     backgroundColor: theme.colors.background.primary,
     borderBottomWidth: 1,
     borderBottomColor: theme.colors.border.light,
   },
   headerButton: {
-    padding: theme.spacing[2],
+    padding: responsive.spacing[2],
   },
   headerTitle: {
     ...theme.typography.styles.h3,
-    fontSize: 18,
+    fontSize: responsive.fontSize.lg,
+    lineHeight: responsive.fontSize.lg * 1.5,
   },
   placeholder: {
     width: 40,
   },
   content: {
-    padding: theme.spacing[6],
-    paddingBottom: theme.spacing[8],
+    padding: responsive.spacing[6],
+    paddingBottom: responsive.spacing[8],
   },
   section: {
-    marginBottom: theme.spacing[6],
+    marginBottom: responsive.spacing[6],
   },
   sectionTitle: {
     ...theme.typography.styles.label,
-    fontSize: 12,
+    fontSize: responsive.fontSize.xs,
+    lineHeight: responsive.fontSize.xs * 1.5,
     color: theme.colors.text.tertiary,
     fontWeight: '600',
-    marginBottom: theme.spacing[2],
+    marginBottom: responsive.spacing[2],
   },
   settingsCard: {
     backgroundColor: theme.colors.background.primary,
     borderRadius: theme.borderRadius.xl,
-    padding: theme.spacing[4],
+    padding: responsive.spacing[4],
     ...theme.shadows.sm,
   },
   settingRow: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    paddingVertical: theme.spacing[2],
+    paddingVertical: responsive.spacing[2],
   },
   settingLeft: {
     flexDirection: 'row',
     alignItems: 'center',
     flex: 1,
-    marginRight: theme.spacing[2],
+    marginRight: responsive.spacing[2],
   },
   settingIcon: {
-    fontSize: 24,
-    marginRight: theme.spacing[2],
+    fontSize: responsive.fontSize.h4,
+    lineHeight: responsive.fontSize.h4 * 1.5,
+    marginRight: responsive.spacing[2],
   },
   settingTextContainer: {
     flex: 1,
@@ -394,7 +398,7 @@ const styles = StyleSheet.create({
   settingTitleRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: theme.spacing[2],
+    gap: responsive.spacing[2],
   },
   settingTitle: {
     ...theme.typography.styles.body,
@@ -408,17 +412,17 @@ const styles = StyleSheet.create({
   divider: {
     height: 1,
     backgroundColor: theme.colors.border.light,
-    marginVertical: theme.spacing[2],
+    marginVertical: responsive.spacing[2],
   },
   timingContainer: {
-    gap: theme.spacing[2],
+    gap: responsive.spacing[2],
   },
   timingOption: {
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: theme.colors.background.primary,
     borderRadius: theme.borderRadius.xl,
-    padding: theme.spacing[4],
+    padding: responsive.spacing[4],
     borderWidth: 2,
     borderColor: theme.colors.border.light,
     ...theme.shadows.sm,
@@ -435,7 +439,7 @@ const styles = StyleSheet.create({
     borderColor: theme.colors.border.main,
     alignItems: 'center',
     justifyContent: 'center',
-    marginRight: theme.spacing[2],
+    marginRight: responsive.spacing[2],
   },
   radioCircleInner: {
     width: 10,
@@ -458,19 +462,20 @@ const styles = StyleSheet.create({
   premiumBadge: {
     backgroundColor: theme.colors.warning.light,
     borderRadius: theme.borderRadius.full,
-    paddingHorizontal: theme.spacing[2],
+    paddingHorizontal: responsive.spacing[2],
     paddingVertical: 2,
   },
   premiumBadgeText: {
     ...theme.typography.styles.caption,
     color: theme.colors.warning.dark,
-    fontSize: 12,
+    fontSize: responsive.fontSize.xs,
+    lineHeight: responsive.fontSize.xs * 1.5,
     fontWeight: '600',
   },
   exampleCard: {
     backgroundColor: theme.colors.background.primary,
     borderRadius: theme.borderRadius.xl,
-    padding: theme.spacing[4],
+    padding: responsive.spacing[4],
     borderWidth: 1,
     borderColor: theme.colors.warning.light,
     ...theme.shadows.sm,
@@ -486,7 +491,7 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     alignItems: 'center',
     justifyContent: 'center',
-    marginRight: theme.spacing[2],
+    marginRight: responsive.spacing[2],
   },
   exampleContent: {
     flex: 1,
@@ -494,13 +499,13 @@ const styles = StyleSheet.create({
   exampleTitle: {
     ...theme.typography.styles.body,
     fontWeight: '600',
-    marginBottom: theme.spacing[1],
+    marginBottom: responsive.spacing[1],
   },
   exampleMessage: {
     ...theme.typography.styles.bodySmall,
     color: theme.colors.text.secondary,
     lineHeight: 20,
-    marginBottom: theme.spacing[2],
+    marginBottom: responsive.spacing[2],
   },
   exampleTime: {
     ...theme.typography.styles.caption,
@@ -513,13 +518,13 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: theme.colors.info.main,
     borderRadius: theme.borderRadius.xl,
-    padding: theme.spacing[2],
-    marginTop: theme.spacing[6],
+    padding: responsive.spacing[2],
+    marginTop: responsive.spacing[6],
   },
   infoText: {
     ...theme.typography.styles.bodySmall,
     color: theme.colors.info.dark,
-    marginLeft: theme.spacing[2],
+    marginLeft: responsive.spacing[2],
     flex: 1,
   },
 });

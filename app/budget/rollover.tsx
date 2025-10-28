@@ -4,6 +4,7 @@ import { useRouter } from 'expo-router';
 import { Screen } from '@/components/layout/Screen';
 import { Button } from '@/components/ui/Button';
 import { theme } from '@/constants/theme';
+import { responsive, ms } from '@/constants/responsive';
 import { Ionicons } from '@expo/vector-icons';
 
 type RolloverOption = 'copy' | 'adjust' | 'fresh';
@@ -183,18 +184,19 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    paddingHorizontal: theme.spacing[4],
-    paddingVertical: theme.spacing[2],
+    paddingHorizontal: responsive.spacing[4],
+    paddingVertical: responsive.spacing[2],
     backgroundColor: theme.colors.background.primary,
     borderBottomWidth: 1,
     borderBottomColor: theme.colors.border.light,
   },
   headerButton: {
-    padding: theme.spacing[2],
+    padding: responsive.spacing[2],
   },
   headerTitle: {
     ...theme.typography.styles.h3,
-    fontSize: 18,
+    fontSize: responsive.fontSize.lg,
+    lineHeight: responsive.fontSize.lg * 1.5,
   },
   placeholder: {
     width: 40,
@@ -203,8 +205,8 @@ const styles = StyleSheet.create({
     backgroundColor: theme.colors.warning.light,
     borderBottomWidth: 1,
     borderBottomColor: theme.colors.warning.main,
-    paddingVertical: theme.spacing[2],
-    paddingHorizontal: theme.spacing[6],
+    paddingVertical: responsive.spacing[2],
+    paddingHorizontal: responsive.spacing[6],
   },
   alertContent: {
     flexDirection: 'row',
@@ -214,30 +216,31 @@ const styles = StyleSheet.create({
     ...theme.typography.styles.bodySmall,
     color: theme.colors.warning.dark,
     fontWeight: '600',
-    marginLeft: theme.spacing[2],
+    marginLeft: responsive.spacing[2],
   },
   content: {
-    padding: theme.spacing[6],
-    paddingBottom: theme.spacing[8],
+    padding: responsive.spacing[6],
+    paddingBottom: responsive.spacing[8],
   },
   summaryCard: {
     backgroundColor: theme.colors.background.primary,
     borderRadius: theme.borderRadius.xl,
-    padding: theme.spacing[4],
-    marginBottom: theme.spacing[6],
+    padding: responsive.spacing[4],
+    marginBottom: responsive.spacing[6],
     ...theme.shadows.sm,
   },
   summaryLabel: {
     ...theme.typography.styles.label,
-    fontSize: 12,
+    fontSize: responsive.fontSize.xs,
+    lineHeight: responsive.fontSize.xs * 1.5,
     color: theme.colors.text.tertiary,
     fontWeight: '600',
-    marginBottom: theme.spacing[2],
+    marginBottom: responsive.spacing[2],
   },
   periodText: {
     ...theme.typography.styles.body,
     fontWeight: '600',
-    marginBottom: theme.spacing[4],
+    marginBottom: responsive.spacing[4],
   },
   summaryStats: {
     flexDirection: 'row',
@@ -251,7 +254,7 @@ const styles = StyleSheet.create({
   summaryStatLabel: {
     ...theme.typography.styles.caption,
     color: theme.colors.text.tertiary,
-    marginBottom: theme.spacing[1],
+    marginBottom: responsive.spacing[1],
   },
   summaryStatValue: {
     ...theme.typography.styles.body,
@@ -264,17 +267,18 @@ const styles = StyleSheet.create({
   },
   questionText: {
     ...theme.typography.styles.h3,
-    fontSize: 18,
-    marginBottom: theme.spacing[4],
+    fontSize: responsive.fontSize.lg,
+    lineHeight: responsive.fontSize.lg * 1.5,
+    marginBottom: responsive.spacing[4],
   },
   optionsContainer: {
-    gap: theme.spacing[2],
-    marginBottom: theme.spacing[6],
+    gap: responsive.spacing[2],
+    marginBottom: responsive.spacing[6],
   },
   optionCard: {
     backgroundColor: theme.colors.background.primary,
     borderRadius: theme.borderRadius.xl,
-    padding: theme.spacing[4],
+    padding: responsive.spacing[4],
     borderWidth: 2,
     borderColor: theme.colors.border.light,
     flexDirection: 'row',
@@ -293,7 +297,7 @@ const styles = StyleSheet.create({
     borderColor: theme.colors.border.main,
     alignItems: 'center',
     justifyContent: 'center',
-    marginRight: theme.spacing[2],
+    marginRight: responsive.spacing[2],
     marginTop: 2,
   },
   radioCircleInner: {
@@ -308,11 +312,12 @@ const styles = StyleSheet.create({
   optionHeader: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: theme.spacing[1],
+    marginBottom: responsive.spacing[1],
   },
   optionIcon: {
-    fontSize: 20,
-    marginRight: theme.spacing[2],
+    fontSize: responsive.fontSize.xl,
+    lineHeight: responsive.fontSize.xl * 1.5,
+    marginRight: responsive.spacing[2],
   },
   optionTitle: {
     ...theme.typography.styles.body,
@@ -321,13 +326,13 @@ const styles = StyleSheet.create({
   optionSubtitle: {
     ...theme.typography.styles.bodySmall,
     color: theme.colors.text.secondary,
-    marginBottom: theme.spacing[2],
+    marginBottom: responsive.spacing[2],
   },
   previewBox: {
     backgroundColor: theme.colors.background.tertiary,
     borderRadius: theme.borderRadius.lg,
-    padding: theme.spacing[2],
-    marginTop: theme.spacing[2],
+    padding: responsive.spacing[2],
+    marginTop: responsive.spacing[2],
   },
   previewText: {
     ...theme.typography.styles.caption,
@@ -340,23 +345,23 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: theme.colors.info.main,
     borderRadius: theme.borderRadius.xl,
-    padding: theme.spacing[2],
-    marginBottom: theme.spacing[6],
+    padding: responsive.spacing[2],
+    marginBottom: responsive.spacing[6],
   },
   infoText: {
     ...theme.typography.styles.bodySmall,
     color: theme.colors.info.dark,
-    marginLeft: theme.spacing[2],
+    marginLeft: responsive.spacing[2],
     flex: 1,
   },
   createButton: {
-    marginBottom: theme.spacing[2],
+    marginBottom: responsive.spacing[2],
   },
   remindButton: {
     borderWidth: 2,
     borderColor: theme.colors.border.main,
     borderRadius: theme.borderRadius.xl,
-    padding: theme.spacing[4],
+    padding: responsive.spacing[4],
     alignItems: 'center',
   },
   remindButtonText: {

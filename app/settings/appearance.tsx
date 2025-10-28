@@ -3,6 +3,7 @@ import { View, Text, StyleSheet, TouchableOpacity, ScrollView } from 'react-nati
 import { useRouter } from 'expo-router';
 import { Screen } from '@/components/layout/Screen';
 import { theme } from '@/constants/theme';
+import { responsive, ms } from '@/constants/responsive';
 import { Ionicons } from '@expo/vector-icons';
 
 type ThemeType = 'system' | 'light' | 'dark';
@@ -119,7 +120,7 @@ export default function AppearanceSettings() {
           </View>
           <Text style={styles.colorLabel}>{accentColor} (Default)</Text>
 
-          <Text style={[styles.sectionLabel, { marginTop: theme.spacing[6] }]}>
+          <Text style={[styles.sectionLabel, { marginTop: responsive.spacing[6] }]}>
             Budget display:
           </Text>
           <View style={styles.optionsGroup}>
@@ -245,41 +246,43 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    paddingHorizontal: theme.spacing[4],
-    paddingVertical: theme.spacing[2],
+    paddingHorizontal: responsive.spacing[4],
+    paddingVertical: responsive.spacing[2],
     backgroundColor: theme.colors.background.primary,
     borderBottomWidth: 1,
     borderBottomColor: theme.colors.border.light,
   },
   headerButton: {
-    padding: theme.spacing[2],
+    padding: responsive.spacing[2],
   },
   headerTitle: {
     ...theme.typography.styles.h3,
-    fontSize: 18,
+    fontSize: responsive.fontSize.lg,
+    lineHeight: responsive.fontSize.lg * 1.5,
   },
   placeholder: {
     width: 40,
   },
   content: {
-    padding: theme.spacing[6],
-    paddingBottom: theme.spacing[8],
+    padding: responsive.spacing[6],
+    paddingBottom: responsive.spacing[8],
   },
   card: {
     backgroundColor: theme.colors.background.primary,
     borderRadius: theme.borderRadius.xl,
-    padding: theme.spacing[6],
-    marginBottom: theme.spacing[4],
+    padding: responsive.spacing[6],
+    marginBottom: responsive.spacing[4],
     ...theme.shadows.sm,
   },
   cardTitle: {
     ...theme.typography.styles.h3,
-    fontSize: 18,
-    marginBottom: theme.spacing[4],
+    fontSize: responsive.fontSize.lg,
+    lineHeight: responsive.fontSize.lg * 1.5,
+    marginBottom: responsive.spacing[4],
   },
   optionsGroup: {
-    gap: theme.spacing[2],
-    marginBottom: theme.spacing[4],
+    gap: responsive.spacing[2],
+    marginBottom: responsive.spacing[4],
   },
   option: {
     flexDirection: 'row',
@@ -287,7 +290,7 @@ const styles = StyleSheet.create({
     borderWidth: 2,
     borderColor: theme.colors.border.light,
     borderRadius: theme.borderRadius.xl,
-    padding: theme.spacing[2],
+    padding: responsive.spacing[2],
   },
   optionSelected: {
     backgroundColor: theme.colors.primary[50],
@@ -301,7 +304,7 @@ const styles = StyleSheet.create({
     borderColor: theme.colors.border.main,
     alignItems: 'center',
     justifyContent: 'center',
-    marginRight: theme.spacing[2],
+    marginRight: responsive.spacing[2],
   },
   radioCircleInner: {
     width: 12,
@@ -316,23 +319,24 @@ const styles = StyleSheet.create({
   actionButton: {
     backgroundColor: theme.colors.background.tertiary,
     borderRadius: theme.borderRadius.xl,
-    padding: theme.spacing[2],
+    padding: responsive.spacing[2],
     alignItems: 'center',
   },
   actionButtonText: {
     ...theme.typography.styles.button,
     color: theme.colors.text.primary,
-    fontSize: 14,
+    fontSize: responsive.fontSize.sm,
+    lineHeight: responsive.fontSize.sm * 1.5,
   },
   sectionLabel: {
     ...theme.typography.styles.bodySmall,
     color: theme.colors.text.secondary,
-    marginBottom: theme.spacing[2],
+    marginBottom: responsive.spacing[2],
   },
   colorRow: {
     flexDirection: 'row',
-    gap: theme.spacing[2],
-    marginBottom: theme.spacing[2],
+    gap: responsive.spacing[2],
+    marginBottom: responsive.spacing[2],
   },
   colorSwatch: {
     width: 48,
@@ -349,8 +353,8 @@ const styles = StyleSheet.create({
     textTransform: 'capitalize',
   },
   checkboxGroup: {
-    gap: theme.spacing[2],
-    marginBottom: theme.spacing[4],
+    gap: responsive.spacing[2],
+    marginBottom: responsive.spacing[4],
   },
   checkboxRow: {
     flexDirection: 'row',
@@ -362,7 +366,7 @@ const styles = StyleSheet.create({
     borderWidth: 2,
     borderColor: theme.colors.border.main,
     borderRadius: 4,
-    marginRight: theme.spacing[2],
+    marginRight: responsive.spacing[2],
     alignItems: 'center',
     justifyContent: 'center',
   },

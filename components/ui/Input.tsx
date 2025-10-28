@@ -8,6 +8,7 @@ import {
   TextInputProps,
 } from 'react-native';
 import { theme } from '@/constants/theme';
+import { responsive } from '@/constants/responsive';
 
 /**
  * Input Component
@@ -99,21 +100,24 @@ export const Input: React.FC<InputProps> = ({
 
 const styles = StyleSheet.create({
   container: {
-    marginBottom: theme.spacing[4],
+    marginBottom: responsive.spacing[4],
   },
   label: {
-    ...theme.typography.styles.label,
-    marginBottom: theme.spacing[2],
+    fontSize: responsive.fontSize.sm,
+    fontWeight: '500',
+    lineHeight: responsive.fontSize.sm * 1.5,
+    color: theme.colors.text.primary,
+    marginBottom: responsive.spacing[2],
   },
   inputContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    height: 48,
+    height: responsive.layout.inputHeight,
     borderWidth: 1,
     borderColor: theme.colors.border.main,
-    borderRadius: 12,
+    borderRadius: responsive.layout.cardRadius,
     backgroundColor: theme.colors.background.primary,
-    paddingHorizontal: theme.spacing[4],
+    paddingHorizontal: responsive.spacing[4],
   },
   inputContainerFocused: {
     borderColor: theme.colors.primary[500],
@@ -124,32 +128,39 @@ const styles = StyleSheet.create({
   },
   input: {
     flex: 1,
-    ...theme.typography.styles.body,
+    fontSize: responsive.fontSize.base,
+    fontWeight: '400',
+    lineHeight: responsive.fontSize.base * 1.5,
+    color: theme.colors.text.primary,
     paddingVertical: 0, // Remove default padding
   },
   inputWithLeftIcon: {
-    paddingLeft: theme.spacing[2],
+    paddingLeft: responsive.spacing[2],
   },
   inputWithRightIcon: {
-    paddingRight: theme.spacing[2],
+    paddingRight: responsive.spacing[2],
   },
   leftIcon: {
-    marginRight: theme.spacing[2],
+    marginRight: responsive.spacing[2],
   },
   rightIcon: {
-    marginLeft: theme.spacing[2],
+    marginLeft: responsive.spacing[2],
   },
   iconText: {
-    fontSize: 18,
+    fontSize: responsive.fontSize.lg,
   },
   error: {
-    ...theme.typography.styles.caption,
+    fontSize: responsive.fontSize.xs,
+    fontWeight: '400',
+    lineHeight: responsive.fontSize.xs * 1.5,
     color: theme.colors.danger.main,
-    marginTop: theme.spacing[1],
+    marginTop: responsive.spacing[1],
   },
   hint: {
-    ...theme.typography.styles.caption,
+    fontSize: responsive.fontSize.xs,
+    fontWeight: '400',
+    lineHeight: responsive.fontSize.xs * 1.5,
     color: theme.colors.text.tertiary,
-    marginTop: theme.spacing[1],
+    marginTop: responsive.spacing[1],
   },
 });

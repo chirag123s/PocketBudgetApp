@@ -5,6 +5,7 @@ import { Screen } from '@/components/layout/Screen';
 import { Button } from '@/components/ui/Button';
 import { Card } from '@/components/ui/Card';
 import { theme } from '@/constants/theme';
+import { responsive, ms } from '@/constants/responsive';
 import { Ionicons } from '@expo/vector-icons';
 
 export default function BankConnectionIntro() {
@@ -91,12 +92,12 @@ export default function BankConnectionIntro() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: theme.spacing[6],
+    padding: responsive.spacing[6],
     justifyContent: 'space-between',
   },
   illustrationContainer: {
     alignItems: 'center',
-    marginTop: theme.spacing[8],
+    marginTop: responsive.spacing[8],
     position: 'relative',
   },
   mainIllustration: {
@@ -122,55 +123,61 @@ const styles = StyleSheet.create({
   },
   title: {
     ...theme.typography.styles.h1,
-    fontSize: 32,
+    fontSize: responsive.fontSize.h2,
+    lineHeight: responsive.fontSize.h2 * 1.5,
     textAlign: 'center',
-    marginTop: theme.spacing[8],
+    marginTop: responsive.spacing[8],
   },
   featuresList: {
-    gap: theme.spacing[4],
+    gap: responsive.spacing[4],
   },
   featureItem: {
     flexDirection: 'row',
-    gap: theme.spacing[2],
+    gap: responsive.spacing[2],
   },
   checkmark: {
-    fontSize: 18,
+    fontSize: responsive.fontSize.lg,
+    lineHeight: responsive.fontSize.lg * 1.5,
   },
   featureContent: {
     flex: 1,
   },
   featureTitle: {
     ...theme.typography.styles.body,
-    fontSize: 16,
+    fontSize: responsive.fontSize.md,
+    lineHeight: responsive.fontSize.md * 1.5,
     fontWeight: '600',
     color: theme.colors.text.primary,
-    marginBottom: theme.spacing[1],
+    marginBottom: responsive.spacing[1],
   },
   featureDescription: {
     ...theme.typography.styles.bodySmall,
-    fontSize: 14,
+    fontSize: responsive.fontSize.sm,
+    lineHeight: responsive.fontSize.sm * 1.5,
     color: theme.colors.text.secondary,
   },
   buttonContainer: {
-    gap: theme.spacing[4],
+    gap: responsive.spacing[4],
   },
   learnMore: {
     ...theme.typography.styles.button,
-    fontSize: 16,
+    fontSize: responsive.fontSize.md,
+    lineHeight: responsive.fontSize.md * 1.5,
     color: theme.colors.text.secondary,
     textAlign: 'center',
-    paddingVertical: theme.spacing[2],
+    paddingVertical: responsive.spacing[2],
   },
   securityNotice: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    gap: theme.spacing[1],
-    paddingBottom: theme.spacing[4],
+    gap: responsive.spacing[1],
+    paddingBottom: responsive.spacing[4],
   },
   securityText: {
     ...theme.typography.styles.caption,
-    fontSize: 12,
+    fontSize: responsive.fontSize.xs,
+    lineHeight: responsive.fontSize.xs * 1.5,
     color: theme.colors.text.tertiary,
   },
 });

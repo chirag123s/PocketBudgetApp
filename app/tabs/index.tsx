@@ -3,6 +3,7 @@ import { View, Text, StyleSheet, TouchableOpacity, ScrollView } from 'react-nati
 import { useRouter } from 'expo-router';
 import { Screen } from '@/components/layout/Screen';
 import { theme } from '@/constants/theme';
+import { responsive, ms } from '@/constants/responsive';
 import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
 
@@ -33,7 +34,7 @@ export default function HomeTab() {
   const remaining = sampleData.totalBudget - sampleData.totalSpent;
 
   return (
-    <Screen noPadding backgroundColor={theme.colors.background.secondary}>
+    <Screen edges={['top']} noPadding backgroundColor={theme.colors.background.secondary}>
       {/* Header */}
       <View style={styles.header}>
         <View>
@@ -214,8 +215,8 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    paddingHorizontal: theme.spacing[6],
-    paddingVertical: theme.spacing[4],
+    paddingHorizontal: responsive.spacing[6],
+    paddingVertical: responsive.spacing[4],
     backgroundColor: theme.colors.background.primary,
     borderBottomWidth: 1,
     borderBottomColor: theme.colors.border.light,
@@ -226,11 +227,12 @@ const styles = StyleSheet.create({
   },
   userName: {
     ...theme.typography.styles.h2,
-    fontSize: 24,
+    fontSize: responsive.fontSize.h4,
+    lineHeight: responsive.fontSize.h4 * 1.5,
   },
   notificationButton: {
     position: 'relative',
-    padding: theme.spacing[2],
+    padding: responsive.spacing[2],
   },
   notificationBadge: {
     position: 'absolute',
@@ -242,37 +244,40 @@ const styles = StyleSheet.create({
     backgroundColor: theme.colors.danger.main,
   },
   content: {
-    padding: theme.spacing[6],
-    paddingBottom: theme.spacing[8],
+    padding: responsive.spacing[6],
+    paddingBottom: responsive.spacing[8],
   },
   summaryCard: {
     borderRadius: theme.borderRadius.xl,
-    padding: theme.spacing[6],
-    marginBottom: theme.spacing[6],
+    padding: responsive.spacing[6],
+    marginBottom: responsive.spacing[6],
     ...theme.shadows.lg,
   },
   summaryTitle: {
-    fontSize: 16,
+    fontSize: responsive.fontSize.md,
+    lineHeight: responsive.fontSize.md * 1.5,
     fontWeight: '600',
     color: '#FFFFFF',
     opacity: 0.9,
-    marginBottom: theme.spacing[2],
+    marginBottom: responsive.spacing[2],
   },
   summaryAmount: {
-    fontSize: 28,
+    fontSize: responsive.fontSize.h3,
+    lineHeight: responsive.fontSize.h3 * 1.5,
     fontWeight: '700',
     color: '#FFFFFF',
   },
   summaryLabel: {
-    fontSize: 14,
+    fontSize: responsive.fontSize.sm,
+    lineHeight: responsive.fontSize.sm * 1.5,
     color: '#FFFFFF',
     opacity: 0.8,
-    marginBottom: theme.spacing[4],
+    marginBottom: responsive.spacing[4],
   },
   progressBarContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: theme.spacing[4],
+    marginBottom: responsive.spacing[4],
   },
   progressBarBackground: {
     flex: 1,
@@ -280,7 +285,7 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(255, 255, 255, 0.3)',
     borderRadius: 4,
     overflow: 'hidden',
-    marginRight: theme.spacing[2],
+    marginRight: responsive.spacing[2],
   },
   progressBarFill: {
     height: '100%',
@@ -288,7 +293,8 @@ const styles = StyleSheet.create({
     borderRadius: 4,
   },
   progressPercentage: {
-    fontSize: 14,
+    fontSize: responsive.fontSize.sm,
+    lineHeight: responsive.fontSize.sm * 1.5,
     fontWeight: '600',
     color: '#FFFFFF',
     width: 40,
@@ -304,31 +310,34 @@ const styles = StyleSheet.create({
     width: 1,
     height: 32,
     backgroundColor: 'rgba(255, 255, 255, 0.3)',
-    marginHorizontal: theme.spacing[4],
+    marginHorizontal: responsive.spacing[4],
   },
   statLabel: {
-    fontSize: 12,
+    fontSize: responsive.fontSize.xs,
+    lineHeight: responsive.fontSize.xs * 1.5,
     color: '#FFFFFF',
     opacity: 0.8,
     marginBottom: 4,
   },
   statValue: {
-    fontSize: 18,
+    fontSize: responsive.fontSize.lg,
+    lineHeight: responsive.fontSize.lg * 1.5,
     fontWeight: '700',
     color: '#FFFFFF',
   },
   section: {
-    marginBottom: theme.spacing[6],
+    marginBottom: responsive.spacing[6],
   },
   sectionHeader: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: theme.spacing[4],
+    marginBottom: responsive.spacing[4],
   },
   sectionTitle: {
     ...theme.typography.styles.h3,
-    fontSize: 18,
+    fontSize: responsive.fontSize.lg,
+    lineHeight: responsive.fontSize.lg * 1.5,
   },
   seeAllText: {
     ...theme.typography.styles.bodySmall,
@@ -338,15 +347,15 @@ const styles = StyleSheet.create({
   categoryCard: {
     backgroundColor: theme.colors.background.primary,
     borderRadius: theme.borderRadius.xl,
-    padding: theme.spacing[4],
-    marginBottom: theme.spacing[2],
+    padding: responsive.spacing[4],
+    marginBottom: responsive.spacing[2],
     ...theme.shadows.sm,
   },
   categoryHeader: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: theme.spacing[2],
+    marginBottom: responsive.spacing[2],
   },
   categoryInfo: {
     flexDirection: 'row',
@@ -354,8 +363,9 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   categoryEmoji: {
-    fontSize: 24,
-    marginRight: theme.spacing[2],
+    fontSize: responsive.fontSize.h4,
+    lineHeight: responsive.fontSize.h4 * 1.5,
+    marginRight: responsive.spacing[2],
   },
   categoryName: {
     ...theme.typography.styles.body,
@@ -390,8 +400,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     backgroundColor: theme.colors.background.primary,
     borderRadius: theme.borderRadius.xl,
-    padding: theme.spacing[4],
-    marginBottom: theme.spacing[2],
+    padding: responsive.spacing[4],
+    marginBottom: responsive.spacing[2],
     ...theme.shadows.sm,
   },
   billInfo: {
@@ -400,8 +410,9 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   billEmoji: {
-    fontSize: 24,
-    marginRight: theme.spacing[2],
+    fontSize: responsive.fontSize.h4,
+    lineHeight: responsive.fontSize.h4 * 1.5,
+    marginRight: responsive.spacing[2],
   },
   billName: {
     ...theme.typography.styles.body,
@@ -423,8 +434,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     backgroundColor: theme.colors.background.primary,
     borderRadius: theme.borderRadius.xl,
-    padding: theme.spacing[4],
-    marginBottom: theme.spacing[2],
+    padding: responsive.spacing[4],
+    marginBottom: responsive.spacing[2],
     ...theme.shadows.sm,
   },
   transactionInfo: {
@@ -433,8 +444,9 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   transactionEmoji: {
-    fontSize: 24,
-    marginRight: theme.spacing[2],
+    fontSize: responsive.fontSize.h4,
+    lineHeight: responsive.fontSize.h4 * 1.5,
+    marginRight: responsive.spacing[2],
   },
   transactionName: {
     ...theme.typography.styles.body,
@@ -466,7 +478,7 @@ const styles = StyleSheet.create({
   quickActions: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    gap: theme.spacing[2],
+    gap: responsive.spacing[2],
   },
   actionButton: {
     flex: 1,
@@ -478,7 +490,7 @@ const styles = StyleSheet.create({
     borderRadius: 28,
     alignItems: 'center',
     justifyContent: 'center',
-    marginBottom: theme.spacing[2],
+    marginBottom: responsive.spacing[2],
   },
   actionText: {
     ...theme.typography.styles.bodySmall,

@@ -4,6 +4,7 @@ import { useRouter } from 'expo-router';
 import { Screen } from '@/components/layout/Screen';
 import { Button } from '@/components/ui/Button';
 import { theme } from '@/constants/theme';
+import { responsive, ms } from '@/constants/responsive';
 import { Ionicons } from '@expo/vector-icons';
 
 export default function ContactSupport() {
@@ -101,38 +102,39 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    paddingHorizontal: theme.spacing[4],
-    paddingVertical: theme.spacing[2],
+    paddingHorizontal: responsive.spacing[4],
+    paddingVertical: responsive.spacing[2],
     backgroundColor: theme.colors.background.primary,
     borderBottomWidth: 1,
     borderBottomColor: theme.colors.border.light,
   },
   headerButton: {
-    padding: theme.spacing[2],
+    padding: responsive.spacing[2],
   },
   headerTitle: {
     ...theme.typography.styles.h3,
-    fontSize: 18,
+    fontSize: responsive.fontSize.lg,
+    lineHeight: responsive.fontSize.lg * 1.5,
   },
   placeholder: {
     width: 40,
   },
   content: {
-    padding: theme.spacing[6],
-    paddingBottom: theme.spacing[8],
+    padding: responsive.spacing[6],
+    paddingBottom: responsive.spacing[8],
   },
   card: {
     backgroundColor: theme.colors.background.primary,
     borderRadius: theme.borderRadius.xl,
-    padding: theme.spacing[6],
-    marginBottom: theme.spacing[4],
+    padding: responsive.spacing[6],
+    marginBottom: responsive.spacing[4],
     ...theme.shadows.sm,
   },
   label: {
     ...theme.typography.styles.bodySmall,
     color: theme.colors.text.secondary,
-    marginBottom: theme.spacing[2],
-    marginTop: theme.spacing[4],
+    marginBottom: responsive.spacing[2],
+    marginTop: responsive.spacing[4],
   },
   selectButton: {
     flexDirection: 'row',
@@ -140,8 +142,8 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     backgroundColor: theme.colors.background.tertiary,
     borderRadius: theme.borderRadius.xl,
-    padding: theme.spacing[2],
-    marginBottom: theme.spacing[4],
+    padding: responsive.spacing[2],
+    marginBottom: responsive.spacing[4],
   },
   selectButtonText: {
     ...theme.typography.styles.body,
@@ -151,14 +153,14 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: theme.colors.border.main,
     borderRadius: theme.borderRadius.xl,
-    padding: theme.spacing[2],
+    padding: responsive.spacing[2],
     ...theme.typography.styles.body,
     color: theme.colors.text.primary,
-    marginBottom: theme.spacing[4],
+    marginBottom: responsive.spacing[4],
   },
   textArea: {
     minHeight: 120,
-    paddingTop: theme.spacing[2],
+    paddingTop: responsive.spacing[2],
   },
   attachButton: {
     flexDirection: 'row',
@@ -166,19 +168,19 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     backgroundColor: theme.colors.background.tertiary,
     borderRadius: theme.borderRadius.xl,
-    padding: theme.spacing[2],
-    marginBottom: theme.spacing[4],
+    padding: responsive.spacing[2],
+    marginBottom: responsive.spacing[4],
   },
   attachButtonText: {
     ...theme.typography.styles.button,
-    marginLeft: theme.spacing[2],
+    marginLeft: responsive.spacing[2],
     fontWeight: '600',
   },
   emailBox: {
     backgroundColor: theme.colors.background.tertiary,
     borderRadius: theme.borderRadius.xl,
-    padding: theme.spacing[4],
-    marginBottom: theme.spacing[4],
+    padding: responsive.spacing[4],
+    marginBottom: responsive.spacing[4],
   },
   emailLabel: {
     ...theme.typography.styles.bodySmall,
@@ -192,13 +194,13 @@ const styles = StyleSheet.create({
   infoCard: {
     backgroundColor: theme.colors.info.light,
     borderRadius: theme.borderRadius.xl,
-    padding: theme.spacing[6],
+    padding: responsive.spacing[6],
     alignItems: 'center',
   },
   infoLabel: {
     ...theme.typography.styles.bodySmall,
     color: theme.colors.info.dark,
-    marginBottom: theme.spacing[2],
+    marginBottom: responsive.spacing[2],
   },
   infoText: {
     ...theme.typography.styles.body,

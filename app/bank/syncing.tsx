@@ -3,6 +3,7 @@ import { View, Text, StyleSheet, Animated } from 'react-native';
 import { useRouter } from 'expo-router';
 import { Screen } from '@/components/layout/Screen';
 import { theme } from '@/constants/theme';
+import { responsive, ms } from '@/constants/responsive';
 import { Ionicons } from '@expo/vector-icons';
 
 export default function SyncingInProgress() {
@@ -126,11 +127,11 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    paddingHorizontal: theme.spacing[6],
+    paddingHorizontal: responsive.spacing[6],
   },
   iconContainer: {
     position: 'relative',
-    marginBottom: theme.spacing[8],
+    marginBottom: responsive.spacing[8],
     alignItems: 'center',
     justifyContent: 'center',
   },
@@ -153,15 +154,16 @@ const styles = StyleSheet.create({
   },
   title: {
     ...theme.typography.styles.h1,
-    fontSize: 16,
+    fontSize: responsive.fontSize.md,
+    lineHeight: responsive.fontSize.md * 1.5,
     textAlign: 'center',
-    marginBottom: theme.spacing[8],
+    marginBottom: responsive.spacing[8],
     color: theme.colors.text.primary,
   },
   progressContainer: {
     width: '100%',
     maxWidth: 300,
-    marginBottom: theme.spacing[6],
+    marginBottom: responsive.spacing[6],
   },
   progressBar: {
     width: '100%',
@@ -179,7 +181,7 @@ const styles = StyleSheet.create({
     ...theme.typography.styles.bodySmall,
     color: theme.colors.text.secondary,
     textAlign: 'center',
-    marginTop: theme.spacing[2],
+    marginTop: responsive.spacing[2],
   },
   statusContainer: {
     alignItems: 'center',
@@ -188,7 +190,7 @@ const styles = StyleSheet.create({
     ...theme.typography.styles.body,
     color: theme.colors.text.secondary,
     textAlign: 'center',
-    marginBottom: theme.spacing[2],
+    marginBottom: responsive.spacing[2],
   },
   statusSubtext: {
     ...theme.typography.styles.bodySmall,
@@ -196,8 +198,8 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
   footer: {
-    paddingHorizontal: theme.spacing[6],
-    paddingBottom: theme.spacing[8],
+    paddingHorizontal: responsive.spacing[6],
+    paddingBottom: responsive.spacing[8],
     alignItems: 'center',
   },
   footerText: {

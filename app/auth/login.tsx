@@ -7,6 +7,7 @@ import { Input } from '@/components/ui/Input';
 import { theme } from '@/constants/theme';
 import { Ionicons } from '@expo/vector-icons';
 import { useScreenTracker } from '@/utils/screenTracker';
+import { responsive, wp, hp, ms } from '@/constants/responsive';
 
 export default function LoginScreen() {
   useScreenTracker('LoginScreen');
@@ -29,7 +30,7 @@ export default function LoginScreen() {
             style={styles.backButton}
             onPress={() => router.back()}
           >
-            <Ionicons name="chevron-back" size={24} color={theme.colors.text.primary} />
+            <Ionicons name="chevron-back" size={responsive.layout.iconMd} color={theme.colors.text.primary} />
           </TouchableOpacity>
         </View>
 
@@ -61,7 +62,7 @@ export default function LoginScreen() {
               <TouchableOpacity onPress={() => setShowPassword(!showPassword)}>
                 <Ionicons
                   name={showPassword ? 'eye-off' : 'eye'}
-                  size={20}
+                  size={responsive.layout.iconSm}
                   color={theme.colors.text.tertiary}
                 />
               </TouchableOpacity>
@@ -83,7 +84,7 @@ export default function LoginScreen() {
                 ]}
               >
                 {formData.rememberMe && (
-                  <Ionicons name="checkmark" size={14} color="white" />
+                  <Ionicons name="checkmark" size={ms(14)} color="white" />
                 )}
               </View>
               <Text style={styles.checkboxLabel}>Remember me</Text>
@@ -124,7 +125,7 @@ export default function LoginScreen() {
             }}
           >
             <View style={styles.biometricContent}>
-              <Ionicons name="finger-print" size={24} color={theme.colors.primary[600]} />
+              <Ionicons name="finger-print" size={responsive.layout.iconMd} color={theme.colors.primary[600]} />
               <Text style={styles.biometricText}>Login with Face ID</Text>
             </View>
           </Button>
@@ -139,7 +140,7 @@ export default function LoginScreen() {
 
           <Button variant="secondary" fullWidth style={styles.socialButton}>
             <View style={styles.socialContent}>
-              <Ionicons name="logo-apple" size={20} color={theme.colors.text.primary} />
+              <Ionicons name="logo-apple" size={responsive.layout.iconSm} color={theme.colors.text.primary} />
               <Text style={styles.socialText}>Continue with Apple</Text>
             </View>
           </Button>
@@ -159,48 +160,53 @@ export default function LoginScreen() {
 
 const styles = StyleSheet.create({
   header: {
-    padding: theme.spacing[4],
+    padding: responsive.spacing[4],
   },
   backButton: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
+    width: ms(40),
+    height: ms(40),
+    borderRadius: ms(20),
     backgroundColor: theme.colors.background.tertiary,
     alignItems: 'center',
     justifyContent: 'center',
   },
   content: {
     flex: 1,
-    padding: theme.spacing[6],
+    padding: responsive.spacing[6],
+    maxWidth: responsive.layout.maxContentWidth,
+    width: '100%',
+    alignSelf: 'center',
   },
   titleContainer: {
-    marginBottom: theme.spacing[8],
+    marginBottom: responsive.device.isShortDevice ? responsive.spacing[6] : responsive.spacing[8],
   },
   title: {
     ...theme.typography.styles.h1,
-    fontSize: 32,
-    marginBottom: theme.spacing[2],
+    fontSize: responsive.fontSize.h2,
+    lineHeight: responsive.fontSize.h2 * 1.3,
+    marginBottom: responsive.spacing[2],
   },
   subtitle: {
     ...theme.typography.styles.body,
-    fontSize: 16,
+    fontSize: responsive.fontSize.base,
+    lineHeight: responsive.fontSize.base * 1.5,
     color: theme.colors.text.secondary,
   },
   optionsRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: theme.spacing[6],
+    marginBottom: responsive.spacing[6],
   },
   checkboxContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: theme.spacing[2],
+    gap: responsive.spacing[2],
   },
   checkbox: {
-    width: 16,
-    height: 16,
-    borderRadius: 4,
+    width: ms(16),
+    height: ms(16),
+    borderRadius: ms(4),
     borderWidth: 2,
     borderColor: theme.colors.border.main,
     alignItems: 'center',
@@ -212,20 +218,22 @@ const styles = StyleSheet.create({
   },
   checkboxLabel: {
     ...theme.typography.styles.bodySmall,
-    fontSize: 14,
+    fontSize: responsive.fontSize.sm,
+    lineHeight: responsive.fontSize.sm * 1.5,
     color: theme.colors.text.secondary,
   },
   forgotPassword: {
     ...theme.typography.styles.bodySmall,
-    fontSize: 14,
+    fontSize: responsive.fontSize.sm,
+    lineHeight: responsive.fontSize.sm * 1.5,
     color: theme.colors.primary[500],
     fontWeight: '600',
   },
   divider: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginVertical: theme.spacing[6],
-    gap: theme.spacing[4],
+    marginVertical: responsive.spacing[6],
+    gap: responsive.spacing[4],
   },
   dividerLine: {
     flex: 1,
@@ -234,56 +242,61 @@ const styles = StyleSheet.create({
   },
   dividerText: {
     ...theme.typography.styles.caption,
-    fontSize: 12,
+    fontSize: responsive.fontSize.xs,
+    lineHeight: responsive.fontSize.xs * 1.4,
     color: theme.colors.text.tertiary,
   },
   biometricButton: {
-    marginBottom: theme.spacing[4],
+    marginBottom: responsive.spacing[4],
     borderWidth: 2,
     borderColor: theme.colors.primary[600],
   },
   biometricContent: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: theme.spacing[4],
+    gap: responsive.spacing[4],
   },
   biometricText: {
     ...theme.typography.styles.button,
-    fontSize: 16,
+    fontSize: responsive.fontSize.base,
+    lineHeight: responsive.fontSize.base * 1.5,
     color: theme.colors.primary[600],
   },
   socialButton: {
-    marginBottom: theme.spacing[4],
+    marginBottom: responsive.spacing[4],
   },
   socialContent: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: theme.spacing[4],
+    gap: responsive.spacing[4],
   },
   socialIcon: {
-    fontSize: 18,
+    fontSize: responsive.fontSize.md,
     fontWeight: 'bold',
   },
   socialText: {
     ...theme.typography.styles.button,
-    fontSize: 16,
+    fontSize: responsive.fontSize.base,
+    lineHeight: responsive.fontSize.base * 1.5,
     color: theme.colors.text.primary,
   },
   signupContainer: {
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
-    marginTop: theme.spacing[4],
-    paddingBottom: theme.spacing[8],
+    marginTop: responsive.spacing[4],
+    paddingBottom: responsive.spacing[8],
   },
   signupText: {
     ...theme.typography.styles.body,
-    fontSize: 16,
+    fontSize: responsive.fontSize.base,
+    lineHeight: responsive.fontSize.base * 1.5,
     color: theme.colors.text.secondary,
   },
   signupLink: {
     ...theme.typography.styles.body,
-    fontSize: 16,
+    fontSize: responsive.fontSize.base,
+    lineHeight: responsive.fontSize.base * 1.5,
     color: theme.colors.primary[500],
     fontWeight: '600',
   },

@@ -3,6 +3,7 @@ import { View, Text, StyleSheet, TouchableOpacity, ScrollView } from 'react-nati
 import { useRouter } from 'expo-router';
 import { Screen } from '@/components/layout/Screen';
 import { theme } from '@/constants/theme';
+import { responsive, ms } from '@/constants/responsive';
 import { Ionicons } from '@expo/vector-icons';
 
 interface Transaction {
@@ -187,42 +188,44 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    paddingHorizontal: theme.spacing[4],
-    paddingVertical: theme.spacing[2],
+    paddingHorizontal: responsive.spacing[4],
+    paddingVertical: responsive.spacing[2],
     backgroundColor: theme.colors.primary[600],
   },
   headerButton: {
-    padding: theme.spacing[2],
+    padding: responsive.spacing[2],
   },
   headerTitle: {
-    fontSize: 18,
+    fontSize: responsive.fontSize.lg,
+    lineHeight: responsive.fontSize.lg * 1.5,
     fontWeight: '700',
     color: '#FFFFFF',
   },
   doneText: {
-    fontSize: 16,
+    fontSize: responsive.fontSize.md,
+    lineHeight: responsive.fontSize.md * 1.5,
     fontWeight: '700',
     color: '#FFFFFF',
   },
   content: {
-    padding: theme.spacing[4],
+    padding: responsive.spacing[4],
     paddingBottom: 180, // Space for action bar
   },
   dateGroup: {
-    marginBottom: theme.spacing[4],
+    marginBottom: responsive.spacing[4],
   },
   dateHeader: {
     ...theme.typography.styles.bodySmall,
     fontWeight: '700',
     color: theme.colors.text.secondary,
-    marginBottom: theme.spacing[2],
-    paddingHorizontal: theme.spacing[2],
+    marginBottom: responsive.spacing[2],
+    paddingHorizontal: responsive.spacing[2],
   },
   transactionCard: {
     backgroundColor: theme.colors.background.primary,
     borderRadius: theme.borderRadius.xl,
-    padding: theme.spacing[4],
-    marginBottom: theme.spacing[2],
+    padding: responsive.spacing[4],
+    marginBottom: responsive.spacing[2],
     borderWidth: 2,
     borderColor: 'transparent',
     ...theme.shadows.sm,
@@ -242,7 +245,7 @@ const styles = StyleSheet.create({
     borderWidth: 2,
     borderColor: theme.colors.border.main,
     backgroundColor: theme.colors.background.primary,
-    marginRight: theme.spacing[4],
+    marginRight: responsive.spacing[4],
     alignItems: 'center',
     justifyContent: 'center',
   },
@@ -263,7 +266,8 @@ const styles = StyleSheet.create({
     color: theme.colors.text.secondary,
   },
   transactionAmount: {
-    fontSize: 18,
+    fontSize: responsive.fontSize.lg,
+    lineHeight: responsive.fontSize.lg * 1.5,
     fontWeight: '700',
     color: theme.colors.danger.main,
   },
@@ -275,16 +279,16 @@ const styles = StyleSheet.create({
     backgroundColor: theme.colors.background.primary,
     borderTopWidth: 1,
     borderTopColor: theme.colors.border.light,
-    padding: theme.spacing[6],
-    gap: theme.spacing[2],
+    padding: responsive.spacing[6],
+    gap: responsive.spacing[2],
   },
   actionRow: {
     flexDirection: 'row',
-    gap: theme.spacing[2],
+    gap: responsive.spacing[2],
   },
   actionButtonPrimary: {
     flex: 1,
-    paddingVertical: theme.spacing[4],
+    paddingVertical: responsive.spacing[4],
     backgroundColor: theme.colors.primary[600],
     borderRadius: theme.borderRadius.xl,
     alignItems: 'center',
@@ -297,7 +301,7 @@ const styles = StyleSheet.create({
   },
   actionButtonSecondary: {
     flex: 1,
-    paddingVertical: theme.spacing[4],
+    paddingVertical: responsive.spacing[4],
     backgroundColor: theme.colors.background.tertiary,
     borderRadius: theme.borderRadius.xl,
     alignItems: 'center',
@@ -309,7 +313,7 @@ const styles = StyleSheet.create({
   },
   actionButtonDanger: {
     flex: 1,
-    paddingVertical: theme.spacing[4],
+    paddingVertical: responsive.spacing[4],
     backgroundColor: '#FEF2F2',
     borderRadius: theme.borderRadius.xl,
     alignItems: 'center',

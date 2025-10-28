@@ -4,6 +4,7 @@ import { useRouter } from 'expo-router';
 import { Screen } from '@/components/layout/Screen';
 import { Button } from '@/components/ui/Button';
 import { theme } from '@/constants/theme';
+import { responsive, ms } from '@/constants/responsive';
 import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
 
@@ -246,14 +247,14 @@ const styles = StyleSheet.create({
   header: {
     flexDirection: 'row',
     alignItems: 'center',
-    paddingHorizontal: theme.spacing[4],
-    paddingTop: theme.spacing[4],
-    paddingBottom: theme.spacing[2],
+    paddingHorizontal: responsive.spacing[4],
+    paddingTop: responsive.spacing[4],
+    paddingBottom: responsive.spacing[2],
     backgroundColor: theme.colors.background.primary,
-    gap: theme.spacing[2],
+    gap: responsive.spacing[2],
   },
   backButton: {
-    padding: theme.spacing[2],
+    padding: responsive.spacing[2],
   },
   searchBar: {
     flex: 1,
@@ -261,9 +262,9 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     backgroundColor: theme.colors.background.tertiary,
     borderRadius: theme.borderRadius.xl,
-    paddingHorizontal: theme.spacing[4],
-    paddingVertical: theme.spacing[2],
-    gap: theme.spacing[2],
+    paddingHorizontal: responsive.spacing[4],
+    paddingVertical: responsive.spacing[2],
+    gap: responsive.spacing[2],
   },
   searchInput: {
     flex: 1,
@@ -271,8 +272,8 @@ const styles = StyleSheet.create({
     color: theme.colors.text.primary,
   },
   clearButtonContainer: {
-    paddingHorizontal: theme.spacing[6],
-    paddingBottom: theme.spacing[2],
+    paddingHorizontal: responsive.spacing[6],
+    paddingBottom: responsive.spacing[2],
     backgroundColor: theme.colors.background.primary,
     borderBottomWidth: 1,
     borderBottomColor: theme.colors.border.light,
@@ -283,41 +284,44 @@ const styles = StyleSheet.create({
     color: theme.colors.primary[600],
   },
   content: {
-    padding: theme.spacing[6],
+    padding: responsive.spacing[6],
     paddingBottom: 100, // Space for filter bar
   },
   summaryCard: {
     borderRadius: theme.borderRadius.xl,
-    padding: theme.spacing[4],
-    marginBottom: theme.spacing[6],
+    padding: responsive.spacing[4],
+    marginBottom: responsive.spacing[6],
     ...theme.shadows.lg,
   },
   summaryNumber: {
-    fontSize: 32,
+    fontSize: responsive.fontSize.h2,
+    lineHeight: responsive.fontSize.h2 * 1.5,
     fontWeight: '700',
     color: '#FFFFFF',
-    marginBottom: theme.spacing[2],
+    marginBottom: responsive.spacing[2],
   },
   summaryText: {
-    fontSize: 14,
+    fontSize: responsive.fontSize.sm,
+    lineHeight: responsive.fontSize.sm * 1.5,
     color: '#FFFFFF',
     opacity: 0.9,
   },
   section: {
-    marginBottom: theme.spacing[6],
+    marginBottom: responsive.spacing[6],
   },
   sectionHeader: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: theme.spacing[4],
+    marginBottom: responsive.spacing[4],
   },
   sectionTitle: {
     ...theme.typography.styles.h3,
-    fontSize: 18,
+    fontSize: responsive.fontSize.lg,
+    lineHeight: responsive.fontSize.lg * 1.5,
   },
   countBadge: {
-    paddingHorizontal: theme.spacing[2],
+    paddingHorizontal: responsive.spacing[2],
     paddingVertical: 4,
     backgroundColor: theme.colors.background.tertiary,
     borderRadius: theme.borderRadius.full,
@@ -330,8 +334,8 @@ const styles = StyleSheet.create({
   resultCard: {
     backgroundColor: theme.colors.background.primary,
     borderRadius: theme.borderRadius.xl,
-    padding: theme.spacing[4],
-    marginBottom: theme.spacing[2],
+    padding: responsive.spacing[4],
+    marginBottom: responsive.spacing[2],
     ...theme.shadows.sm,
   },
   resultContent: {
@@ -341,26 +345,28 @@ const styles = StyleSheet.create({
   },
   resultLeft: {
     flex: 1,
-    marginRight: theme.spacing[4],
+    marginRight: responsive.spacing[4],
   },
   resultName: {
     ...theme.typography.styles.h3,
-    fontSize: 18,
-    marginBottom: theme.spacing[1],
+    fontSize: responsive.fontSize.lg,
+    lineHeight: responsive.fontSize.lg * 1.5,
+    marginBottom: responsive.spacing[1],
   },
   resultMeta: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: theme.spacing[2],
+    gap: responsive.spacing[2],
   },
   categoryBadge: {
-    paddingHorizontal: theme.spacing[2],
+    paddingHorizontal: responsive.spacing[2],
     paddingVertical: 4,
     backgroundColor: theme.colors.background.tertiary,
     borderRadius: theme.borderRadius.full,
   },
   categoryBadgeText: {
-    fontSize: 12,
+    fontSize: responsive.fontSize.xs,
+    lineHeight: responsive.fontSize.xs * 1.5,
     fontWeight: '600',
     color: theme.colors.text.secondary,
   },
@@ -376,10 +382,11 @@ const styles = StyleSheet.create({
     alignItems: 'flex-end',
   },
   resultAmount: {
-    fontSize: 20,
+    fontSize: responsive.fontSize.xl,
+    lineHeight: responsive.fontSize.xl * 1.5,
     fontWeight: '700',
     color: theme.colors.danger.main,
-    marginBottom: theme.spacing[1],
+    marginBottom: responsive.spacing[1],
   },
   resultDate: {
     ...theme.typography.styles.bodySmall,
@@ -388,7 +395,7 @@ const styles = StyleSheet.create({
   premiumCard: {
     backgroundColor: theme.colors.background.primary,
     borderRadius: theme.borderRadius.xl,
-    padding: theme.spacing[6],
+    padding: responsive.spacing[6],
     borderWidth: 2,
     borderColor: '#FEF3C7',
     ...theme.shadows.sm,
@@ -397,27 +404,29 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: theme.spacing[2],
+    marginBottom: responsive.spacing[2],
   },
   premiumTitle: {
     ...theme.typography.styles.h3,
-    fontSize: 18,
+    fontSize: responsive.fontSize.lg,
+    lineHeight: responsive.fontSize.lg * 1.5,
   },
   premiumBadge: {
-    paddingHorizontal: theme.spacing[2],
+    paddingHorizontal: responsive.spacing[2],
     paddingVertical: 4,
     backgroundColor: theme.colors.warning.light,
     borderRadius: theme.borderRadius.full,
   },
   premiumBadgeText: {
-    fontSize: 12,
+    fontSize: responsive.fontSize.xs,
+    lineHeight: responsive.fontSize.xs * 1.5,
     fontWeight: '700',
     color: theme.colors.warning.dark,
   },
   premiumDescription: {
     ...theme.typography.styles.body,
     color: theme.colors.text.secondary,
-    marginBottom: theme.spacing[4],
+    marginBottom: responsive.spacing[4],
   },
   filterBar: {
     position: 'absolute',
@@ -427,15 +436,15 @@ const styles = StyleSheet.create({
     backgroundColor: theme.colors.background.primary,
     borderTopWidth: 1,
     borderTopColor: theme.colors.border.light,
-    paddingVertical: theme.spacing[4],
+    paddingVertical: responsive.spacing[4],
   },
   filterScrollContent: {
-    paddingHorizontal: theme.spacing[6],
-    gap: theme.spacing[2],
+    paddingHorizontal: responsive.spacing[6],
+    gap: responsive.spacing[2],
   },
   filterChip: {
-    paddingHorizontal: theme.spacing[4],
-    paddingVertical: theme.spacing[2],
+    paddingHorizontal: responsive.spacing[4],
+    paddingVertical: responsive.spacing[2],
     backgroundColor: theme.colors.background.tertiary,
     borderRadius: theme.borderRadius.full,
   },

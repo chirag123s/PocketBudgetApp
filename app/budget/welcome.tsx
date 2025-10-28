@@ -4,6 +4,7 @@ import { useRouter } from 'expo-router';
 import { Screen } from '@/components/layout/Screen';
 import { Button } from '@/components/ui/Button';
 import { theme } from '@/constants/theme';
+import { responsive, ms } from '@/constants/responsive';
 
 const templates = ['Single person', 'Couple', 'Family', 'Student', 'Homeowner'];
 
@@ -95,17 +96,18 @@ export default function BudgetSetupWelcome() {
 
 const styles = StyleSheet.create({
   content: {
-    padding: theme.spacing[6],
-    paddingBottom: theme.spacing[8],
+    padding: responsive.spacing[6],
+    paddingBottom: responsive.spacing[8],
   },
   header: {
     alignItems: 'center',
-    marginTop: theme.spacing[8],
-    marginBottom: theme.spacing[6],
+    marginTop: responsive.spacing[8],
+    marginBottom: responsive.spacing[6],
   },
   title: {
     ...theme.typography.styles.h1,
-    fontSize: 32,
+    fontSize: responsive.fontSize.h2,
+    lineHeight: responsive.fontSize.h2 * 1.5,
     textAlign: 'center',
   },
   illustrationContainer: {
@@ -114,7 +116,7 @@ const styles = StyleSheet.create({
     height: 192,
     alignItems: 'center',
     justifyContent: 'center',
-    marginBottom: theme.spacing[8],
+    marginBottom: responsive.spacing[8],
   },
   illustrationIcon: {
     fontSize: 64,
@@ -122,8 +124,8 @@ const styles = StyleSheet.create({
   descriptionCard: {
     backgroundColor: theme.colors.background.primary,
     borderRadius: theme.borderRadius.xl,
-    padding: theme.spacing[6],
-    marginBottom: theme.spacing[6],
+    padding: responsive.spacing[6],
+    marginBottom: responsive.spacing[6],
     ...theme.shadows.sm,
   },
   descriptionText: {
@@ -131,7 +133,7 @@ const styles = StyleSheet.create({
     color: theme.colors.text.secondary,
     textAlign: 'center',
     lineHeight: 24,
-    marginBottom: theme.spacing[4],
+    marginBottom: responsive.spacing[4],
   },
   timeIndicator: {
     flexDirection: 'row',
@@ -143,22 +145,22 @@ const styles = StyleSheet.create({
     height: 4,
     borderRadius: 2,
     backgroundColor: theme.colors.primary[500],
-    marginHorizontal: theme.spacing[1],
+    marginHorizontal: responsive.spacing[1],
   },
   timeText: {
     ...theme.typography.styles.bodySmall,
     color: theme.colors.text.tertiary,
   },
   benefitsContainer: {
-    gap: theme.spacing[2],
-    marginBottom: theme.spacing[8],
+    gap: responsive.spacing[2],
+    marginBottom: responsive.spacing[8],
   },
   benefitItem: {
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: theme.colors.background.primary,
     borderRadius: theme.borderRadius.xl,
-    padding: theme.spacing[4],
+    padding: responsive.spacing[4],
     ...theme.shadows.sm,
   },
   checkmarkContainer: {
@@ -168,10 +170,11 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     alignItems: 'center',
     justifyContent: 'center',
-    marginRight: theme.spacing[2],
+    marginRight: responsive.spacing[2],
   },
   checkmark: {
-    fontSize: 20,
+    fontSize: responsive.fontSize.xl,
+    lineHeight: responsive.fontSize.xl * 1.5,
     color: theme.colors.primary[600],
   },
   benefitText: {
@@ -180,32 +183,33 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   primaryButton: {
-    marginBottom: theme.spacing[2],
+    marginBottom: responsive.spacing[2],
   },
   secondaryButton: {
-    marginBottom: theme.spacing[8],
+    marginBottom: responsive.spacing[8],
   },
   templatesCard: {
     backgroundColor: theme.colors.background.tertiary,
     borderRadius: theme.borderRadius.xl,
-    padding: theme.spacing[4],
+    padding: responsive.spacing[4],
   },
   templatesLabel: {
     ...theme.typography.styles.label,
-    fontSize: 12,
+    fontSize: responsive.fontSize.xs,
+    lineHeight: responsive.fontSize.xs * 1.5,
     color: theme.colors.text.secondary,
     fontWeight: '600',
-    marginBottom: theme.spacing[2],
+    marginBottom: responsive.spacing[2],
   },
   templatesGrid: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    gap: theme.spacing[2],
+    gap: responsive.spacing[2],
   },
   templateChip: {
     backgroundColor: theme.colors.background.primary,
     borderRadius: theme.borderRadius.lg,
-    paddingHorizontal: theme.spacing[2],
+    paddingHorizontal: responsive.spacing[2],
     paddingVertical: 6,
   },
   templateChipText: {

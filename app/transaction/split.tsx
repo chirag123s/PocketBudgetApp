@@ -4,6 +4,7 @@ import { useRouter } from 'expo-router';
 import { Screen } from '@/components/layout/Screen';
 import { Button } from '@/components/ui/Button';
 import { theme } from '@/constants/theme';
+import { responsive, ms } from '@/constants/responsive';
 import { Ionicons } from '@expo/vector-icons';
 
 interface Split {
@@ -185,49 +186,51 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    paddingHorizontal: theme.spacing[6],
-    paddingVertical: theme.spacing[2],
+    paddingHorizontal: responsive.spacing[6],
+    paddingVertical: responsive.spacing[2],
     backgroundColor: theme.colors.background.primary,
     borderBottomWidth: 1,
     borderBottomColor: theme.colors.border.light,
   },
   backButton: {
-    padding: theme.spacing[2],
+    padding: responsive.spacing[2],
   },
   headerTitle: {
     ...theme.typography.styles.h3,
-    fontSize: 18,
+    fontSize: responsive.fontSize.lg,
+    lineHeight: responsive.fontSize.lg * 1.5,
   },
   placeholder: {
     width: 40,
   },
   content: {
-    padding: theme.spacing[6],
-    paddingBottom: theme.spacing[8],
+    padding: responsive.spacing[6],
+    paddingBottom: responsive.spacing[8],
   },
   card: {
     backgroundColor: theme.colors.background.primary,
     borderRadius: 20,
-    padding: theme.spacing[6],
-    marginBottom: theme.spacing[4],
+    padding: responsive.spacing[6],
+    marginBottom: responsive.spacing[4],
     ...theme.shadows.sm,
   },
   label: {
     ...theme.typography.styles.bodySmall,
     color: theme.colors.text.secondary,
-    marginBottom: theme.spacing[2],
+    marginBottom: responsive.spacing[2],
   },
   targetAmount: {
-    fontSize: 24,
+    fontSize: responsive.fontSize.h4,
+    lineHeight: responsive.fontSize.h4 * 1.5,
     fontWeight: '700',
     color: theme.colors.text.primary,
-    marginBottom: theme.spacing[4],
+    marginBottom: responsive.spacing[4],
   },
   statusBox: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    padding: theme.spacing[2],
+    padding: responsive.spacing[2],
     borderRadius: theme.borderRadius.xl,
   },
   statusText: {
@@ -235,13 +238,14 @@ const styles = StyleSheet.create({
     fontWeight: '600',
   },
   statusIcon: {
-    fontSize: 16,
+    fontSize: responsive.fontSize.md,
+    lineHeight: responsive.fontSize.md * 1.5,
   },
   splitHeader: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    marginBottom: theme.spacing[4],
+    marginBottom: responsive.spacing[4],
   },
   splitLabel: {
     ...theme.typography.styles.bodySmall,
@@ -260,17 +264,18 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'space-between',
     backgroundColor: theme.colors.background.secondary,
-    padding: theme.spacing[2],
+    padding: responsive.spacing[2],
     borderRadius: 20,
-    marginBottom: theme.spacing[4],
+    marginBottom: responsive.spacing[4],
   },
   selectorContent: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: theme.spacing[2],
+    gap: responsive.spacing[2],
   },
   selectorIcon: {
-    fontSize: 20,
+    fontSize: responsive.fontSize.xl,
+    lineHeight: responsive.fontSize.xl * 1.5,
   },
   selectorText: {
     ...theme.typography.styles.body,
@@ -280,39 +285,42 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: theme.colors.background.secondary,
-    padding: theme.spacing[2],
+    padding: responsive.spacing[2],
     borderRadius: 20,
   },
   currencySymbol: {
-    fontSize: 20,
+    fontSize: responsive.fontSize.xl,
+    lineHeight: responsive.fontSize.xl * 1.5,
     fontWeight: '600',
     color: theme.colors.text.primary,
-    marginRight: theme.spacing[2],
+    marginRight: responsive.spacing[2],
   },
   amountInput: {
     flex: 1,
-    fontSize: 20,
+    fontSize: responsive.fontSize.xl,
+    lineHeight: responsive.fontSize.xl * 1.5,
     fontWeight: '600',
     color: theme.colors.text.primary,
   },
   addSplitButton: {
     backgroundColor: theme.colors.background.tertiary,
-    paddingVertical: theme.spacing[2],
+    paddingVertical: responsive.spacing[2],
     borderRadius: 20,
     alignItems: 'center',
-    marginBottom: theme.spacing[6],
+    marginBottom: responsive.spacing[6],
   },
   addSplitText: {
     ...theme.typography.styles.button,
     color: theme.colors.text.secondary,
-    fontSize: 14,
+    fontSize: responsive.fontSize.sm,
+    lineHeight: responsive.fontSize.sm * 1.5,
   },
   warningBox: {
     backgroundColor: theme.colors.warning.light,
-    padding: theme.spacing[4],
+    padding: responsive.spacing[4],
     borderRadius: 20,
     alignItems: 'center',
-    marginBottom: theme.spacing[6],
+    marginBottom: responsive.spacing[6],
   },
   warningText: {
     ...theme.typography.styles.bodySmall,
@@ -320,9 +328,9 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
   validationBox: {
-    padding: theme.spacing[4],
+    padding: responsive.spacing[4],
     borderRadius: 20,
-    marginBottom: theme.spacing[6],
+    marginBottom: responsive.spacing[6],
   },
   validationText: {
     ...theme.typography.styles.bodySmall,

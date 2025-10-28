@@ -4,6 +4,7 @@ import { useRouter } from 'expo-router';
 import { Screen } from '@/components/layout/Screen';
 import { Button } from '@/components/ui/Button';
 import { theme } from '@/constants/theme';
+import { responsive, ms } from '@/constants/responsive';
 
 type SyncFrequency = 'realtime' | 'daily' | 'manual';
 type ImportHistory = '1month' | '3months' | '6months' | 'all';
@@ -151,28 +152,29 @@ export default function SyncSettings() {
 
 const styles = StyleSheet.create({
   header: {
-    paddingHorizontal: theme.spacing[6],
-    paddingVertical: theme.spacing[2],
+    paddingHorizontal: responsive.spacing[6],
+    paddingVertical: responsive.spacing[2],
     backgroundColor: theme.colors.background.primary,
     borderBottomWidth: 1,
     borderBottomColor: theme.colors.border.light,
   },
   headerTitle: {
     ...theme.typography.styles.h3,
-    fontSize: 16,
+    fontSize: responsive.fontSize.md,
+    lineHeight: responsive.fontSize.md * 1.5,
   },
   content: {
     flex: 1,
   },
   contentContainer: {
-    paddingHorizontal: theme.spacing[6],
-    paddingVertical: theme.spacing[6],
+    paddingHorizontal: responsive.spacing[6],
+    paddingVertical: responsive.spacing[6],
   },
   section: {
-    marginBottom: theme.spacing[6],
+    marginBottom: responsive.spacing[6],
   },
   sectionBorder: {
-    paddingTop: theme.spacing[6],
+    paddingTop: responsive.spacing[6],
     borderTopWidth: 1,
     borderTopColor: theme.colors.border.light,
   },
@@ -180,19 +182,19 @@ const styles = StyleSheet.create({
     ...theme.typography.styles.body,
     fontWeight: '600',
     color: theme.colors.text.primary,
-    marginBottom: theme.spacing[2],
+    marginBottom: responsive.spacing[2],
   },
   sectionDescription: {
     ...theme.typography.styles.bodySmall,
     color: theme.colors.text.secondary,
-    marginBottom: theme.spacing[4],
+    marginBottom: responsive.spacing[4],
   },
   optionsContainer: {
-    gap: theme.spacing[2],
+    gap: responsive.spacing[2],
   },
   radioOption: {
     backgroundColor: theme.colors.background.primary,
-    padding: theme.spacing[4],
+    padding: responsive.spacing[4],
     borderRadius: 20,
     borderWidth: 2,
     borderColor: theme.colors.border.light,
@@ -204,7 +206,7 @@ const styles = StyleSheet.create({
   radioContent: {
     flexDirection: 'row',
     alignItems: 'flex-start',
-    gap: theme.spacing[2],
+    gap: responsive.spacing[2],
   },
   radioCircleContainer: {
     marginTop: 2,
@@ -233,7 +235,7 @@ const styles = StyleSheet.create({
   radioLabelRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: theme.spacing[2],
+    gap: responsive.spacing[2],
   },
   radioLabel: {
     ...theme.typography.styles.body,
@@ -243,24 +245,25 @@ const styles = StyleSheet.create({
   radioDescription: {
     ...theme.typography.styles.bodySmall,
     color: theme.colors.text.secondary,
-    marginTop: theme.spacing[1],
+    marginTop: responsive.spacing[1],
   },
   premiumBadge: {
     backgroundColor: theme.colors.accent.light,
-    paddingHorizontal: theme.spacing[2],
+    paddingHorizontal: responsive.spacing[2],
     paddingVertical: 2,
     borderRadius: theme.borderRadius.full,
   },
   premiumBadgeText: {
     ...theme.typography.styles.caption,
     color: theme.colors.accent.dark,
-    fontSize: 16,
+    fontSize: responsive.fontSize.md,
+    lineHeight: responsive.fontSize.md * 1.5,
     fontWeight: '600',
   },
   buttonContainer: {
     backgroundColor: theme.colors.background.primary,
     borderTopWidth: 1,
     borderTopColor: theme.colors.border.light,
-    padding: theme.spacing[6],
+    padding: responsive.spacing[6],
   },
 });

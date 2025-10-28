@@ -4,6 +4,7 @@ import { useRouter } from 'expo-router';
 import { Screen } from '@/components/layout/Screen';
 import { Button } from '@/components/ui/Button';
 import { theme } from '@/constants/theme';
+import { responsive, ms } from '@/constants/responsive';
 import { Ionicons } from '@expo/vector-icons';
 
 const categoryData = {
@@ -202,14 +203,14 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    paddingHorizontal: theme.spacing[4],
-    paddingVertical: theme.spacing[2],
+    paddingHorizontal: responsive.spacing[4],
+    paddingVertical: responsive.spacing[2],
     backgroundColor: theme.colors.background.primary,
     borderBottomWidth: 1,
     borderBottomColor: theme.colors.border.light,
   },
   headerButton: {
-    padding: theme.spacing[2],
+    padding: responsive.spacing[2],
   },
   headerCenter: {
     flex: 1,
@@ -218,37 +219,40 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   headerIcon: {
-    fontSize: 20,
-    marginRight: theme.spacing[2],
+    fontSize: responsive.fontSize.xl,
+    lineHeight: responsive.fontSize.xl * 1.5,
+    marginRight: responsive.spacing[2],
   },
   headerTitle: {
     ...theme.typography.styles.h3,
-    fontSize: 18,
+    fontSize: responsive.fontSize.lg,
+    lineHeight: responsive.fontSize.lg * 1.5,
   },
   overviewCard: {
     backgroundColor: theme.colors.background.primary,
-    paddingHorizontal: theme.spacing[6],
-    paddingVertical: theme.spacing[8],
+    paddingHorizontal: responsive.spacing[6],
+    paddingVertical: responsive.spacing[8],
     borderBottomWidth: 1,
     borderBottomColor: theme.colors.border.light,
   },
   periodText: {
     ...theme.typography.styles.bodySmall,
     color: theme.colors.text.tertiary,
-    marginBottom: theme.spacing[2],
+    marginBottom: responsive.spacing[2],
   },
   amountText: {
-    fontSize: 36,
+    fontSize: responsive.fontSize.h1,
+    lineHeight: responsive.fontSize.h1 * 1.5,
     fontWeight: '700',
     color: theme.colors.text.primary,
-    marginBottom: theme.spacing[2],
+    marginBottom: responsive.spacing[2],
   },
   progressBar: {
     height: 8,
     backgroundColor: theme.colors.background.tertiary,
     borderRadius: theme.borderRadius.full,
     overflow: 'hidden',
-    marginBottom: theme.spacing[2],
+    marginBottom: responsive.spacing[2],
   },
   progressFill: {
     height: '100%',
@@ -268,25 +272,25 @@ const styles = StyleSheet.create({
     color: theme.colors.text.secondary,
   },
   content: {
-    padding: theme.spacing[6],
+    padding: responsive.spacing[6],
   },
   card: {
     backgroundColor: theme.colors.background.primary,
     borderRadius: theme.borderRadius.xl,
-    padding: theme.spacing[4],
-    marginBottom: theme.spacing[4],
+    padding: responsive.spacing[4],
+    marginBottom: responsive.spacing[4],
     ...theme.shadows.sm,
   },
   cardTitle: {
     ...theme.typography.styles.body,
     fontWeight: '600',
-    marginBottom: theme.spacing[4],
+    marginBottom: responsive.spacing[4],
   },
   cardHeader: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    marginBottom: theme.spacing[4],
+    marginBottom: responsive.spacing[4],
   },
   viewAllText: {
     ...theme.typography.styles.bodySmall,
@@ -298,7 +302,7 @@ const styles = StyleSheet.create({
     alignItems: 'flex-end',
     justifyContent: 'space-between',
     height: 128,
-    marginBottom: theme.spacing[4],
+    marginBottom: responsive.spacing[4],
   },
   chartBar: {
     flex: 1,
@@ -314,14 +318,14 @@ const styles = StyleSheet.create({
   chartLabel: {
     ...theme.typography.styles.caption,
     color: theme.colors.text.tertiary,
-    marginTop: theme.spacing[1],
+    marginTop: responsive.spacing[1],
   },
   statsRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     borderTopWidth: 1,
     borderTopColor: theme.colors.border.light,
-    paddingTop: theme.spacing[2],
+    paddingTop: responsive.spacing[2],
   },
   statItem: {
     flex: 1,
@@ -329,26 +333,26 @@ const styles = StyleSheet.create({
   statLabel: {
     ...theme.typography.styles.caption,
     color: theme.colors.text.tertiary,
-    marginBottom: theme.spacing[1],
+    marginBottom: responsive.spacing[1],
   },
   statValue: {
     ...theme.typography.styles.body,
     fontWeight: '600',
   },
   transactionsContainer: {
-    gap: theme.spacing[2],
+    gap: responsive.spacing[2],
   },
   dateLabel: {
     ...theme.typography.styles.caption,
     color: theme.colors.text.tertiary,
     fontWeight: '600',
-    marginBottom: theme.spacing[2],
+    marginBottom: responsive.spacing[2],
   },
   transactionRow: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    paddingVertical: theme.spacing[2],
+    paddingVertical: responsive.spacing[2],
   },
   merchantName: {
     ...theme.typography.styles.body,
@@ -360,7 +364,7 @@ const styles = StyleSheet.create({
     color: theme.colors.danger.main,
   },
   merchantsContainer: {
-    gap: theme.spacing[2],
+    gap: responsive.spacing[2],
   },
   merchantRow: {
     flexDirection: 'row',
@@ -379,7 +383,7 @@ const styles = StyleSheet.create({
     borderRadius: 16,
     alignItems: 'center',
     justifyContent: 'center',
-    marginRight: theme.spacing[2],
+    marginRight: responsive.spacing[2],
   },
   rankText: {
     ...theme.typography.styles.body,
@@ -391,8 +395,8 @@ const styles = StyleSheet.create({
     fontWeight: '600',
   },
   actionsContainer: {
-    gap: theme.spacing[2],
-    marginBottom: theme.spacing[6],
+    gap: responsive.spacing[2],
+    marginBottom: responsive.spacing[6],
   },
   actionButton: {
     marginBottom: 0,
@@ -404,7 +408,7 @@ const styles = StyleSheet.create({
     borderWidth: 2,
     borderColor: theme.colors.border.main,
     borderRadius: theme.borderRadius.xl,
-    padding: theme.spacing[4],
+    padding: responsive.spacing[4],
   },
   premiumActionText: {
     ...theme.typography.styles.button,
@@ -413,20 +417,21 @@ const styles = StyleSheet.create({
   premiumBadge: {
     backgroundColor: theme.colors.warning.light,
     borderRadius: theme.borderRadius.full,
-    paddingHorizontal: theme.spacing[2],
+    paddingHorizontal: responsive.spacing[2],
     paddingVertical: 4,
   },
   premiumBadgeText: {
     ...theme.typography.styles.caption,
     color: theme.colors.warning.dark,
-    fontSize: 12,
+    fontSize: responsive.fontSize.xs,
+    lineHeight: responsive.fontSize.xs * 1.5,
     fontWeight: '500',
   },
   secondaryAction: {
     borderWidth: 2,
     borderColor: theme.colors.border.main,
     borderRadius: theme.borderRadius.xl,
-    padding: theme.spacing[4],
+    padding: responsive.spacing[4],
     alignItems: 'center',
   },
   secondaryActionText: {

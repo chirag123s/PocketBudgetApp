@@ -18,6 +18,9 @@ console.log('✅ theme imported - colors.primary[600]:', theme.colors.primary[60
 import { useScreenTracker } from '@/utils/screenTracker';
 console.log('✅ screenTracker imported');
 
+import { Screen } from '@/components/layout/Screen';
+console.log('✅ Screen component imported');
+
 console.log('📦 index.tsx MODULE LOADED - About to create StyleSheet');
 
 /**
@@ -34,25 +37,15 @@ export default function Index() {
   useEffect(() => {
     if (isLoading) return;
 
-    // Small delay for splash effect
+    // Small delay for initial loading
     const timer = setTimeout(() => {
-      if (isGuestMode) {
-        // Guest mode → Go directly to main app
-        router.replace('/tabs');
-      } else if (!isAuthenticated) {
-        // Not authenticated → Go to welcome
-        router.replace('/auth/welcome');
-      } else if (!hasCompletedOnboarding) {
-        // Authenticated but not onboarded → Go to bank connection
-        router.replace('/bank/intro');
-      } else {
-        // Fully set up → Go to main app
-        router.replace('/tabs');
-      }
-    }, 1000);
+      // Always show the branded splash screen first (app/auth/index.tsx)
+      // The splash screen will then handle the routing logic
+      router.replace('/auth');
+    }, 500);
 
     return () => clearTimeout(timer);
-  }, [isAuthenticated, isGuestMode, isLoading, hasCompletedOnboarding]);
+  }, [isLoading]);
 
   // 🔍 Check ActivityIndicator props
   const animating = true;
@@ -66,13 +59,15 @@ export default function Index() {
   }
 
   return (
-    <View style={styles.container}>
-      <ActivityIndicator
-        size="large"
-        color={activityColor}
-        animating={animating}
-      />
-    </View>
+    <Screen scrollable={false} backgroundColor={theme.colors.background.primary}>
+      <View style={styles.container}>
+        <ActivityIndicator
+          size="large"
+          color={activityColor}
+          animating={animating}
+        />
+      </View>
+    </Screen>
   );
 }
 
@@ -84,7 +79,6 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: theme.colors.background.primary,
   },
 });
 

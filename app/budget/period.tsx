@@ -4,6 +4,7 @@ import { useRouter } from 'expo-router';
 import { Screen } from '@/components/layout/Screen';
 import { Button } from '@/components/ui/Button';
 import { theme } from '@/constants/theme';
+import { responsive, ms } from '@/constants/responsive';
 import { Ionicons } from '@expo/vector-icons';
 
 interface Period {
@@ -132,14 +133,14 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    paddingHorizontal: theme.spacing[4],
-    paddingVertical: theme.spacing[2],
+    paddingHorizontal: responsive.spacing[4],
+    paddingVertical: responsive.spacing[2],
     backgroundColor: theme.colors.background.primary,
     borderBottomWidth: 1,
     borderBottomColor: theme.colors.border.light,
   },
   backButton: {
-    padding: theme.spacing[2],
+    padding: responsive.spacing[2],
   },
   headerCenter: {
     flex: 1,
@@ -147,34 +148,36 @@ const styles = StyleSheet.create({
   },
   headerTitle: {
     ...theme.typography.styles.h3,
-    fontSize: 18,
+    fontSize: responsive.fontSize.lg,
+    lineHeight: responsive.fontSize.lg * 1.5,
   },
   headerSubtitle: {
     ...theme.typography.styles.caption,
     color: theme.colors.text.tertiary,
-    marginTop: theme.spacing[1],
+    marginTop: responsive.spacing[1],
   },
   placeholder: {
     width: 40,
   },
   content: {
-    padding: theme.spacing[6],
-    paddingBottom: theme.spacing[8],
+    padding: responsive.spacing[6],
+    paddingBottom: responsive.spacing[8],
   },
   question: {
     ...theme.typography.styles.h2,
-    fontSize: 20,
+    fontSize: responsive.fontSize.xl,
+    lineHeight: responsive.fontSize.xl * 1.5,
     textAlign: 'center',
-    marginBottom: theme.spacing[6],
+    marginBottom: responsive.spacing[6],
   },
   optionsContainer: {
-    gap: theme.spacing[2],
-    marginBottom: theme.spacing[6],
+    gap: responsive.spacing[2],
+    marginBottom: responsive.spacing[6],
   },
   periodOption: {
     backgroundColor: theme.colors.background.primary,
     borderRadius: theme.borderRadius.xl,
-    padding: theme.spacing[4],
+    padding: responsive.spacing[4],
     borderWidth: 2,
     borderColor: theme.colors.border.light,
   },
@@ -199,7 +202,7 @@ const styles = StyleSheet.create({
     borderColor: theme.colors.border.main,
     alignItems: 'center',
     justifyContent: 'center',
-    marginRight: theme.spacing[2],
+    marginRight: responsive.spacing[2],
   },
   radioCircleSelected: {
     borderColor: theme.colors.primary[500],
@@ -216,7 +219,7 @@ const styles = StyleSheet.create({
   periodTitle: {
     ...theme.typography.styles.body,
     fontWeight: '600',
-    marginBottom: theme.spacing[1],
+    marginBottom: responsive.spacing[1],
   },
   periodSubtitle: {
     ...theme.typography.styles.bodySmall,
@@ -225,13 +228,14 @@ const styles = StyleSheet.create({
   badge: {
     backgroundColor: theme.colors.primary[100],
     borderRadius: theme.borderRadius.full,
-    paddingHorizontal: theme.spacing[2],
+    paddingHorizontal: responsive.spacing[2],
     paddingVertical: 4,
   },
   badgeText: {
     ...theme.typography.styles.caption,
     color: theme.colors.primary[700],
-    fontSize: 12,
+    fontSize: responsive.fontSize.xs,
+    lineHeight: responsive.fontSize.xs * 1.5,
     fontWeight: '500',
   },
   infoBox: {
@@ -239,16 +243,17 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: theme.colors.primary[200],
     borderRadius: theme.borderRadius.xl,
-    padding: theme.spacing[4],
-    marginBottom: theme.spacing[6],
+    padding: responsive.spacing[4],
+    marginBottom: responsive.spacing[6],
   },
   infoContent: {
     flexDirection: 'row',
     alignItems: 'flex-start',
   },
   infoIcon: {
-    fontSize: 24,
-    marginRight: theme.spacing[2],
+    fontSize: responsive.fontSize.h4,
+    lineHeight: responsive.fontSize.h4 * 1.5,
+    marginRight: responsive.spacing[2],
   },
   infoTextContainer: {
     flex: 1,
@@ -257,7 +262,7 @@ const styles = StyleSheet.create({
     ...theme.typography.styles.body,
     fontWeight: '600',
     color: theme.colors.primary[900],
-    marginBottom: theme.spacing[1],
+    marginBottom: responsive.spacing[1],
   },
   infoDescription: {
     ...theme.typography.styles.bodySmall,

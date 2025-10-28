@@ -4,6 +4,7 @@ import { useRouter } from 'expo-router';
 import { Screen } from '@/components/layout/Screen';
 import { Button } from '@/components/ui/Button';
 import { theme } from '@/constants/theme';
+import { responsive, ms } from '@/constants/responsive';
 import { Ionicons } from '@expo/vector-icons';
 
 interface Account {
@@ -148,31 +149,33 @@ const styles = StyleSheet.create({
   header: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: theme.spacing[2],
-    paddingHorizontal: theme.spacing[6],
-    paddingVertical: theme.spacing[2],
+    gap: responsive.spacing[2],
+    paddingHorizontal: responsive.spacing[6],
+    paddingVertical: responsive.spacing[2],
     backgroundColor: theme.colors.background.primary,
     borderBottomWidth: 1,
     borderBottomColor: theme.colors.border.light,
   },
   backButton: {
-    padding: theme.spacing[2],
+    padding: responsive.spacing[2],
   },
   headerTitle: {
     ...theme.typography.styles.h3,
-    fontSize: 24,
+    fontSize: responsive.fontSize.h4,
+    lineHeight: responsive.fontSize.h4 * 1.5,
   },
   content: {
     flex: 1,
   },
   messageContainer: {
-    paddingHorizontal: theme.spacing[6],
-    paddingVertical: theme.spacing[4],
+    paddingHorizontal: responsive.spacing[6],
+    paddingVertical: responsive.spacing[4],
     alignItems: 'center',
   },
   messageText: {
     ...theme.typography.styles.body,
-    fontSize: 16,
+    fontSize: responsive.fontSize.md,
+    lineHeight: responsive.fontSize.md * 1.5,
     color: theme.colors.text.secondary,
     textAlign: 'center',
   },
@@ -181,20 +184,20 @@ const styles = StyleSheet.create({
     color: theme.colors.text.primary,
   },
   listContent: {
-    paddingHorizontal: theme.spacing[6],
-    paddingBottom: theme.spacing[4],
+    paddingHorizontal: responsive.spacing[6],
+    paddingBottom: responsive.spacing[4],
   },
   accountItem: {
     backgroundColor: theme.colors.background.primary,
-    padding: theme.spacing[4],
-    marginBottom: theme.spacing[2],
+    padding: responsive.spacing[4],
+    marginBottom: responsive.spacing[2],
     borderRadius: 20,
     ...theme.shadows.sm,
   },
   accountContent: {
     flexDirection: 'row',
     alignItems: 'flex-start',
-    gap: theme.spacing[2],
+    gap: responsive.spacing[2],
   },
   checkbox: {
     width: 24,
@@ -215,19 +218,22 @@ const styles = StyleSheet.create({
   },
   accountName: {
     ...theme.typography.styles.body,
-    fontSize: 16,
+    fontSize: responsive.fontSize.md,
+    lineHeight: responsive.fontSize.md * 1.5,
     fontWeight: '600',
-    marginBottom: theme.spacing[1],
+    marginBottom: responsive.spacing[1],
   },
   accountNumber: {
     ...theme.typography.styles.bodySmall,
-    fontSize: 14,
+    fontSize: responsive.fontSize.sm,
+    lineHeight: responsive.fontSize.sm * 1.5,
     color: theme.colors.text.secondary,
-    marginBottom: theme.spacing[1],
+    marginBottom: responsive.spacing[1],
   },
   accountBalance: {
     ...theme.typography.styles.bodySmall,
-    fontSize: 14,
+    fontSize: responsive.fontSize.sm,
+    lineHeight: responsive.fontSize.sm * 1.5,
     fontWeight: '500',
   },
   balancePositive: {
@@ -237,22 +243,24 @@ const styles = StyleSheet.create({
     color: theme.colors.danger.main,
   },
   footer: {
-    marginTop: theme.spacing[2],
+    marginTop: responsive.spacing[2],
   },
   toggleAllText: {
     ...theme.typography.styles.button,
-    fontSize: 16,
+    fontSize: responsive.fontSize.md,
+    lineHeight: responsive.fontSize.md * 1.5,
     color: theme.colors.primary[600],
-    marginBottom: theme.spacing[4],
+    marginBottom: responsive.spacing[4],
   },
   noteContainer: {
     backgroundColor: theme.colors.info.light,
-    padding: theme.spacing[4],
+    padding: responsive.spacing[4],
     borderRadius: 20,
   },
   noteText: {
     ...theme.typography.styles.bodySmall,
-    fontSize: 14,
+    fontSize: responsive.fontSize.sm,
+    lineHeight: responsive.fontSize.sm * 1.5,
     color: theme.colors.info.dark,
   },
   noteBold: {
@@ -262,6 +270,6 @@ const styles = StyleSheet.create({
     backgroundColor: theme.colors.background.primary,
     borderTopWidth: 1,
     borderTopColor: theme.colors.border.light,
-    padding: theme.spacing[6],
+    padding: responsive.spacing[6],
   },
 });

@@ -6,6 +6,7 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { Screen } from '@/components/layout/Screen';
 import { Button } from '@/components/ui/Button';
 import { theme } from '@/constants/theme';
+import { responsive, wp, hp, ms } from '@/constants/responsive';
 
 const { width } = Dimensions.get('window');
 
@@ -97,7 +98,7 @@ export default function TutorialScreen() {
             >
               <Ionicons
                 name={currentSlideData.icon}
-                size={80}
+                size={ms(80)}
                 color="white"
               />
             </LinearGradient>
@@ -139,7 +140,7 @@ export default function TutorialScreen() {
             {isLastSlide ? "Let's Get Started" : 'Next'}
             <Ionicons
               name="chevron-forward"
-              size={20}
+              size={responsive.layout.iconSm}
               color="white"
               style={styles.buttonIcon}
             />
@@ -154,7 +155,7 @@ export default function TutorialScreen() {
             >
               <Ionicons
                 name="chevron-back"
-                size={20}
+                size={responsive.layout.iconSm}
                 color={theme.colors.text.primary}
                 style={styles.buttonIcon}
               />
@@ -170,18 +171,22 @@ export default function TutorialScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: theme.spacing[6],
+    padding: responsive.spacing[6],
+    maxWidth: responsive.layout.maxContentWidth,
+    width: '100%',
+    alignSelf: 'center',
   },
   header: {
     alignItems: 'flex-end',
-    paddingVertical: theme.spacing[4],
+    paddingVertical: responsive.spacing[4],
   },
   skipButton: {
-    padding: theme.spacing[2],
+    padding: responsive.spacing[2],
   },
   skipText: {
     ...theme.typography.styles.button,
-    fontSize: 16,
+    fontSize: responsive.fontSize.base,
+    lineHeight: responsive.fontSize.base * 1.5,
     color: theme.colors.primary[600],
   },
   content: {
@@ -190,64 +195,66 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   illustrationContainer: {
-    marginBottom: theme.spacing[8],
+    marginBottom: responsive.device.isShortDevice ? responsive.spacing[6] : responsive.spacing[8],
     position: 'relative',
   },
   mainCircle: {
-    width: 160,
-    height: 160,
-    borderRadius: 80,
+    width: ms(160),
+    height: ms(160),
+    borderRadius: ms(80),
     alignItems: 'center',
     justifyContent: 'center',
     ...theme.shadows.lg,
   },
   emojiCircle: {
     position: 'absolute',
-    bottom: -12,
-    right: -12,
-    width: 64,
-    height: 64,
-    borderRadius: 32,
+    bottom: ms(-12),
+    right: ms(-12),
+    width: ms(64),
+    height: ms(64),
+    borderRadius: ms(32),
     backgroundColor: theme.colors.background.primary,
     alignItems: 'center',
     justifyContent: 'center',
     ...theme.shadows.base,
   },
   emoji: {
-    fontSize: 32,
+    fontSize: responsive.layout.iconLg,
   },
   title: {
     ...theme.typography.styles.h2,
-    fontSize: 28,
+    fontSize: responsive.fontSize.h3,
+    lineHeight: responsive.fontSize.h3 * 1.3,
     textAlign: 'center',
-    marginBottom: theme.spacing[2],
-    paddingHorizontal: theme.spacing[4],
+    marginBottom: responsive.spacing[2],
+    paddingHorizontal: responsive.spacing[4],
   },
   description: {
     ...theme.typography.styles.body,
-    fontSize: 16,
+    fontSize: responsive.fontSize.base,
+    lineHeight: responsive.fontSize.base * 1.5,
     color: theme.colors.text.secondary,
     textAlign: 'center',
-    marginBottom: theme.spacing[12],
-    maxWidth: 320,
+    marginBottom: responsive.device.isShortDevice ? responsive.spacing[8] : responsive.spacing[12],
+    maxWidth: wp(320),
   },
   dotsContainer: {
     flexDirection: 'row',
-    gap: theme.spacing[2],
-    marginBottom: theme.spacing[8],
+    gap: responsive.spacing[2],
+    marginBottom: responsive.spacing[8],
   },
   dot: {
-    width: 8,
-    height: 8,
-    borderRadius: 4,
+    width: ms(8),
+    height: ms(8),
+    borderRadius: ms(4),
     backgroundColor: theme.colors.neutral[300],
   },
   activeDot: {
-    width: 32,
+    width: ms(32),
     backgroundColor: theme.colors.primary[600],
   },
   footer: {
-    gap: theme.spacing[2],
+    gap: responsive.spacing[2],
   },
   nextButton: {
     flexDirection: 'row',
@@ -255,6 +262,6 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   buttonIcon: {
-    marginHorizontal: theme.spacing[1],
+    marginHorizontal: responsive.spacing[1],
   },
 });

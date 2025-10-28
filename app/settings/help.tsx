@@ -3,6 +3,7 @@ import { View, Text, StyleSheet, TouchableOpacity, ScrollView, TextInput } from 
 import { useRouter } from 'expo-router';
 import { Screen } from '@/components/layout/Screen';
 import { theme } from '@/constants/theme';
+import { responsive, ms } from '@/constants/responsive';
 import { Ionicons } from '@expo/vector-icons';
 
 interface HelpTopic {
@@ -107,37 +108,38 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    paddingHorizontal: theme.spacing[4],
-    paddingVertical: theme.spacing[2],
+    paddingHorizontal: responsive.spacing[4],
+    paddingVertical: responsive.spacing[2],
     backgroundColor: theme.colors.background.primary,
     borderBottomWidth: 1,
     borderBottomColor: theme.colors.border.light,
   },
   headerButton: {
-    padding: theme.spacing[2],
+    padding: responsive.spacing[2],
   },
   headerTitle: {
     ...theme.typography.styles.h3,
-    fontSize: 18,
+    fontSize: responsive.fontSize.lg,
+    lineHeight: responsive.fontSize.lg * 1.5,
   },
   placeholder: {
     width: 40,
   },
   content: {
-    padding: theme.spacing[6],
-    paddingBottom: theme.spacing[8],
+    padding: responsive.spacing[6],
+    paddingBottom: responsive.spacing[8],
   },
   searchCard: {
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: theme.colors.background.primary,
     borderRadius: theme.borderRadius.xl,
-    padding: theme.spacing[4],
-    marginBottom: theme.spacing[6],
+    padding: responsive.spacing[4],
+    marginBottom: responsive.spacing[6],
     ...theme.shadows.sm,
   },
   searchIcon: {
-    marginRight: theme.spacing[2],
+    marginRight: responsive.spacing[2],
   },
   searchInput: {
     flex: 1,
@@ -147,17 +149,18 @@ const styles = StyleSheet.create({
   card: {
     backgroundColor: theme.colors.background.primary,
     borderRadius: theme.borderRadius.xl,
-    padding: theme.spacing[6],
-    marginBottom: theme.spacing[4],
+    padding: responsive.spacing[6],
+    marginBottom: responsive.spacing[4],
     ...theme.shadows.sm,
   },
   cardTitle: {
     ...theme.typography.styles.h3,
-    fontSize: 18,
-    marginBottom: theme.spacing[4],
+    fontSize: responsive.fontSize.lg,
+    lineHeight: responsive.fontSize.lg * 1.5,
+    marginBottom: responsive.spacing[4],
   },
   topicsList: {
-    gap: theme.spacing[2],
+    gap: responsive.spacing[2],
   },
   topicItem: {
     flexDirection: 'row',
@@ -165,19 +168,19 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     backgroundColor: theme.colors.background.tertiary,
     borderRadius: theme.borderRadius.xl,
-    padding: theme.spacing[2],
+    padding: responsive.spacing[2],
   },
   topicText: {
     ...theme.typography.styles.body,
     flex: 1,
   },
   actionsContainer: {
-    gap: theme.spacing[2],
+    gap: responsive.spacing[2],
   },
   primaryButton: {
     backgroundColor: theme.colors.primary[600],
     borderRadius: theme.borderRadius.xl,
-    padding: theme.spacing[4],
+    padding: responsive.spacing[4],
     alignItems: 'center',
     ...theme.shadows.lg,
   },
@@ -189,7 +192,7 @@ const styles = StyleSheet.create({
   secondaryButton: {
     backgroundColor: theme.colors.background.tertiary,
     borderRadius: theme.borderRadius.xl,
-    padding: theme.spacing[2],
+    padding: responsive.spacing[2],
     alignItems: 'center',
   },
   secondaryButtonText: {

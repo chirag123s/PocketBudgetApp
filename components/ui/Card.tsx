@@ -1,6 +1,7 @@
 import React from 'react';
 import { View, StyleSheet, ViewStyle } from 'react-native';
 import { theme } from '@/constants/theme';
+import { responsive } from '@/constants/responsive';
 
 /**
  * Card Component
@@ -43,10 +44,10 @@ export const Card: React.FC<CardProps> = ({
 const styles = StyleSheet.create({
   card: {
     backgroundColor: theme.colors.background.primary,
-    borderRadius: 20,
+    borderRadius: responsive.layout.cardRadius,
     overflow: 'hidden',
   },
   cardWithPadding: {
-    padding: theme.spacing[4],
+    padding: responsive.spacing[4],
   },
 });

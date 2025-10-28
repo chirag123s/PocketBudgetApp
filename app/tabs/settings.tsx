@@ -1,10 +1,13 @@
 import React from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, ScrollView } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, ScrollView, Alert } from 'react-native';
 import { useRouter } from 'expo-router';
 import { Screen } from '@/components/layout/Screen';
 import { theme } from '@/constants/theme';
+import { responsive, ms } from '@/constants/responsive';
 import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
+import { useAuth } from '@/contexts/AuthContext';
+import { clearAllStorage, checkStorageState } from '@/scripts/clearStorage';
 
 interface SettingsItem {
   title: string;
@@ -33,6 +36,7 @@ const settingsData = {
 
 export default function SettingsTab() {
   const router = useRouter();
+  const { clearAllData } = useAuth();
 
   const handleNavigation = (route?: string) => {
     if (route) {
@@ -40,8 +44,51 @@ export default function SettingsTab() {
     }
   };
 
+  const handleClearAllData = () => {
+    Alert.alert(
+      'Clear All Data',
+      'This will clear all app data including guest mode, authentication, and onboarding status. You will be returned to the welcome screen.\n\n⚠️ This action cannot be undone.',
+      [
+        {
+          text: 'Cancel',
+          style: 'cancel',
+        },
+        {
+          text: 'Clear Data',
+          style: 'destructive',
+          onPress: async () => {
+            try {
+              await clearAllStorage();
+              await clearAllData();
+              Alert.alert(
+                'Success',
+                'All data cleared. Please close and reopen the app.',
+                [
+                  {
+                    text: 'OK',
+                    onPress: () => {
+                      // App will show welcome screen on next launch
+                    },
+                  },
+                ]
+              );
+            } catch (error) {
+              Alert.alert('Error', 'Failed to clear data. Please try again.');
+              console.error('Clear data error:', error);
+            }
+          },
+        },
+      ]
+    );
+  };
+
+  const handleCheckStorage = async () => {
+    await checkStorageState();
+    Alert.alert('Storage State', 'Check console logs for storage details');
+  };
+
   return (
-    <Screen noPadding backgroundColor={theme.colors.background.secondary}>
+    <Screen edges={['top']} noPadding backgroundColor={theme.colors.background.secondary}>
       {/* Header */}
       <View style={styles.header}>
         <Text style={styles.headerTitle}>Settings</Text>
@@ -169,6 +216,40 @@ export default function SettingsTab() {
           </LinearGradient>
         </TouchableOpacity>
 
+        {/* Developer Section */}
+        <View style={styles.section}>
+          <Text style={styles.sectionTitle}>Developer</Text>
+          <View style={styles.card}>
+            <TouchableOpacity
+              style={styles.settingsItem}
+              onPress={handleCheckStorage}
+            >
+              <View style={styles.settingsItemLeft}>
+                <View style={[styles.iconContainer, { backgroundColor: theme.colors.warning.light }]}>
+                  <Ionicons name="bug-outline" size={20} color={theme.colors.warning.dark} />
+                </View>
+                <Text style={styles.settingsItemText}>Check Storage State</Text>
+              </View>
+              <Ionicons name="terminal-outline" size={20} color={theme.colors.text.tertiary} />
+            </TouchableOpacity>
+            <View style={styles.divider} />
+            <TouchableOpacity
+              style={styles.settingsItem}
+              onPress={handleClearAllData}
+            >
+              <View style={styles.settingsItemLeft}>
+                <View style={[styles.iconContainer, { backgroundColor: theme.colors.danger.light }]}>
+                  <Ionicons name="trash-outline" size={20} color={theme.colors.danger.main} />
+                </View>
+                <Text style={[styles.settingsItemText, { color: theme.colors.danger.main }]}>
+                  Clear All Data
+                </Text>
+              </View>
+              <Ionicons name="warning-outline" size={20} color={theme.colors.danger.main} />
+            </TouchableOpacity>
+          </View>
+        </View>
+
         {/* Logout Button */}
         <TouchableOpacity style={styles.logoutButton}>
           <Ionicons name="log-out-outline" size={20} color={theme.colors.danger.main} />
@@ -187,27 +268,28 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    paddingHorizontal: theme.spacing[6],
-    paddingVertical: theme.spacing[4],
+    paddingHorizontal: responsive.spacing[6],
+    paddingVertical: responsive.spacing[4],
     backgroundColor: theme.colors.background.primary,
     borderBottomWidth: 1,
     borderBottomColor: theme.colors.border.light,
   },
   headerTitle: {
     ...theme.typography.styles.h2,
-    fontSize: 24,
+    fontSize: responsive.fontSize.h4,
+    lineHeight: responsive.fontSize.h4 * 1.5,
   },
   content: {
-    padding: theme.spacing[6],
-    paddingBottom: theme.spacing[8],
+    padding: responsive.spacing[6],
+    paddingBottom: responsive.spacing[8],
   },
   profileCard: {
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: theme.colors.background.primary,
     borderRadius: theme.borderRadius.xl,
-    padding: theme.spacing[4],
-    marginBottom: theme.spacing[6],
+    padding: responsive.spacing[4],
+    marginBottom: responsive.spacing[6],
     ...theme.shadows.sm,
   },
   avatar: {
@@ -216,10 +298,11 @@ const styles = StyleSheet.create({
     borderRadius: 28,
     alignItems: 'center',
     justifyContent: 'center',
-    marginRight: theme.spacing[4],
+    marginRight: responsive.spacing[4],
   },
   avatarText: {
-    fontSize: 20,
+    fontSize: responsive.fontSize.xl,
+    lineHeight: responsive.fontSize.xl * 1.5,
     fontWeight: '700',
     color: '#FFFFFF',
   },
@@ -228,7 +311,8 @@ const styles = StyleSheet.create({
   },
   profileName: {
     ...theme.typography.styles.body,
-    fontSize: 18,
+    fontSize: responsive.fontSize.lg,
+    lineHeight: responsive.fontSize.lg * 1.5,
     fontWeight: '700',
     marginBottom: 4,
   },
@@ -237,7 +321,7 @@ const styles = StyleSheet.create({
     color: theme.colors.text.secondary,
   },
   section: {
-    marginBottom: theme.spacing[6],
+    marginBottom: responsive.spacing[6],
   },
   sectionTitle: {
     ...theme.typography.styles.bodySmall,
@@ -245,8 +329,8 @@ const styles = StyleSheet.create({
     color: theme.colors.text.secondary,
     textTransform: 'uppercase',
     letterSpacing: 0.5,
-    marginBottom: theme.spacing[2],
-    paddingHorizontal: theme.spacing[2],
+    marginBottom: responsive.spacing[2],
+    paddingHorizontal: responsive.spacing[2],
   },
   card: {
     backgroundColor: theme.colors.background.primary,
@@ -258,7 +342,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    padding: theme.spacing[4],
+    padding: responsive.spacing[4],
   },
   settingsItemLeft: {
     flexDirection: 'row',
@@ -272,7 +356,7 @@ const styles = StyleSheet.create({
     backgroundColor: theme.colors.primary[50],
     alignItems: 'center',
     justifyContent: 'center',
-    marginRight: theme.spacing[2],
+    marginRight: responsive.spacing[2],
   },
   settingsItemText: {
     ...theme.typography.styles.body,
@@ -281,27 +365,28 @@ const styles = StyleSheet.create({
   settingsItemRight: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: theme.spacing[2],
+    gap: responsive.spacing[2],
   },
   badge: {
     backgroundColor: theme.colors.warning.light,
-    paddingHorizontal: theme.spacing[2],
+    paddingHorizontal: responsive.spacing[2],
     paddingVertical: 4,
     borderRadius: theme.borderRadius.md,
   },
   badgeText: {
     ...theme.typography.styles.bodySmall,
-    fontSize: 12,
+    fontSize: responsive.fontSize.xs,
+    lineHeight: responsive.fontSize.xs * 1.5,
     fontWeight: '700',
     color: theme.colors.warning.dark,
   },
   divider: {
     height: 1,
     backgroundColor: theme.colors.border.light,
-    marginLeft: theme.spacing[4] + 40 + theme.spacing[2],
+    marginLeft: responsive.spacing[4] + 40 + responsive.spacing[2],
   },
   upgradeCard: {
-    marginBottom: theme.spacing[6],
+    marginBottom: responsive.spacing[6],
     borderRadius: theme.borderRadius.xl,
     overflow: 'hidden',
     ...theme.shadows.lg,
@@ -313,7 +398,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    padding: theme.spacing[4],
+    padding: responsive.spacing[4],
   },
   upgradeLeft: {
     flexDirection: 'row',
@@ -321,17 +406,20 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   upgradeIcon: {
-    fontSize: 32,
-    marginRight: theme.spacing[2],
+    fontSize: responsive.fontSize.h2,
+    lineHeight: responsive.fontSize.h2 * 1.5,
+    marginRight: responsive.spacing[2],
   },
   upgradeTitle: {
-    fontSize: 16,
+    fontSize: responsive.fontSize.md,
+    lineHeight: responsive.fontSize.md * 1.5,
     fontWeight: '700',
     color: '#FFFFFF',
     marginBottom: 4,
   },
   upgradeSubtitle: {
-    fontSize: 12,
+    fontSize: responsive.fontSize.xs,
+    lineHeight: responsive.fontSize.xs * 1.5,
     color: '#FFFFFF',
     opacity: 0.9,
   },
@@ -341,9 +429,9 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     backgroundColor: theme.colors.background.primary,
     borderRadius: theme.borderRadius.xl,
-    padding: theme.spacing[4],
-    marginBottom: theme.spacing[4],
-    gap: theme.spacing[2],
+    padding: responsive.spacing[4],
+    marginBottom: responsive.spacing[4],
+    gap: responsive.spacing[2],
     ...theme.shadows.sm,
   },
   logoutText: {

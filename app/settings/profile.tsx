@@ -4,6 +4,7 @@ import { useRouter } from 'expo-router';
 import { Screen } from '@/components/layout/Screen';
 import { Button } from '@/components/ui/Button';
 import { theme } from '@/constants/theme';
+import { responsive, ms } from '@/constants/responsive';
 import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
 
@@ -140,31 +141,32 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    paddingHorizontal: theme.spacing[4],
-    paddingVertical: theme.spacing[2],
+    paddingHorizontal: responsive.spacing[4],
+    paddingVertical: responsive.spacing[2],
     backgroundColor: theme.colors.background.primary,
     borderBottomWidth: 1,
     borderBottomColor: theme.colors.border.light,
   },
   headerButton: {
-    padding: theme.spacing[2],
+    padding: responsive.spacing[2],
   },
   headerTitle: {
     ...theme.typography.styles.h3,
-    fontSize: 18,
+    fontSize: responsive.fontSize.lg,
+    lineHeight: responsive.fontSize.lg * 1.5,
   },
   placeholder: {
     width: 40,
   },
   content: {
-    padding: theme.spacing[6],
-    paddingBottom: theme.spacing[8],
+    padding: responsive.spacing[6],
+    paddingBottom: responsive.spacing[8],
   },
   photoCard: {
     backgroundColor: theme.colors.background.primary,
     borderRadius: theme.borderRadius.xl,
-    padding: theme.spacing[6],
-    marginBottom: theme.spacing[4],
+    padding: responsive.spacing[6],
+    marginBottom: responsive.spacing[4],
     alignItems: 'center',
     ...theme.shadows.sm,
   },
@@ -174,88 +176,94 @@ const styles = StyleSheet.create({
     borderRadius: 48,
     alignItems: 'center',
     justifyContent: 'center',
-    marginBottom: theme.spacing[4],
+    marginBottom: responsive.spacing[4],
   },
   avatarText: {
-    fontSize: 32,
+    fontSize: responsive.fontSize.h2,
+    lineHeight: responsive.fontSize.h2 * 1.5,
     fontWeight: '700',
     color: '#FFFFFF',
   },
   changePhotoText: {
     ...theme.typography.styles.button,
     color: theme.colors.primary[600],
-    fontSize: 14,
+    fontSize: responsive.fontSize.sm,
+    lineHeight: responsive.fontSize.sm * 1.5,
   },
   card: {
     backgroundColor: theme.colors.background.primary,
     borderRadius: theme.borderRadius.xl,
-    padding: theme.spacing[6],
-    marginBottom: theme.spacing[4],
+    padding: responsive.spacing[6],
+    marginBottom: responsive.spacing[4],
     ...theme.shadows.sm,
   },
   cardTitle: {
     ...theme.typography.styles.h3,
-    fontSize: 18,
-    marginBottom: theme.spacing[4],
+    fontSize: responsive.fontSize.lg,
+    lineHeight: responsive.fontSize.lg * 1.5,
+    marginBottom: responsive.spacing[4],
   },
   inputGroup: {
-    marginBottom: theme.spacing[4],
+    marginBottom: responsive.spacing[4],
   },
   label: {
     ...theme.typography.styles.bodySmall,
     color: theme.colors.text.secondary,
-    marginBottom: theme.spacing[2],
+    marginBottom: responsive.spacing[2],
   },
   input: {
     borderWidth: 1,
     borderColor: theme.colors.border.main,
     borderRadius: theme.borderRadius.xl,
-    padding: theme.spacing[2],
+    padding: responsive.spacing[2],
     ...theme.typography.styles.body,
     color: theme.colors.text.primary,
   },
   verifiedRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginTop: theme.spacing[2],
+    marginTop: responsive.spacing[2],
   },
   verifiedText: {
     ...theme.typography.styles.bodySmall,
     color: theme.colors.text.secondary,
-    marginLeft: theme.spacing[2],
+    marginLeft: responsive.spacing[2],
   },
   verifyButton: {
-    marginTop: theme.spacing[2],
+    marginTop: responsive.spacing[2],
   },
   verifyButtonText: {
     ...theme.typography.styles.button,
     color: theme.colors.primary[600],
-    fontSize: 14,
+    fontSize: responsive.fontSize.sm,
+    lineHeight: responsive.fontSize.sm * 1.5,
   },
   saveButton: {
-    marginBottom: theme.spacing[4],
+    marginBottom: responsive.spacing[4],
   },
   actionButton: {
     backgroundColor: theme.colors.background.tertiary,
     borderRadius: theme.borderRadius.xl,
-    padding: theme.spacing[2],
+    padding: responsive.spacing[2],
     alignItems: 'center',
-    marginBottom: theme.spacing[2],
+    marginBottom: responsive.spacing[2],
   },
   actionButtonText: {
     ...theme.typography.styles.button,
     color: theme.colors.text.primary,
-    fontSize: 14,
+    fontSize: responsive.fontSize.sm,
+    lineHeight: responsive.fontSize.sm * 1.5,
   },
   deleteButton: {
     backgroundColor: theme.colors.danger.light,
     borderRadius: theme.borderRadius.xl,
-    padding: theme.spacing[2],
+    padding: responsive.spacing[2],
     alignItems: 'center',
   },
   deleteButtonText: {
     ...theme.typography.styles.button,
     color: theme.colors.danger.dark,
-    fontSize: 14,
+    fontSize: responsive.fontSize.sm,
+    lineHeight: responsive.fontSize.sm * 1.5,
   },
 });

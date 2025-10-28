@@ -3,6 +3,7 @@ import { View, Text, StyleSheet, TouchableOpacity, ScrollView } from 'react-nati
 import { useRouter } from 'expo-router';
 import { Screen } from '@/components/layout/Screen';
 import { theme } from '@/constants/theme';
+import { responsive, ms } from '@/constants/responsive';
 import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
 
@@ -116,31 +117,32 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    paddingHorizontal: theme.spacing[4],
-    paddingVertical: theme.spacing[2],
+    paddingHorizontal: responsive.spacing[4],
+    paddingVertical: responsive.spacing[2],
     backgroundColor: theme.colors.background.primary,
     borderBottomWidth: 1,
     borderBottomColor: theme.colors.border.light,
   },
   headerButton: {
-    padding: theme.spacing[2],
+    padding: responsive.spacing[2],
   },
   headerTitle: {
     ...theme.typography.styles.h3,
-    fontSize: 18,
+    fontSize: responsive.fontSize.lg,
+    lineHeight: responsive.fontSize.lg * 1.5,
   },
   placeholder: {
     width: 40,
   },
   content: {
-    padding: theme.spacing[6],
-    paddingBottom: theme.spacing[8],
+    padding: responsive.spacing[6],
+    paddingBottom: responsive.spacing[8],
   },
   appInfoCard: {
     backgroundColor: theme.colors.background.primary,
     borderRadius: theme.borderRadius.xl,
-    padding: theme.spacing[8],
-    marginBottom: theme.spacing[4],
+    padding: responsive.spacing[8],
+    marginBottom: responsive.spacing[4],
     alignItems: 'center',
     ...theme.shadows.sm,
   },
@@ -150,21 +152,23 @@ const styles = StyleSheet.create({
     borderRadius: 24,
     alignItems: 'center',
     justifyContent: 'center',
-    marginBottom: theme.spacing[4],
+    marginBottom: responsive.spacing[4],
   },
   appIconText: {
-    fontSize: 40,
+    fontSize: responsive.fontSize.display,
+    lineHeight: responsive.fontSize.display * 1.5,
   },
   appName: {
-    fontSize: 28,
+    fontSize: responsive.fontSize.h3,
+    lineHeight: responsive.fontSize.h3 * 1.5,
     fontWeight: '700',
     color: theme.colors.text.primary,
-    marginBottom: theme.spacing[2],
+    marginBottom: responsive.spacing[2],
   },
   appVersion: {
     ...theme.typography.styles.bodySmall,
     color: theme.colors.text.tertiary,
-    marginBottom: theme.spacing[4],
+    marginBottom: responsive.spacing[4],
   },
   appTagline: {
     ...theme.typography.styles.body,
@@ -175,14 +179,15 @@ const styles = StyleSheet.create({
   card: {
     backgroundColor: theme.colors.background.primary,
     borderRadius: theme.borderRadius.xl,
-    padding: theme.spacing[6],
-    marginBottom: theme.spacing[4],
+    padding: responsive.spacing[6],
+    marginBottom: responsive.spacing[4],
     ...theme.shadows.sm,
   },
   cardTitle: {
     ...theme.typography.styles.h3,
-    fontSize: 18,
-    marginBottom: theme.spacing[4],
+    fontSize: responsive.fontSize.lg,
+    lineHeight: responsive.fontSize.lg * 1.5,
+    marginBottom: responsive.spacing[4],
   },
   linkItem: {
     flexDirection: 'row',
@@ -190,21 +195,21 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     backgroundColor: theme.colors.background.tertiary,
     borderRadius: theme.borderRadius.xl,
-    padding: theme.spacing[2],
-    paddingHorizontal: theme.spacing[4],
-    marginBottom: theme.spacing[2],
+    padding: responsive.spacing[2],
+    paddingHorizontal: responsive.spacing[4],
+    marginBottom: responsive.spacing[2],
   },
   linkText: {
     ...theme.typography.styles.body,
   },
   footerCard: {
     borderRadius: theme.borderRadius.xl,
-    padding: theme.spacing[6],
+    padding: responsive.spacing[6],
     alignItems: 'center',
   },
   footerCopyright: {
     ...theme.typography.styles.body,
-    marginBottom: theme.spacing[1],
+    marginBottom: responsive.spacing[1],
   },
   footerMadeWith: {
     flexDirection: 'row',
@@ -215,7 +220,8 @@ const styles = StyleSheet.create({
     color: theme.colors.text.secondary,
   },
   footerHeart: {
-    fontSize: 16,
-    marginHorizontal: theme.spacing[1],
+    fontSize: responsive.fontSize.md,
+    lineHeight: responsive.fontSize.md * 1.5,
+    marginHorizontal: responsive.spacing[1],
   },
 });

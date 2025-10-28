@@ -3,6 +3,7 @@ import { View, Text, StyleSheet, TouchableOpacity, ScrollView } from 'react-nati
 import { useRouter } from 'expo-router';
 import { Screen } from '@/components/layout/Screen';
 import { theme } from '@/constants/theme';
+import { responsive, ms } from '@/constants/responsive';
 import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
 
@@ -148,41 +149,43 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    paddingHorizontal: theme.spacing[4],
-    paddingVertical: theme.spacing[2],
+    paddingHorizontal: responsive.spacing[4],
+    paddingVertical: responsive.spacing[2],
     backgroundColor: theme.colors.background.primary,
     borderBottomWidth: 1,
     borderBottomColor: theme.colors.border.light,
   },
   backButton: {
-    padding: theme.spacing[2],
+    padding: responsive.spacing[2],
   },
   headerTitle: {
     ...theme.typography.styles.h3,
-    fontSize: 18,
+    fontSize: responsive.fontSize.lg,
+    lineHeight: responsive.fontSize.lg * 1.5,
   },
   placeholder: {
     width: 40,
   },
   content: {
-    padding: theme.spacing[6],
-    paddingBottom: theme.spacing[8],
+    padding: responsive.spacing[6],
+    paddingBottom: responsive.spacing[8],
   },
   premiumCard: {
     borderRadius: theme.borderRadius.xl,
-    padding: theme.spacing[4],
-    marginBottom: theme.spacing[6],
+    padding: responsive.spacing[4],
+    marginBottom: responsive.spacing[6],
     borderWidth: 1,
     borderColor: theme.colors.warning.main,
   },
   premiumHeader: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: theme.spacing[2],
+    marginBottom: responsive.spacing[2],
   },
   premiumIcon: {
-    fontSize: 24,
-    marginRight: theme.spacing[2],
+    fontSize: responsive.fontSize.h4,
+    lineHeight: responsive.fontSize.h4 * 1.5,
+    marginRight: responsive.spacing[2],
   },
   premiumTitle: {
     ...theme.typography.styles.body,
@@ -192,43 +195,45 @@ const styles = StyleSheet.create({
   premiumText: {
     ...theme.typography.styles.bodySmall,
     color: theme.colors.warning.dark,
-    marginBottom: theme.spacing[2],
+    marginBottom: responsive.spacing[2],
   },
   upgradeButton: {
     backgroundColor: theme.colors.warning.main,
     borderRadius: theme.borderRadius.lg,
-    paddingVertical: theme.spacing[2],
+    paddingVertical: responsive.spacing[2],
     alignItems: 'center',
   },
   upgradeButtonText: {
     ...theme.typography.styles.button,
     color: '#FFFFFF',
-    fontSize: 14,
+    fontSize: responsive.fontSize.sm,
+    lineHeight: responsive.fontSize.sm * 1.5,
   },
   section: {
-    marginBottom: theme.spacing[6],
+    marginBottom: responsive.spacing[6],
   },
   sectionTitle: {
     ...theme.typography.styles.label,
-    fontSize: 12,
+    fontSize: responsive.fontSize.xs,
+    lineHeight: responsive.fontSize.xs * 1.5,
     color: theme.colors.text.tertiary,
     fontWeight: '600',
-    marginBottom: theme.spacing[2],
+    marginBottom: responsive.spacing[2],
   },
   templatesContainer: {
-    gap: theme.spacing[2],
+    gap: responsive.spacing[2],
   },
   templateCard: {
     backgroundColor: theme.colors.background.primary,
     borderRadius: theme.borderRadius.xl,
-    padding: theme.spacing[4],
+    padding: responsive.spacing[4],
     ...theme.shadows.sm,
   },
   templateHeader: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    marginBottom: theme.spacing[2],
+    marginBottom: responsive.spacing[2],
   },
   templateLeft: {
     flexDirection: 'row',
@@ -236,8 +241,9 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   templateIcon: {
-    fontSize: 20,
-    marginRight: theme.spacing[2],
+    fontSize: responsive.fontSize.xl,
+    lineHeight: responsive.fontSize.xl * 1.5,
+    marginRight: responsive.spacing[2],
   },
   templateName: {
     ...theme.typography.styles.body,
@@ -246,7 +252,7 @@ const styles = StyleSheet.create({
   templateNote: {
     ...theme.typography.styles.bodySmall,
     color: theme.colors.text.secondary,
-    marginBottom: theme.spacing[2],
+    marginBottom: responsive.spacing[2],
   },
   templateFooter: {
     flexDirection: 'row',
@@ -259,30 +265,32 @@ const styles = StyleSheet.create({
   },
   templateActions: {
     flexDirection: 'row',
-    gap: theme.spacing[2],
+    gap: responsive.spacing[2],
   },
   useButton: {
     backgroundColor: theme.colors.primary[100],
     borderRadius: theme.borderRadius.lg,
-    paddingHorizontal: theme.spacing[2],
+    paddingHorizontal: responsive.spacing[2],
     paddingVertical: 4,
   },
   useButtonText: {
     ...theme.typography.styles.caption,
     color: theme.colors.primary[700],
-    fontSize: 12,
+    fontSize: responsive.fontSize.xs,
+    lineHeight: responsive.fontSize.xs * 1.5,
     fontWeight: '500',
   },
   editButton: {
     backgroundColor: theme.colors.background.tertiary,
     borderRadius: theme.borderRadius.lg,
-    paddingHorizontal: theme.spacing[2],
+    paddingHorizontal: responsive.spacing[2],
     paddingVertical: 4,
   },
   editButtonText: {
     ...theme.typography.styles.caption,
     color: theme.colors.text.secondary,
-    fontSize: 12,
+    fontSize: responsive.fontSize.xs,
+    lineHeight: responsive.fontSize.xs * 1.5,
     fontWeight: '500',
   },
   createButton: {
@@ -290,19 +298,20 @@ const styles = StyleSheet.create({
     borderStyle: 'dashed',
     borderColor: theme.colors.border.main,
     borderRadius: theme.borderRadius.xl,
-    padding: theme.spacing[4],
+    padding: responsive.spacing[4],
     alignItems: 'center',
-    marginTop: theme.spacing[2],
+    marginTop: responsive.spacing[2],
   },
   createButtonText: {
     ...theme.typography.styles.button,
     color: theme.colors.text.secondary,
-    fontSize: 14,
+    fontSize: responsive.fontSize.sm,
+    lineHeight: responsive.fontSize.sm * 1.5,
   },
   suggestedCard: {
     backgroundColor: theme.colors.background.primary,
     borderRadius: theme.borderRadius.xl,
-    padding: theme.spacing[4],
+    padding: responsive.spacing[4],
     borderWidth: 2,
     borderColor: theme.colors.border.light,
     ...theme.shadows.sm,
@@ -311,7 +320,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    marginBottom: theme.spacing[2],
+    marginBottom: responsive.spacing[2],
   },
   useArrow: {
     ...theme.typography.styles.body,
@@ -320,13 +329,13 @@ const styles = StyleSheet.create({
   },
   suggestedStats: {
     flexDirection: 'row',
-    gap: theme.spacing[2],
+    gap: responsive.spacing[2],
   },
   statBox: {
     flex: 1,
     backgroundColor: theme.colors.background.tertiary,
     borderRadius: theme.borderRadius.lg,
-    padding: theme.spacing[2],
+    padding: responsive.spacing[2],
   },
   statLabel: {
     ...theme.typography.styles.caption,
@@ -342,15 +351,16 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: theme.colors.info.main,
     borderRadius: theme.borderRadius.xl,
-    padding: theme.spacing[4],
+    padding: responsive.spacing[4],
   },
   infoContent: {
     flexDirection: 'row',
     alignItems: 'flex-start',
   },
   infoIcon: {
-    fontSize: 24,
-    marginRight: theme.spacing[2],
+    fontSize: responsive.fontSize.h4,
+    lineHeight: responsive.fontSize.h4 * 1.5,
+    marginRight: responsive.spacing[2],
   },
   infoTextContainer: {
     flex: 1,
@@ -359,7 +369,7 @@ const styles = StyleSheet.create({
     ...theme.typography.styles.body,
     fontWeight: '600',
     color: theme.colors.info.dark,
-    marginBottom: theme.spacing[1],
+    marginBottom: responsive.spacing[1],
   },
   infoDescription: {
     ...theme.typography.styles.bodySmall,

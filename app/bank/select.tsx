@@ -4,6 +4,7 @@ import { useRouter } from 'expo-router';
 import { Screen } from '@/components/layout/Screen';
 import { Card } from '@/components/ui/Card';
 import { theme } from '@/constants/theme';
+import { responsive, ms } from '@/constants/responsive';
 import { Ionicons } from '@expo/vector-icons';
 
 interface Bank {
@@ -117,70 +118,73 @@ const styles = StyleSheet.create({
   header: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: theme.spacing[2],
-    paddingHorizontal: theme.spacing[6],
-    paddingVertical: theme.spacing[2],
+    gap: responsive.spacing[2],
+    paddingHorizontal: responsive.spacing[6],
+    paddingVertical: responsive.spacing[2],
     backgroundColor: theme.colors.background.primary,
     borderBottomWidth: 1,
     borderBottomColor: theme.colors.border.light,
   },
   backButton: {
-    padding: theme.spacing[2],
+    padding: responsive.spacing[2],
   },
   headerTitle: {
     ...theme.typography.styles.h3,
-    fontSize: 24,
+    fontSize: responsive.fontSize.h4,
+    lineHeight: responsive.fontSize.h4 * 1.5,
   },
   searchContainer: {
-    padding: theme.spacing[4],
+    padding: responsive.spacing[4],
     backgroundColor: theme.colors.background.secondary,
   },
   searchBar: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: theme.spacing[2],
+    gap: responsive.spacing[2],
     backgroundColor: theme.colors.background.primary,
     borderRadius: 20,
-    paddingHorizontal: theme.spacing[4],
-    paddingVertical: theme.spacing[2],
+    paddingHorizontal: responsive.spacing[4],
+    paddingVertical: responsive.spacing[2],
     ...theme.shadows.sm,
   },
   searchInput: {
     flex: 1,
     ...theme.typography.styles.body,
-    fontSize: 16,
+    fontSize: responsive.fontSize.md,
+    lineHeight: responsive.fontSize.md * 1.5,
     paddingVertical: 0,
   },
   list: {
     flex: 1,
   },
   listContent: {
-    paddingHorizontal: theme.spacing[6],
-    paddingBottom: theme.spacing[4],
+    paddingHorizontal: responsive.spacing[6],
+    paddingBottom: responsive.spacing[4],
   },
   sectionHeader: {
     ...theme.typography.styles.label,
-    fontSize: 14,
+    fontSize: responsive.fontSize.sm,
+    lineHeight: responsive.fontSize.sm * 1.5,
     color: theme.colors.text.secondary,
     textTransform: 'uppercase',
-    marginTop: theme.spacing[4],
-    marginBottom: theme.spacing[2],
-    paddingHorizontal: theme.spacing[2],
+    marginTop: responsive.spacing[4],
+    marginBottom: responsive.spacing[2],
+    paddingHorizontal: responsive.spacing[2],
   },
   bankItem: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
     backgroundColor: theme.colors.background.primary,
-    padding: theme.spacing[4],
-    marginBottom: theme.spacing[2],
+    padding: responsive.spacing[4],
+    marginBottom: responsive.spacing[2],
     borderRadius: 20,
     ...theme.shadows.sm,
   },
   bankInfo: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: theme.spacing[2],
+    gap: responsive.spacing[2],
   },
   bankLogo: {
     width: 48,
@@ -191,32 +195,36 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   bankLogoText: {
-    fontSize: 24,
+    fontSize: responsive.fontSize.h4,
+    lineHeight: responsive.fontSize.h4 * 1.5,
   },
   bankName: {
     ...theme.typography.styles.body,
-    fontSize: 16,
+    fontSize: responsive.fontSize.md,
+    lineHeight: responsive.fontSize.md * 1.5,
     fontWeight: '600',
   },
   bankTime: {
     ...theme.typography.styles.caption,
-    fontSize: 12,
+    fontSize: responsive.fontSize.xs,
+    lineHeight: responsive.fontSize.xs * 1.5,
     color: theme.colors.text.secondary,
   },
   footer: {
-    marginTop: theme.spacing[4],
-    marginBottom: theme.spacing[8],
+    marginTop: responsive.spacing[4],
+    marginBottom: responsive.spacing[8],
   },
   cantFindButton: {
     backgroundColor: theme.colors.background.primary,
-    padding: theme.spacing[4],
+    padding: responsive.spacing[4],
     borderRadius: 20,
     alignItems: 'center',
     ...theme.shadows.sm,
   },
   cantFindText: {
     ...theme.typography.styles.button,
-    fontSize: 16,
+    fontSize: responsive.fontSize.md,
+    lineHeight: responsive.fontSize.md * 1.5,
     color: theme.colors.text.primary,
   },
 });

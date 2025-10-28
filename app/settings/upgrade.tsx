@@ -4,6 +4,7 @@ import { useRouter } from 'expo-router';
 import { Screen } from '@/components/layout/Screen';
 import { Button } from '@/components/ui/Button';
 import { theme } from '@/constants/theme';
+import { responsive, ms } from '@/constants/responsive';
 import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
 
@@ -152,41 +153,43 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    paddingHorizontal: theme.spacing[4],
-    paddingVertical: theme.spacing[2],
+    paddingHorizontal: responsive.spacing[4],
+    paddingVertical: responsive.spacing[2],
     backgroundColor: theme.colors.background.primary,
     borderBottomWidth: 1,
     borderBottomColor: theme.colors.border.light,
   },
   headerButton: {
-    padding: theme.spacing[2],
+    padding: responsive.spacing[2],
   },
   headerTitle: {
     ...theme.typography.styles.h3,
-    fontSize: 18,
+    fontSize: responsive.fontSize.lg,
+    lineHeight: responsive.fontSize.lg * 1.5,
   },
   placeholder: {
     width: 40,
   },
   content: {
-    padding: theme.spacing[6],
-    paddingBottom: theme.spacing[8],
+    padding: responsive.spacing[6],
+    paddingBottom: responsive.spacing[8],
   },
   heroCard: {
     borderRadius: theme.borderRadius.xl,
-    padding: theme.spacing[8],
-    marginBottom: theme.spacing[6],
+    padding: responsive.spacing[8],
+    marginBottom: responsive.spacing[6],
     alignItems: 'center',
   },
   heroEmoji: {
     fontSize: 64,
-    marginBottom: theme.spacing[4],
+    marginBottom: responsive.spacing[4],
   },
   heroTitle: {
-    fontSize: 28,
+    fontSize: responsive.fontSize.h3,
+    lineHeight: responsive.fontSize.h3 * 1.5,
     fontWeight: '700',
     color: theme.colors.text.primary,
-    marginBottom: theme.spacing[2],
+    marginBottom: responsive.spacing[2],
   },
   heroSubtitle: {
     ...theme.typography.styles.body,
@@ -196,17 +199,18 @@ const styles = StyleSheet.create({
   card: {
     backgroundColor: theme.colors.background.primary,
     borderRadius: theme.borderRadius.xl,
-    padding: theme.spacing[6],
-    marginBottom: theme.spacing[6],
+    padding: responsive.spacing[6],
+    marginBottom: responsive.spacing[6],
     ...theme.shadows.sm,
   },
   cardTitle: {
     ...theme.typography.styles.h3,
-    fontSize: 18,
-    marginBottom: theme.spacing[4],
+    fontSize: responsive.fontSize.lg,
+    lineHeight: responsive.fontSize.lg * 1.5,
+    marginBottom: responsive.spacing[4],
   },
   featuresContainer: {
-    gap: theme.spacing[2],
+    gap: responsive.spacing[2],
   },
   featureRow: {
     flexDirection: 'row',
@@ -219,7 +223,7 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     alignItems: 'center',
     justifyContent: 'center',
-    marginRight: theme.spacing[2],
+    marginRight: responsive.spacing[2],
   },
   featureText: {
     ...theme.typography.styles.body,
@@ -228,8 +232,8 @@ const styles = StyleSheet.create({
     borderWidth: 2,
     borderColor: theme.colors.border.light,
     borderRadius: theme.borderRadius.xl,
-    padding: theme.spacing[4],
-    marginBottom: theme.spacing[2],
+    padding: responsive.spacing[4],
+    marginBottom: responsive.spacing[2],
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
@@ -252,7 +256,7 @@ const styles = StyleSheet.create({
     borderColor: theme.colors.border.main,
     alignItems: 'center',
     justifyContent: 'center',
-    marginRight: theme.spacing[2],
+    marginRight: responsive.spacing[2],
   },
   radioCircleInner: {
     width: 12,
@@ -273,7 +277,8 @@ const styles = StyleSheet.create({
     alignItems: 'flex-end',
   },
   planPrice: {
-    fontSize: 20,
+    fontSize: responsive.fontSize.xl,
+    lineHeight: responsive.fontSize.xl * 1.5,
     fontWeight: '700',
     color: theme.colors.text.primary,
   },
@@ -284,26 +289,27 @@ const styles = StyleSheet.create({
   savingsBadge: {
     position: 'absolute',
     top: -8,
-    right: theme.spacing[4],
+    right: responsive.spacing[4],
     backgroundColor: theme.colors.warning.main,
     borderRadius: theme.borderRadius.full,
-    paddingHorizontal: theme.spacing[2],
+    paddingHorizontal: responsive.spacing[2],
     paddingVertical: 4,
   },
   savingsBadgeText: {
     ...theme.typography.styles.caption,
     color: theme.colors.warning.dark,
-    fontSize: 12,
+    fontSize: responsive.fontSize.xs,
+    lineHeight: responsive.fontSize.xs * 1.5,
     fontWeight: '700',
   },
   ctaButton: {
-    marginBottom: theme.spacing[2],
+    marginBottom: responsive.spacing[2],
   },
   priceInfo: {
     ...theme.typography.styles.bodySmall,
     color: theme.colors.text.secondary,
     textAlign: 'center',
-    marginBottom: theme.spacing[2],
+    marginBottom: responsive.spacing[2],
   },
   finePrint: {
     ...theme.typography.styles.caption,

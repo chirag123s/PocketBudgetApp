@@ -1,13 +1,23 @@
 import { Tabs } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { theme } from '@/constants/theme';
 
 export default function TabsLayout() {
+  // Get safe area insets for proper bottom spacing on Android/iOS
+  const insets = useSafeAreaInsets();
+
   // 🔍 Check Tabs boolean props
   const headerShown = false;
   if (typeof headerShown !== 'boolean') {
     console.error('❌ Tabs prop ERROR: headerShown is', typeof headerShown, '- value:', headerShown);
   }
+
+  // Calculate tab bar height with safe area
+  // Base height: 60px (icon + label + padding)
+  // Add bottom inset for Android gesture navigation / iOS home indicator
+  const tabBarHeight = 60 + insets.bottom;
+  const tabBarPaddingBottom = Math.max(8, insets.bottom);
 
   return (
     <Tabs
@@ -19,8 +29,8 @@ export default function TabsLayout() {
           backgroundColor: theme.colors.background.primary,
           borderTopWidth: 1,
           borderTopColor: theme.colors.border.light,
-          height: 60,
-          paddingBottom: 8,
+          height: tabBarHeight,
+          paddingBottom: tabBarPaddingBottom,
           paddingTop: 8,
         },
         tabBarLabelStyle: {

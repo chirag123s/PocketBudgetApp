@@ -5,6 +5,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Screen } from '@/components/layout/Screen';
 import { theme } from '@/constants/theme';
+import { responsive, wp, hp, ms } from '@/constants/responsive';
 
 interface OptionCardProps {
   icon: keyof typeof Ionicons.glyphMap;
@@ -47,7 +48,7 @@ const OptionCard = ({
 
         <View style={styles.cardContent}>
           <View style={[styles.iconContainer, { backgroundColor: iconBg }]}>
-            <Ionicons name={icon} size={28} color={iconColor} />
+            <Ionicons name={icon} size={responsive.layout.iconLg} color={iconColor} />
           </View>
 
           <View style={styles.cardTextContainer}>
@@ -58,7 +59,7 @@ const OptionCard = ({
 
           <Ionicons
             name="chevron-forward"
-            size={24}
+            size={responsive.layout.iconMd}
             color={isRecommended ? theme.colors.primary[600] : theme.colors.text.tertiary}
             style={styles.chevron}
           />
@@ -132,86 +133,95 @@ export default function OnboardingChoiceScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: theme.spacing[6],
+    padding: responsive.spacing[6],
+    maxWidth: responsive.layout.maxContentWidth,
+    width: '100%',
+    alignSelf: 'center',
   },
   title: {
     ...theme.typography.styles.h1,
-    fontSize: 32,
-    marginBottom: theme.spacing[2],
+    fontSize: responsive.fontSize.h2,
+    lineHeight: responsive.fontSize.h2 * 1.3,
+    marginBottom: responsive.spacing[2],
   },
   description: {
     ...theme.typography.styles.body,
-    fontSize: 16,
+    fontSize: responsive.fontSize.base,
+    lineHeight: responsive.fontSize.base * 1.5,
     color: theme.colors.text.secondary,
-    marginBottom: theme.spacing[6],
+    marginBottom: responsive.spacing[6],
   },
   optionsContainer: {
     flex: 1,
-    gap: theme.spacing[4],
+    gap: responsive.spacing[4],
   },
   card: {
     backgroundColor: theme.colors.background.primary,
-    borderRadius: 20,
-    padding: theme.spacing[6],
+    borderRadius: ms(20),
+    padding: responsive.spacing[6],
     borderWidth: 2,
     borderColor: theme.colors.border.light,
   },
   recommendedCard: {
-    borderRadius: 20,
-    padding: theme.spacing[6],
+    borderRadius: ms(20),
+    padding: responsive.spacing[6],
     borderWidth: 2,
     borderColor: theme.colors.primary[500],
     position: 'relative',
   },
   badge: {
     position: 'absolute',
-    top: theme.spacing[4],
-    right: theme.spacing[4],
+    top: responsive.spacing[4],
+    right: responsive.spacing[4],
     backgroundColor: theme.colors.primary[600],
-    paddingHorizontal: theme.spacing[2],
-    paddingVertical: theme.spacing[1],
-    borderRadius: 16,
+    paddingHorizontal: responsive.spacing[2],
+    paddingVertical: responsive.spacing[1],
+    borderRadius: ms(16),
   },
   badgeText: {
     ...theme.typography.styles.caption,
-    fontSize: 12,
+    fontSize: responsive.fontSize.xs,
+    lineHeight: responsive.fontSize.xs * 1.4,
     color: 'white',
     fontWeight: 'bold',
   },
   cardContent: {
     flexDirection: 'row',
     alignItems: 'flex-start',
-    gap: theme.spacing[4],
+    gap: responsive.spacing[4],
   },
   iconContainer: {
-    width: 56,
-    height: 56,
-    borderRadius: 16,
+    width: ms(56),
+    height: ms(56),
+    borderRadius: ms(16),
     alignItems: 'center',
     justifyContent: 'center',
   },
   cardTextContainer: {
     flex: 1,
-    paddingTop: theme.spacing[1],
+    paddingTop: responsive.spacing[1],
   },
   cardTitle: {
     ...theme.typography.styles.h3,
-    fontSize: 24,
-    marginBottom: theme.spacing[2],
+    fontSize: responsive.fontSize.h4,
+    lineHeight: responsive.fontSize.h4 * 1.3,
+    marginBottom: responsive.spacing[2],
   },
   cardSubtitle: {
     ...theme.typography.styles.bodySmall,
-    fontSize: 14,
+    fontSize: responsive.fontSize.sm,
+    lineHeight: responsive.fontSize.sm * 1.5,
     color: theme.colors.text.secondary,
   },
   chevron: {
-    marginTop: theme.spacing[2],
+    marginTop: responsive.spacing[2],
   },
   helpText: {
     ...theme.typography.styles.bodySmall,
-    fontSize: 14,
+    fontSize: responsive.fontSize.sm,
+    lineHeight: responsive.fontSize.sm * 1.5,
     color: theme.colors.text.secondary,
     textAlign: 'center',
-    marginTop: theme.spacing[4],
+    marginTop: responsive.spacing[4],
   },
 });

@@ -4,6 +4,7 @@ import { useRouter } from 'expo-router';
 import { Screen } from '@/components/layout/Screen';
 import { Button } from '@/components/ui/Button';
 import { theme } from '@/constants/theme';
+import { responsive, ms } from '@/constants/responsive';
 import { Ionicons } from '@expo/vector-icons';
 
 export default function TransactionDetail() {
@@ -192,48 +193,50 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    paddingHorizontal: theme.spacing[6],
-    paddingVertical: theme.spacing[2],
+    paddingHorizontal: responsive.spacing[6],
+    paddingVertical: responsive.spacing[2],
     backgroundColor: theme.colors.background.primary,
     borderBottomWidth: 1,
     borderBottomColor: theme.colors.border.light,
   },
   backButton: {
-    padding: theme.spacing[2],
+    padding: responsive.spacing[2],
   },
   headerTitle: {
     ...theme.typography.styles.h3,
-    fontSize: 18,
+    fontSize: responsive.fontSize.lg,
+    lineHeight: responsive.fontSize.lg * 1.5,
   },
   moreButton: {
-    padding: theme.spacing[2],
+    padding: responsive.spacing[2],
   },
   content: {
-    padding: theme.spacing[6],
-    paddingBottom: theme.spacing[8],
+    padding: responsive.spacing[6],
+    paddingBottom: responsive.spacing[8],
   },
   headerCard: {
     backgroundColor: theme.colors.background.primary,
     borderRadius: 20,
-    padding: theme.spacing[6],
-    marginBottom: theme.spacing[4],
+    padding: responsive.spacing[6],
+    marginBottom: responsive.spacing[4],
     alignItems: 'center',
     ...theme.shadows.sm,
   },
   merchantName: {
     ...theme.typography.styles.h3,
-    marginBottom: theme.spacing[2],
+    marginBottom: responsive.spacing[2],
   },
   location: {
     ...theme.typography.styles.bodySmall,
     color: theme.colors.text.secondary,
-    marginBottom: theme.spacing[4],
+    marginBottom: responsive.spacing[4],
   },
   amount: {
-    fontSize: 28,
+    fontSize: responsive.fontSize.h3,
+    lineHeight: responsive.fontSize.h3 * 1.5,
     fontWeight: '700',
     color: theme.colors.danger.main,
-    marginBottom: theme.spacing[2],
+    marginBottom: responsive.spacing[2],
   },
   date: {
     ...theme.typography.styles.bodySmall,
@@ -246,17 +249,17 @@ const styles = StyleSheet.create({
   card: {
     backgroundColor: theme.colors.background.primary,
     borderRadius: 20,
-    padding: theme.spacing[6],
-    marginBottom: theme.spacing[4],
+    padding: responsive.spacing[6],
+    marginBottom: responsive.spacing[4],
     ...theme.shadows.sm,
   },
   sectionTitle: {
     ...theme.typography.styles.h4,
-    marginBottom: theme.spacing[4],
+    marginBottom: responsive.spacing[4],
   },
   detailRow: {
-    paddingBottom: theme.spacing[4],
-    marginBottom: theme.spacing[4],
+    paddingBottom: responsive.spacing[4],
+    marginBottom: responsive.spacing[4],
     borderBottomWidth: 1,
     borderBottomColor: theme.colors.border.light,
   },
@@ -268,7 +271,7 @@ const styles = StyleSheet.create({
   detailLabel: {
     ...theme.typography.styles.bodySmall,
     color: theme.colors.text.secondary,
-    marginBottom: theme.spacing[2],
+    marginBottom: responsive.spacing[2],
   },
   detailValueRow: {
     flexDirection: 'row',
@@ -276,7 +279,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
   },
   detailValueColumn: {
-    gap: theme.spacing[1],
+    gap: responsive.spacing[1],
   },
   detailValue: {
     ...theme.typography.styles.body,
@@ -287,12 +290,13 @@ const styles = StyleSheet.create({
     color: theme.colors.text.secondary,
   },
   emoji: {
-    marginRight: theme.spacing[2],
+    marginRight: responsive.spacing[2],
   },
   editButton: {
     ...theme.typography.styles.button,
     color: theme.colors.primary[600],
-    fontSize: 14,
+    fontSize: responsive.fontSize.sm,
+    lineHeight: responsive.fontSize.sm * 1.5,
   },
   notesInput: {
     ...theme.typography.styles.body,
@@ -303,11 +307,11 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    marginBottom: theme.spacing[2],
+    marginBottom: responsive.spacing[2],
   },
   premiumBadge: {
     backgroundColor: theme.colors.warning.light,
-    paddingHorizontal: theme.spacing[2],
+    paddingHorizontal: responsive.spacing[2],
     paddingVertical: 4,
     borderRadius: theme.borderRadius.full,
   },
@@ -315,25 +319,27 @@ const styles = StyleSheet.create({
     ...theme.typography.styles.caption,
     color: theme.colors.warning.dark,
     fontWeight: '600',
-    fontSize: 12,
+    fontSize: responsive.fontSize.xs,
+    lineHeight: responsive.fontSize.xs * 1.5,
   },
   addButton: {
-    marginBottom: theme.spacing[2],
+    marginBottom: responsive.spacing[2],
   },
   addButtonText: {
     ...theme.typography.styles.button,
     color: theme.colors.primary[600],
-    fontSize: 14,
+    fontSize: responsive.fontSize.sm,
+    lineHeight: responsive.fontSize.sm * 1.5,
   },
   tagsContainer: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    gap: theme.spacing[2],
+    gap: responsive.spacing[2],
   },
   tag: {
     backgroundColor: theme.colors.primary[50],
-    paddingHorizontal: theme.spacing[2],
-    paddingVertical: theme.spacing[1],
+    paddingHorizontal: responsive.spacing[2],
+    paddingVertical: responsive.spacing[1],
     borderRadius: theme.borderRadius.full,
   },
   tagText: {
@@ -342,33 +348,35 @@ const styles = StyleSheet.create({
   },
   receiptButtons: {
     flexDirection: 'row',
-    gap: theme.spacing[2],
+    gap: responsive.spacing[2],
   },
   receiptButton: {
     flex: 1,
     backgroundColor: theme.colors.background.tertiary,
-    paddingVertical: theme.spacing[2],
-    paddingHorizontal: theme.spacing[4],
+    paddingVertical: responsive.spacing[2],
+    paddingHorizontal: responsive.spacing[4],
     borderRadius: 20,
     alignItems: 'center',
   },
   receiptButtonText: {
     ...theme.typography.styles.button,
     color: theme.colors.text.secondary,
-    fontSize: 14,
+    fontSize: responsive.fontSize.sm,
+    lineHeight: responsive.fontSize.sm * 1.5,
   },
   actionButton: {
     backgroundColor: theme.colors.background.tertiary,
-    paddingVertical: theme.spacing[2],
-    paddingHorizontal: theme.spacing[4],
+    paddingVertical: responsive.spacing[2],
+    paddingHorizontal: responsive.spacing[4],
     borderRadius: 20,
     alignItems: 'center',
-    marginBottom: theme.spacing[2],
+    marginBottom: responsive.spacing[2],
   },
   actionButtonText: {
     ...theme.typography.styles.button,
     color: theme.colors.text.secondary,
-    fontSize: 14,
+    fontSize: responsive.fontSize.sm,
+    lineHeight: responsive.fontSize.sm * 1.5,
   },
   deleteButton: {
     backgroundColor: theme.colors.danger.light,
@@ -377,7 +385,8 @@ const styles = StyleSheet.create({
   deleteButtonText: {
     ...theme.typography.styles.button,
     color: theme.colors.danger.main,
-    fontSize: 14,
+    fontSize: responsive.fontSize.sm,
+    lineHeight: responsive.fontSize.sm * 1.5,
   },
   modalOverlay: {
     flex: 1,
@@ -385,7 +394,7 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-start',
     alignItems: 'flex-end',
     paddingTop: 60,
-    paddingRight: theme.spacing[6],
+    paddingRight: responsive.spacing[6],
   },
   moreMenu: {
     backgroundColor: theme.colors.background.primary,
@@ -397,9 +406,9 @@ const styles = StyleSheet.create({
   moreMenuItem: {
     flexDirection: 'row',
     alignItems: 'center',
-    paddingHorizontal: theme.spacing[4],
-    paddingVertical: theme.spacing[2],
-    gap: theme.spacing[2],
+    paddingHorizontal: responsive.spacing[4],
+    paddingVertical: responsive.spacing[2],
+    gap: responsive.spacing[2],
     borderBottomWidth: 1,
     borderBottomColor: theme.colors.border.light,
   },

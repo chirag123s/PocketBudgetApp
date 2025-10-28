@@ -4,6 +4,7 @@ import { useRouter } from 'expo-router';
 import { Screen } from '@/components/layout/Screen';
 import { Button } from '@/components/ui/Button';
 import { theme } from '@/constants/theme';
+import { responsive, ms } from '@/constants/responsive';
 import { Ionicons } from '@expo/vector-icons';
 
 type FormatType = 'csv' | 'pdf' | 'json';
@@ -224,41 +225,43 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    paddingHorizontal: theme.spacing[4],
-    paddingVertical: theme.spacing[2],
+    paddingHorizontal: responsive.spacing[4],
+    paddingVertical: responsive.spacing[2],
     backgroundColor: theme.colors.background.primary,
     borderBottomWidth: 1,
     borderBottomColor: theme.colors.border.light,
   },
   headerButton: {
-    padding: theme.spacing[2],
+    padding: responsive.spacing[2],
   },
   headerTitle: {
     ...theme.typography.styles.h3,
-    fontSize: 18,
+    fontSize: responsive.fontSize.lg,
+    lineHeight: responsive.fontSize.lg * 1.5,
   },
   placeholder: {
     width: 40,
   },
   content: {
-    padding: theme.spacing[6],
-    paddingBottom: theme.spacing[8],
+    padding: responsive.spacing[6],
+    paddingBottom: responsive.spacing[8],
   },
   card: {
     backgroundColor: theme.colors.background.primary,
     borderRadius: theme.borderRadius.xl,
-    padding: theme.spacing[6],
-    marginBottom: theme.spacing[4],
+    padding: responsive.spacing[6],
+    marginBottom: responsive.spacing[4],
     ...theme.shadows.sm,
   },
   cardTitle: {
     ...theme.typography.styles.h3,
-    fontSize: 18,
-    marginBottom: theme.spacing[4],
+    fontSize: responsive.fontSize.lg,
+    lineHeight: responsive.fontSize.lg * 1.5,
+    marginBottom: responsive.spacing[4],
   },
   checkboxGroup: {
-    gap: theme.spacing[2],
-    marginBottom: theme.spacing[6],
+    gap: responsive.spacing[2],
+    marginBottom: responsive.spacing[6],
   },
   checkboxRow: {
     flexDirection: 'row',
@@ -270,7 +273,7 @@ const styles = StyleSheet.create({
     borderWidth: 2,
     borderColor: theme.colors.border.main,
     borderRadius: 4,
-    marginRight: theme.spacing[2],
+    marginRight: responsive.spacing[2],
     alignItems: 'center',
     justifyContent: 'center',
   },
@@ -283,8 +286,8 @@ const styles = StyleSheet.create({
   },
   dateRow: {
     flexDirection: 'row',
-    gap: theme.spacing[2],
-    marginBottom: theme.spacing[6],
+    gap: responsive.spacing[2],
+    marginBottom: responsive.spacing[6],
   },
   dateField: {
     flex: 1,
@@ -292,7 +295,7 @@ const styles = StyleSheet.create({
   label: {
     ...theme.typography.styles.bodySmall,
     color: theme.colors.text.secondary,
-    marginBottom: theme.spacing[2],
+    marginBottom: responsive.spacing[2],
   },
   selectButton: {
     flexDirection: 'row',
@@ -300,14 +303,14 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     backgroundColor: theme.colors.background.tertiary,
     borderRadius: theme.borderRadius.xl,
-    padding: theme.spacing[2],
+    padding: responsive.spacing[2],
   },
   selectButtonText: {
     ...theme.typography.styles.body,
   },
   optionsGroup: {
-    gap: theme.spacing[2],
-    marginBottom: theme.spacing[6],
+    gap: responsive.spacing[2],
+    marginBottom: responsive.spacing[6],
   },
   option: {
     flexDirection: 'row',
@@ -315,7 +318,7 @@ const styles = StyleSheet.create({
     borderWidth: 2,
     borderColor: theme.colors.border.light,
     borderRadius: theme.borderRadius.xl,
-    padding: theme.spacing[2],
+    padding: responsive.spacing[2],
   },
   optionSelected: {
     backgroundColor: theme.colors.primary[50],
@@ -329,7 +332,7 @@ const styles = StyleSheet.create({
     borderColor: theme.colors.border.main,
     alignItems: 'center',
     justifyContent: 'center',
-    marginRight: theme.spacing[2],
+    marginRight: responsive.spacing[2],
   },
   radioCircleInner: {
     width: 12,
@@ -341,7 +344,7 @@ const styles = StyleSheet.create({
     ...theme.typography.styles.body,
   },
   exportsList: {
-    gap: theme.spacing[2],
+    gap: responsive.spacing[2],
   },
   exportItem: {
     flexDirection: 'row',
@@ -349,7 +352,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     backgroundColor: theme.colors.background.tertiary,
     borderRadius: theme.borderRadius.xl,
-    padding: theme.spacing[4],
+    padding: responsive.spacing[4],
   },
   exportName: {
     ...theme.typography.styles.body,
@@ -363,12 +366,13 @@ const styles = StyleSheet.create({
   downloadButton: {
     backgroundColor: theme.colors.primary[600],
     borderRadius: theme.borderRadius.xl,
-    paddingHorizontal: theme.spacing[4],
-    paddingVertical: theme.spacing[2],
+    paddingHorizontal: responsive.spacing[4],
+    paddingVertical: responsive.spacing[2],
   },
   downloadButtonText: {
     ...theme.typography.styles.button,
     color: '#FFFFFF',
-    fontSize: 14,
+    fontSize: responsive.fontSize.sm,
+    lineHeight: responsive.fontSize.sm * 1.5,
   },
 });

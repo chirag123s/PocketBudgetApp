@@ -4,6 +4,7 @@ import { useRouter } from 'expo-router';
 import { Screen } from '@/components/layout/Screen';
 import { Button } from '@/components/ui/Button';
 import { theme } from '@/constants/theme';
+import { responsive, ms } from '@/constants/responsive';
 import { Ionicons } from '@expo/vector-icons';
 
 const budgetData = {
@@ -127,61 +128,64 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    paddingHorizontal: theme.spacing[4],
-    paddingVertical: theme.spacing[2],
+    paddingHorizontal: responsive.spacing[4],
+    paddingVertical: responsive.spacing[2],
     backgroundColor: theme.colors.background.primary,
     borderBottomWidth: 1,
     borderBottomColor: theme.colors.border.light,
   },
   backButton: {
-    padding: theme.spacing[2],
+    padding: responsive.spacing[2],
   },
   headerTitle: {
     ...theme.typography.styles.h3,
-    fontSize: 18,
+    fontSize: responsive.fontSize.lg,
+    lineHeight: responsive.fontSize.lg * 1.5,
   },
   placeholder: {
     width: 40,
   },
   content: {
-    padding: theme.spacing[6],
-    paddingBottom: theme.spacing[8],
+    padding: responsive.spacing[6],
+    paddingBottom: responsive.spacing[8],
   },
   card: {
     backgroundColor: theme.colors.background.primary,
     borderRadius: theme.borderRadius.xl,
-    padding: theme.spacing[4],
-    marginBottom: theme.spacing[4],
+    padding: responsive.spacing[4],
+    marginBottom: responsive.spacing[4],
     ...theme.shadows.sm,
   },
   cardLabel: {
     ...theme.typography.styles.label,
-    fontSize: 12,
+    fontSize: responsive.fontSize.xs,
+    lineHeight: responsive.fontSize.xs * 1.5,
     color: theme.colors.text.tertiary,
     fontWeight: '600',
-    marginBottom: theme.spacing[2],
+    marginBottom: responsive.spacing[2],
   },
   periodText: {
     ...theme.typography.styles.h4,
-    marginBottom: theme.spacing[2],
+    marginBottom: responsive.spacing[2],
   },
   badge: {
     backgroundColor: theme.colors.primary[100],
     borderRadius: theme.borderRadius.lg,
-    paddingHorizontal: theme.spacing[2],
+    paddingHorizontal: responsive.spacing[2],
     paddingVertical: 4,
     alignSelf: 'flex-start',
   },
   badgeText: {
     ...theme.typography.styles.caption,
     color: theme.colors.primary[700],
-    fontSize: 12,
+    fontSize: responsive.fontSize.xs,
+    lineHeight: responsive.fontSize.xs * 1.5,
     fontWeight: '500',
   },
   summaryRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    paddingVertical: theme.spacing[2],
+    paddingVertical: responsive.spacing[2],
     borderBottomWidth: 1,
     borderBottomColor: theme.colors.border.light,
   },
@@ -207,7 +211,7 @@ const styles = StyleSheet.create({
     fontWeight: '600',
   },
   categoriesContainer: {
-    gap: theme.spacing[2],
+    gap: responsive.spacing[2],
   },
   categoryRow: {
     flexDirection: 'row',
@@ -220,8 +224,9 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   categoryIcon: {
-    fontSize: 20,
-    marginRight: theme.spacing[2],
+    fontSize: responsive.fontSize.xl,
+    lineHeight: responsive.fontSize.xl * 1.5,
+    marginRight: responsive.spacing[2],
   },
   categoryName: {
     ...theme.typography.styles.body,
@@ -234,18 +239,19 @@ const styles = StyleSheet.create({
   savingsCard: {
     backgroundColor: theme.colors.primary[50],
     borderRadius: theme.borderRadius.xl,
-    padding: theme.spacing[6],
-    marginBottom: theme.spacing[6],
+    padding: responsive.spacing[6],
+    marginBottom: responsive.spacing[6],
     alignItems: 'center',
   },
   savingsIcon: {
-    fontSize: 40,
-    marginBottom: theme.spacing[2],
+    fontSize: responsive.fontSize.display,
+    lineHeight: responsive.fontSize.display * 1.5,
+    marginBottom: responsive.spacing[2],
   },
   savingsTitle: {
     ...theme.typography.styles.h3,
     textAlign: 'center',
-    marginBottom: theme.spacing[1],
+    marginBottom: responsive.spacing[1],
   },
   savingsSubtitle: {
     ...theme.typography.styles.body,
@@ -253,6 +259,6 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
   editButton: {
-    marginBottom: theme.spacing[2],
+    marginBottom: responsive.spacing[2],
   },
 });

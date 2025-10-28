@@ -4,6 +4,7 @@ import { useRouter } from 'expo-router';
 import { Screen } from '@/components/layout/Screen';
 import { Button } from '@/components/ui/Button';
 import { theme } from '@/constants/theme';
+import { responsive, ms } from '@/constants/responsive';
 import { Ionicons } from '@expo/vector-icons';
 
 export default function ImportSuccess() {
@@ -126,11 +127,11 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    paddingHorizontal: theme.spacing[6],
+    paddingHorizontal: responsive.spacing[6],
   },
   iconContainer: {
     position: 'relative',
-    marginBottom: theme.spacing[8],
+    marginBottom: responsive.spacing[8],
     alignItems: 'center',
     justifyContent: 'center',
   },
@@ -153,16 +154,17 @@ const styles = StyleSheet.create({
   },
   title: {
     ...theme.typography.styles.h1,
-    fontSize: 16,
+    fontSize: responsive.fontSize.md,
+    lineHeight: responsive.fontSize.md * 1.5,
     textAlign: 'center',
-    marginBottom: theme.spacing[2],
+    marginBottom: responsive.spacing[2],
     color: theme.colors.text.primary,
   },
   message: {
     ...theme.typography.styles.h4,
     textAlign: 'center',
     color: theme.colors.text.secondary,
-    marginBottom: theme.spacing[8],
+    marginBottom: responsive.spacing[8],
   },
   messageHighlight: {
     fontWeight: '600',
@@ -173,14 +175,14 @@ const styles = StyleSheet.create({
     maxWidth: 400,
     backgroundColor: theme.colors.background.secondary,
     borderRadius: 20,
-    padding: theme.spacing[4],
-    marginBottom: theme.spacing[8],
+    padding: responsive.spacing[4],
+    marginBottom: responsive.spacing[8],
   },
   bankHeader: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: theme.spacing[2],
-    marginBottom: theme.spacing[2],
+    gap: responsive.spacing[2],
+    marginBottom: responsive.spacing[2],
   },
   bankLogo: {
     width: 40,
@@ -191,20 +193,21 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   bankLogoText: {
-    fontSize: 16,
+    fontSize: responsive.fontSize.md,
+    lineHeight: responsive.fontSize.md * 1.5,
   },
   bankName: {
     ...theme.typography.styles.body,
     fontWeight: '600',
   },
   accountsList: {
-    gap: theme.spacing[1],
+    gap: responsive.spacing[1],
     marginLeft: 48,
   },
   accountItem: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: theme.spacing[2],
+    gap: responsive.spacing[2],
   },
   accountName: {
     ...theme.typography.styles.bodySmall,
@@ -215,14 +218,14 @@ const styles = StyleSheet.create({
     maxWidth: 400,
     backgroundColor: theme.colors.info.light,
     borderRadius: 20,
-    padding: theme.spacing[4],
-    marginBottom: theme.spacing[4],
+    padding: responsive.spacing[4],
+    marginBottom: responsive.spacing[4],
   },
   nextStepTitle: {
     ...theme.typography.styles.body,
     fontWeight: '600',
     color: theme.colors.info.dark,
-    marginBottom: theme.spacing[1],
+    marginBottom: responsive.spacing[1],
   },
   nextStepDescription: {
     ...theme.typography.styles.bodySmall,
@@ -233,9 +236,9 @@ const styles = StyleSheet.create({
     maxWidth: 400,
   },
   skipButton: {
-    paddingVertical: theme.spacing[2],
+    paddingVertical: responsive.spacing[2],
     alignItems: 'center',
-    marginTop: theme.spacing[2],
+    marginTop: responsive.spacing[2],
   },
   skipButtonText: {
     ...theme.typography.styles.button,

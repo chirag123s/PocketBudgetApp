@@ -4,6 +4,7 @@ import { useEffect } from 'react';
 import { Stack, useRouter, useSegments } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { AuthProvider, useAuth } from '@/contexts/AuthContext';
 import ErrorBoundary from '@/components/ErrorBoundary';
 
@@ -30,6 +31,7 @@ function RootLayoutNav() {
     console.log('═══════════════════════════════════════════════════════════');
     console.log('📍 NAVIGATION:', segments.join('/') || 'index');
     console.log('   Auth:', isAuthenticated, '| Guest:', isGuestMode, '| Loading:', isLoading);
+    console.log('   Onboarding:', hasCompletedOnboarding);
     console.log('═══════════════════════════════════════════════════════════');
 
     if (isLoading) return;
@@ -38,15 +40,25 @@ function RootLayoutNav() {
     const inTabsGroup = segments[0] === 'tabs';
     const inOnboardingFlow = segments[0] === 'bank' || segments[0] === 'budget';
 
+    // Don't redirect if user is viewing the splash screen (auth/index)
+    const isOnSplashScreen = inAuthGroup && segments.length === 1;
+
     // Redirect logic based on authentication state
-    if (!isAuthenticated && !isGuestMode && !inAuthGroup) {
-      // User is not authenticated and not in guest mode, redirect to auth
-      router.replace('/auth/welcome');
-    } else if (isAuthenticated && !hasCompletedOnboarding && !inOnboardingFlow) {
+    if (!isAuthenticated && !isGuestMode && !inAuthGroup && !isOnSplashScreen) {
+      // User is not authenticated, not in guest mode, and not in auth flow
+      // Let the splash screen handle initial routing
+      console.log('🔄 Redirecting to auth splash screen');
+      router.replace('/auth');
+    } else if (isAuthenticated && !hasCompletedOnboarding && !inOnboardingFlow && !isOnSplashScreen) {
       // User is authenticated but hasn't completed onboarding
+      // Only redirect if not on splash screen (splash screen will handle it)
+      console.log('🔄 Redirecting to onboarding');
       router.replace('/bank/intro');
-    } else if ((isAuthenticated && hasCompletedOnboarding && inAuthGroup) || (isGuestMode && inAuthGroup)) {
-      // User is authenticated/guest and has completed onboarding, redirect to main app
+    } else if ((isAuthenticated && hasCompletedOnboarding && inAuthGroup && !isOnSplashScreen) ||
+               (isGuestMode && inAuthGroup && !isOnSplashScreen)) {
+      // User is authenticated/guest and has completed onboarding
+      // Only redirect if not on splash screen
+      console.log('🔄 Redirecting to main app');
       router.replace('/tabs');
     }
   }, [isAuthenticated, isGuestMode, isLoading, hasCompletedOnboarding, segments]);
@@ -96,12 +108,15 @@ function RootLayoutNav() {
 
 export default function RootLayout() {
   return (
-    <ErrorBoundary>
-      <SafeAreaProvider>
-        <AuthProvider>
-          <RootLayoutNav />
-        </AuthProvider>
-      </SafeAreaProvider>
-    </ErrorBoundary>
+    <GestureHandlerRootView style={{ flex: 1 }}>
+      <ErrorBoundary>
+        <SafeAreaProvider>
+          <AuthProvider>
+            <StatusBar style="auto" />
+            <RootLayoutNav />
+          </AuthProvider>
+        </SafeAreaProvider>
+      </ErrorBoundary>
+    </GestureHandlerRootView>
   );
 }

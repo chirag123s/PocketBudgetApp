@@ -4,6 +4,7 @@ import { useRouter } from 'expo-router';
 import { Screen } from '@/components/layout/Screen';
 import { Button } from '@/components/ui/Button';
 import { theme } from '@/constants/theme';
+import { responsive, ms } from '@/constants/responsive';
 
 interface Category {
   icon: string;
@@ -157,12 +158,12 @@ const styles = StyleSheet.create({
     backgroundColor: theme.colors.border.main,
     borderRadius: 2,
     alignSelf: 'center',
-    marginTop: theme.spacing[2],
-    marginBottom: theme.spacing[2],
+    marginTop: responsive.spacing[2],
+    marginBottom: responsive.spacing[2],
   },
   header: {
-    paddingHorizontal: theme.spacing[6],
-    paddingVertical: theme.spacing[4],
+    paddingHorizontal: responsive.spacing[6],
+    paddingVertical: responsive.spacing[4],
     borderBottomWidth: 1,
     borderBottomColor: theme.colors.border.light,
   },
@@ -170,26 +171,27 @@ const styles = StyleSheet.create({
     ...theme.typography.styles.h3,
   },
   listContent: {
-    paddingHorizontal: theme.spacing[6],
-    paddingBottom: theme.spacing[6],
+    paddingHorizontal: responsive.spacing[6],
+    paddingBottom: responsive.spacing[6],
   },
   section: {
-    marginTop: theme.spacing[6],
+    marginTop: responsive.spacing[6],
   },
   sectionLabel: {
     ...theme.typography.styles.label,
-    fontSize: 12,
+    fontSize: responsive.fontSize.xs,
+    lineHeight: responsive.fontSize.xs * 1.5,
     color: theme.colors.text.secondary,
-    marginBottom: theme.spacing[2],
+    marginBottom: responsive.spacing[2],
     textTransform: 'uppercase',
   },
   categoryItem: {
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: theme.colors.background.secondary,
-    padding: theme.spacing[2],
+    padding: responsive.spacing[2],
     borderRadius: 20,
-    marginBottom: theme.spacing[2],
+    marginBottom: responsive.spacing[2],
   },
   categoryItemSelected: {
     backgroundColor: theme.colors.primary[50],
@@ -202,8 +204,9 @@ const styles = StyleSheet.create({
     borderColor: theme.colors.primary[600],
   },
   categoryIcon: {
-    fontSize: 24,
-    marginRight: theme.spacing[2],
+    fontSize: responsive.fontSize.h4,
+    lineHeight: responsive.fontSize.h4 * 1.5,
+    marginRight: responsive.spacing[2],
   },
   categoryName: {
     ...theme.typography.styles.body,
@@ -211,10 +214,11 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   checkmark: {
-    fontSize: 20,
+    fontSize: responsive.fontSize.xl,
+    lineHeight: responsive.fontSize.xl * 1.5,
     color: theme.colors.primary[600],
   },
   createButtonContainer: {
-    marginTop: theme.spacing[6],
+    marginTop: responsive.spacing[6],
   },
 });

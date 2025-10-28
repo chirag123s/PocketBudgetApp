@@ -8,6 +8,7 @@ import {
   TextStyle,
 } from 'react-native';
 import { theme } from '@/constants/theme';
+import { responsive } from '@/constants/responsive';
 
 /**
  * Button Component
@@ -96,7 +97,9 @@ export const Button: React.FC<ButtonProps> = ({
       ) : (
         <>
           {icon && iconPosition === 'left' && icon}
-          <Text style={textStyles}>{children}</Text>
+          <Text style={textStyles}>
+            {children}
+          </Text>
           {icon && iconPosition === 'right' && icon}
         </>
       )}
@@ -116,16 +119,16 @@ const styles = StyleSheet.create({
 
   // Sizes
   small: {
-    height: 40,
-    paddingHorizontal: theme.spacing[4],
+    height: responsive.layout.buttonHeightSmall,
+    paddingHorizontal: responsive.spacing[4],
   },
   medium: {
-    height: 48,
-    paddingHorizontal: theme.spacing[6],
+    height: responsive.layout.buttonHeight,
+    paddingHorizontal: responsive.spacing[6],
   },
   large: {
-    height: 56,
-    paddingHorizontal: theme.spacing[8],
+    height: responsive.layout.buttonHeightLarge,
+    paddingHorizontal: responsive.spacing[8],
   },
 
   // Variants
@@ -158,28 +161,36 @@ const styles = StyleSheet.create({
 
   // Text styles
   text: {
-    ...theme.typography.styles.button,
+    fontSize: responsive.fontSize.md,
+    fontWeight: '600',
+    lineHeight: responsive.fontSize.md * 1.25,
+    textAlign: 'center',
   },
   text_primary: {
-    color: theme.colors.text.inverse,
+    color: '#FFFFFF',
   },
   text_secondary: {
     color: theme.colors.primary[500],
+    fontWeight: '600',
   },
   text_tertiary: {
     color: theme.colors.primary[500],
+    fontWeight: '600',
   },
   text_danger: {
-    color: theme.colors.text.inverse,
+    color: '#FFFFFF',
   },
   text_small: {
-    fontSize: 14,
+    fontSize: responsive.fontSize.sm,
+    lineHeight: responsive.fontSize.sm * 1.25,
   },
   text_medium: {
-    fontSize: 16,
+    fontSize: responsive.fontSize.md,
+    lineHeight: responsive.fontSize.md * 1.25,
   },
   text_large: {
-    fontSize: 18,
+    fontSize: responsive.fontSize.lg,
+    lineHeight: responsive.fontSize.lg * 1.25,
   },
   textDisabled: {
     color: theme.colors.neutral[400],

@@ -2,6 +2,7 @@ import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import { Button } from './Button';
 import { theme } from '@/constants/theme';
+import { responsive } from '@/constants/responsive';
 
 /**
  * EmptyState Component
@@ -56,21 +57,26 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    padding: theme.spacing[6],
+    padding: responsive.spacing[6],
   },
   iconContainer: {
-    marginBottom: theme.spacing[4],
+    marginBottom: responsive.spacing[4],
   },
   title: {
-    ...theme.typography.styles.h3,
+    fontSize: responsive.fontSize.h3,
+    lineHeight: responsive.fontSize.h3 * 1.4,
+    fontWeight: '600',
+    color: theme.colors.text.primary,
     textAlign: 'center',
-    marginBottom: theme.spacing[2],
+    marginBottom: responsive.spacing[2],
   },
   description: {
-    ...theme.typography.styles.body,
-    textAlign: 'center',
+    fontSize: responsive.fontSize.base,
+    lineHeight: responsive.fontSize.base * 1.5,
+    fontWeight: '400',
     color: theme.colors.text.secondary,
-    marginBottom: theme.spacing[6],
+    textAlign: 'center',
+    marginBottom: responsive.spacing[6],
   },
   button: {
     minWidth: 200,

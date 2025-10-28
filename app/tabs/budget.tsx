@@ -4,6 +4,7 @@ import { useRouter } from 'expo-router';
 import { Screen } from '@/components/layout/Screen';
 import { Button } from '@/components/ui/Button';
 import { theme } from '@/constants/theme';
+import { responsive, ms } from '@/constants/responsive';
 import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
 
@@ -29,7 +30,7 @@ export default function BudgetTab() {
   const remaining = sampleBudgetData.totalBudget - sampleBudgetData.totalSpent;
 
   return (
-    <Screen noPadding backgroundColor={theme.colors.background.secondary}>
+    <Screen edges={['top']} noPadding backgroundColor={theme.colors.background.secondary}>
       {/* Header */}
       <View style={styles.header}>
         <Text style={styles.headerTitle}>Budget</Text>
@@ -194,50 +195,54 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    paddingHorizontal: theme.spacing[6],
-    paddingVertical: theme.spacing[4],
+    paddingHorizontal: responsive.spacing[6],
+    paddingVertical: responsive.spacing[4],
     backgroundColor: theme.colors.background.primary,
     borderBottomWidth: 1,
     borderBottomColor: theme.colors.border.light,
   },
   headerTitle: {
     ...theme.typography.styles.h2,
-    fontSize: 24,
+    fontSize: responsive.fontSize.h4,
+    lineHeight: responsive.fontSize.h4 * 1.5,
   },
   headerButton: {
-    padding: theme.spacing[2],
+    padding: responsive.spacing[2],
   },
   content: {
-    padding: theme.spacing[6],
-    paddingBottom: theme.spacing[8],
+    padding: responsive.spacing[6],
+    paddingBottom: responsive.spacing[8],
   },
   summaryCard: {
     borderRadius: theme.borderRadius.xl,
-    padding: theme.spacing[6],
-    marginBottom: theme.spacing[6],
+    padding: responsive.spacing[6],
+    marginBottom: responsive.spacing[6],
     ...theme.shadows.lg,
   },
   summaryHeader: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'flex-start',
-    marginBottom: theme.spacing[4],
+    marginBottom: responsive.spacing[4],
   },
   summaryPeriod: {
-    fontSize: 14,
+    fontSize: responsive.fontSize.sm,
+    lineHeight: responsive.fontSize.sm * 1.5,
     fontWeight: '600',
     color: '#FFFFFF',
     opacity: 0.9,
-    marginBottom: theme.spacing[2],
+    marginBottom: responsive.spacing[2],
   },
   summaryAmount: {
-    fontSize: 32,
+    fontSize: responsive.fontSize.h2,
+    lineHeight: responsive.fontSize.h2 * 1.5,
     fontWeight: '700',
     color: '#FFFFFF',
     marginBottom: 4,
   },
   summaryLabel: {
-    fontSize: 14,
+    fontSize: responsive.fontSize.sm,
+    lineHeight: responsive.fontSize.sm * 1.5,
     color: '#FFFFFF',
     opacity: 0.8,
   },
@@ -250,7 +255,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   progressContainer: {
-    marginBottom: theme.spacing[4],
+    marginBottom: responsive.spacing[4],
   },
   progressBackground: {
     height: 8,
@@ -271,28 +276,31 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   statLabel: {
-    fontSize: 12,
+    fontSize: responsive.fontSize.xs,
+    lineHeight: responsive.fontSize.xs * 1.5,
     color: '#FFFFFF',
     opacity: 0.8,
     marginBottom: 4,
   },
   statValue: {
-    fontSize: 16,
+    fontSize: responsive.fontSize.md,
+    lineHeight: responsive.fontSize.md * 1.5,
     fontWeight: '700',
     color: '#FFFFFF',
   },
   categoriesSection: {
-    marginBottom: theme.spacing[6],
+    marginBottom: responsive.spacing[6],
   },
   sectionHeader: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: theme.spacing[4],
+    marginBottom: responsive.spacing[4],
   },
   sectionTitle: {
     ...theme.typography.styles.h3,
-    fontSize: 18,
+    fontSize: responsive.fontSize.lg,
+    lineHeight: responsive.fontSize.lg * 1.5,
   },
   categoryCount: {
     ...theme.typography.styles.bodySmall,
@@ -301,15 +309,15 @@ const styles = StyleSheet.create({
   categoryCard: {
     backgroundColor: theme.colors.background.primary,
     borderRadius: theme.borderRadius.xl,
-    padding: theme.spacing[4],
-    marginBottom: theme.spacing[4],
+    padding: responsive.spacing[4],
+    marginBottom: responsive.spacing[4],
     ...theme.shadows.sm,
   },
   categoryHeader: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: theme.spacing[2],
+    marginBottom: responsive.spacing[2],
   },
   categoryTitleRow: {
     flexDirection: 'row',
@@ -317,15 +325,17 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   categoryEmoji: {
-    fontSize: 28,
-    marginRight: theme.spacing[2],
+    fontSize: responsive.fontSize.h3,
+    lineHeight: responsive.fontSize.h3 * 1.5,
+    marginRight: responsive.spacing[2],
   },
   categoryInfo: {
     flex: 1,
   },
   categoryName: {
     ...theme.typography.styles.body,
-    fontSize: 16,
+    fontSize: responsive.fontSize.md,
+    lineHeight: responsive.fontSize.md * 1.5,
     fontWeight: '600',
     marginBottom: 4,
   },
@@ -339,7 +349,7 @@ const styles = StyleSheet.create({
   },
   categoryActions: {
     flexDirection: 'row',
-    gap: theme.spacing[2],
+    gap: responsive.spacing[2],
   },
   actionIconButton: {
     width: 36,
@@ -354,7 +364,7 @@ const styles = StyleSheet.create({
     backgroundColor: theme.colors.background.tertiary,
     borderRadius: 4,
     overflow: 'hidden',
-    marginBottom: theme.spacing[2],
+    marginBottom: responsive.spacing[2],
   },
   categoryProgressFill: {
     height: '100%',
@@ -363,7 +373,7 @@ const styles = StyleSheet.create({
   categoryAmounts: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: theme.spacing[2],
+    marginBottom: responsive.spacing[2],
   },
   categorySpent: {
     ...theme.typography.styles.bodySmall,
@@ -389,7 +399,7 @@ const styles = StyleSheet.create({
   },
   categoryButtons: {
     flexDirection: 'row',
-    gap: theme.spacing[2],
+    gap: responsive.spacing[2],
   },
   categoryButton: {
     flex: 1,
@@ -398,8 +408,8 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     backgroundColor: theme.colors.background.tertiary,
     borderRadius: theme.borderRadius.xl,
-    paddingVertical: theme.spacing[2],
-    paddingHorizontal: theme.spacing[2],
+    paddingVertical: responsive.spacing[2],
+    paddingHorizontal: responsive.spacing[2],
   },
   categoryButtonText: {
     ...theme.typography.styles.bodySmall,
@@ -408,6 +418,6 @@ const styles = StyleSheet.create({
     marginLeft: 4,
   },
   actionButtons: {
-    gap: theme.spacing[2],
+    gap: responsive.spacing[2],
   },
 });

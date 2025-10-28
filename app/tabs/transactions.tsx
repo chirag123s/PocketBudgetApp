@@ -3,6 +3,7 @@ import { View, Text, StyleSheet, TouchableOpacity, ScrollView, TextInput } from 
 import { useRouter } from 'expo-router';
 import { Screen } from '@/components/layout/Screen';
 import { theme } from '@/constants/theme';
+import { responsive, ms } from '@/constants/responsive';
 import { Ionicons } from '@expo/vector-icons';
 
 interface Transaction {
@@ -45,7 +46,7 @@ export default function TransactionsTab() {
   }, {} as Record<string, Transaction[]>);
 
   return (
-    <Screen noPadding backgroundColor={theme.colors.background.secondary}>
+    <Screen edges={['top']} noPadding backgroundColor={theme.colors.background.secondary}>
       {/* Header */}
       <View style={styles.header}>
         <Text style={styles.headerTitle}>Transactions</Text>
@@ -179,23 +180,24 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    paddingHorizontal: theme.spacing[6],
-    paddingVertical: theme.spacing[4],
+    paddingHorizontal: responsive.spacing[6],
+    paddingVertical: responsive.spacing[4],
     backgroundColor: theme.colors.background.primary,
     borderBottomWidth: 1,
     borderBottomColor: theme.colors.border.light,
   },
   headerTitle: {
     ...theme.typography.styles.h2,
-    fontSize: 24,
+    fontSize: responsive.fontSize.h4,
+    lineHeight: responsive.fontSize.h4 * 1.5,
   },
   headerButton: {
-    padding: theme.spacing[2],
+    padding: responsive.spacing[2],
   },
   searchContainer: {
-    paddingHorizontal: theme.spacing[6],
-    paddingTop: theme.spacing[4],
-    paddingBottom: theme.spacing[2],
+    paddingHorizontal: responsive.spacing[6],
+    paddingTop: responsive.spacing[4],
+    paddingBottom: responsive.spacing[2],
     backgroundColor: theme.colors.background.primary,
   },
   searchBar: {
@@ -203,9 +205,9 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     backgroundColor: theme.colors.background.secondary,
     borderRadius: theme.borderRadius.xl,
-    paddingHorizontal: theme.spacing[4],
-    paddingVertical: theme.spacing[2],
-    gap: theme.spacing[2],
+    paddingHorizontal: responsive.spacing[4],
+    paddingVertical: responsive.spacing[2],
+    gap: responsive.spacing[2],
   },
   searchInput: {
     flex: 1,
@@ -213,17 +215,17 @@ const styles = StyleSheet.create({
     color: theme.colors.text.primary,
   },
   filterContainer: {
-    paddingHorizontal: theme.spacing[6],
-    paddingVertical: theme.spacing[2],
+    paddingHorizontal: responsive.spacing[6],
+    paddingVertical: responsive.spacing[2],
     backgroundColor: theme.colors.background.primary,
-    gap: theme.spacing[2],
+    gap: responsive.spacing[2],
   },
   filterChip: {
-    paddingHorizontal: theme.spacing[4],
-    paddingVertical: theme.spacing[2],
+    paddingHorizontal: responsive.spacing[4],
+    paddingVertical: responsive.spacing[2],
     borderRadius: theme.borderRadius.full,
     backgroundColor: theme.colors.background.tertiary,
-    marginRight: theme.spacing[2],
+    marginRight: responsive.spacing[2],
   },
   filterChipActive: {
     backgroundColor: theme.colors.primary[600],
@@ -237,11 +239,11 @@ const styles = StyleSheet.create({
     color: '#FFFFFF',
   },
   content: {
-    padding: theme.spacing[6],
+    padding: responsive.spacing[6],
     paddingBottom: 100, // Space for FAB
   },
   dateGroup: {
-    marginBottom: theme.spacing[6],
+    marginBottom: responsive.spacing[6],
   },
   dateHeader: {
     ...theme.typography.styles.bodySmall,
@@ -249,8 +251,8 @@ const styles = StyleSheet.create({
     color: theme.colors.text.secondary,
     textTransform: 'uppercase',
     letterSpacing: 0.5,
-    marginBottom: theme.spacing[2],
-    paddingHorizontal: theme.spacing[2],
+    marginBottom: responsive.spacing[2],
+    paddingHorizontal: responsive.spacing[2],
   },
   transactionCard: {
     flexDirection: 'row',
@@ -258,8 +260,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     backgroundColor: theme.colors.background.primary,
     borderRadius: theme.borderRadius.xl,
-    padding: theme.spacing[4],
-    marginBottom: theme.spacing[2],
+    padding: responsive.spacing[4],
+    marginBottom: responsive.spacing[2],
     ...theme.shadows.sm,
   },
   transactionLeft: {
@@ -273,10 +275,11 @@ const styles = StyleSheet.create({
     borderRadius: 24,
     alignItems: 'center',
     justifyContent: 'center',
-    marginRight: theme.spacing[2],
+    marginRight: responsive.spacing[2],
   },
   transactionEmoji: {
-    fontSize: 24,
+    fontSize: responsive.fontSize.h4,
+    lineHeight: responsive.fontSize.h4 * 1.5,
   },
   transactionInfo: {
     flex: 1,
@@ -293,7 +296,7 @@ const styles = StyleSheet.create({
   transactionRight: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: theme.spacing[2],
+    gap: responsive.spacing[2],
   },
   transactionAmount: {
     ...theme.typography.styles.body,
@@ -311,18 +314,18 @@ const styles = StyleSheet.create({
   emptyState: {
     alignItems: 'center',
     justifyContent: 'center',
-    paddingVertical: theme.spacing[12],
+    paddingVertical: responsive.spacing[12],
   },
   emptyStateTitle: {
     ...theme.typography.styles.h3,
-    marginTop: theme.spacing[4],
-    marginBottom: theme.spacing[2],
+    marginTop: responsive.spacing[4],
+    marginBottom: responsive.spacing[2],
   },
   emptyStateText: {
     ...theme.typography.styles.body,
     color: theme.colors.text.secondary,
     textAlign: 'center',
-    paddingHorizontal: theme.spacing[8],
+    paddingHorizontal: responsive.spacing[8],
   },
   fab: {
     position: 'absolute',

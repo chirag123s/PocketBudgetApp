@@ -3,6 +3,7 @@ import { View, Text, StyleSheet, ScrollView, Switch } from 'react-native';
 import { useRouter } from 'expo-router';
 import { Screen } from '@/components/layout/Screen';
 import { theme } from '@/constants/theme';
+import { responsive, ms } from '@/constants/responsive';
 import { Ionicons } from '@expo/vector-icons';
 import { TouchableOpacity } from 'react-native';
 
@@ -322,40 +323,42 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    paddingHorizontal: theme.spacing[4],
-    paddingVertical: theme.spacing[2],
+    paddingHorizontal: responsive.spacing[4],
+    paddingVertical: responsive.spacing[2],
     backgroundColor: theme.colors.background.primary,
     borderBottomWidth: 1,
     borderBottomColor: theme.colors.border.light,
   },
   headerButton: {
-    padding: theme.spacing[2],
+    padding: responsive.spacing[2],
   },
   headerTitle: {
     ...theme.typography.styles.h3,
-    fontSize: 18,
+    fontSize: responsive.fontSize.lg,
+    lineHeight: responsive.fontSize.lg * 1.5,
   },
   placeholder: {
     width: 40,
   },
   content: {
-    padding: theme.spacing[6],
-    paddingBottom: theme.spacing[8],
+    padding: responsive.spacing[6],
+    paddingBottom: responsive.spacing[8],
   },
   card: {
     backgroundColor: theme.colors.background.primary,
     borderRadius: theme.borderRadius.xl,
-    padding: theme.spacing[6],
-    marginBottom: theme.spacing[4],
+    padding: responsive.spacing[6],
+    marginBottom: responsive.spacing[4],
     ...theme.shadows.sm,
   },
   cardTitle: {
     ...theme.typography.styles.h3,
-    fontSize: 18,
-    marginBottom: theme.spacing[4],
+    fontSize: responsive.fontSize.lg,
+    lineHeight: responsive.fontSize.lg * 1.5,
+    marginBottom: responsive.spacing[4],
   },
   settingsGroup: {
-    gap: theme.spacing[4],
+    gap: responsive.spacing[4],
   },
   settingRow: {
     flexDirection: 'row',
@@ -380,23 +383,24 @@ const styles = StyleSheet.create({
   settingWithBadge: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: theme.spacing[2],
+    gap: responsive.spacing[2],
   },
   premiumBadge: {
     backgroundColor: theme.colors.warning.light,
     borderRadius: theme.borderRadius.full,
-    paddingHorizontal: theme.spacing[2],
+    paddingHorizontal: responsive.spacing[2],
     paddingVertical: 2,
   },
   premiumBadgeText: {
     ...theme.typography.styles.caption,
     color: theme.colors.warning.dark,
-    fontSize: 12,
+    fontSize: responsive.fontSize.xs,
+    lineHeight: responsive.fontSize.xs * 1.5,
     fontWeight: '600',
   },
   checkboxGroup: {
-    gap: theme.spacing[2],
-    marginBottom: theme.spacing[4],
+    gap: responsive.spacing[2],
+    marginBottom: responsive.spacing[4],
   },
   checkboxRow: {
     flexDirection: 'row',
@@ -408,7 +412,7 @@ const styles = StyleSheet.create({
     borderWidth: 2,
     borderColor: theme.colors.border.main,
     borderRadius: 4,
-    marginRight: theme.spacing[2],
+    marginRight: responsive.spacing[2],
     alignItems: 'center',
     justifyContent: 'center',
   },
@@ -422,6 +426,6 @@ const styles = StyleSheet.create({
   divider: {
     height: 1,
     backgroundColor: theme.colors.border.light,
-    marginVertical: theme.spacing[4],
+    marginVertical: responsive.spacing[4],
   },
 });

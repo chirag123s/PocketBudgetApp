@@ -1,6 +1,7 @@
 import React from 'react';
 import { View, Text, ScrollView, StyleSheet, TouchableOpacity } from 'react-native';
 import { theme } from '@/constants/theme';
+import { responsive } from '@/constants/responsive';
 
 interface ErrorBoundaryProps {
   children: React.ReactNode;
@@ -115,66 +116,70 @@ const styles = StyleSheet.create({
     backgroundColor: theme.colors.background.secondary,
   },
   content: {
-    padding: theme.spacing[6],
-    paddingTop: theme.spacing[12],
+    padding: responsive.spacing[6],
+    paddingTop: responsive.spacing[12],
   },
   header: {
-    marginBottom: theme.spacing[8],
+    marginBottom: responsive.spacing[8],
   },
   title: {
-    fontSize: 28,
+    fontSize: responsive.fontSize.h3,
+    lineHeight: responsive.fontSize.h3 * 1.3,
     fontWeight: '700',
     color: theme.colors.danger.main,
-    marginBottom: theme.spacing[2],
+    marginBottom: responsive.spacing[2],
   },
   subtitle: {
-    fontSize: 16,
+    fontSize: responsive.fontSize.md,
+    lineHeight: responsive.fontSize.md * 1.5,
     color: theme.colors.text.secondary,
-    lineHeight: 24,
   },
   errorCard: {
     backgroundColor: theme.colors.background.primary,
-    borderRadius: 12,
-    padding: theme.spacing[4],
-    marginBottom: theme.spacing[4],
+    borderRadius: responsive.layout.cardRadius,
+    padding: responsive.spacing[4],
+    marginBottom: responsive.spacing[4],
     borderLeftWidth: 4,
     borderLeftColor: theme.colors.danger.main,
   },
   errorLabel: {
-    fontSize: 14,
+    fontSize: responsive.fontSize.sm,
+    lineHeight: responsive.fontSize.sm * 1.5,
     fontWeight: '600',
     color: theme.colors.text.primary,
-    marginBottom: theme.spacing[2],
+    marginBottom: responsive.spacing[2],
   },
   errorText: {
-    fontSize: 14,
+    fontSize: responsive.fontSize.sm,
+    lineHeight: responsive.fontSize.sm * 1.5,
     color: theme.colors.danger.dark,
     fontFamily: 'monospace',
-    lineHeight: 20,
   },
   stackText: {
-    fontSize: 12,
+    fontSize: responsive.fontSize.xs,
+    lineHeight: responsive.fontSize.xs * 1.5,
     color: theme.colors.text.secondary,
     fontFamily: 'monospace',
-    lineHeight: 18,
   },
   button: {
     backgroundColor: theme.colors.primary[500],
-    borderRadius: 12,
-    padding: theme.spacing[4],
+    borderRadius: responsive.layout.cardRadius,
+    padding: responsive.spacing[4],
     alignItems: 'center',
-    marginTop: theme.spacing[6],
+    marginTop: responsive.spacing[6],
   },
   buttonText: {
-    fontSize: 16,
+    fontSize: responsive.fontSize.md,
+    lineHeight: responsive.fontSize.md * 1.5,
     fontWeight: '600',
     color: '#FFFFFF',
   },
   hint: {
-    fontSize: 12,
+    fontSize: responsive.fontSize.xs,
+    lineHeight: responsive.fontSize.xs * 1.5,
     color: theme.colors.text.tertiary,
     textAlign: 'center',
-    marginTop: theme.spacing[6],
+    marginTop: responsive.spacing[6],
     fontStyle: 'italic',
   },
 });

@@ -9,6 +9,9 @@ console.log('✅ typography imported');
 import { spacing, borderRadius, layout } from './spacing';
 console.log('✅ spacing, borderRadius, layout imported');
 
+import { responsive } from './responsive';
+console.log('✅ responsive imported');
+
 /**
  * Complete Theme Configuration
  */
@@ -21,6 +24,7 @@ export const theme = {
   spacing,
   borderRadius,
   layout,
+  responsive,
 
   // Shadows
   shadows: {

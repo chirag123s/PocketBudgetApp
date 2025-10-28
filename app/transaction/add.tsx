@@ -4,6 +4,7 @@ import { useRouter } from 'expo-router';
 import { Screen } from '@/components/layout/Screen';
 import { Button } from '@/components/ui/Button';
 import { theme } from '@/constants/theme';
+import { responsive, ms } from '@/constants/responsive';
 import { Ionicons } from '@expo/vector-icons';
 
 type TransactionType = 'expense' | 'income';
@@ -196,47 +197,48 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    paddingHorizontal: theme.spacing[6],
-    paddingVertical: theme.spacing[2],
+    paddingHorizontal: responsive.spacing[6],
+    paddingVertical: responsive.spacing[2],
     backgroundColor: theme.colors.background.primary,
     borderBottomWidth: 1,
     borderBottomColor: theme.colors.border.light,
   },
   backButton: {
-    padding: theme.spacing[2],
+    padding: responsive.spacing[2],
   },
   headerTitle: {
     ...theme.typography.styles.h3,
-    fontSize: 18,
+    fontSize: responsive.fontSize.lg,
+    lineHeight: responsive.fontSize.lg * 1.5,
   },
   placeholder: {
     width: 40,
   },
   content: {
-    padding: theme.spacing[6],
-    paddingBottom: theme.spacing[8],
+    padding: responsive.spacing[6],
+    paddingBottom: responsive.spacing[8],
   },
   card: {
     backgroundColor: theme.colors.background.primary,
     borderRadius: 20,
-    padding: theme.spacing[6],
-    marginBottom: theme.spacing[4],
+    padding: responsive.spacing[6],
+    marginBottom: responsive.spacing[4],
     ...theme.shadows.sm,
   },
   label: {
     ...theme.typography.styles.body,
     color: theme.colors.text.secondary,
-    marginBottom: theme.spacing[4],
+    marginBottom: responsive.spacing[4],
   },
   typeButtons: {
     flexDirection: 'row',
-    gap: theme.spacing[4],
+    gap: responsive.spacing[4],
   },
   typeButton: {
     flex: 1,
     backgroundColor: theme.colors.background.tertiary,
-    paddingVertical: theme.spacing[2],
-    paddingHorizontal: theme.spacing[4],
+    paddingVertical: responsive.spacing[2],
+    paddingHorizontal: responsive.spacing[4],
     borderRadius: 20,
     borderWidth: 2,
     borderColor: 'transparent',
@@ -253,7 +255,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    gap: theme.spacing[2],
+    gap: responsive.spacing[2],
   },
   radioCircle: {
     width: 18,
@@ -285,7 +287,8 @@ const styles = StyleSheet.create({
   typeButtonText: {
     ...theme.typography.styles.button,
     color: theme.colors.text.secondary,
-    fontSize: 14,
+    fontSize: responsive.fontSize.sm,
+    lineHeight: responsive.fontSize.sm * 1.5,
   },
   typeButtonTextExpenseActive: {
     color: theme.colors.danger.main,
@@ -298,14 +301,16 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   currencySymbol: {
-    fontSize: 24,
+    fontSize: responsive.fontSize.h4,
+    lineHeight: responsive.fontSize.h4 * 1.5,
     fontWeight: '600',
     color: theme.colors.text.primary,
-    marginRight: theme.spacing[2],
+    marginRight: responsive.spacing[2],
   },
   amountInput: {
     flex: 1,
-    fontSize: 24,
+    fontSize: responsive.fontSize.h4,
+    lineHeight: responsive.fontSize.h4 * 1.5,
     fontWeight: '600',
     color: theme.colors.text.primary,
   },
@@ -319,19 +324,20 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'space-between',
     backgroundColor: theme.colors.background.secondary,
-    padding: theme.spacing[2],
+    padding: responsive.spacing[2],
     borderRadius: 20,
   },
   selectorContent: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: theme.spacing[2],
+    gap: responsive.spacing[2],
   },
   selectorColumn: {
-    gap: theme.spacing[1],
+    gap: responsive.spacing[1],
   },
   selectorIcon: {
-    fontSize: 20,
+    fontSize: responsive.fontSize.xl,
+    lineHeight: responsive.fontSize.xl * 1.5,
   },
   selectorText: {
     ...theme.typography.styles.body,
