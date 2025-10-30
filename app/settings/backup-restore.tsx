@@ -13,6 +13,7 @@ import { ScreenHeader } from '@/components/layout/ScreenHeader';
 import { theme } from '@/constants/theme';
 import { responsive, ms } from '@/constants/responsive';
 import { Ionicons } from '@expo/vector-icons';
+import { settingsTypography, settingsFontWeights, settingsTextStyles } from './typography';
 
 // Color Palette - Using theme colors
 const colors = {
@@ -166,8 +167,8 @@ export default function BackupRestoreScreen() {
           {/* Recent Backup 1 */}
           <View style={styles.historyItem}>
             <View style={styles.historyLeft}>
-              <View style={[styles.iconContainer, { backgroundColor: `${colors.functionalSuccess}20` }]}>
-                <Ionicons name="checkmark-circle" size={ms(20)} color={colors.functionalSuccess} />
+              <View style={styles.iconContainer}>
+                <Ionicons name="checkmark-circle" size={ms(24)} color={colors.neutralDarkest} />
               </View>
               <View style={styles.historyContent}>
                 <Text style={styles.historyTitle}>Today at 10:30 AM</Text>
@@ -182,8 +183,8 @@ export default function BackupRestoreScreen() {
           {/* Recent Backup 2 */}
           <View style={styles.historyItem}>
             <View style={styles.historyLeft}>
-              <View style={[styles.iconContainer, { backgroundColor: `${colors.functionalSuccess}20` }]}>
-                <Ionicons name="checkmark-circle" size={ms(20)} color={colors.functionalSuccess} />
+              <View style={styles.iconContainer}>
+                <Ionicons name="checkmark-circle" size={ms(24)} color={colors.neutralDarkest} />
               </View>
               <View style={styles.historyContent}>
                 <Text style={styles.historyTitle}>Yesterday at 10:30 AM</Text>
@@ -198,8 +199,8 @@ export default function BackupRestoreScreen() {
           {/* Recent Backup 3 */}
           <View style={styles.historyItem}>
             <View style={styles.historyLeft}>
-              <View style={[styles.iconContainer, { backgroundColor: `${colors.functionalSuccess}20` }]}>
-                <Ionicons name="checkmark-circle" size={ms(20)} color={colors.functionalSuccess} />
+              <View style={styles.iconContainer}>
+                <Ionicons name="checkmark-circle" size={ms(24)} color={colors.neutralDarkest} />
               </View>
               <View style={styles.historyContent}>
                 <Text style={styles.historyTitle}>2 days ago at 10:30 AM</Text>
@@ -217,8 +218,8 @@ export default function BackupRestoreScreen() {
           {/* App Storage Size */}
           <View style={styles.row}>
             <View style={styles.rowLeft}>
-              <View style={[styles.iconContainer, { backgroundColor: `${colors.primary}20` }]}>
-                <Ionicons name="phone-portrait-outline" size={ms(20)} color={colors.primary} />
+              <View style={styles.iconContainer}>
+                <Ionicons name="phone-portrait-outline" size={ms(24)} color={colors.neutralDarkest} />
               </View>
               <Text style={styles.rowTitle}>App Storage Size</Text>
             </View>
@@ -228,8 +229,8 @@ export default function BackupRestoreScreen() {
           {/* Cache Size */}
           <View style={styles.row}>
             <View style={styles.rowLeft}>
-              <View style={[styles.iconContainer, { backgroundColor: `${colors.neutralMedium}20` }]}>
-                <Ionicons name="archive-outline" size={ms(20)} color={colors.neutralMedium} />
+              <View style={styles.iconContainer}>
+                <Ionicons name="archive-outline" size={ms(24)} color={colors.neutralDarkest} />
               </View>
               <Text style={styles.rowTitle}>Cache Size</Text>
             </View>
@@ -287,9 +288,9 @@ const styles = StyleSheet.create({
     ...theme.shadows.sm,
   },
   cardTitle: {
-    fontSize: responsive.fontSize.lg,
-    lineHeight: responsive.fontSize.lg * 1.5,
-    fontWeight: '700',
+    fontSize: settingsTypography.sectionHeading,
+    lineHeight: settingsTypography.sectionHeading * 1.5,
+    fontWeight: settingsFontWeights.bold,
     color: colors.neutralDarkest,
     marginBottom: responsive.spacing[4],
   },
@@ -307,10 +308,10 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   iconContainer: {
-    width: ms(40),
-    height: ms(40),
-    borderRadius: theme.borderRadius.lg,
-    backgroundColor: `${colors.primary}20`,
+    width: ms(48),
+    height: ms(48),
+    borderRadius: ms(24),
+    backgroundColor: colors.iconBg,
     alignItems: 'center',
     justifyContent: 'center',
   },
@@ -319,28 +320,28 @@ const styles = StyleSheet.create({
     gap: 2,
   },
   rowTitle: {
-    fontSize: responsive.fontSize.md,
-    lineHeight: responsive.fontSize.md * 1.5,
-    fontWeight: '500',
+    fontSize: settingsTypography.primary,
+    lineHeight: settingsTypography.primary * 1.5,
+    fontWeight: settingsFontWeights.medium,
     color: colors.neutralDarkest,
   },
   rowSubtitle: {
-    fontSize: responsive.fontSize.sm,
-    lineHeight: responsive.fontSize.sm * 1.5,
-    fontWeight: '400',
+    fontSize: settingsTypography.secondary,
+    lineHeight: settingsTypography.secondary * 1.5,
+    fontWeight: settingsFontWeights.regular,
     color: colors.neutralDark,
     marginTop: 2,
   },
   rowValue: {
-    fontSize: responsive.fontSize.md,
-    lineHeight: responsive.fontSize.md * 1.5,
-    fontWeight: '400',
+    fontSize: settingsTypography.primary,
+    lineHeight: settingsTypography.primary * 1.5,
+    fontWeight: settingsFontWeights.regular,
     color: colors.neutralDarkest,
   },
   linkText: {
-    fontSize: responsive.fontSize.md,
-    lineHeight: responsive.fontSize.md * 1.5,
-    fontWeight: '600',
+    fontSize: settingsTypography.primary,
+    lineHeight: settingsTypography.primary * 1.5,
+    fontWeight: settingsFontWeights.semibold,
     color: colors.primary,
   },
   switchContainer: {
@@ -370,15 +371,15 @@ const styles = StyleSheet.create({
     backgroundColor: `${colors.functionalError}20`,
   },
   actionButtonTextPrimary: {
-    fontSize: responsive.fontSize.sm,
-    lineHeight: responsive.fontSize.sm * 1.5,
-    fontWeight: '700',
+    fontSize: settingsTypography.secondary,
+    lineHeight: settingsTypography.secondary * 1.5,
+    fontWeight: settingsFontWeights.bold,
     color: colors.primary,
   },
   actionButtonTextDanger: {
-    fontSize: responsive.fontSize.sm,
-    lineHeight: responsive.fontSize.sm * 1.5,
-    fontWeight: '700',
+    fontSize: settingsTypography.secondary,
+    lineHeight: settingsTypography.secondary * 1.5,
+    fontWeight: settingsFontWeights.bold,
     color: colors.functionalError,
   },
   historyItem: {
@@ -399,22 +400,22 @@ const styles = StyleSheet.create({
     gap: 2,
   },
   historyTitle: {
-    fontSize: responsive.fontSize.md,
-    lineHeight: responsive.fontSize.md * 1.5,
-    fontWeight: '500',
+    fontSize: settingsTypography.primary,
+    lineHeight: settingsTypography.primary * 1.5,
+    fontWeight: settingsFontWeights.medium,
     color: colors.neutralDarkest,
   },
   historySubtitle: {
-    fontSize: responsive.fontSize.sm,
-    lineHeight: responsive.fontSize.sm * 1.5,
-    fontWeight: '400',
+    fontSize: settingsTypography.secondary,
+    lineHeight: settingsTypography.secondary * 1.5,
+    fontWeight: settingsFontWeights.regular,
     color: colors.neutralDark,
     marginTop: 2,
   },
   historySize: {
-    fontSize: responsive.fontSize.sm,
-    lineHeight: responsive.fontSize.sm * 1.5,
-    fontWeight: '600',
+    fontSize: settingsTypography.secondary,
+    lineHeight: settingsTypography.secondary * 1.5,
+    fontWeight: settingsFontWeights.semibold,
     color: colors.neutralMedium,
   },
   infoBox: {
@@ -429,8 +430,8 @@ const styles = StyleSheet.create({
   },
   infoText: {
     flex: 1,
-    fontSize: responsive.fontSize.xs,
-    lineHeight: responsive.fontSize.xs * 1.6,
+    fontSize: settingsTypography.tertiary,
+    lineHeight: settingsTypography.tertiary * 1.6,
     color: colors.primaryDark,
   },
 });

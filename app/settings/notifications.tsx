@@ -5,6 +5,7 @@ import { ScreenHeader } from '@/components/layout/ScreenHeader';
 import { theme } from '@/constants/theme';
 import { responsive, ms } from '@/constants/responsive';
 import { Ionicons } from '@expo/vector-icons';
+import { settingsTypography, settingsFontWeights, settingsTextStyles } from './typography';
 
 type AlertTiming = 'immediate' | 'daily' | 'weekly';
 
@@ -77,11 +78,13 @@ export default function NotificationsSettings() {
   ) => (
     <View key={item.id} style={styles.notificationCard}>
       <View style={styles.cardContent}>
-        <Ionicons
-          name={item.icon}
-          size={ms(24)}
-          color={theme.colors.text.primary}
-        />
+        <View style={styles.notificationIconContainer}>
+          <Ionicons
+            name={item.icon}
+            size={ms(24)}
+            color={theme.colors.text.primary}
+          />
+        </View>
         <View style={styles.cardTextContainer}>
           <View style={styles.cardTitleRow}>
             <Text style={styles.cardTitle} numberOfLines={1}>{item.title}</Text>
@@ -135,7 +138,7 @@ export default function NotificationsSettings() {
         <View style={styles.masterToggleCard}>
           <View style={styles.masterToggleLeft}>
             <View style={styles.masterIcon}>
-              <Ionicons name="notifications" size={24} color={theme.colors.primary[600]} />
+              <Ionicons name="notifications" size={ms(24)} color={theme.colors.text.primary} />
             </View>
             <View>
               <Text style={styles.masterToggleTitle}>All Notifications</Text>
@@ -228,7 +231,9 @@ export default function NotificationsSettings() {
           <View style={styles.deliveryCard}>
             <View style={styles.deliveryRow}>
               <View style={styles.deliveryLeft}>
-                <Ionicons name="phone-portrait-outline" size={24} color={theme.colors.text.secondary} />
+                <View style={styles.deliveryIconContainer}>
+                  <Ionicons name="phone-portrait-outline" size={ms(24)} color={theme.colors.text.primary} />
+                </View>
                 <View style={styles.deliveryTextContainer}>
                   <Text style={styles.deliveryTitle}>Push Notifications</Text>
                   <Text style={styles.deliverySubtitle}>In-app alerts</Text>
@@ -248,7 +253,9 @@ export default function NotificationsSettings() {
 
             <View style={styles.deliveryRow}>
               <View style={styles.deliveryLeft}>
-                <Ionicons name="mail-outline" size={24} color={theme.colors.text.secondary} />
+                <View style={styles.deliveryIconContainer}>
+                  <Ionicons name="mail-outline" size={ms(24)} color={theme.colors.text.primary} />
+                </View>
                 <View style={styles.deliveryTextContainer}>
                   <Text style={styles.deliveryTitle}>Email Notifications</Text>
                   <Text style={styles.deliverySubtitle}>Send to user@example.com</Text>
@@ -268,7 +275,9 @@ export default function NotificationsSettings() {
 
             <View style={styles.deliveryRow}>
               <View style={styles.deliveryLeft}>
-                <Ionicons name="chatbubble-outline" size={24} color={theme.colors.text.secondary} />
+                <View style={styles.deliveryIconContainer}>
+                  <Ionicons name="chatbubble-outline" size={ms(24)} color={theme.colors.text.primary} />
+                </View>
                 <View style={styles.deliveryTextContainer}>
                   <View style={styles.deliveryTitleRow}>
                     <Text style={styles.deliveryTitle}>SMS Notifications</Text>
@@ -294,7 +303,9 @@ export default function NotificationsSettings() {
 
             <View style={styles.deliveryRow}>
               <View style={styles.deliveryLeft}>
-                <Ionicons name="moon-outline" size={24} color={theme.colors.text.secondary} />
+                <View style={styles.deliveryIconContainer}>
+                  <Ionicons name="moon-outline" size={ms(24)} color={theme.colors.text.primary} />
+                </View>
                 <View style={styles.deliveryTextContainer}>
                   <Text style={styles.deliveryTitle}>Quiet Hours</Text>
                   <Text style={styles.deliverySubtitle}>10:00 PM - 8:00 AM</Text>
@@ -319,7 +330,7 @@ export default function NotificationsSettings() {
           <View style={styles.exampleCard}>
             <View style={styles.exampleHeader}>
               <View style={styles.exampleIconContainer}>
-                <Ionicons name="notifications" size={20} color={theme.colors.warning.dark} />
+                <Ionicons name="notifications" size={ms(24)} color={theme.colors.text.primary} />
               </View>
               <View style={styles.exampleContent}>
                 <Text style={styles.exampleTitle}>Budget Alert: Groceries</Text>
@@ -349,7 +360,7 @@ export default function NotificationsSettings() {
 
 const styles = StyleSheet.create({
   content: {
-    padding: responsive.spacing[6],
+    padding: responsive.spacing[4],
     paddingBottom: responsive.spacing[8],
   },
   // Master Toggle Card
@@ -373,21 +384,21 @@ const styles = StyleSheet.create({
     width: ms(48),
     height: ms(48),
     borderRadius: ms(24),
-    backgroundColor: theme.colors.primary[50],
+    backgroundColor: theme.colors.background.tertiary,
     alignItems: 'center',
     justifyContent: 'center',
   },
   masterToggleTitle: {
     ...theme.typography.styles.body,
-    fontSize: responsive.fontSize.md,
-    lineHeight: responsive.fontSize.md * 1.5,
-    fontWeight: '600',
+    fontSize: settingsTypography.primary,
+    lineHeight: settingsTypography.primary * 1.5,
+    fontWeight: settingsFontWeights.semibold,
     marginBottom: 4,
   },
   masterToggleSubtitle: {
     ...theme.typography.styles.bodySmall,
-    fontSize: responsive.fontSize.sm,
-    lineHeight: responsive.fontSize.sm * 1.5,
+    fontSize: settingsTypography.secondary,
+    lineHeight: settingsTypography.secondary * 1.5,
     color: theme.colors.text.secondary,
   },
   // Section
@@ -399,7 +410,7 @@ const styles = StyleSheet.create({
     fontSize: responsive.fontSize.xs,
     lineHeight: responsive.fontSize.xs * 1.5,
     color: theme.colors.text.tertiary,
-    fontWeight: '700',
+    fontWeight: settingsFontWeights.bold,
     letterSpacing: 1.2,
     marginBottom: responsive.spacing[3],
   },
@@ -414,13 +425,13 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    paddingVertical: responsive.spacing[2],
+    paddingVertical: responsive.spacing[3],
     gap: responsive.spacing[3],
   },
   cardDivider: {
     height: 1,
     backgroundColor: theme.colors.border.light,
-    marginVertical: responsive.spacing[2],
+    marginVertical: responsive.spacing[3],
   },
   cardContent: {
     flexDirection: 'row',
@@ -428,25 +439,33 @@ const styles = StyleSheet.create({
     gap: responsive.spacing[3],
     flex: 1,
   },
+  notificationIconContainer: {
+    width: ms(48),
+    height: ms(48),
+    borderRadius: ms(24),
+    backgroundColor: theme.colors.background.tertiary,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
   cardTextContainer: {
     flex: 1,
+    gap: responsive.spacing[0.5],
   },
   cardTitleRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: responsive.spacing[1],
-    marginBottom: 2,
+    gap: responsive.spacing[1.5],
   },
   cardTitle: {
     ...theme.typography.styles.body,
-    fontSize: responsive.fontSize.sm,
-    lineHeight: responsive.fontSize.sm * 1.5,
-    fontWeight: '600',
+    fontSize: settingsTypography.primary,
+    lineHeight: settingsTypography.primary * 1.5,
+    fontWeight: settingsFontWeights.semibold,
   },
   cardSubtitle: {
     ...theme.typography.styles.bodySmall,
-    fontSize: responsive.fontSize.xs,
-    lineHeight: responsive.fontSize.xs * 1.5,
+    fontSize: settingsTypography.secondary,
+    lineHeight: settingsTypography.secondary * 1.5,
     color: theme.colors.text.secondary,
   },
   premiumBadgeSmall: {
@@ -458,9 +477,9 @@ const styles = StyleSheet.create({
   premiumBadgeTextSmall: {
     ...theme.typography.styles.caption,
     color: theme.colors.warning.dark,
-    fontSize: 10,
+    fontSize: settingsTypography.badge,
     lineHeight: 12,
-    fontWeight: '600',
+    fontWeight: settingsFontWeights.semibold,
   },
   premiumBadge: {
     backgroundColor: theme.colors.warning.light,
@@ -471,9 +490,9 @@ const styles = StyleSheet.create({
   premiumBadgeText: {
     ...theme.typography.styles.caption,
     color: theme.colors.warning.dark,
-    fontSize: responsive.fontSize.xs,
-    lineHeight: responsive.fontSize.xs * 1.5,
-    fontWeight: '600',
+    fontSize: settingsTypography.badge,
+    lineHeight: 14,
+    fontWeight: settingsFontWeights.semibold,
   },
   // Timing Section
   timingContainer: {
@@ -514,15 +533,15 @@ const styles = StyleSheet.create({
   },
   timingTitle: {
     ...theme.typography.styles.body,
-    fontSize: responsive.fontSize.sm,
-    lineHeight: responsive.fontSize.sm * 1.5,
-    fontWeight: '600',
+    fontSize: settingsTypography.primary,
+    lineHeight: settingsTypography.primary * 1.5,
+    fontWeight: settingsFontWeights.semibold,
     marginBottom: 4,
   },
   timingSubtitle: {
     ...theme.typography.styles.bodySmall,
-    fontSize: responsive.fontSize.xs,
-    lineHeight: responsive.fontSize.xs * 1.5,
+    fontSize: settingsTypography.secondary,
+    lineHeight: settingsTypography.secondary * 1.5,
     color: theme.colors.text.secondary,
   },
   // Delivery Method
@@ -545,6 +564,14 @@ const styles = StyleSheet.create({
     marginRight: responsive.spacing[2],
     gap: responsive.spacing[3],
   },
+  deliveryIconContainer: {
+    width: ms(48),
+    height: ms(48),
+    borderRadius: ms(24),
+    backgroundColor: theme.colors.background.tertiary,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
   deliveryTextContainer: {
     flex: 1,
   },
@@ -555,15 +582,15 @@ const styles = StyleSheet.create({
   },
   deliveryTitle: {
     ...theme.typography.styles.body,
-    fontSize: responsive.fontSize.sm,
-    lineHeight: responsive.fontSize.sm * 1.5,
-    fontWeight: '600',
+    fontSize: settingsTypography.primary,
+    lineHeight: settingsTypography.primary * 1.5,
+    fontWeight: settingsFontWeights.semibold,
     marginBottom: 4,
   },
   deliverySubtitle: {
     ...theme.typography.styles.bodySmall,
-    fontSize: responsive.fontSize.xs,
-    lineHeight: responsive.fontSize.xs * 1.5,
+    fontSize: settingsTypography.secondary,
+    lineHeight: settingsTypography.secondary * 1.5,
     color: theme.colors.text.secondary,
   },
   divider: {
@@ -588,10 +615,10 @@ const styles = StyleSheet.create({
     alignItems: 'flex-start',
   },
   exampleIconContainer: {
-    width: 40,
-    height: 40,
-    backgroundColor: theme.colors.warning.light,
-    borderRadius: 20,
+    width: ms(48),
+    height: ms(48),
+    backgroundColor: theme.colors.background.tertiary,
+    borderRadius: ms(24),
     alignItems: 'center',
     justifyContent: 'center',
     marginRight: responsive.spacing[2],
@@ -601,22 +628,22 @@ const styles = StyleSheet.create({
   },
   exampleTitle: {
     ...theme.typography.styles.body,
-    fontSize: responsive.fontSize.sm,
-    lineHeight: responsive.fontSize.sm * 1.5,
-    fontWeight: '600',
+    fontSize: settingsTypography.primary,
+    lineHeight: settingsTypography.primary * 1.5,
+    fontWeight: settingsFontWeights.semibold,
     marginBottom: responsive.spacing[1],
   },
   exampleMessage: {
     ...theme.typography.styles.bodySmall,
-    fontSize: responsive.fontSize.xs,
-    lineHeight: responsive.fontSize.xs * 1.6,
+    fontSize: settingsTypography.secondary,
+    lineHeight: settingsTypography.secondary * 1.5,
     color: theme.colors.text.secondary,
     marginBottom: responsive.spacing[2],
   },
   exampleTime: {
     ...theme.typography.styles.caption,
-    fontSize: responsive.fontSize.xs,
-    lineHeight: responsive.fontSize.xs * 1.5,
+    fontSize: settingsTypography.tertiary,
+    lineHeight: settingsTypography.tertiary * 1.5,
     color: theme.colors.text.tertiary,
   },
   // Info Box
@@ -632,8 +659,8 @@ const styles = StyleSheet.create({
   },
   infoText: {
     ...theme.typography.styles.bodySmall,
-    fontSize: responsive.fontSize.xs,
-    lineHeight: responsive.fontSize.xs * 1.6,
+    fontSize: settingsTypography.secondary,
+    lineHeight: settingsTypography.secondary * 1.5,
     color: theme.colors.info.dark,
     marginLeft: responsive.spacing[2],
     flex: 1,

@@ -10,7 +10,8 @@ import { Screen } from '@/components/layout/Screen';
 import { ScreenHeader } from '@/components/layout/ScreenHeader';
 import { theme } from '@/constants/theme';
 import { responsive, ms } from '@/constants/responsive';
-import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
+import { Ionicons } from '@expo/vector-icons';
+import { settingsTypography, settingsFontWeights, settingsTextStyles } from './typography';
 
 // Color Palette - Using theme colors
 const colors = {
@@ -50,21 +51,21 @@ export default function ImportData() {
       id: 'csv',
       title: 'Import from CSV',
       description: 'Map columns and detect duplicates automatically',
-      icon: 'file-delimited',
+      icon: 'document-text-outline',
       color: colors.functionalSuccess,
     },
     {
       id: 'pocketbook',
       title: 'Import from Pocketbook',
       description: 'Use our migration wizard to transfer data',
-      icon: 'swap-horizontal',
+      icon: 'swap-horizontal-outline',
       color: colors.primary,
     },
     {
       id: 'other',
       title: 'Import from Other Apps',
       description: 'YNAB, Mint, or other budgeting apps',
-      icon: 'application-import',
+      icon: 'arrow-down-circle-outline',
       color: colors.functionalWarning,
     },
   ];
@@ -86,14 +87,6 @@ export default function ImportData() {
         contentContainerStyle={styles.scrollContent}
         showsVerticalScrollIndicator={false}
       >
-        {/* Header Section */}
-        <View style={styles.headerSection}>
-          <Text style={styles.headline}>Import Your Data</Text>
-          <Text style={styles.subheadline}>
-            Bring your financial data from other sources into PocketBudget
-          </Text>
-        </View>
-
         {/* Import Options */}
         <View style={styles.section}>
           <Text style={styles.sectionHeader}>IMPORT FROM</Text>
@@ -106,11 +99,11 @@ export default function ImportData() {
               ]}
               onPress={() => handleImport(option.id)}
             >
-              <View style={[styles.iconContainer, { backgroundColor: `${option.color}20` }]}>
-                <MaterialCommunityIcons
+              <View style={styles.iconContainer}>
+                <Ionicons
                   name={option.icon as any}
                   size={ms(24)}
-                  color={option.color}
+                  color={colors.neutralDarkest}
                 />
               </View>
               <View style={styles.optionContent}>
@@ -184,37 +177,20 @@ const styles = StyleSheet.create({
   },
   scrollContent: {
     paddingHorizontal: responsive.spacing[4],
-    paddingTop: responsive.spacing[4],
+    paddingTop: responsive.spacing[6],
     paddingBottom: responsive.spacing[8],
   },
-  headerSection: {
-    paddingHorizontal: responsive.spacing[2],
-    marginBottom: responsive.spacing[6],
-  },
-  headline: {
-    fontSize: responsive.fontSize.h1,
-    lineHeight: responsive.fontSize.h1 * 1.3,
-    fontWeight: '700',
-    color: colors.neutralDarkest,
-    marginBottom: responsive.spacing[2],
-  },
-  subheadline: {
-    fontSize: responsive.fontSize.md,
-    lineHeight: responsive.fontSize.md * 1.5,
-    color: colors.neutralDark,
-  },
   section: {
-    marginBottom: responsive.spacing[6],
+    marginBottom: responsive.spacing[4],
   },
   sectionHeader: {
-    fontSize: responsive.fontSize.xs,
-    lineHeight: responsive.fontSize.xs * 1.5,
-    fontWeight: '700',
+    fontSize: settingsTypography.tertiary,
+    lineHeight: settingsTypography.tertiary * 1.5,
+    fontWeight: settingsFontWeights.bold,
     letterSpacing: 1,
     textTransform: 'uppercase',
     color: colors.neutralMedium,
     marginBottom: responsive.spacing[3],
-    paddingHorizontal: responsive.spacing[2],
   },
   importOption: {
     flexDirection: 'row',
@@ -231,7 +207,8 @@ const styles = StyleSheet.create({
   iconContainer: {
     width: ms(48),
     height: ms(48),
-    borderRadius: theme.borderRadius.lg,
+    borderRadius: ms(24),
+    backgroundColor: colors.iconBg,
     alignItems: 'center',
     justifyContent: 'center',
     marginRight: responsive.spacing[3],
@@ -241,14 +218,14 @@ const styles = StyleSheet.create({
     gap: 2,
   },
   optionTitle: {
-    fontSize: responsive.fontSize.md,
-    lineHeight: responsive.fontSize.md * 1.5,
-    fontWeight: '600',
+    fontSize: settingsTypography.primary,
+    lineHeight: settingsTypography.primary * 1.5,
+    fontWeight: settingsFontWeights.semibold,
     color: colors.neutralDarkest,
   },
   optionDescription: {
-    fontSize: responsive.fontSize.sm,
-    lineHeight: responsive.fontSize.sm * 1.5,
+    fontSize: settingsTypography.secondary,
+    lineHeight: settingsTypography.secondary * 1.5,
     color: colors.neutralDark,
     marginTop: 2,
   },
@@ -266,9 +243,9 @@ const styles = StyleSheet.create({
     marginBottom: responsive.spacing[4],
   },
   cardTitle: {
-    fontSize: responsive.fontSize.lg,
-    lineHeight: responsive.fontSize.lg * 1.5,
-    fontWeight: '700',
+    fontSize: settingsTypography.sectionHeading,
+    lineHeight: settingsTypography.sectionHeading * 1.5,
+    fontWeight: settingsFontWeights.bold,
     color: colors.neutralDarkest,
   },
   guidelinesList: {
@@ -288,15 +265,15 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   guidelineBulletText: {
-    fontSize: responsive.fontSize.xs,
-    lineHeight: responsive.fontSize.xs * 1.5,
-    fontWeight: '700',
+    fontSize: settingsTypography.tertiary,
+    lineHeight: settingsTypography.tertiary * 1.5,
+    fontWeight: settingsFontWeights.bold,
     color: colors.primary,
   },
   guidelineText: {
     flex: 1,
-    fontSize: responsive.fontSize.sm,
-    lineHeight: responsive.fontSize.sm * 1.6,
+    fontSize: settingsTypography.secondary,
+    lineHeight: settingsTypography.secondary * 1.6,
     color: colors.neutralDark,
   },
   infoBox: {
@@ -311,8 +288,9 @@ const styles = StyleSheet.create({
   },
   infoText: {
     flex: 1,
-    fontSize: responsive.fontSize.xs,
-    lineHeight: responsive.fontSize.xs * 1.6,
+    fontSize: settingsTypography.secondary,
+    lineHeight: settingsTypography.secondary * 1.6,
     color: colors.neutralDarkest,
+    fontWeight: settingsFontWeights.regular,
   },
 });

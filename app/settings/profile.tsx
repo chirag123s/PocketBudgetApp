@@ -17,6 +17,7 @@ import { responsive, ms } from '@/constants/responsive';
 import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
 import { avatarColors, loadAvatarColor, saveAvatarColor, getAvatarGradientSync } from '@/utils/avatar';
+import { settingsTypography, settingsFontWeights, settingsTextStyles } from './typography';
 
 // Color Palette - Using theme colors
 const colors = {
@@ -284,7 +285,7 @@ export default function EditProfileScreen() {
                 onPress={() => setShowColorPicker(false)}
                 style={styles.closeButton}
               >
-                <Ionicons name="close" size={24} color={colors.neutralDarkest} />
+                <Ionicons name="close" size={ms(24)} color={colors.neutralDarkest} />
               </Pressable>
             </View>
 
@@ -312,7 +313,7 @@ export default function EditProfileScreen() {
                     </Text>
                     {selectedColor === color.id && (
                       <View style={styles.selectedBadge}>
-                        <Ionicons name="checkmark" size={16} color={colors.neutralWhite} />
+                        <Ionicons name="checkmark" size={ms(16)} color={colors.neutralWhite} />
                       </View>
                     )}
                   </LinearGradient>
@@ -347,8 +348,8 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   avatarText: {
-    fontSize: responsive.fontSize.h1,
-    fontWeight: '700',
+    fontSize: settingsTypography.hero,
+    fontWeight: settingsFontWeights.bold,
     color: colors.neutralWhite,
   },
   changePhotoButton: {
@@ -363,8 +364,8 @@ const styles = StyleSheet.create({
     opacity: 0.7,
   },
   changePhotoButtonText: {
-    fontSize: responsive.fontSize.sm,
-    fontWeight: '700',
+    fontSize: settingsTypography.button,
+    fontWeight: settingsFontWeights.bold,
     color: colors.primary,
     letterSpacing: 0.2,
   },
@@ -376,8 +377,8 @@ const styles = StyleSheet.create({
     gap: responsive.spacing[2],
   },
   label: {
-    fontSize: responsive.fontSize.sm,
-    fontWeight: '500',
+    fontSize: settingsTypography.inputLabel,
+    fontWeight: settingsFontWeights.medium,
     color: colors.neutralDarkest,
   },
   input: {
@@ -387,7 +388,7 @@ const styles = StyleSheet.create({
     borderColor: colors.border,
     backgroundColor: colors.neutralWhite,
     paddingHorizontal: responsive.spacing[4],
-    fontSize: responsive.fontSize.md,
+    fontSize: settingsTypography.input,
     color: colors.neutralDarkest,
   },
   helperRow: {
@@ -396,12 +397,12 @@ const styles = StyleSheet.create({
     gap: responsive.spacing[1.5],
   },
   helperText: {
-    fontSize: responsive.fontSize.xs,
+    fontSize: settingsTypography.inputHint,
     color: colors.neutralDark,
   },
   verifyText: {
-    fontSize: responsive.fontSize.sm,
-    fontWeight: '700',
+    fontSize: settingsTypography.link,
+    fontWeight: settingsFontWeights.bold,
     color: colors.primary,
     letterSpacing: 0.2,
   },
@@ -431,8 +432,8 @@ const styles = StyleSheet.create({
     opacity: 0.9,
   },
   saveButtonText: {
-    fontSize: responsive.fontSize.md,
-    fontWeight: '700',
+    fontSize: settingsTypography.button,
+    fontWeight: settingsFontWeights.bold,
     color: colors.neutralWhite,
     letterSpacing: 0.2,
   },
@@ -459,13 +460,13 @@ const styles = StyleSheet.create({
     borderBottomColor: colors.border,
   },
   colorPickerTitle: {
-    fontSize: responsive.fontSize.lg,
-    fontWeight: '700',
+    fontSize: settingsTypography.modalTitle,
+    fontWeight: settingsFontWeights.bold,
     color: colors.neutralDarkest,
   },
   closeButton: {
-    width: ms(40),
-    height: ms(40),
+    width: ms(48),
+    height: ms(48),
     alignItems: 'center',
     justifyContent: 'center',
   },
@@ -493,8 +494,8 @@ const styles = StyleSheet.create({
     transform: [{ scale: 1.05 }],
   },
   colorInitials: {
-    fontSize: responsive.fontSize.h2,
-    fontWeight: '700',
+    fontSize: settingsTypography.pageHeading,
+    fontWeight: settingsFontWeights.bold,
     color: colors.neutralWhite,
   },
   selectedBadge: {
@@ -511,9 +512,9 @@ const styles = StyleSheet.create({
     borderColor: colors.neutralWhite,
   },
   colorName: {
-    fontSize: responsive.fontSize.xs,
+    fontSize: settingsTypography.tertiary,
     color: colors.neutralDark,
     textAlign: 'center',
-    fontWeight: '500',
+    fontWeight: settingsFontWeights.medium,
   },
 });

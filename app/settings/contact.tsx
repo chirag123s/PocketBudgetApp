@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/Button';
 import { theme } from '@/constants/theme';
 import { responsive, ms } from '@/constants/responsive';
 import { Ionicons } from '@expo/vector-icons';
+import { settingsTypography, settingsFontWeights, settingsTextStyles } from './typography';
 
 export default function ContactSupport() {
   const [issueType, setIssueType] = useState('technical');
@@ -142,7 +143,7 @@ const styles = StyleSheet.create({
   attachButtonText: {
     ...theme.typography.styles.button,
     marginLeft: responsive.spacing[2],
-    fontWeight: '600',
+    fontWeight: settingsFontWeights.semibold,
   },
   emailBox: {
     backgroundColor: theme.colors.background.tertiary,
@@ -157,7 +158,7 @@ const styles = StyleSheet.create({
   },
   emailText: {
     ...theme.typography.styles.body,
-    fontWeight: '600',
+    fontWeight: settingsFontWeights.semibold,
   },
   infoCard: {
     backgroundColor: theme.colors.info.light,
@@ -172,7 +173,7 @@ const styles = StyleSheet.create({
   },
   infoText: {
     ...theme.typography.styles.body,
-    fontWeight: '600',
+    fontWeight: settingsFontWeights.semibold,
     color: theme.colors.info.dark,
   },
 });

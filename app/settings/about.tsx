@@ -4,8 +4,9 @@ import { Screen } from '@/components/layout/Screen';
 import { ScreenHeader } from '@/components/layout/ScreenHeader';
 import { theme } from '@/constants/theme';
 import { responsive, ms } from '@/constants/responsive';
-import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
+import { Ionicons } from '@expo/vector-icons';
 import { BudgetMateLogo } from '@/app/auth/BudgetMateLogo';
+import { settingsTypography, settingsFontWeights, settingsTextStyles } from './typography';
 
 // Color Palette - Using theme colors
 const colors = {
@@ -59,7 +60,7 @@ export default function AboutApp() {
     >
       <View style={styles.settingLeft}>
         <View style={styles.iconContainer}>
-          <MaterialCommunityIcons name={icon as any} size={24} color={colors.neutralDarkest} />
+          <Ionicons name={icon as any} size={ms(24)} color={colors.neutralDarkest} />
         </View>
         <View style={{ flex: 1 }}>
           <Text style={styles.settingTitle}>
@@ -116,17 +117,17 @@ export default function AboutApp() {
           <Text style={styles.sectionHeader}>LEGAL</Text>
           <View style={styles.card}>
             <SettingRow
-              icon="file-document"
+              icon="document-text-outline"
               title="Terms of Service"
               onPress={() => {}}
             />
             <SettingRow
-              icon="shield-check"
+              icon="shield-checkmark-outline"
               title="Privacy Policy"
               onPress={() => {}}
             />
             <SettingRow
-              icon="license"
+              icon="document-outline"
               title="Open Source Licenses"
               onPress={() => {}}
               isLast
@@ -164,7 +165,7 @@ export default function AboutApp() {
               activeOpacity={0.7}
             >
               <View style={styles.socialIconContainer}>
-                <MaterialCommunityIcons name="twitter" size={24} color={colors.primary} />
+                <Ionicons name="logo-twitter" size={ms(24)} color={colors.neutralDarkest} />
               </View>
               <Text style={styles.socialLabel}>Twitter/X</Text>
             </TouchableOpacity>
@@ -175,7 +176,7 @@ export default function AboutApp() {
               activeOpacity={0.7}
             >
               <View style={styles.socialIconContainer}>
-                <MaterialCommunityIcons name="web" size={24} color={colors.primary} />
+                <Ionicons name="globe-outline" size={ms(24)} color={colors.neutralDarkest} />
               </View>
               <Text style={styles.socialLabel}>Website</Text>
             </TouchableOpacity>
@@ -186,7 +187,7 @@ export default function AboutApp() {
               activeOpacity={0.7}
             >
               <View style={styles.socialIconContainer}>
-                <MaterialCommunityIcons name="email" size={24} color={colors.primary} />
+                <Ionicons name="mail-outline" size={ms(24)} color={colors.neutralDarkest} />
               </View>
               <Text style={styles.socialLabel}>Contact</Text>
             </TouchableOpacity>
@@ -197,7 +198,7 @@ export default function AboutApp() {
               activeOpacity={0.7}
             >
               <View style={styles.socialIconContainer}>
-                <MaterialCommunityIcons name="forum" size={24} color={colors.primary} />
+                <Ionicons name="chatbubbles-outline" size={ms(24)} color={colors.neutralDarkest} />
               </View>
               <Text style={styles.socialLabel}>Forum</Text>
             </TouchableOpacity>
@@ -249,21 +250,21 @@ const styles = StyleSheet.create({
     ...theme.shadows.md,
   },
   appName: {
-    fontSize: responsive.fontSize.h2,
-    lineHeight: responsive.fontSize.h2 * 1.5,
-    fontWeight: '700',
+    fontSize: settingsTypography.pageHeading,
+    lineHeight: settingsTypography.pageHeading * 1.5,
+    fontWeight: settingsFontWeights.bold,
     color: colors.neutralDarkest,
     marginBottom: responsive.spacing[1],
   },
   appVersion: {
-    fontSize: responsive.fontSize.sm,
-    lineHeight: responsive.fontSize.sm * 1.5,
+    fontSize: settingsTypography.secondary,
+    lineHeight: settingsTypography.secondary * 1.5,
     color: colors.neutralMedium,
     marginBottom: responsive.spacing[3],
   },
   appTagline: {
-    fontSize: responsive.fontSize.sm,
-    lineHeight: responsive.fontSize.sm * 1.6,
+    fontSize: settingsTypography.secondary,
+    lineHeight: settingsTypography.secondary * 1.6,
     color: colors.neutralDark,
     fontStyle: 'italic',
     textAlign: 'center',
@@ -273,9 +274,9 @@ const styles = StyleSheet.create({
     marginTop: responsive.spacing[4],
   },
   sectionHeader: {
-    fontSize: responsive.fontSize.xs,
-    lineHeight: responsive.fontSize.xs * 1.5,
-    fontWeight: '700',
+    fontSize: settingsTypography.tertiary,
+    lineHeight: settingsTypography.tertiary * 1.5,
+    fontWeight: settingsFontWeights.bold,
     letterSpacing: 1,
     textTransform: 'uppercase',
     color: colors.neutralMedium,
@@ -304,22 +305,22 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   iconContainer: {
-    width: ms(40),
-    height: ms(40),
-    borderRadius: theme.borderRadius.lg,
+    width: ms(48),
+    height: ms(48),
+    borderRadius: ms(24),
     alignItems: 'center',
     justifyContent: 'center',
     backgroundColor: colors.iconBg,
   },
   settingTitle: {
-    fontSize: responsive.fontSize.md,
-    lineHeight: responsive.fontSize.md * 1.5,
-    fontWeight: '500',
+    fontSize: settingsTypography.primary,
+    lineHeight: settingsTypography.primary * 1.5,
+    fontWeight: settingsFontWeights.medium,
     color: colors.neutralDarkest,
   },
   settingSubtitle: {
-    fontSize: responsive.fontSize.sm,
-    lineHeight: responsive.fontSize.sm * 1.5,
+    fontSize: settingsTypography.secondary,
+    lineHeight: settingsTypography.secondary * 1.5,
     color: colors.neutralDark,
     marginTop: 2,
   },
@@ -343,15 +344,15 @@ const styles = StyleSheet.create({
     width: ms(48),
     height: ms(48),
     borderRadius: ms(24),
-    backgroundColor: `${colors.primary}20`,
+    backgroundColor: colors.iconBg,
     alignItems: 'center',
     justifyContent: 'center',
     marginBottom: responsive.spacing[1],
   },
   socialLabel: {
-    fontSize: responsive.fontSize.xs,
-    lineHeight: responsive.fontSize.xs * 1.5,
-    fontWeight: '500',
+    fontSize: settingsTypography.tertiary,
+    lineHeight: settingsTypography.tertiary * 1.5,
+    fontWeight: settingsFontWeights.medium,
     color: colors.neutralDark,
     textAlign: 'center',
   },
@@ -365,9 +366,9 @@ const styles = StyleSheet.create({
     ...theme.shadows.sm,
   },
   footerCopyright: {
-    fontSize: responsive.fontSize.md,
-    lineHeight: responsive.fontSize.md * 1.5,
-    fontWeight: '600',
+    fontSize: settingsTypography.primary,
+    lineHeight: settingsTypography.primary * 1.5,
+    fontWeight: settingsFontWeights.semibold,
     color: colors.neutralDarkest,
     marginBottom: responsive.spacing[2],
   },
@@ -377,18 +378,18 @@ const styles = StyleSheet.create({
     marginBottom: responsive.spacing[2],
   },
   footerText: {
-    fontSize: responsive.fontSize.sm,
-    lineHeight: responsive.fontSize.sm * 1.5,
+    fontSize: settingsTypography.secondary,
+    lineHeight: settingsTypography.secondary * 1.5,
     color: colors.neutralDark,
   },
   footerHeart: {
-    fontSize: responsive.fontSize.md,
-    lineHeight: responsive.fontSize.md * 1.5,
+    fontSize: settingsTypography.primary,
+    lineHeight: settingsTypography.primary * 1.5,
     marginHorizontal: responsive.spacing[1],
   },
   footerLegal: {
-    fontSize: responsive.fontSize.xs,
-    lineHeight: responsive.fontSize.xs * 1.5,
+    fontSize: settingsTypography.tertiary,
+    lineHeight: settingsTypography.tertiary * 1.5,
     color: colors.neutralMedium,
     textAlign: 'center',
   },

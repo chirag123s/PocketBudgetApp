@@ -18,7 +18,7 @@ import Animated, {
 } from 'react-native-reanimated';
 import { Gesture, GestureDetector } from 'react-native-gesture-handler';
 import { LinearGradient } from 'expo-linear-gradient';
-import { MaterialCommunityIcons } from '@expo/vector-icons';
+import { Ionicons } from '@expo/vector-icons';
 import { BudgetMateLogo } from './BudgetMateLogo';
 import { useRouter } from 'expo-router';
 import { useAuth } from '@/contexts/AuthContext';
@@ -26,10 +26,10 @@ import { useAuth } from '@/contexts/AuthContext';
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get('window');
 
 const floatingIcons = [
-  { icon: 'currency-usd', delay: 0, x: -80, y: -100 },
-  { icon: 'bitcoin', delay: 200, x: 80, y: -150 },
-  { icon: 'piggy-bank', delay: 400, x: -100, y: 100 },
-  { icon: 'credit-card', delay: 600, x: 70, y: 120 },
+  { icon: 'cash-outline', delay: 0, x: -80, y: -100 },
+  { icon: 'logo-bitcoin', delay: 200, x: 80, y: -150 },
+  { icon: 'cash-outline', delay: 400, x: -100, y: 100 },
+  { icon: 'card-outline', delay: 600, x: 70, y: 120 },
 ];
 
 interface Ripple {
@@ -278,7 +278,7 @@ function FloatingIcon({
         animatedStyle,
       ]}
     >
-      <MaterialCommunityIcons name={icon as any} size={48} color="white" />
+      <Ionicons name={icon as any} size={48} color="white" />
     </Animated.View>
   );
 }

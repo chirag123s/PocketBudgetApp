@@ -4,7 +4,8 @@ import { Screen } from '@/components/layout/Screen';
 import { ScreenHeader } from '@/components/layout/ScreenHeader';
 import { theme } from '@/constants/theme';
 import { responsive, ms } from '@/constants/responsive';
-import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
+import { Ionicons } from '@expo/vector-icons';
+import { settingsTypography, settingsFontWeights, settingsTextStyles } from './typography';
 
 // Color Palette - Using theme colors
 const colors = {
@@ -27,6 +28,7 @@ const colors = {
 
   // Border
   border: theme.colors.border.light,
+  iconBg: theme.colors.background.tertiary,
 };
 
 type ThemeType = 'light' | 'dark' | 'system';
@@ -45,7 +47,7 @@ export default function AppearanceSettings() {
   const [widgets, setWidgets] = useState<Widget[]>([
     {
       id: '1',
-      icon: 'wallet',
+      icon: 'wallet-outline',
       title: 'Account Balances',
       description: 'View your current balance.',
       enabled: true,
@@ -53,7 +55,7 @@ export default function AppearanceSettings() {
     },
     {
       id: '2',
-      icon: 'receipt',
+      icon: 'receipt-outline',
       title: 'Recent Transactions',
       description: 'Your latest spending.',
       enabled: true,
@@ -61,7 +63,7 @@ export default function AppearanceSettings() {
     },
     {
       id: '3',
-      icon: 'chart-pie',
+      icon: 'pie-chart-outline',
       title: 'Spending by Category',
       description: 'Breakdown of your expenses.',
       enabled: true,
@@ -69,7 +71,7 @@ export default function AppearanceSettings() {
     },
     {
       id: '4',
-      icon: 'calendar-clock',
+      icon: 'time-outline',
       title: 'Upcoming Bills',
       description: 'Never miss a payment.',
       enabled: false,
@@ -77,7 +79,7 @@ export default function AppearanceSettings() {
     },
     {
       id: '5',
-      icon: 'piggy-bank',
+      icon: 'cash-outline',
       title: 'Savings Goals',
       description: 'Track your goal progress.',
       enabled: false,
@@ -113,7 +115,7 @@ export default function AppearanceSettings() {
       >
         <Ionicons
           name={icon}
-          size={24}
+          size={20}
           color={isSelected ? colors.primary : colors.neutralDarkest}
         />
         <Text
@@ -130,9 +132,9 @@ export default function AppearanceSettings() {
 
   const WidgetItem = ({ widget }: { widget: Widget }) => (
     <View style={styles.widgetItem}>
-      <MaterialCommunityIcons
-        name="drag-horizontal-variant"
-        size={24}
+      <Ionicons
+        name="reorder-three-outline"
+        size={20}
         color={colors.neutralMedium}
         style={styles.dragHandle}
       />
@@ -147,9 +149,9 @@ export default function AppearanceSettings() {
           },
         ]}
       >
-        <MaterialCommunityIcons
+        <Ionicons
           name={widget.icon as any}
-          size={24}
+          size={20}
           color={widget.isPrimary ? colors.functionalSuccess : colors.primary}
         />
       </View>
@@ -222,26 +224,26 @@ export default function AppearanceSettings() {
 
 const styles = StyleSheet.create({
   content: {
-    paddingHorizontal: responsive.spacing[6],
+    paddingHorizontal: responsive.spacing[4],
   },
   section: {
-    paddingTop: responsive.spacing[6],
+    paddingTop: responsive.spacing[4],
   },
   widgetsSection: {
-    paddingTop: responsive.spacing[8],
-    paddingBottom: responsive.spacing[6],
+    paddingTop: responsive.spacing[6],
+    paddingBottom: responsive.spacing[4],
   },
   sectionTitle: {
-    fontSize: responsive.fontSize.xl,
-    lineHeight: responsive.fontSize.xl * 1.5,
-    fontWeight: '700',
+    fontSize: settingsTypography.sectionHeading,
+    lineHeight: settingsTypography.sectionHeading * 1.5,
+    fontWeight: settingsFontWeights.bold,
     letterSpacing: -0.3,
     color: colors.neutralDarkest,
-    marginBottom: responsive.spacing[1],
+    marginBottom: responsive.spacing[2],
   },
   sectionDescription: {
-    fontSize: responsive.fontSize.sm,
-    lineHeight: responsive.fontSize.sm * 1.6,
+    fontSize: settingsTypography.secondary,
+    lineHeight: settingsTypography.secondary * 1.6,
     color: colors.neutralDark,
     marginBottom: responsive.spacing[4],
   },
@@ -255,7 +257,7 @@ const styles = StyleSheet.create({
   },
   themeOption: {
     flex: 1,
-    height: ms(80),
+    height: ms(72),
     flexDirection: 'column',
     alignItems: 'center',
     justifyContent: 'center',
@@ -268,9 +270,9 @@ const styles = StyleSheet.create({
     ...theme.shadows.md,
   },
   themeLabel: {
-    fontSize: responsive.fontSize.sm,
-    lineHeight: responsive.fontSize.sm * 1.5,
-    fontWeight: '600',
+    fontSize: settingsTypography.secondary,
+    lineHeight: settingsTypography.secondary * 1.5,
+    fontWeight: settingsFontWeights.semibold,
   },
   widgetsList: {
     gap: responsive.spacing[2],
@@ -288,9 +290,10 @@ const styles = StyleSheet.create({
     opacity: 0.5,
   },
   widgetIconContainer: {
-    width: ms(40),
-    height: ms(40),
-    borderRadius: theme.borderRadius.lg,
+    width: ms(48),
+    height: ms(48),
+    borderRadius: ms(24),
+    backgroundColor: colors.iconBg,
     alignItems: 'center',
     justifyContent: 'center',
   },
@@ -299,14 +302,14 @@ const styles = StyleSheet.create({
     gap: 2,
   },
   widgetTitle: {
-    fontSize: responsive.fontSize.md,
-    lineHeight: responsive.fontSize.md * 1.5,
-    fontWeight: '600',
+    fontSize: settingsTypography.primary,
+    lineHeight: settingsTypography.primary * 1.5,
+    fontWeight: settingsFontWeights.semibold,
     color: colors.neutralDarkest,
   },
   widgetDescription: {
-    fontSize: responsive.fontSize.xs,
-    lineHeight: responsive.fontSize.xs * 1.5,
+    fontSize: settingsTypography.secondary,
+    lineHeight: settingsTypography.secondary * 1.5,
     color: colors.neutralDark,
   },
   switchContainer: {

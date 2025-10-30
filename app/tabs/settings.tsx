@@ -110,7 +110,7 @@ export default function SettingsTab() {
   };
 
   return (
-    <Screen scrollable={false} noPadding backgroundColor={colors.neutralBg} edges={['top', 'bottom']}>
+    <Screen scrollable={false} noPadding backgroundColor={colors.neutralBg} edges={['top']}>
       <StatusBar barStyle="dark-content" backgroundColor={colors.neutralBg} />
 
       {/* Header */}

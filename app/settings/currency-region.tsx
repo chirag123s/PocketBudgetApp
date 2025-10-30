@@ -12,7 +12,8 @@ import { Screen } from '@/components/layout/Screen';
 import { ScreenHeader } from '@/components/layout/ScreenHeader';
 import { theme } from '@/constants/theme';
 import { responsive, ms } from '@/constants/responsive';
-import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
+import { settingsTypography, settingsFontWeights, settingsTextStyles } from './typography';
+import { Ionicons } from '@expo/vector-icons';
 
 // Color Palette - Using theme colors
 const colors = {
@@ -76,9 +77,9 @@ export default function CurrencyRegionSettings() {
     >
       <View style={styles.settingLeft}>
         <View style={styles.iconContainer}>
-          <MaterialCommunityIcons
+          <Ionicons
             name={icon as any}
-            size={24}
+            size={20}
             color={colors.neutralDarkest}
           />
         </View>
@@ -115,9 +116,9 @@ export default function CurrencyRegionSettings() {
     >
       <View style={styles.settingLeftFlex}>
         <View style={styles.iconContainer}>
-          <MaterialCommunityIcons
+          <Ionicons
             name={icon as any}
-            size={24}
+            size={20}
             color={colors.neutralDarkest}
           />
         </View>
@@ -168,13 +169,13 @@ export default function CurrencyRegionSettings() {
           </Text>
           <View style={styles.settingsCard}>
             <SettingItem
-              icon="earth"
+              icon="globe-outline"
               label="Country"
               value="Australia"
               onPress={() => console.log('Select country')}
             />
             <SettingItem
-              icon="cash-multiple"
+              icon="cash-outline"
               label="Primary Currency"
               value="AUD"
               onPress={() => console.log('Select currency')}
@@ -190,7 +191,7 @@ export default function CurrencyRegionSettings() {
           </Text>
           <View style={styles.settingsCard}>
             <SettingItem
-              icon="calendar-month"
+              icon="calendar-outline"
               label="Date Format"
               value="DD/MM/YYYY"
               onPress={() => console.log('Select date format')}
@@ -202,7 +203,7 @@ export default function CurrencyRegionSettings() {
               onPress={() => console.log('Select time format')}
             />
             <SettingItem
-              icon="numeric"
+              icon="calculator-outline"
               label="Number Format"
               value="1,000.00"
               onPress={() => console.log('Select number format')}
@@ -218,13 +219,13 @@ export default function CurrencyRegionSettings() {
           </Text>
           <View style={styles.settingsCard}>
             <SettingItem
-              icon="calendar-refresh"
+              icon="calendar-outline"
               label="Financial Year Start"
               value="July 1st"
               onPress={() => console.log('Select financial year start')}
             />
             <SettingToggle
-              icon="receipt-text"
+              icon="receipt-outline"
               label="Regional Tax Guidance"
               description="Enable GST tracking features"
               value={taxGuidanceEnabled}
@@ -270,17 +271,17 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   scrollContent: {
-    paddingHorizontal: responsive.spacing[6],
-    paddingTop: responsive.spacing[6],
+    paddingHorizontal: responsive.spacing[4],
+    paddingTop: responsive.spacing[4],
     paddingBottom: ms(100),
   },
   section: {
-    marginBottom: responsive.spacing[6],
+    marginBottom: responsive.spacing[5],
   },
   sectionHeader: {
-    fontSize: responsive.fontSize.xs,
-    lineHeight: responsive.fontSize.xs * 1.5,
-    fontWeight: '700',
+    fontSize: settingsTypography.tertiary,
+    lineHeight: settingsTypography.tertiary * 1.5,
+    fontWeight: settingsFontWeights.bold,
     letterSpacing: 1,
     textTransform: 'uppercase',
     color: colors.neutralMedium,
@@ -298,7 +299,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     paddingVertical: responsive.spacing[3],
     paddingHorizontal: responsive.spacing[4],
-    minHeight: ms(64),
+    minHeight: ms(56),
   },
   settingItemBorder: {
     borderBottomWidth: 1,
@@ -307,34 +308,34 @@ const styles = StyleSheet.create({
   settingLeft: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: responsive.spacing[4],
+    gap: responsive.spacing[3],
   },
   settingLeftFlex: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: responsive.spacing[4],
+    gap: responsive.spacing[3],
     flex: 1,
   },
   iconContainer: {
-    width: ms(40),
-    height: ms(40),
-    borderRadius: theme.borderRadius.lg,
+    width: ms(48),
+    height: ms(48),
+    borderRadius: ms(24),
     backgroundColor: colors.iconBg,
     alignItems: 'center',
     justifyContent: 'center',
   },
   settingLabel: {
-    fontSize: responsive.fontSize.md,
-    lineHeight: responsive.fontSize.md * 1.5,
-    fontWeight: '500',
+    fontSize: settingsTypography.secondary,
+    lineHeight: settingsTypography.secondary * 1.5,
+    fontWeight: settingsFontWeights.semibold,
     color: colors.neutralDarkest,
   },
   toggleTextContainer: {
     flex: 1,
   },
   settingDescription: {
-    fontSize: responsive.fontSize.sm,
-    lineHeight: responsive.fontSize.sm * 1.5,
+    fontSize: settingsTypography.tertiary,
+    lineHeight: settingsTypography.tertiary * 1.5,
     color: colors.neutralDark,
     marginTop: 2,
   },
@@ -344,9 +345,9 @@ const styles = StyleSheet.create({
     gap: responsive.spacing[2],
   },
   settingValue: {
-    fontSize: responsive.fontSize.md,
-    lineHeight: responsive.fontSize.md * 1.5,
-    fontWeight: '600',
+    fontSize: settingsTypography.secondary,
+    lineHeight: settingsTypography.secondary * 1.5,
+    fontWeight: settingsFontWeights.medium,
     color: colors.primary,
   },
   switchContainer: {
@@ -364,8 +365,8 @@ const styles = StyleSheet.create({
   },
   infoText: {
     flex: 1,
-    fontSize: responsive.fontSize.xs,
-    lineHeight: responsive.fontSize.xs * 1.6,
+    fontSize: settingsTypography.secondary,
+    lineHeight: settingsTypography.secondary * 1.5,
     color: colors.primaryDark,
   },
   bottomSpacer: {
@@ -379,9 +380,9 @@ const styles = StyleSheet.create({
     backgroundColor: colors.neutralWhite,
     borderTopWidth: 1,
     borderTopColor: colors.border,
-    paddingHorizontal: responsive.spacing[6],
-    paddingTop: responsive.spacing[4],
-    paddingBottom: responsive.spacing[4],
+    paddingHorizontal: responsive.spacing[4],
+    paddingTop: responsive.spacing[3],
+    paddingBottom: responsive.spacing[3],
     ...theme.shadows.md,
   },
   saveButton: {
@@ -392,9 +393,9 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   saveButtonText: {
-    fontSize: responsive.fontSize.md,
-    lineHeight: responsive.fontSize.md * 1.5,
-    fontWeight: '700',
+    fontSize: settingsTypography.button,
+    lineHeight: settingsTypography.button * 1.5,
+    fontWeight: settingsFontWeights.bold,
     color: colors.neutralWhite,
     letterSpacing: 0.3,
   },

@@ -12,8 +12,9 @@ import { Screen } from '@/components/layout/Screen';
 import { ScreenHeader } from '@/components/layout/ScreenHeader';
 import { theme } from '@/constants/theme';
 import { responsive, ms } from '@/constants/responsive';
-import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
+import { Ionicons } from '@expo/vector-icons';
 import { Picker } from '@react-native-picker/picker';
+import { settingsTypography, settingsFontWeights, settingsTextStyles } from './typography';
 
 // Color Palette - Using theme colors
 const colors = {
@@ -88,7 +89,7 @@ export default function SecurityPrivacy() {
     >
       <View style={styles.settingLeft}>
         <View style={styles.iconContainer}>
-          <MaterialCommunityIcons name={icon as any} size={24} color={colors.neutralDarkest} />
+          <Ionicons name={icon as any} size={ms(24)} color={colors.neutralDarkest} />
         </View>
         <View style={{ flex: 1 }}>
           <Text style={styles.settingTitle}>
@@ -103,7 +104,7 @@ export default function SecurityPrivacy() {
       </View>
 
       {rightElement === 'chevron' && (
-        <Ionicons name="chevron-forward" size={20} color={colors.neutralMedium} />
+        <Ionicons name="chevron-forward" size={ms(20)} color={colors.neutralMedium} />
       )}
 
       {rightElement === 'toggle' && toggleValue !== undefined && onToggleChange && (
@@ -154,7 +155,7 @@ export default function SecurityPrivacy() {
         ]}
       >
         {checked && (
-          <Ionicons name="checkmark" size={16} color="#FFFFFF" />
+          <Ionicons name="checkmark" size={ms(14)} color="#FFFFFF" />
         )}
       </View>
       <Text style={styles.checkboxLabel}>
@@ -212,7 +213,7 @@ export default function SecurityPrivacy() {
           </Text>
           <View style={styles.card}>
             <SettingRow
-              icon="fingerprint"
+              icon="finger-print-outline"
               title="Face ID / Touch ID"
               subtitle="Require on app launch"
               rightElement="toggle"
@@ -220,13 +221,13 @@ export default function SecurityPrivacy() {
               onToggleChange={setBiometricEnabled}
             />
             <SettingRow
-              icon="lock"
+              icon="lock-closed-outline"
               title="Change Password"
               subtitle="Last changed: 45 days ago"
               onPress={() => {}}
             />
             <SettingRow
-              icon="message-text"
+              icon="phone-portrait-outline"
               title="Two-Factor Auth"
               subtitle="via SMS"
               rightElement="button"
@@ -317,12 +318,12 @@ export default function SecurityPrivacy() {
           </Text>
           <View style={styles.card}>
             <SettingRow
-              icon="download"
+              icon="cloud-download-outline"
               title="Download My Data"
               onPress={() => {}}
             />
             <SettingRow
-              icon="chart-bar"
+              icon="analytics-outline"
               title="Share Analytics"
               subtitle="Anonymous only"
               rightElement="toggle"
@@ -330,12 +331,12 @@ export default function SecurityPrivacy() {
               onToggleChange={setShareAnalytics}
             />
             <SettingRow
-              icon="shield-check"
+              icon="shield-checkmark-outline"
               title="Privacy Policy"
               onPress={() => {}}
             />
             <SettingRow
-              icon="gavel"
+              icon="document-text-outline"
               title="Data Usage Policy"
               onPress={() => {}}
               isLast
@@ -373,8 +374,6 @@ export default function SecurityPrivacy() {
           </View>
         </View>
 
-        {/* Bottom spacing */}
-        <View style={{ height: responsive.spacing[8] }} />
       </ScrollView>
     </Screen>
   );
@@ -382,20 +381,21 @@ export default function SecurityPrivacy() {
 
 const styles = StyleSheet.create({
   content: {
-    paddingHorizontal: responsive.spacing[6],
+    paddingHorizontal: responsive.spacing[4],
+    paddingTop: responsive.spacing[2],
+    paddingBottom: responsive.spacing[8],
   },
   section: {
-    marginTop: responsive.spacing[4],
+    marginBottom: responsive.spacing[4],
   },
   sectionHeader: {
-    fontSize: responsive.fontSize.xs,
-    lineHeight: responsive.fontSize.xs * 1.5,
-    fontWeight: '700',
+    fontSize: settingsTypography.tertiary,
+    lineHeight: settingsTypography.tertiary * 1.5,
+    fontWeight: settingsFontWeights.bold,
     letterSpacing: 1,
     textTransform: 'uppercase',
     color: colors.neutralMedium,
-    paddingBottom: responsive.spacing[2],
-    paddingTop: responsive.spacing[4],
+    marginBottom: responsive.spacing[3],
   },
   dangerHeader: {
     color: colors.functionalError,
@@ -416,38 +416,38 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     paddingVertical: responsive.spacing[3],
     paddingHorizontal: responsive.spacing[4],
-    minHeight: ms(72),
+    minHeight: ms(64),
   },
   settingLeft: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: responsive.spacing[4],
+    gap: responsive.spacing[3],
     flex: 1,
   },
   iconContainer: {
-    width: ms(40),
-    height: ms(40),
-    borderRadius: theme.borderRadius.lg,
+    width: ms(48),
+    height: ms(48),
+    borderRadius: ms(24),
     alignItems: 'center',
     justifyContent: 'center',
     backgroundColor: colors.iconBg,
   },
   settingTitle: {
-    fontSize: responsive.fontSize.md,
-    lineHeight: responsive.fontSize.md * 1.5,
-    fontWeight: '500',
+    fontSize: settingsTypography.primary,
+    lineHeight: settingsTypography.primary * 1.5,
+    fontWeight: settingsFontWeights.medium,
     color: colors.neutralDarkest,
   },
   settingSubtitle: {
-    fontSize: responsive.fontSize.sm,
-    lineHeight: responsive.fontSize.sm * 1.5,
+    fontSize: settingsTypography.secondary,
+    lineHeight: settingsTypography.secondary * 1.5,
     color: colors.neutralDark,
     marginTop: 2,
   },
   buttonText: {
-    fontSize: responsive.fontSize.md,
-    lineHeight: responsive.fontSize.md * 1.5,
-    fontWeight: '600',
+    fontSize: settingsTypography.primary,
+    lineHeight: settingsTypography.primary * 1.5,
+    fontWeight: settingsFontWeights.semibold,
     color: colors.primary,
   },
   switchContainer: {
@@ -459,9 +459,9 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
   },
   inlineLabel: {
-    fontSize: responsive.fontSize.md,
-    lineHeight: responsive.fontSize.md * 1.5,
-    fontWeight: '500',
+    fontSize: settingsTypography.primary,
+    lineHeight: settingsTypography.primary * 1.5,
+    fontWeight: settingsFontWeights.medium,
     color: colors.neutralDarkest,
   },
   pickerContainer: {
@@ -478,9 +478,9 @@ const styles = StyleSheet.create({
     paddingTop: responsive.spacing[2],
   },
   checkboxSectionTitle: {
-    fontSize: responsive.fontSize.md,
-    lineHeight: responsive.fontSize.md * 1.5,
-    fontWeight: '500',
+    fontSize: settingsTypography.primary,
+    lineHeight: settingsTypography.primary * 1.5,
+    fontWeight: settingsFontWeights.medium,
     color: colors.neutralDarkest,
     marginBottom: responsive.spacing[3],
   },
@@ -493,17 +493,17 @@ const styles = StyleSheet.create({
     gap: responsive.spacing[3],
   },
   checkbox: {
-    width: 20,
-    height: 20,
-    borderRadius: 4,
+    width: ms(20),
+    height: ms(20),
+    borderRadius: theme.borderRadius.sm,
     borderWidth: 2,
     alignItems: 'center',
     justifyContent: 'center',
   },
   checkboxLabel: {
-    fontSize: responsive.fontSize.md,
-    lineHeight: responsive.fontSize.md * 1.5,
-    fontWeight: '400',
+    fontSize: settingsTypography.primary,
+    lineHeight: settingsTypography.primary * 1.5,
+    fontWeight: settingsFontWeights.regular,
     color: colors.neutralDarkest,
   },
   dangerCard: {
@@ -514,28 +514,30 @@ const styles = StyleSheet.create({
     ...theme.shadows.sm,
   },
   dangerButton: {
-    paddingVertical: responsive.spacing[3],
+    height: ms(48),
     borderRadius: theme.borderRadius.lg,
     alignItems: 'center',
-    backgroundColor: `${colors.functionalError}1A`,
+    justifyContent: 'center',
+    backgroundColor: `${colors.functionalError}15`,
   },
   dangerButtonText: {
-    fontSize: responsive.fontSize.md,
-    lineHeight: responsive.fontSize.md * 1.5,
-    fontWeight: '700',
+    fontSize: settingsTypography.primary,
+    lineHeight: settingsTypography.primary * 1.5,
+    fontWeight: settingsFontWeights.bold,
     color: colors.functionalError,
   },
   deleteButton: {
-    paddingVertical: responsive.spacing[3],
+    height: ms(48),
     borderRadius: theme.borderRadius.lg,
     alignItems: 'center',
+    justifyContent: 'center',
     backgroundColor: colors.functionalError,
-    marginTop: responsive.spacing[1],
+    marginTop: responsive.spacing[2],
   },
   deleteButtonText: {
     color: '#FFFFFF',
-    fontSize: responsive.fontSize.md,
-    lineHeight: responsive.fontSize.md * 1.5,
-    fontWeight: '700',
+    fontSize: settingsTypography.primary,
+    lineHeight: settingsTypography.primary * 1.5,
+    fontWeight: settingsFontWeights.bold,
   },
 });

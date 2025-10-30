@@ -12,6 +12,7 @@ import { ScreenHeader } from '@/components/layout/ScreenHeader';
 import { theme } from '@/constants/theme';
 import { responsive, ms } from '@/constants/responsive';
 import { Ionicons } from '@expo/vector-icons';
+import { settingsTypography, settingsFontWeights, settingsTextStyles } from './typography';
 
 // Color Palette - Using theme colors
 const colors = {
@@ -298,8 +299,8 @@ const styles = StyleSheet.create({
     paddingBottom: ms(160),
   },
   headline: {
-    fontSize: responsive.fontSize.h1,
-    fontWeight: '700',
+    fontSize: settingsTypography.hero,
+    fontWeight: settingsFontWeights.bold,
     color: colors.neutralDarkest,
     paddingHorizontal: responsive.spacing[4],
     paddingTop: responsive.spacing[4],
@@ -307,13 +308,13 @@ const styles = StyleSheet.create({
     letterSpacing: -0.5,
   },
   subheadline: {
-    fontSize: responsive.fontSize.md,
-    fontWeight: '400',
+    fontSize: settingsTypography.primary,
+    fontWeight: settingsFontWeights.regular,
     color: colors.neutralDark,
     paddingHorizontal: responsive.spacing[4],
     paddingTop: responsive.spacing[1],
     paddingBottom: responsive.spacing[4],
-    lineHeight: responsive.fontSize.md * 1.5,
+    lineHeight: settingsTypography.primary * 1.5,
   },
   billingToggleContainer: {
     flexDirection: 'row',
@@ -337,8 +338,8 @@ const styles = StyleSheet.create({
     backgroundColor: colors.primary,
   },
   billingToggleText: {
-    fontSize: responsive.fontSize.md,
-    fontWeight: '600',
+    fontSize: settingsTypography.primary,
+    fontWeight: settingsFontWeights.semibold,
     color: colors.neutralDark,
   },
   billingToggleTextActive: {
@@ -354,8 +355,8 @@ const styles = StyleSheet.create({
     borderRadius: theme.borderRadius.sm,
   },
   savingsBadgeText: {
-    fontSize: responsive.fontSize.xs,
-    fontWeight: '700',
+    fontSize: settingsTypography.tertiary,
+    fontWeight: settingsFontWeights.bold,
     color: colors.neutralWhite,
   },
   cardsContainer: {
@@ -386,8 +387,8 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
   },
   planName: {
-    fontSize: responsive.fontSize.md,
-    fontWeight: '700',
+    fontSize: settingsTypography.primary,
+    fontWeight: settingsFontWeights.bold,
     color: colors.neutralDarkest,
   },
   currentBadge: {
@@ -397,13 +398,13 @@ const styles = StyleSheet.create({
     borderRadius: theme.borderRadius.lg,
   },
   currentBadgeText: {
-    fontSize: responsive.fontSize.xs,
-    fontWeight: '500',
+    fontSize: settingsTypography.tertiary,
+    fontWeight: settingsFontWeights.medium,
     color: colors.functionalSuccess,
     letterSpacing: 0.2,
   },
   planDescription: {
-    fontSize: responsive.fontSize.sm,
+    fontSize: settingsTypography.secondary,
     color: colors.neutralDark,
   },
   priceContainer: {
@@ -412,19 +413,19 @@ const styles = StyleSheet.create({
     gap: responsive.spacing[1],
   },
   priceAmount: {
-    fontSize: responsive.fontSize.h1,
-    fontWeight: '800',
+    fontSize: settingsTypography.hero,
+    fontWeight: settingsFontWeights.extrabold,
     color: colors.neutralDarkest,
     letterSpacing: -1,
   },
   pricePeriod: {
-    fontSize: responsive.fontSize.md,
-    fontWeight: '700',
+    fontSize: settingsTypography.primary,
+    fontWeight: settingsFontWeights.bold,
     color: colors.neutralDark,
   },
   yearlyPrice: {
-    fontSize: responsive.fontSize.sm,
-    fontWeight: '500',
+    fontSize: settingsTypography.secondary,
+    fontWeight: settingsFontWeights.medium,
     color: colors.neutralDark,
     marginTop: responsive.spacing[1],
   },
@@ -439,8 +440,8 @@ const styles = StyleSheet.create({
   },
   featureText: {
     flex: 1,
-    fontSize: responsive.fontSize.sm,
-    fontWeight: '500',
+    fontSize: settingsTypography.secondary,
+    fontWeight: settingsFontWeights.medium,
     color: colors.neutralDarkest,
   },
   featureTextUnavailable: {
@@ -458,8 +459,8 @@ const styles = StyleSheet.create({
     borderColor: `${colors.primary}30`,
   },
   popularBadgeText: {
-    fontSize: responsive.fontSize.xs,
-    fontWeight: '500',
+    fontSize: settingsTypography.tertiary,
+    fontWeight: settingsFontWeights.medium,
     color: colors.primary,
     letterSpacing: 0.2,
   },
@@ -489,21 +490,21 @@ const styles = StyleSheet.create({
     opacity: 0.9,
   },
   upgradeButtonText: {
-    fontSize: responsive.fontSize.md,
-    fontWeight: '700',
+    fontSize: settingsTypography.primary,
+    fontWeight: settingsFontWeights.bold,
     color: colors.neutralWhite,
     letterSpacing: 0.2,
   },
   priceInfoText: {
-    fontSize: responsive.fontSize.sm,
-    fontWeight: '500',
+    fontSize: settingsTypography.secondary,
+    fontWeight: settingsFontWeights.medium,
     color: colors.neutralDark,
     textAlign: 'center',
     marginTop: responsive.spacing[2],
   },
   benefitsText: {
-    fontSize: responsive.fontSize.xs,
-    fontWeight: '500',
+    fontSize: settingsTypography.tertiary,
+    fontWeight: settingsFontWeights.medium,
     color: colors.neutralDark,
     textAlign: 'center',
     marginTop: responsive.spacing[1],
@@ -516,8 +517,8 @@ const styles = StyleSheet.create({
     paddingTop: responsive.spacing[2],
   },
   footerLinkText: {
-    fontSize: responsive.fontSize.xs,
-    fontWeight: '500',
+    fontSize: settingsTypography.tertiary,
+    fontWeight: settingsFontWeights.medium,
     color: colors.neutralMedium,
   },
 });

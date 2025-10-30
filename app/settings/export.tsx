@@ -11,7 +11,8 @@ import { Screen } from '@/components/layout/Screen';
 import { ScreenHeader } from '@/components/layout/ScreenHeader';
 import { theme } from '@/constants/theme';
 import { responsive, ms } from '@/constants/responsive';
-import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
+import { Ionicons } from '@expo/vector-icons';
+import { settingsTypography, settingsFontWeights, settingsTextStyles } from './typography';
 
 // Color Palette - Using theme colors
 const colors = {
@@ -78,19 +79,19 @@ export default function ExportData() {
       id: 'csv',
       title: 'CSV',
       description: 'Excel, Numbers, Google Sheets',
-      icon: 'file-table',
+      icon: 'document-text-outline',
     },
     {
       id: 'pdf',
       title: 'PDF Report',
       description: 'Easy to read and print',
-      icon: 'file-pdf-box',
+      icon: 'document-outline',
     },
     {
       id: 'json',
       title: 'JSON',
       description: 'Raw data for developers',
-      icon: 'code-json',
+      icon: 'code-slash-outline',
     },
   ];
 
@@ -122,16 +123,16 @@ export default function ExportData() {
     Alert.alert('Download', `Downloading ${filename}...`, [{ text: 'OK' }]);
   };
 
-  const getFileIcon = (type: FormatType) => {
+  const getFileIcon = (type: FormatType): { name: keyof typeof Ionicons.glyphMap; color: string } => {
     switch (type) {
       case 'pdf':
-        return { name: 'file-pdf-box', color: colors.functionalError };
+        return { name: 'document-outline', color: colors.functionalError };
       case 'csv':
-        return { name: 'file-table', color: colors.functionalSuccess };
+        return { name: 'document-text-outline', color: colors.functionalSuccess };
       case 'json':
-        return { name: 'code-json', color: colors.functionalWarning };
+        return { name: 'code-slash-outline', color: colors.functionalWarning };
       default:
-        return { name: 'file-document', color: colors.neutralDark };
+        return { name: 'document-outline', color: colors.neutralDark };
     }
   };
 
@@ -253,7 +254,7 @@ export default function ExportData() {
                     <Text style={styles.formatOptionDescription}>{formatOption.description}</Text>
                   </View>
                 </View>
-                <MaterialCommunityIcons
+                <Ionicons
                   name={formatOption.icon as any}
                   size={ms(24)}
                   color={format === formatOption.id ? colors.primary : colors.neutralMedium}
@@ -284,11 +285,11 @@ export default function ExportData() {
                 return (
                   <View key={item.id} style={styles.exportItem}>
                     <View style={styles.exportItemLeft}>
-                      <View style={[styles.exportIconContainer, { backgroundColor: `${fileIcon.color}15` }]}>
-                        <MaterialCommunityIcons
-                          name={fileIcon.name as any}
+                      <View style={styles.exportIconContainer}>
+                        <Ionicons
+                          name={fileIcon.name}
                           size={ms(24)}
-                          color={fileIcon.color}
+                          color={colors.neutralDarkest}
                         />
                       </View>
                       <View style={styles.exportItemContent}>
@@ -340,11 +341,10 @@ const styles = StyleSheet.create({
     ...theme.shadows.sm,
   },
   sectionTitle: {
-    fontSize: responsive.fontSize.md,
-    fontWeight: '700',
+    fontSize: settingsTypography.subsectionHeading,
+    fontWeight: settingsFontWeights.semibold,
     color: colors.neutralDarkest,
     marginBottom: responsive.spacing[3],
-    letterSpacing: -0.3,
   },
   checkboxGroup: {
     gap: responsive.spacing[3],
@@ -373,9 +373,9 @@ const styles = StyleSheet.create({
     borderColor: colors.primary,
   },
   checkboxText: {
-    fontSize: responsive.fontSize.md,
+    fontSize: settingsTypography.primary,
     color: colors.neutralDarkest,
-    fontWeight: '400',
+    fontWeight: settingsFontWeights.regular,
   },
   dateRow: {
     flexDirection: 'row',
@@ -386,8 +386,8 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   label: {
-    fontSize: responsive.fontSize.sm,
-    fontWeight: '500',
+    fontSize: settingsTypography.secondary,
+    fontWeight: settingsFontWeights.medium,
     color: colors.neutralDark,
     marginBottom: responsive.spacing[2],
   },
@@ -403,9 +403,9 @@ const styles = StyleSheet.create({
     paddingHorizontal: responsive.spacing[4],
   },
   selectButtonText: {
-    fontSize: responsive.fontSize.md,
+    fontSize: settingsTypography.primary,
     color: colors.neutralDarkest,
-    fontWeight: '400',
+    fontWeight: settingsFontWeights.regular,
   },
   formatList: {
     gap: responsive.spacing[3],
@@ -435,13 +435,13 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   formatOptionTitle: {
-    fontSize: responsive.fontSize.md,
-    fontWeight: '600',
+    fontSize: settingsTypography.primary,
+    fontWeight: settingsFontWeights.semibold,
     color: colors.neutralDarkest,
     marginBottom: responsive.spacing[0.5],
   },
   formatOptionDescription: {
-    fontSize: responsive.fontSize.sm,
+    fontSize: settingsTypography.secondary,
     color: colors.neutralDark,
   },
   radioCircle: {
@@ -471,8 +471,8 @@ const styles = StyleSheet.create({
     opacity: 0.9,
   },
   generateButtonText: {
-    fontSize: responsive.fontSize.md,
-    fontWeight: '700',
+    fontSize: settingsTypography.primary,
+    fontWeight: settingsFontWeights.bold,
     color: colors.neutralWhite,
     letterSpacing: 0.3,
   },
@@ -495,9 +495,10 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   exportIconContainer: {
-    width: ms(40),
-    height: ms(40),
-    borderRadius: ms(20),
+    width: ms(48),
+    height: ms(48),
+    borderRadius: ms(24),
+    backgroundColor: colors.iconBg,
     alignItems: 'center',
     justifyContent: 'center',
   },
@@ -505,13 +506,13 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   exportName: {
-    fontSize: responsive.fontSize.sm,
-    fontWeight: '600',
+    fontSize: settingsTypography.secondary,
+    fontWeight: settingsFontWeights.semibold,
     color: colors.neutralDarkest,
     marginBottom: responsive.spacing[0.5],
   },
   exportDate: {
-    fontSize: responsive.fontSize.xs,
+    fontSize: settingsTypography.tertiary,
     color: colors.neutralDark,
   },
   downloadButton: {
@@ -525,8 +526,8 @@ const styles = StyleSheet.create({
     opacity: 0.9,
   },
   downloadButtonText: {
-    fontSize: responsive.fontSize.sm,
-    fontWeight: '700',
+    fontSize: settingsTypography.secondary,
+    fontWeight: settingsFontWeights.bold,
     color: colors.neutralWhite,
   },
   emptyState: {
@@ -534,7 +535,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   emptyStateText: {
-    fontSize: responsive.fontSize.md,
+    fontSize: settingsTypography.primary,
     color: colors.neutralMedium,
   },
   bottomSpacer: {

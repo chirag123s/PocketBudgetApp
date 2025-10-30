@@ -12,6 +12,7 @@ import { ScreenHeader } from '@/components/layout/ScreenHeader';
 import { theme } from '@/constants/theme';
 import { responsive, ms } from '@/constants/responsive';
 import { Ionicons } from '@expo/vector-icons';
+import { settingsTypography, settingsFontWeights, settingsTextStyles } from './typography';
 
 // Color Palette - Using theme colors
 const colors = {
@@ -260,12 +261,12 @@ const styles = StyleSheet.create({
   },
   searchInput: {
     flex: 1,
-    fontSize: responsive.fontSize.md,
+    fontSize: settingsTypography.primary,
     color: colors.neutralDarkest,
   },
   sectionTitle: {
-    fontSize: responsive.fontSize.lg,
-    fontWeight: '700',
+    fontSize: settingsTypography.sectionHeading,
+    fontWeight: settingsFontWeights.bold,
     color: colors.neutralDarkest,
     paddingHorizontal: responsive.spacing[4],
     paddingTop: responsive.spacing[6],
@@ -291,11 +292,11 @@ const styles = StyleSheet.create({
   },
   faqQuestionText: {
     flex: 1,
-    fontSize: responsive.fontSize.sm,
-    fontWeight: '500',
+    fontSize: settingsTypography.secondary,
+    fontWeight: settingsFontWeights.medium,
     color: colors.neutralDarkest,
     marginRight: responsive.spacing[4],
-    lineHeight: responsive.fontSize.sm * 1.4,
+    lineHeight: settingsTypography.secondary * 1.4,
   },
   faqAnswer: {
     paddingTop: responsive.spacing[1],
@@ -303,9 +304,9 @@ const styles = StyleSheet.create({
     paddingRight: responsive.spacing[8],
   },
   faqAnswerText: {
-    fontSize: responsive.fontSize.sm,
+    fontSize: settingsTypography.secondary,
     color: colors.neutralDark,
-    lineHeight: responsive.fontSize.sm * 1.4,
+    lineHeight: settingsTypography.secondary * 1.4,
   },
   knowledgeBaseButton: {
     marginHorizontal: responsive.spacing[4],
@@ -322,8 +323,8 @@ const styles = StyleSheet.create({
     opacity: 0.7,
   },
   knowledgeBaseButtonText: {
-    fontSize: responsive.fontSize.sm,
-    fontWeight: '700',
+    fontSize: settingsTypography.secondary,
+    fontWeight: settingsFontWeights.bold,
     color: colors.primary,
     letterSpacing: 0.2,
   },
@@ -357,8 +358,8 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   contactOptionTitle: {
-    fontSize: responsive.fontSize.md,
-    fontWeight: '600',
+    fontSize: settingsTypography.primary,
+    fontWeight: settingsFontWeights.semibold,
     color: colors.neutralDarkest,
     marginBottom: responsive.spacing[0.5],
   },
@@ -374,7 +375,7 @@ const styles = StyleSheet.create({
     backgroundColor: colors.functionalSuccess,
   },
   contactOptionSubtitle: {
-    fontSize: responsive.fontSize.sm,
+    fontSize: settingsTypography.secondary,
     color: colors.neutralDark,
   },
 });
