@@ -161,7 +161,7 @@ export default function EditProfileScreen() {
   };
 
   return (
-    <Screen scrollable={false} noPadding backgroundColor={colors.neutralBg} edges={['top']}>
+    <Screen scrollable={false} noPadding backgroundColor={colors.neutralBg} edges={['top', 'bottom']}>
       <ScreenHeader
         title="My Profile"
         onBackPress={handleBack}

@@ -118,7 +118,7 @@ export default function SubscriptionPlanScreen() {
   };
 
   return (
-    <Screen scrollable={false} noPadding backgroundColor={colors.neutralBg} edges={['top']}>
+    <Screen scrollable={false} noPadding backgroundColor={colors.neutralBg} edges={['top', 'bottom']}>
       <ScreenHeader
         title="Your Plan & Features"
         backgroundColor={colors.neutralBg}

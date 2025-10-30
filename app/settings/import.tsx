@@ -75,7 +75,7 @@ export default function ImportData() {
   };
 
   return (
-    <Screen scrollable={false} noPadding backgroundColor={colors.neutralBg} edges={['top']}>
+    <Screen scrollable={false} noPadding backgroundColor={colors.neutralBg} edges={['top', 'bottom']}>
       <ScreenHeader
         title="Import Data"
         backgroundColor={colors.neutralBg}

@@ -59,7 +59,7 @@ export default function SyncSettings() {
   const [importHistory, setImportHistory] = useState<ImportHistory>('3months');
 
   return (
-    <Screen noPadding backgroundColor={theme.colors.background.secondary}>
+    <Screen noPadding backgroundColor={theme.colors.background.secondary} edges={['top', 'bottom']}>
       {/* Header */}
       <View style={styles.header}>
         <Text style={styles.headerTitle}>Sync Settings</Text>

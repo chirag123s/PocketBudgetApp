@@ -305,7 +305,7 @@ export default function CategoryDetailsScreen() {
           widthScale={280}
           showGrid={true}
           showLabels={true}
-          showLegend={true}
+          showLegend={false}
           showCompare={true}
           primaryColor={colors.primary}
           compareColor={colors.neutralMedium}

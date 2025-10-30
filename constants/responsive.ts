@@ -189,6 +189,14 @@ export const responsiveLayout = {
   screenPaddingHorizontal: wp(16),
   /** Vertical screen padding */
   screenPaddingVertical: hp(16),
+
+  // Chart sizing constants
+  /** Compact chart size (dashboard, small cards) */
+  chartSizeCompact: 120,
+  /** Standard chart size (default, most common usage) */
+  chartSizeStandard: 160,
+  /** Large chart size (analytics, detailed views) */
+  chartSizeLarge: 192,
 } as const;
 
 /**

@@ -87,7 +87,7 @@ export default function AboutApp() {
   };
 
   return (
-    <Screen noPadding backgroundColor={colors.neutralBg} edges={['top']}>
+    <Screen noPadding backgroundColor={colors.neutralBg} edges={['top', 'bottom']}>
       <ScreenHeader title="About" />
 
       <ScrollView

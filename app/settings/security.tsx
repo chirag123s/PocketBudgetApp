@@ -198,7 +198,7 @@ export default function SecurityPrivacy() {
   };
 
   return (
-    <Screen noPadding backgroundColor={colors.neutralBg} edges={['top']}>
+    <Screen noPadding backgroundColor={colors.neutralBg} edges={['top', 'bottom']}>
       <ScreenHeader title="Security & Privacy" />
 
       <ScrollView

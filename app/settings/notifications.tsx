@@ -124,7 +124,7 @@ export default function NotificationsSettings() {
   );
 
   return (
-    <Screen noPadding backgroundColor={theme.colors.background.secondary}>
+    <Screen noPadding backgroundColor={theme.colors.background.secondary} edges={['top', 'bottom']}>
       <ScreenHeader title="Notifications" />
 
       <ScrollView

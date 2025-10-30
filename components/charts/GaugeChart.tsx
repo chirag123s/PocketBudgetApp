@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, TouchableWithoutFeedback } from 'react-native';
 import Svg, { Path, G } from 'react-native-svg';
+import { GestureDetector, Gesture } from 'react-native-gesture-handler';
+import * as Haptics from 'expo-haptics';
 import { theme } from '@/constants/theme';
 import { responsive, ms } from '@/constants/responsive';
 
@@ -26,6 +28,7 @@ export interface GaugeChartProps {
   legendPosition?: 'bottom' | 'right';
   legendDotSize?: number;    // Legend dot size (default: 7.5% of sizeScale)
   interactive?: boolean;     // Enable tap-to-show-details (default: true)
+  showNavigation?: boolean;  // Show left/right navigation buttons (default: true)
 }
 
 export const GaugeChart: React.FC<GaugeChartProps> = ({
@@ -37,6 +40,7 @@ export const GaugeChart: React.FC<GaugeChartProps> = ({
   legendPosition = 'bottom',
   legendDotSize,
   interactive = true,
+  showNavigation = true,
 }) => {
   const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
   const [tooltipVisible, setTooltipVisible] = useState(false);
@@ -118,6 +122,30 @@ export const GaugeChart: React.FC<GaugeChartProps> = ({
     setTooltipVisible(false);
   };
 
+  // Navigate to next/previous segment
+  const navigateSegment = (direction: 'next' | 'prev') => {
+    if (!interactive || !showNavigation) return;
+
+    // Provide haptic feedback when using navigation buttons
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+
+    let newIndex: number;
+    if (selectedIndex === null) {
+      // If nothing selected, start at first segment
+      newIndex = 0;
+    } else {
+      // Move clockwise (next) or anti-clockwise (prev)
+      if (direction === 'next') {
+        newIndex = (selectedIndex + 1) % segments.length;
+      } else {
+        newIndex = selectedIndex - 1;
+        if (newIndex < 0) newIndex = segments.length - 1;
+      }
+    }
+
+    handleSegmentPress(newIndex);
+  };
+
   // Handle segment tap
   const handleSegmentPress = (index: number) => {
     if (!interactive) return;
@@ -191,8 +219,8 @@ export const GaugeChart: React.FC<GaugeChartProps> = ({
           const touchRadius = (innerRadius + outerRadius) / 2;
           const touchX = centerX + touchRadius * Math.cos(midAngle);
           const touchY = centerY + touchRadius * Math.sin(midAngle);
-          // Use responsive scaling - 60% of chart size with minimum 70, properly scaled
-          const touchSize = ms(Math.max(sizeScale * 0.6, 70));
+          // Use responsive scaling - 40% of chart size with minimum 60, properly scaled
+          const touchSize = ms(Math.max(sizeScale * 0.4, 60));
 
           return (
             <TouchableWithoutFeedback
@@ -234,6 +262,39 @@ export const GaugeChart: React.FC<GaugeChartProps> = ({
               <Text style={styles.tooltipClose}>✕</Text>
             </View>
           </TouchableWithoutFeedback>
+        )}
+
+        {/* Navigation Buttons - Left (Anti-clockwise) and Right (Clockwise) */}
+        {interactive && showNavigation && (
+          <>
+            {/* Left Button - Previous/Anti-clockwise */}
+            <TouchableWithoutFeedback onPress={() => navigateSegment('prev')}>
+              <View
+                style={{
+                  position: 'absolute',
+                  left: 0,
+                  top: 0,
+                  bottom: 0,
+                  width: size * 0.2,
+                  // backgroundColor: 'rgba(0,0,255,0.1)', // Debug: uncomment to see button area
+                }}
+              />
+            </TouchableWithoutFeedback>
+
+            {/* Right Button - Next/Clockwise */}
+            <TouchableWithoutFeedback onPress={() => navigateSegment('next')}>
+              <View
+                style={{
+                  position: 'absolute',
+                  right: 0,
+                  top: 0,
+                  bottom: 0,
+                  width: size * 0.2,
+                  // backgroundColor: 'rgba(255,0,0,0.1)', // Debug: uncomment to see button area
+                }}
+              />
+            </TouchableWithoutFeedback>
+          </>
         )}
 
         {/* Center Content */}

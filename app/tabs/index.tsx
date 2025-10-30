@@ -278,7 +278,7 @@ const DashboardScreen: React.FC = () => {
           </View>
 
           {(() => {
-            const chartSize = 120;
+            const chartSize = responsive.layout.chartSizeCompact;
             return (
               <GaugeChart
                 data={gaugeChartData}
@@ -287,6 +287,7 @@ const DashboardScreen: React.FC = () => {
                 showLegend={true}
                 legendPosition="right"
                 legendDotSize={chartSize * 0.083}
+                showNavigation={false}
               >
                 <View style={{ alignItems: 'center' }}>
                   <Text style={styles.circleAmount}>

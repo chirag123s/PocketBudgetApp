@@ -321,7 +321,7 @@ export default function ChartsTab() {
             {/* Gauge Chart */}
             {spendingGraphType === 'donut' && (
               (() => {
-                const chartSize = 192;
+                const chartSize = responsive.layout.chartSizeLarge;
                 return (
                   <GaugeChart
                     data={[
@@ -549,7 +549,7 @@ export default function ChartsTab() {
                 {/* Donut Chart */}
                 {incomeGraphType === 'donut' && (
                   (() => {
-                    const chartSize = 192;
+                    const chartSize = responsive.layout.chartSizeLarge;
                     return (
                       <DonutChart
                         data={incomeSources.map((source, index): DonutChartSegment => ({
@@ -559,7 +559,7 @@ export default function ChartsTab() {
                         }))}
                         sizeScale={chartSize}
                         strokeWidthScale={chartSize * 0.083}
-                        showLegend={true}
+                        showLegend={false}
                         legendPosition="bottom"
                         legendDotSize={chartSize * 0.0625}
                       >
@@ -916,7 +916,7 @@ export default function ChartsTab() {
               <View style={styles.chartCard}>
                 <Text style={styles.sectionTitle}>Portfolio Allocation</Text>
                 {(() => {
-                  const chartSize = 192;
+                  const chartSize = responsive.layout.chartSizeLarge;
                   return (
                     <DonutChart
                       data={portfolioAllocation.map((item): DonutChartSegment => ({
@@ -926,7 +926,7 @@ export default function ChartsTab() {
                       }))}
                       sizeScale={chartSize}
                       strokeWidthScale={chartSize * 0.083}
-                      showLegend={true}
+                      showLegend={false}
                       legendPosition="bottom"
                       legendDotSize={chartSize * 0.0625}
                     >
