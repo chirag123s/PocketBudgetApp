@@ -1,6 +1,6 @@
-import React from 'react';
-import { View, Text, StyleSheet } from 'react-native';
-import Svg, { Path } from 'react-native-svg';
+import React, { useState } from 'react';
+import { View, Text, StyleSheet, TouchableOpacity, TouchableWithoutFeedback } from 'react-native';
+import Svg, { Path, G } from 'react-native-svg';
 import { theme } from '@/constants/theme';
 import { responsive, ms } from '@/constants/responsive';
 
@@ -25,6 +25,7 @@ export interface DonutChartProps {
   children?: React.ReactNode; // Custom center content
   legendPosition?: 'bottom' | 'right'; // Legend position (default: 'bottom')
   legendDotSize?: number;    // Legend dot size (default: 7.5% of sizeScale)
+  interactive?: boolean;     // Enable tap-to-show-details (default: true)
 }
 
 export const DonutChart: React.FC<DonutChartProps> = ({
@@ -36,7 +37,12 @@ export const DonutChart: React.FC<DonutChartProps> = ({
   children,
   legendPosition = 'bottom',
   legendDotSize,
+  interactive = true,
 }) => {
+  const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
+  const [tooltipVisible, setTooltipVisible] = useState(false);
+  const [tooltipPosition, setTooltipPosition] = useState({ x: 0, y: 0 });
+
   // Use responsive scaling
   const size = ms(sizeScale);
   // Default stroke width is 5% of size if not provided
@@ -97,8 +103,57 @@ export const DonutChart: React.FC<DonutChartProps> = ({
       ...segment,
       percentage,
       path: createArcPath(startAngle, endAngle, innerRadius, outerRadius),
+      startAngle,
+      endAngle,
     };
   });
+
+  // Handle dismissing tooltip (tap anywhere)
+  const handleDismiss = () => {
+    if (!interactive || !tooltipVisible) return;
+    setSelectedIndex(null);
+    setTooltipVisible(false);
+  };
+
+  // Handle segment tap
+  const handleSegmentPress = (index: number, event?: any) => {
+    if (!interactive) return;
+
+    // Select segment
+    setSelectedIndex(index);
+    setTooltipVisible(true);
+
+    // Calculate tooltip position based on segment angle
+    const segment = segments[index];
+    const midAngle = ((segment.startAngle + segment.endAngle) / 2 - 90) * (Math.PI / 180);
+    const tooltipRadius = radius + strokeWidth / 2 + ms(20);
+    let tooltipX = centerX + tooltipRadius * Math.cos(midAngle);
+    let tooltipY = centerY + tooltipRadius * Math.sin(midAngle);
+
+    // Tooltip dimensions (approximate)
+    const tooltipWidth = ms(120);
+    const tooltipHeight = ms(70);
+    const padding = ms(10);
+
+    // Adjust X position to keep tooltip inside container
+    if (tooltipX - tooltipWidth / 2 < padding) {
+      tooltipX = tooltipWidth / 2 + padding;
+    } else if (tooltipX + tooltipWidth / 2 > size - padding) {
+      tooltipX = size - tooltipWidth / 2 - padding;
+    }
+
+    // Adjust Y position to keep tooltip inside container
+    if (tooltipY - tooltipHeight / 2 < padding) {
+      tooltipY = tooltipHeight / 2 + padding;
+    } else if (tooltipY + tooltipHeight / 2 > size - padding) {
+      tooltipY = size - tooltipHeight / 2 - padding;
+    }
+
+    setTooltipPosition({ x: tooltipX, y: tooltipY });
+  };
+
+  // Get selected segment data
+  const selectedSegment = selectedIndex !== null ? segments[selectedIndex] : null;
 
   return (
     <View style={[
@@ -108,21 +163,74 @@ export const DonutChart: React.FC<DonutChartProps> = ({
       {/* SVG Donut Chart */}
       <View style={styles.chartContainer}>
         <Svg width={size} height={size} viewBox={`0 0 ${size} ${size}`}>
-          {segments.map((segment, index) => (
-            <Path
-              key={index}
-              d={segment.path}
-              fill={segment.color}
-              stroke={colors.neutralWhite}
-              strokeWidth="1"
-              strokeLinejoin="round"
-              opacity="1"
-            />
-          ))}
+          <G>
+            {segments.map((segment, index) => (
+              <Path
+                key={index}
+                d={segment.path}
+                fill={segment.color}
+                stroke={colors.neutralWhite}
+                strokeWidth="1"
+                strokeLinejoin="round"
+                opacity={interactive && selectedIndex !== null && selectedIndex !== index ? 0.3 : 1}
+              />
+            ))}
+          </G>
         </Svg>
 
+        {/* Touchable overlays for segments (Android compatibility) */}
+        {interactive && segments.map((segment, index) => {
+          const midAngle = ((segment.startAngle + segment.endAngle) / 2 - 90) * (Math.PI / 180);
+          const touchRadius = (innerRadius + outerRadius) / 2;
+          const touchX = centerX + touchRadius * Math.cos(midAngle);
+          const touchY = centerY + touchRadius * Math.sin(midAngle);
+          // Use responsive scaling - 60% of chart size with minimum 70, properly scaled
+          const touchSize = ms(Math.max(sizeScale * 0.6, 70));
+
+          return (
+            <TouchableWithoutFeedback
+              key={`touch-${index}`}
+              onPress={() => handleSegmentPress(index)}
+            >
+              <View
+                style={{
+                  position: 'absolute',
+                  left: touchX - touchSize / 2,
+                  top: touchY - touchSize / 2,
+                  width: touchSize,
+                  height: touchSize,
+                  // backgroundColor: 'rgba(255,0,0,0.2)', // Debug: uncomment to see touch areas
+                }}
+              />
+            </TouchableWithoutFeedback>
+          );
+        })}
+
+        {/* Tooltip - tap to dismiss */}
+        {interactive && tooltipVisible && selectedSegment && (
+          <TouchableWithoutFeedback onPress={handleDismiss}>
+            <View
+              style={[
+                styles.tooltip,
+                {
+                  left: tooltipPosition.x,
+                  top: tooltipPosition.y,
+                },
+              ]}
+            >
+              <View style={[styles.tooltipDot, { backgroundColor: selectedSegment.color }]} />
+              <View style={styles.tooltipContent}>
+                <Text style={styles.tooltipLabel}>{selectedSegment.label}</Text>
+                <Text style={styles.tooltipValue}>${selectedSegment.value.toFixed(2)}</Text>
+                <Text style={styles.tooltipPercentage}>{selectedSegment.percentage.toFixed(1)}%</Text>
+              </View>
+              <Text style={styles.tooltipClose}>×</Text>
+            </View>
+          </TouchableWithoutFeedback>
+        )}
+
         {/* Center Content */}
-        <View style={styles.centerContent}>
+        <View style={styles.centerContent} pointerEvents="none">
           {children ? (
             children
           ) : (
@@ -140,23 +248,50 @@ export const DonutChart: React.FC<DonutChartProps> = ({
           styles.legend,
           legendPosition === 'right' && styles.legendRight
         ]}>
-          {data.map((segment, index) => (
-            <View key={index} style={styles.legendItem}>
-              <View style={[
-                styles.legendDot,
-                {
-                  backgroundColor: segment.color,
-                  width: ms(dotSize),
-                  height: ms(dotSize),
-                  borderRadius: ms(dotSize / 2),
-                }
-              ]} />
-              <View style={styles.legendTextContainer}>
-                <Text style={styles.legendLabel}>{segment.label}</Text>
-                <Text style={styles.legendValue}>${segment.value.toFixed(2)}</Text>
-              </View>
-            </View>
-          ))}
+          {data.map((segment, index) => {
+            const isSelected = selectedIndex === index;
+            const isOtherSelected = selectedIndex !== null && selectedIndex !== index;
+
+            return (
+              <TouchableOpacity
+                key={index}
+                style={styles.legendItem}
+                onPress={() => handleSegmentPress(index)}
+                disabled={!interactive}
+              >
+                <View style={[
+                  styles.legendDot,
+                  {
+                    backgroundColor: segment.color,
+                    width: ms(dotSize),
+                    height: ms(dotSize),
+                    borderRadius: ms(dotSize / 2),
+                    opacity: interactive && isOtherSelected ? 0.3 : 1,
+                  }
+                ]} />
+                <View style={styles.legendTextContainer}>
+                  <Text style={[
+                    styles.legendLabel,
+                    {
+                      opacity: interactive && isOtherSelected ? 0.3 : 1,
+                      fontWeight: interactive && isSelected ? '700' : '500',
+                    }
+                  ]}>
+                    {segment.label}
+                  </Text>
+                  <Text style={[
+                    styles.legendValue,
+                    {
+                      opacity: interactive && isOtherSelected ? 0.3 : 1,
+                      fontWeight: interactive && isSelected ? '800' : '700',
+                    }
+                  ]}>
+                    ${segment.value.toFixed(2)}
+                  </Text>
+                </View>
+              </TouchableOpacity>
+            );
+          })}
         </View>
       )}
     </View>
@@ -192,6 +327,61 @@ const styles = StyleSheet.create({
     fontWeight: '500',
     color: theme.colors.text.secondary,
     marginTop: responsive.spacing[1],
+  },
+  percentageLabel: {
+    fontSize: responsive.fontSize.xs,
+    fontWeight: '600',
+    color: theme.colors.text.tertiary,
+    marginTop: responsive.spacing[0.5],
+  },
+  tooltip: {
+    position: 'absolute',
+    backgroundColor: theme.colors.background.primary,
+    borderRadius: theme.borderRadius.md,
+    padding: responsive.spacing[2],
+    ...theme.shadows.base,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: responsive.spacing[2],
+    minWidth: ms(120),
+    maxWidth: ms(150),
+    transform: [{ translateX: '-50%' }, { translateY: '-50%' }],
+    zIndex: 1000,
+    elevation: 5,
+    paddingRight: responsive.spacing[3],
+  },
+  tooltipClose: {
+    position: 'absolute',
+    top: responsive.spacing[1],
+    right: responsive.spacing[1],
+    fontSize: responsive.fontSize.xs,
+    fontWeight: '600',
+    color: theme.colors.text.tertiary,
+    opacity: 0.6,
+  },
+  tooltipDot: {
+    width: ms(8),
+    height: ms(8),
+    borderRadius: ms(4),
+  },
+  tooltipContent: {
+    flex: 1,
+  },
+  tooltipLabel: {
+    fontSize: responsive.fontSize.xs,
+    fontWeight: '600',
+    color: theme.colors.text.primary,
+  },
+  tooltipValue: {
+    fontSize: responsive.fontSize.sm,
+    fontWeight: '700',
+    color: theme.colors.text.primary,
+    marginTop: responsive.spacing[0.5],
+  },
+  tooltipPercentage: {
+    fontSize: responsive.fontSize.xs,
+    fontWeight: '500',
+    color: theme.colors.text.secondary,
   },
   legend: {
     gap: responsive.spacing[3],

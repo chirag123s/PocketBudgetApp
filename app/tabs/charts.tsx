@@ -104,10 +104,21 @@ export default function ChartsTab() {
   const [menuForTab, setMenuForTab] = useState<'spending' | 'income' | 'networth'>('spending');
 
   const categories: Category[] = [
-    { id: '1', name: 'Groceries', icon: 'cart-outline', amount: 450.20, budget: 600, percentage: 42, color: theme.colors.secondary.main },
-    { id: '2', name: 'Transport', icon: 'car-outline', amount: 268.00, budget: 300, percentage: 25, color: colors.functionalSuccess },
-    { id: '3', name: 'Bills', icon: 'receipt-outline', amount: 192.95, budget: 250, percentage: 18, color: colors.primary },
-    { id: '4', name: 'Entertainment', icon: 'film-outline', amount: 160.75, budget: 200, percentage: 15, color: colors.functionalWarning },
+    { id: '1', name: 'Groceries', icon: 'cart-outline', amount: 650.20, budget: 800, percentage: 81, color: theme.colors.secondary.main },
+    { id: '2', name: 'Rent', icon: 'home-outline', amount: 1800.00, budget: 1800, percentage: 100, color: '#8B5CF6' },
+    { id: '3', name: 'Transport', icon: 'car-outline', amount: 268.00, budget: 350, percentage: 77, color: colors.functionalSuccess },
+    { id: '4', name: 'Dining Out', icon: 'restaurant-outline', amount: 420.50, budget: 500, percentage: 84, color: '#F59E0B' },
+    { id: '5', name: 'Bills & Utilities', icon: 'receipt-outline', amount: 385.95, budget: 400, percentage: 96, color: colors.primary },
+    { id: '6', name: 'Entertainment', icon: 'film-outline', amount: 160.75, budget: 200, percentage: 80, color: colors.functionalWarning },
+    { id: '7', name: 'Health & Fitness', icon: 'fitness-outline', amount: 125.00, budget: 150, percentage: 83, color: '#10B981' },
+    { id: '8', name: 'Insurance', icon: 'shield-checkmark-outline', amount: 280.00, budget: 280, percentage: 100, color: '#3B82F6' },
+    { id: '9', name: 'Subscriptions', icon: 'tv-outline', amount: 89.99, budget: 100, percentage: 90, color: '#EC4899' },
+    { id: '10', name: 'Shopping', icon: 'bag-handle-outline', amount: 310.45, budget: 400, percentage: 78, color: '#F97316' },
+    { id: '11', name: 'Personal Care', icon: 'brush-outline', amount: 95.50, budget: 120, percentage: 80, color: '#A855F7' },
+    { id: '12', name: 'Education', icon: 'school-outline', amount: 150.00, budget: 200, percentage: 75, color: '#0EA5E9' },
+    { id: '13', name: 'HECS/HELP', icon: 'document-text-outline', amount: 200.00, budget: 200, percentage: 100, color: '#6366F1' },
+    { id: '14', name: 'Gifts', icon: 'gift-outline', amount: 85.00, budget: 150, percentage: 57, color: '#EF4444' },
+    { id: '15', name: 'Pet Care', icon: 'paw-outline', amount: 120.75, budget: 150, percentage: 81, color: '#14B8A6' },
   ];
 
   const insights: Insight[] = [
