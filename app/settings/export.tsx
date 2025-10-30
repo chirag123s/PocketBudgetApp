@@ -1,11 +1,41 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, ScrollView } from 'react-native';
-import { useRouter } from 'expo-router';
+import {
+  View,
+  Text,
+  StyleSheet,
+  Pressable,
+  ScrollView,
+  Alert,
+} from 'react-native';
 import { Screen } from '@/components/layout/Screen';
-import { Button } from '@/components/ui/Button';
+import { ScreenHeader } from '@/components/layout/ScreenHeader';
 import { theme } from '@/constants/theme';
 import { responsive, ms } from '@/constants/responsive';
-import { Ionicons } from '@expo/vector-icons';
+import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
+
+// Color Palette - Using theme colors
+const colors = {
+  // Primary Palette
+  primaryDark: theme.colors.info.dark,
+  primary: theme.colors.info.main,
+  primaryLight: theme.colors.info.light,
+
+  // Neutral Palette
+  neutralBg: theme.colors.background.secondary,
+  neutralWhite: theme.colors.background.primary,
+  neutralDarkest: theme.colors.text.primary,
+  neutralDark: theme.colors.text.secondary,
+  neutralMedium: theme.colors.text.tertiary,
+
+  // Functional Palette
+  functionalSuccess: theme.colors.success.main,
+  functionalWarning: theme.colors.warning.main,
+  functionalError: theme.colors.danger.main,
+
+  // Border
+  border: theme.colors.border.light,
+  iconBg: theme.colors.background.tertiary,
+};
 
 type FormatType = 'csv' | 'pdf' | 'json';
 
@@ -17,46 +47,112 @@ interface ExportOptions {
   personalInfo: boolean;
 }
 
+interface FormatOption {
+  id: FormatType;
+  title: string;
+  description: string;
+  icon: string;
+}
+
+interface RecentExport {
+  id: string;
+  filename: string;
+  date: string;
+  type: FormatType;
+}
+
 export default function ExportData() {
-  const router = useRouter();
   const [exportOptions, setExportOptions] = useState<ExportOptions>({
     transactions: true,
-    budgets: true,
+    budgets: false,
     categories: true,
     accountDetails: false,
     personalInfo: false,
   });
   const [format, setFormat] = useState<FormatType>('csv');
+  const [dateFrom] = useState('Jan 1, 2025');
+  const [dateTo] = useState('Oct 29, 2025');
+
+  const formatOptions: FormatOption[] = [
+    {
+      id: 'csv',
+      title: 'CSV',
+      description: 'Excel, Numbers, Google Sheets',
+      icon: 'file-table',
+    },
+    {
+      id: 'pdf',
+      title: 'PDF Report',
+      description: 'Easy to read and print',
+      icon: 'file-pdf-box',
+    },
+    {
+      id: 'json',
+      title: 'JSON',
+      description: 'Raw data for developers',
+      icon: 'code-json',
+    },
+  ];
+
+  const recentExports: RecentExport[] = [
+    { id: '1', filename: 'Oct 2025 Report.pdf', date: 'Oct 20, 2025', type: 'pdf' },
+    { id: '2', filename: 'Sep 2025 Data.csv', date: 'Sep 15, 2025', type: 'csv' },
+  ];
 
   const toggleOption = (key: keyof ExportOptions) => {
     setExportOptions(prev => ({ ...prev, [key]: !prev[key] }));
   };
 
   const handleGenerateExport = () => {
-    // Generate export logic
+    const selectedOptions = Object.entries(exportOptions).filter(([_, checked]) => checked);
+    if (selectedOptions.length === 0) {
+      Alert.alert('No Data Selected', 'Please select at least one type of data to export.');
+      return;
+    }
+
+    const selectedFormat = formatOptions.find(f => f.id === format);
+    Alert.alert(
+      'Export Generated',
+      `Your ${selectedFormat?.title} export is being prepared.`,
+      [{ text: 'OK' }]
+    );
+  };
+
+  const handleDownload = (filename: string) => {
+    Alert.alert('Download', `Downloading ${filename}...`, [{ text: 'OK' }]);
+  };
+
+  const getFileIcon = (type: FormatType) => {
+    switch (type) {
+      case 'pdf':
+        return { name: 'file-pdf-box', color: colors.functionalError };
+      case 'csv':
+        return { name: 'file-table', color: colors.functionalSuccess };
+      case 'json':
+        return { name: 'code-json', color: colors.functionalWarning };
+      default:
+        return { name: 'file-document', color: colors.neutralDark };
+    }
   };
 
   return (
-    <Screen noPadding backgroundColor={theme.colors.background.secondary}>
-      {/* Header */}
-      <View style={styles.header}>
-        <TouchableOpacity
-          style={styles.headerButton}
-          onPress={() => router.back()}
-        >
-          <Ionicons name="chevron-back" size={24} color={theme.colors.primary[600]} />
-        </TouchableOpacity>
-        <Text style={styles.headerTitle}>Export Data</Text>
-        <View style={styles.placeholder} />
-      </View>
+    <Screen scrollable={false} noPadding backgroundColor={colors.neutralBg} edges={['top']}>
+      <ScreenHeader
+        title="Export Data"
+        backgroundColor={colors.neutralBg}
+      />
 
-      <ScrollView contentContainerStyle={styles.content}>
+      <ScrollView
+        style={styles.scrollView}
+        contentContainerStyle={styles.scrollContent}
+        showsVerticalScrollIndicator={false}
+      >
         {/* What to export */}
         <View style={styles.card}>
-          <Text style={styles.cardTitle}>What to export:</Text>
+          <Text style={styles.sectionTitle}>What to export</Text>
 
           <View style={styles.checkboxGroup}>
-            <TouchableOpacity
+            <Pressable
               style={styles.checkboxRow}
               onPress={() => toggleOption('transactions')}
             >
@@ -66,9 +162,9 @@ export default function ExportData() {
                 )}
               </View>
               <Text style={styles.checkboxText}>Transactions</Text>
-            </TouchableOpacity>
+            </Pressable>
 
-            <TouchableOpacity
+            <Pressable
               style={styles.checkboxRow}
               onPress={() => toggleOption('budgets')}
             >
@@ -78,9 +174,9 @@ export default function ExportData() {
                 )}
               </View>
               <Text style={styles.checkboxText}>Budgets</Text>
-            </TouchableOpacity>
+            </Pressable>
 
-            <TouchableOpacity
+            <Pressable
               style={styles.checkboxRow}
               onPress={() => toggleOption('categories')}
             >
@@ -90,9 +186,9 @@ export default function ExportData() {
                 )}
               </View>
               <Text style={styles.checkboxText}>Categories</Text>
-            </TouchableOpacity>
+            </Pressable>
 
-            <TouchableOpacity
+            <Pressable
               style={styles.checkboxRow}
               onPress={() => toggleOption('accountDetails')}
             >
@@ -102,9 +198,9 @@ export default function ExportData() {
                 )}
               </View>
               <Text style={styles.checkboxText}>Account details</Text>
-            </TouchableOpacity>
+            </Pressable>
 
-            <TouchableOpacity
+            <Pressable
               style={styles.checkboxRow}
               onPress={() => toggleOption('personalInfo')}
             >
@@ -114,265 +210,334 @@ export default function ExportData() {
                 )}
               </View>
               <Text style={styles.checkboxText}>Personal info</Text>
-            </TouchableOpacity>
+            </Pressable>
           </View>
 
           {/* Date Range */}
-          <Text style={styles.cardTitle}>Date Range:</Text>
+          <Text style={styles.sectionTitle}>Date Range</Text>
           <View style={styles.dateRow}>
             <View style={styles.dateField}>
-              <Text style={styles.label}>From:</Text>
-              <TouchableOpacity style={styles.selectButton}>
-                <Text style={styles.selectButtonText}>Jan 1, 2025</Text>
-                <Ionicons name="chevron-down" size={16} color={theme.colors.text.tertiary} />
-              </TouchableOpacity>
+              <Text style={styles.label}>From</Text>
+              <Pressable style={styles.selectButton}>
+                <Text style={styles.selectButtonText}>{dateFrom}</Text>
+                <Ionicons name="calendar-outline" size={ms(16)} color={colors.neutralMedium} />
+              </Pressable>
             </View>
             <View style={styles.dateField}>
-              <Text style={styles.label}>To:</Text>
-              <TouchableOpacity style={styles.selectButton}>
-                <Text style={styles.selectButtonText}>Oct 25, 2025</Text>
-                <Ionicons name="chevron-down" size={16} color={theme.colors.text.tertiary} />
-              </TouchableOpacity>
+              <Text style={styles.label}>To</Text>
+              <Pressable style={styles.selectButton}>
+                <Text style={styles.selectButtonText}>{dateTo}</Text>
+                <Ionicons name="calendar-outline" size={ms(16)} color={colors.neutralMedium} />
+              </Pressable>
             </View>
           </View>
 
           {/* Format */}
-          <Text style={styles.cardTitle}>Format:</Text>
-          <View style={styles.optionsGroup}>
-            <TouchableOpacity
-              style={[
-                styles.option,
-                format === 'csv' && styles.optionSelected,
-              ]}
-              onPress={() => setFormat('csv')}
-            >
-              <View style={styles.radioCircle}>
-                {format === 'csv' && <View style={styles.radioCircleInner} />}
-              </View>
-              <Text style={styles.optionText}>CSV (Excel)</Text>
-            </TouchableOpacity>
-
-            <TouchableOpacity
-              style={[
-                styles.option,
-                format === 'pdf' && styles.optionSelected,
-              ]}
-              onPress={() => setFormat('pdf')}
-            >
-              <View style={styles.radioCircle}>
-                {format === 'pdf' && <View style={styles.radioCircleInner} />}
-              </View>
-              <Text style={styles.optionText}>PDF Report</Text>
-            </TouchableOpacity>
-
-            <TouchableOpacity
-              style={[
-                styles.option,
-                format === 'json' && styles.optionSelected,
-              ]}
-              onPress={() => setFormat('json')}
-            >
-              <View style={styles.radioCircle}>
-                {format === 'json' && <View style={styles.radioCircleInner} />}
-              </View>
-              <Text style={styles.optionText}>JSON (Raw data)</Text>
-            </TouchableOpacity>
+          <Text style={styles.sectionTitle}>Format</Text>
+          <View style={styles.formatList}>
+            {formatOptions.map((formatOption) => (
+              <Pressable
+                key={formatOption.id}
+                style={[
+                  styles.formatOption,
+                  format === formatOption.id && styles.formatOptionSelected,
+                ]}
+                onPress={() => setFormat(formatOption.id)}
+              >
+                <View style={styles.formatOptionLeft}>
+                  <View style={styles.radioCircle}>
+                    {format === formatOption.id && <View style={styles.radioCircleInner} />}
+                  </View>
+                  <View style={styles.formatOptionContent}>
+                    <Text style={styles.formatOptionTitle}>{formatOption.title}</Text>
+                    <Text style={styles.formatOptionDescription}>{formatOption.description}</Text>
+                  </View>
+                </View>
+                <MaterialCommunityIcons
+                  name={formatOption.icon as any}
+                  size={ms(24)}
+                  color={format === formatOption.id ? colors.primary : colors.neutralMedium}
+                />
+              </Pressable>
+            ))}
           </View>
 
-          <Button
-            variant="primary"
-            fullWidth
-            size="large"
+          <Pressable
+            style={({ pressed }) => [
+              styles.generateButton,
+              pressed && styles.generateButtonPressed,
+            ]}
             onPress={handleGenerateExport}
           >
-            Generate Export
-          </Button>
+            <Text style={styles.generateButtonText}>Generate Export</Text>
+          </Pressable>
         </View>
 
         {/* Recent Exports */}
         <View style={styles.card}>
-          <Text style={styles.cardTitle}>Recent Exports</Text>
+          <Text style={styles.sectionTitle}>Recent Exports</Text>
 
-          <View style={styles.exportsList}>
-            <View style={styles.exportItem}>
-              <View>
-                <Text style={styles.exportName}>Oct 2025 Report.pdf</Text>
-                <Text style={styles.exportDate}>Generated: Oct 20</Text>
-              </View>
-              <TouchableOpacity style={styles.downloadButton}>
-                <Text style={styles.downloadButtonText}>Download</Text>
-              </TouchableOpacity>
+          {recentExports.length > 0 ? (
+            <View style={styles.exportsList}>
+              {recentExports.map((item) => {
+                const fileIcon = getFileIcon(item.type);
+                return (
+                  <View key={item.id} style={styles.exportItem}>
+                    <View style={styles.exportItemLeft}>
+                      <View style={[styles.exportIconContainer, { backgroundColor: `${fileIcon.color}15` }]}>
+                        <MaterialCommunityIcons
+                          name={fileIcon.name as any}
+                          size={ms(24)}
+                          color={fileIcon.color}
+                        />
+                      </View>
+                      <View style={styles.exportItemContent}>
+                        <Text style={styles.exportName}>{item.filename}</Text>
+                        <Text style={styles.exportDate}>Generated: {item.date}</Text>
+                      </View>
+                    </View>
+                    <Pressable
+                      style={({ pressed }) => [
+                        styles.downloadButton,
+                        pressed && styles.downloadButtonPressed,
+                      ]}
+                      onPress={() => handleDownload(item.filename)}
+                    >
+                      <Text style={styles.downloadButtonText}>Download</Text>
+                    </Pressable>
+                  </View>
+                );
+              })}
             </View>
-
-            <View style={styles.exportItem}>
-              <View>
-                <Text style={styles.exportName}>Q3 2025 Data.csv</Text>
-                <Text style={styles.exportDate}>Generated: Sep 30</Text>
-              </View>
-              <TouchableOpacity style={styles.downloadButton}>
-                <Text style={styles.downloadButtonText}>Download</Text>
-              </TouchableOpacity>
+          ) : (
+            <View style={styles.emptyState}>
+              <Text style={styles.emptyStateText}>You have no recent exports.</Text>
             </View>
-          </View>
+          )}
         </View>
+
+        {/* Bottom spacing */}
+        <View style={styles.bottomSpacer} />
       </ScrollView>
     </Screen>
   );
 }
 
 const styles = StyleSheet.create({
-  header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
+  scrollView: {
+    flex: 1,
+  },
+  scrollContent: {
     paddingHorizontal: responsive.spacing[4],
-    paddingVertical: responsive.spacing[2],
-    backgroundColor: theme.colors.background.primary,
-    borderBottomWidth: 1,
-    borderBottomColor: theme.colors.border.light,
-  },
-  headerButton: {
-    padding: responsive.spacing[2],
-  },
-  headerTitle: {
-    ...theme.typography.styles.h3,
-    fontSize: responsive.fontSize.lg,
-    lineHeight: responsive.fontSize.lg * 1.5,
-  },
-  placeholder: {
-    width: 40,
-  },
-  content: {
-    padding: responsive.spacing[6],
+    paddingTop: responsive.spacing[4],
     paddingBottom: responsive.spacing[8],
   },
   card: {
-    backgroundColor: theme.colors.background.primary,
+    backgroundColor: colors.neutralWhite,
     borderRadius: theme.borderRadius.xl,
     padding: responsive.spacing[6],
     marginBottom: responsive.spacing[4],
     ...theme.shadows.sm,
   },
-  cardTitle: {
-    ...theme.typography.styles.h3,
-    fontSize: responsive.fontSize.lg,
-    lineHeight: responsive.fontSize.lg * 1.5,
-    marginBottom: responsive.spacing[4],
+  sectionTitle: {
+    fontSize: responsive.fontSize.md,
+    fontWeight: '700',
+    color: colors.neutralDarkest,
+    marginBottom: responsive.spacing[3],
+    letterSpacing: -0.3,
   },
   checkboxGroup: {
-    gap: responsive.spacing[2],
+    gap: responsive.spacing[3],
     marginBottom: responsive.spacing[6],
+    borderTopWidth: 1,
+    borderTopColor: colors.border,
+    paddingTop: responsive.spacing[3],
   },
   checkboxRow: {
     flexDirection: 'row',
     alignItems: 'center',
+    paddingVertical: responsive.spacing[1],
   },
   checkbox: {
-    width: 20,
-    height: 20,
+    width: ms(20),
+    height: ms(20),
     borderWidth: 2,
-    borderColor: theme.colors.border.main,
-    borderRadius: 4,
-    marginRight: responsive.spacing[2],
+    borderColor: colors.border,
+    borderRadius: theme.borderRadius.sm,
+    marginRight: responsive.spacing[3],
     alignItems: 'center',
     justifyContent: 'center',
   },
   checkboxChecked: {
-    backgroundColor: theme.colors.primary[600],
-    borderColor: theme.colors.primary[600],
+    backgroundColor: colors.primary,
+    borderColor: colors.primary,
   },
   checkboxText: {
-    ...theme.typography.styles.body,
+    fontSize: responsive.fontSize.md,
+    color: colors.neutralDarkest,
+    fontWeight: '400',
   },
   dateRow: {
     flexDirection: 'row',
-    gap: responsive.spacing[2],
+    gap: responsive.spacing[3],
     marginBottom: responsive.spacing[6],
   },
   dateField: {
     flex: 1,
   },
   label: {
-    ...theme.typography.styles.bodySmall,
-    color: theme.colors.text.secondary,
+    fontSize: responsive.fontSize.sm,
+    fontWeight: '500',
+    color: colors.neutralDark,
     marginBottom: responsive.spacing[2],
   },
   selectButton: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    backgroundColor: theme.colors.background.tertiary,
-    borderRadius: theme.borderRadius.xl,
-    padding: responsive.spacing[2],
+    height: ms(48),
+    backgroundColor: colors.iconBg,
+    borderRadius: theme.borderRadius.lg,
+    borderWidth: 1,
+    borderColor: colors.border,
+    paddingHorizontal: responsive.spacing[4],
   },
   selectButtonText: {
-    ...theme.typography.styles.body,
+    fontSize: responsive.fontSize.md,
+    color: colors.neutralDarkest,
+    fontWeight: '400',
   },
-  optionsGroup: {
-    gap: responsive.spacing[2],
+  formatList: {
+    gap: responsive.spacing[3],
     marginBottom: responsive.spacing[6],
   },
-  option: {
+  formatOption: {
     flexDirection: 'row',
     alignItems: 'center',
+    justifyContent: 'space-between',
     borderWidth: 2,
-    borderColor: theme.colors.border.light,
-    borderRadius: theme.borderRadius.xl,
-    padding: responsive.spacing[2],
+    borderColor: colors.border,
+    borderRadius: theme.borderRadius.lg,
+    padding: responsive.spacing[4],
+    backgroundColor: colors.neutralWhite,
   },
-  optionSelected: {
-    backgroundColor: theme.colors.primary[50],
-    borderColor: theme.colors.primary[600],
+  formatOptionSelected: {
+    backgroundColor: `${colors.primary}15`,
+    borderColor: colors.primary,
+  },
+  formatOptionLeft: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: responsive.spacing[3],
+    flex: 1,
+  },
+  formatOptionContent: {
+    flex: 1,
+  },
+  formatOptionTitle: {
+    fontSize: responsive.fontSize.md,
+    fontWeight: '600',
+    color: colors.neutralDarkest,
+    marginBottom: responsive.spacing[0.5],
+  },
+  formatOptionDescription: {
+    fontSize: responsive.fontSize.sm,
+    color: colors.neutralDark,
   },
   radioCircle: {
-    width: 20,
-    height: 20,
-    borderRadius: 10,
+    width: ms(20),
+    height: ms(20),
+    borderRadius: ms(10),
     borderWidth: 2,
-    borderColor: theme.colors.border.main,
+    borderColor: colors.border,
     alignItems: 'center',
     justifyContent: 'center',
-    marginRight: responsive.spacing[2],
   },
   radioCircleInner: {
-    width: 12,
-    height: 12,
-    borderRadius: 6,
-    backgroundColor: theme.colors.primary[600],
+    width: ms(10),
+    height: ms(10),
+    borderRadius: ms(5),
+    backgroundColor: colors.primary,
   },
-  optionText: {
-    ...theme.typography.styles.body,
+  generateButton: {
+    height: ms(48),
+    borderRadius: theme.borderRadius.lg,
+    backgroundColor: colors.functionalSuccess,
+    alignItems: 'center',
+    justifyContent: 'center',
+    ...theme.shadows.md,
+  },
+  generateButtonPressed: {
+    opacity: 0.9,
+  },
+  generateButtonText: {
+    fontSize: responsive.fontSize.md,
+    fontWeight: '700',
+    color: colors.neutralWhite,
+    letterSpacing: 0.3,
   },
   exportsList: {
-    gap: responsive.spacing[2],
+    gap: responsive.spacing[3],
   },
   exportItem: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    backgroundColor: theme.colors.background.tertiary,
-    borderRadius: theme.borderRadius.xl,
+    backgroundColor: colors.iconBg,
+    borderRadius: theme.borderRadius.lg,
     padding: responsive.spacing[4],
+    gap: responsive.spacing[3],
+  },
+  exportItemLeft: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: responsive.spacing[3],
+    flex: 1,
+  },
+  exportIconContainer: {
+    width: ms(40),
+    height: ms(40),
+    borderRadius: ms(20),
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  exportItemContent: {
+    flex: 1,
   },
   exportName: {
-    ...theme.typography.styles.body,
+    fontSize: responsive.fontSize.sm,
     fontWeight: '600',
-    marginBottom: 4,
+    color: colors.neutralDarkest,
+    marginBottom: responsive.spacing[0.5],
   },
   exportDate: {
-    ...theme.typography.styles.bodySmall,
-    color: theme.colors.text.tertiary,
+    fontSize: responsive.fontSize.xs,
+    color: colors.neutralDark,
   },
   downloadButton: {
-    backgroundColor: theme.colors.primary[600],
-    borderRadius: theme.borderRadius.xl,
     paddingHorizontal: responsive.spacing[4],
     paddingVertical: responsive.spacing[2],
+    borderRadius: theme.borderRadius.lg,
+    backgroundColor: colors.primary,
+    ...theme.shadows.sm,
+  },
+  downloadButtonPressed: {
+    opacity: 0.9,
   },
   downloadButtonText: {
-    ...theme.typography.styles.button,
-    color: '#FFFFFF',
     fontSize: responsive.fontSize.sm,
-    lineHeight: responsive.fontSize.sm * 1.5,
+    fontWeight: '700',
+    color: colors.neutralWhite,
+  },
+  emptyState: {
+    paddingVertical: responsive.spacing[8],
+    alignItems: 'center',
+  },
+  emptyStateText: {
+    fontSize: responsive.fontSize.md,
+    color: colors.neutralMedium,
+  },
+  bottomSpacer: {
+    height: responsive.spacing[4],
   },
 });

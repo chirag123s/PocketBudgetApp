@@ -5,8 +5,9 @@ import { Screen } from '@/components/layout/Screen';
 import { theme } from '@/constants/theme';
 import { responsive, ms } from '@/constants/responsive';
 import { Ionicons } from '@expo/vector-icons';
-import Svg, { Circle } from 'react-native-svg';
 import { Button } from '@/components/ui/Button';
+import { AdjustBudgetsModal } from '@/components/budget';
+import { CircularProgress } from '@/components/charts';
 
 // Color Palette - Using theme colors
 const colors = {
@@ -40,19 +41,20 @@ interface BudgetCategory {
 export default function BudgetTab() {
   const router = useRouter();
   const [selectedPeriod, setSelectedPeriod] = useState<'weekly' | 'monthly' | 'custom'>('monthly');
+  const [showAdjustModal, setShowAdjustModal] = useState(false);
 
   // Sample budget data
-  const totalSpent = 1890.50;
-  const totalBudget = 2500;
-  const remaining = totalBudget - totalSpent;
-  const percentage = Math.round((totalSpent / totalBudget) * 100);
-
-  const categories: BudgetCategory[] = [
+  const [categories, setCategories] = useState<BudgetCategory[]>([
     { id: '1', name: 'Groceries', icon: 'cart-outline', spent: 450.20, total: 600, color: colors.functionalSuccess },
     { id: '2', name: 'Transport', icon: 'bus-outline', spent: 195, total: 200, color: colors.functionalWarning },
     { id: '3', name: 'Entertainment', icon: 'film-outline', spent: 315.50, total: 250, color: colors.functionalError },
     { id: '4', name: 'Utilities', icon: 'bulb-outline', spent: 230, total: 300, color: colors.primary },
-  ];
+  ]);
+
+  const totalSpent = categories.reduce((sum, cat) => sum + cat.spent, 0);
+  const totalBudget = categories.reduce((sum, cat) => sum + cat.total, 0);
+  const remaining = totalBudget - totalSpent;
+  const percentage = Math.round((totalSpent / totalBudget) * 100);
 
   const getProgressColor = (spent: number, total: number) => {
     const percent = (spent / total) * 100;
@@ -61,12 +63,10 @@ export default function BudgetTab() {
     return colors.functionalSuccess;
   };
 
-  // SVG Circle calculations for progress indicator
-  const size = ms(120);
-  const strokeWidth = ms(12);
-  const radius = (size - strokeWidth) / 2;
-  const circumference = radius * 2 * Math.PI;
-  const strokeDashoffset = circumference - (percentage / 100) * circumference;
+  const handleSaveBudgets = (updatedCategories: BudgetCategory[]) => {
+    setCategories(updatedCategories);
+    // TODO: Save to backend/database
+  };
 
   return (
     <Screen scrollable={false} noPadding backgroundColor={colors.neutralBg} edges={['top']}>
@@ -118,34 +118,13 @@ export default function BudgetTab() {
                 <Text style={styles.cardPeriod}>Jan 1 - Jan 31, 2025</Text>
               </View>
               <View style={styles.circularProgress}>
-                <Svg width={size} height={size}>
-                  {/* Background Circle */}
-                  <Circle
-                    cx={size / 2}
-                    cy={size / 2}
-                    r={radius}
-                    stroke={colors.neutralBg}
-                    strokeWidth={strokeWidth}
-                    fill="none"
-                  />
-                  {/* Progress Circle */}
-                  <Circle
-                    cx={size / 2}
-                    cy={size / 2}
-                    r={radius}
-                    stroke={percentage >= 100 ? colors.functionalError : percentage >= 80 ? colors.functionalWarning : colors.functionalSuccess}
-                    strokeWidth={strokeWidth}
-                    fill="none"
-                    strokeDasharray={circumference}
-                    strokeDashoffset={strokeDashoffset}
-                    strokeLinecap="round"
-                    rotation="-90"
-                    origin={`${size / 2}, ${size / 2}`}
-                  />
-                </Svg>
-                <View style={styles.progressCenter}>
-                  <Text style={styles.progressPercentage}>{percentage}%</Text>
-                </View>
+                <CircularProgress
+                  percentage={percentage}
+                  sizeScale={120}
+                  strokeWidthScale={12}
+                  showPercentage={true}
+                  autoColor={true}
+                />
               </View>
             </View>
 
@@ -198,11 +177,19 @@ export default function BudgetTab() {
 
           {/* Action Buttons */}
           <View style={styles.actionButtonsRow}>
-            <TouchableOpacity style={styles.actionBtn}>
+            <TouchableOpacity
+              style={styles.actionBtn}
+              onPress={() => setShowAdjustModal(true)}
+              activeOpacity={0.7}
+            >
               <Ionicons name="create-outline" size={20} color={colors.primary} />
               <Text style={styles.actionBtnText}>Adjust Budgets</Text>
             </TouchableOpacity>
-            <TouchableOpacity style={styles.actionBtn}>
+            <TouchableOpacity
+              style={styles.actionBtn}
+              onPress={() => router.push('/tabs/charts')}
+              activeOpacity={0.7}
+            >
               <Ionicons name="stats-chart" size={20} color={colors.primary} />
               <Text style={styles.actionBtnText}>View Spending</Text>
             </TouchableOpacity>
@@ -258,6 +245,14 @@ export default function BudgetTab() {
           <View style={{ height: responsive.spacing[20] }} />
         </View>
       </ScrollView>
+
+      {/* Adjust Budgets Modal */}
+      <AdjustBudgetsModal
+        visible={showAdjustModal}
+        onClose={() => setShowAdjustModal(false)}
+        categories={categories}
+        onSave={handleSaveBudgets}
+      />
     </Screen>
   );
 }
@@ -343,16 +338,6 @@ const styles = StyleSheet.create({
     position: 'relative',
     justifyContent: 'center',
     alignItems: 'center',
-  },
-  progressCenter: {
-    position: 'absolute',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  progressPercentage: {
-    fontSize: responsive.fontSize.h3,
-    fontWeight: '700',
-    color: colors.neutralDarkest,
   },
   budgetStats: {
     flexDirection: 'row',

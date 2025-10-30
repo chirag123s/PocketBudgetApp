@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useCallback } from 'react';
 import {
   View,
   Text,
@@ -6,11 +6,18 @@ import {
   TouchableOpacity,
   StyleSheet,
   StatusBar,
+  Modal,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import { LinearGradient } from 'expo-linear-gradient';
+import { useFocusEffect, useRouter } from 'expo-router';
+import Svg, { Circle } from 'react-native-svg';
 import { Screen } from '@/components/layout/Screen';
 import { theme } from '@/constants/theme';
 import { responsive, ms } from '@/constants/responsive';
+import { loadAvatarColor, getAvatarGradientSync } from '@/utils/avatar';
+import { getInitials } from '@/utils/helpers';
+import { GaugeChart, GaugeChartSegment } from '@/components/charts';
 
 // Color Palette - Using theme colors
 const colors = {
@@ -55,6 +62,77 @@ interface BudgetItem {
 }
 
 const DashboardScreen: React.FC = () => {
+  const router = useRouter();
+  const [avatarColorId, setAvatarColorId] = useState('blue');
+  const [showPeriodSelector, setShowPeriodSelector] = useState(false);
+  const [selectedPeriod, setSelectedPeriod] = useState<'week' | 'month' | 'year'>('month');
+  const [unreadNotifications, setUnreadNotifications] = useState(2); // TODO: Get from context/state
+
+  // User data (in real app, this would come from auth context)
+  const userName = 'Alex Johnson';
+
+  // Load saved avatar color when screen comes into focus
+  useFocusEffect(
+    useCallback(() => {
+      loadSavedColor();
+    }, [])
+  );
+
+  const loadSavedColor = async () => {
+    const colorId = await loadAvatarColor();
+    setAvatarColorId(colorId);
+  };
+
+  // Handler functions
+  const handleNotificationPress = () => {
+    router.push('/notifications');
+  };
+
+  const handlePeriodSelect = (period: 'week' | 'month' | 'year') => {
+    setSelectedPeriod(period);
+    setShowPeriodSelector(false);
+    // TODO: Fetch data for selected period
+  };
+
+  const handleViewAllTransactions = () => {
+    router.push('/tabs/transactions');
+  };
+
+  const handleTransactionPress = (transactionId: string) => {
+    // TODO: Navigate to transaction detail screen
+    console.log('Transaction pressed:', transactionId);
+  };
+
+  const handleBudgetCardPress = (item: BudgetItem) => {
+    // Navigate to category details with params
+    router.push({
+      pathname: '/budget/category-details',
+      params: {
+        category: item.category,
+        budget: item.total.toString(),
+        spent: item.spent.toString(),
+        icon: 'cart-outline', // TODO: Add icon to BudgetItem type
+      },
+    });
+  };
+
+  const handleViewAllBudgets = () => {
+    router.push('/tabs/budget');
+  };
+
+  const getPeriodLabel = () => {
+    switch (selectedPeriod) {
+      case 'week':
+        return 'This Week';
+      case 'month':
+        return 'This Month';
+      case 'year':
+        return 'This Year';
+      default:
+        return 'This Month';
+    }
+  };
+
   const transactions: Transaction[] = [
     {
       id: '1',
@@ -91,6 +169,32 @@ const DashboardScreen: React.FC = () => {
     { category: 'Entertainment', spent: 80, total: 200, status: 'warning' },
   ];
 
+  // Spending categories for the chart (with budgets)
+  const spendingCategories = [
+    { label: 'Groceries', spent: 840, budget: 1000, color: colors.primary },
+    { label: 'Shopping', spent: 550, budget: 700, color: colors.secondaryRed },
+    { label: 'Transport', spent: 210, budget: 400, color: colors.secondaryYellow },
+    { label: 'Other', spent: 250.75, budget: 300, color: colors.primaryLight },
+  ];
+
+  const totalSpending = spendingCategories.reduce((sum, cat) => sum + cat.spent, 0);
+  const totalBudget = spendingCategories.reduce((sum, cat) => sum + cat.budget, 0);
+  const remainingBudget = totalBudget - totalSpending;
+
+  // Gauge chart data with remaining budget
+  const gaugeChartData: GaugeChartSegment[] = [
+    ...spendingCategories.map((cat) => ({
+      label: cat.label,
+      value: cat.spent,
+      color: cat.color,
+    })),
+    {
+      label: 'Remaining',
+      value: remainingBudget,
+      color: colors.neutralBg,
+    },
+  ];
+
   const getProgressColor = (status: string) => {
     switch (status) {
       case 'good':
@@ -124,13 +228,23 @@ const DashboardScreen: React.FC = () => {
         {/* Header */}
         <View style={styles.header}>
           <View style={styles.headerLeft}>
-            <View style={styles.profilePic}>
-              <Text style={styles.profileInitial}>A</Text>
-            </View>
-            <Text style={styles.greeting}>Good morning, Alex</Text>
+            <LinearGradient
+              colors={getAvatarGradientSync(avatarColorId)}
+              style={styles.profilePic}
+            >
+              <Text style={styles.profileInitial}>{getInitials(userName)}</Text>
+            </LinearGradient>
+            <Text style={styles.greeting}>Good morning, {userName.split(' ')[0]}</Text>
           </View>
-          <TouchableOpacity style={styles.notificationButton}>
+          <TouchableOpacity style={styles.notificationButton} onPress={handleNotificationPress}>
             <Ionicons name="notifications-outline" size={24} color={colors.neutralDark} />
+            {unreadNotifications > 0 && (
+              <View style={styles.notificationBadge}>
+                <Text style={styles.notificationBadgeText}>
+                  {unreadNotifications > 9 ? '9+' : unreadNotifications}
+                </Text>
+              </View>
+            )}
           </TouchableOpacity>
         </View>
 
@@ -154,53 +268,53 @@ const DashboardScreen: React.FC = () => {
         <View style={[styles.spendingCard, styles.cardShadow]}>
           <View style={styles.spendingHeader}>
             <Text style={styles.sectionTitle}>Spending</Text>
-            <TouchableOpacity style={styles.dropdownButton}>
-              <Text style={styles.dropdownText}>This Month</Text>
+            <TouchableOpacity
+              style={styles.dropdownButton}
+              onPress={() => setShowPeriodSelector(true)}
+            >
+              <Text style={styles.dropdownText}>{getPeriodLabel()}</Text>
               <Ionicons name="chevron-down" size={16} color={colors.primary} />
             </TouchableOpacity>
           </View>
 
-          <View style={styles.chartContainer}>
-            {/* Simplified Circle Progress */}
-            <View style={styles.circleProgress}>
-              <View style={styles.circleOuter}>
-                <View style={styles.circleInner}>
-                  <Text style={styles.circleAmount}>$1.8k</Text>
+          {(() => {
+            const chartSize = 120;
+            return (
+              <GaugeChart
+                data={gaugeChartData}
+                sizeScale={chartSize}
+                strokeWidthScale={chartSize * 0.1}
+                showLegend={true}
+                legendPosition="right"
+                legendDotSize={chartSize * 0.083}
+              >
+                <View style={{ alignItems: 'center' }}>
+                  <Text style={styles.circleAmount}>
+                    ${(totalSpending / 1000).toFixed(1)}k
+                  </Text>
+                  <Text style={styles.circleLabel}>
+                    of ${(totalBudget / 1000).toFixed(1)}k
+                  </Text>
                 </View>
-              </View>
-            </View>
-
-            {/* Legend */}
-            <View style={styles.legend}>
-              <View style={styles.legendItem}>
-                <View style={[styles.legendDot, { backgroundColor: colors.primary }]} />
-                <Text style={styles.legendLabel}>Groceries</Text>
-                <Text style={styles.legendAmount}>$840</Text>
-              </View>
-              <View style={styles.legendItem}>
-                <View style={[styles.legendDot, { backgroundColor: colors.secondaryRed }]} />
-                <Text style={styles.legendLabel}>Shopping</Text>
-                <Text style={styles.legendAmount}>$550</Text>
-              </View>
-              <View style={styles.legendItem}>
-                <View style={[styles.legendDot, { backgroundColor: colors.secondaryYellow }]} />
-                <Text style={styles.legendLabel}>Transport</Text>
-                <Text style={styles.legendAmount}>$210</Text>
-              </View>
-              <View style={styles.legendItem}>
-                <View style={[styles.legendDot, { backgroundColor: colors.primaryLight }]} />
-                <Text style={styles.legendLabel}>Other</Text>
-                <Text style={styles.legendAmount}>$250.75</Text>
-              </View>
-            </View>
-          </View>
+              </GaugeChart>
+            );
+          })()}
         </View>
 
         {/* Budget Progress */}
-        <Text style={styles.sectionHeading}>Budget Progress</Text>
+        <View style={styles.transactionsHeader}>
+          <Text style={styles.sectionHeading}>Budget Progress</Text>
+          <TouchableOpacity onPress={handleViewAllBudgets}>
+            <Text style={styles.viewAllButton}>View All</Text>
+          </TouchableOpacity>
+        </View>
         <View style={styles.budgetContainer}>
           {budgetItems.map((item, index) => (
-            <View key={index} style={[styles.budgetCard, styles.cardShadow]}>
+            <TouchableOpacity
+              key={index}
+              style={[styles.budgetCard, styles.cardShadow]}
+              onPress={() => handleBudgetCardPress(item)}
+            >
               <View style={styles.budgetHeader}>
                 <Text style={styles.budgetCategory}>{item.category}</Text>
                 {item.status === 'over' ? (
@@ -224,14 +338,14 @@ const DashboardScreen: React.FC = () => {
                   ]}
                 />
               </View>
-            </View>
+            </TouchableOpacity>
           ))}
         </View>
 
         {/* Recent Transactions */}
         <View style={styles.transactionsHeader}>
           <Text style={styles.sectionHeading}>Recent Transactions</Text>
-          <TouchableOpacity>
+          <TouchableOpacity onPress={handleViewAllTransactions}>
             <Text style={styles.viewAllButton}>View All</Text>
           </TouchableOpacity>
         </View>
@@ -239,7 +353,10 @@ const DashboardScreen: React.FC = () => {
         <View style={[styles.transactionsCard, styles.cardShadow]}>
           {transactions.map((transaction, index) => (
             <View key={transaction.id}>
-              <TouchableOpacity style={styles.transactionItem}>
+              <TouchableOpacity
+                style={styles.transactionItem}
+                onPress={() => handleTransactionPress(transaction.id)}
+              >
                 <View
                   style={[
                     styles.transactionIcon,
@@ -268,6 +385,81 @@ const DashboardScreen: React.FC = () => {
         {/* Bottom spacing */}
         <View style={{ height: responsive.spacing[4] }} />
       </ScrollView>
+
+      {/* Period Selector Modal */}
+      <Modal
+        visible={showPeriodSelector}
+        transparent
+        animationType="fade"
+        onRequestClose={() => setShowPeriodSelector(false)}
+      >
+        <TouchableOpacity
+          style={styles.modalOverlay}
+          activeOpacity={1}
+          onPress={() => setShowPeriodSelector(false)}
+        >
+          <View style={styles.periodModal}>
+            <Text style={styles.modalTitle}>Select Period</Text>
+            <TouchableOpacity
+              style={[
+                styles.periodOption,
+                selectedPeriod === 'week' && styles.periodOptionActive,
+              ]}
+              onPress={() => handlePeriodSelect('week')}
+            >
+              <Text
+                style={[
+                  styles.periodOptionText,
+                  selectedPeriod === 'week' && styles.periodOptionTextActive,
+                ]}
+              >
+                This Week
+              </Text>
+              {selectedPeriod === 'week' && (
+                <Ionicons name="checkmark" size={20} color={colors.primary} />
+              )}
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={[
+                styles.periodOption,
+                selectedPeriod === 'month' && styles.periodOptionActive,
+              ]}
+              onPress={() => handlePeriodSelect('month')}
+            >
+              <Text
+                style={[
+                  styles.periodOptionText,
+                  selectedPeriod === 'month' && styles.periodOptionTextActive,
+                ]}
+              >
+                This Month
+              </Text>
+              {selectedPeriod === 'month' && (
+                <Ionicons name="checkmark" size={20} color={colors.primary} />
+              )}
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={[
+                styles.periodOption,
+                selectedPeriod === 'year' && styles.periodOptionActive,
+              ]}
+              onPress={() => handlePeriodSelect('year')}
+            >
+              <Text
+                style={[
+                  styles.periodOptionText,
+                  selectedPeriod === 'year' && styles.periodOptionTextActive,
+                ]}
+              >
+                This Year
+              </Text>
+              {selectedPeriod === 'year' && (
+                <Ionicons name="checkmark" size={20} color={colors.primary} />
+              )}
+            </TouchableOpacity>
+          </View>
+        </TouchableOpacity>
+      </Modal>
     </Screen>
   );
 };
@@ -293,7 +485,6 @@ const styles = StyleSheet.create({
     width: ms(40),
     height: ms(40),
     borderRadius: ms(20),
-    backgroundColor: colors.primary,
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -309,6 +500,26 @@ const styles = StyleSheet.create({
   },
   notificationButton: {
     padding: responsive.spacing[2],
+    position: 'relative',
+  },
+  notificationBadge: {
+    position: 'absolute',
+    top: responsive.spacing[1],
+    right: responsive.spacing[1],
+    backgroundColor: colors.functionalError,
+    borderRadius: ms(10),
+    minWidth: ms(18),
+    height: ms(18),
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingHorizontal: responsive.spacing[1],
+    borderWidth: 2,
+    borderColor: colors.neutralBg,
+  },
+  notificationBadgeText: {
+    color: colors.neutralWhite,
+    fontSize: responsive.fontSize.xs,
+    fontWeight: '700',
   },
   statsContainer: {
     flexDirection: 'row',
@@ -376,28 +587,33 @@ const styles = StyleSheet.create({
   circleProgress: {
     width: ms(96),
     height: ms(96),
+    position: 'relative',
     justifyContent: 'center',
     alignItems: 'center',
   },
-  circleOuter: {
-    width: ms(96),
-    height: ms(96),
-    borderRadius: ms(48),
-    borderWidth: ms(8),
-    borderColor: colors.neutralBg,
+  circleCenter: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
     justifyContent: 'center',
     alignItems: 'center',
-    borderLeftColor: colors.primary,
-    borderTopColor: colors.primary,
-    transform: [{ rotate: '135deg' }],
-  },
-  circleInner: {
-    transform: [{ rotate: '-135deg' }],
   },
   circleAmount: {
     fontSize: responsive.fontSize.xl,
     fontWeight: '700',
     color: colors.neutralDarkest,
+  },
+  circleLabel: {
+    fontSize: responsive.fontSize.xs,
+    fontWeight: '500',
+    color: colors.neutralDark,
+    marginTop: responsive.spacing[1],
+  },
+  categoryLegend: {
+    gap: responsive.spacing[2],
+    marginTop: responsive.spacing[4],
   },
   legend: {
     flex: 1,
@@ -418,6 +634,11 @@ const styles = StyleSheet.create({
     fontSize: responsive.fontSize.sm,
     color: colors.neutralDark,
   },
+  legendValue: {
+    fontSize: responsive.fontSize.sm,
+    fontWeight: '700',
+    color: colors.neutralDarkest,
+  },
   legendAmount: {
     fontSize: responsive.fontSize.sm,
     fontWeight: '600',
@@ -427,9 +648,6 @@ const styles = StyleSheet.create({
     fontSize: responsive.fontSize.lg,
     fontWeight: '700',
     color: colors.neutralDarkest,
-    paddingHorizontal: responsive.spacing[4],
-    paddingTop: responsive.spacing[6],
-    paddingBottom: responsive.spacing[3],
   },
   budgetContainer: {
     paddingHorizontal: responsive.spacing[4],
@@ -525,6 +743,51 @@ const styles = StyleSheet.create({
   divider: {
     height: 1,
     backgroundColor: colors.neutralBg,
+  },
+  // Period Selector Modal
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: responsive.spacing[4],
+  },
+  periodModal: {
+    backgroundColor: colors.neutralWhite,
+    borderRadius: theme.borderRadius.xl,
+    padding: responsive.spacing[5],
+    width: '100%',
+    maxWidth: ms(320),
+    ...theme.shadows.lg,
+  },
+  modalTitle: {
+    fontSize: responsive.fontSize.lg,
+    fontWeight: '700',
+    color: colors.neutralDarkest,
+    marginBottom: responsive.spacing[4],
+    textAlign: 'center',
+  },
+  periodOption: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingVertical: responsive.spacing[4],
+    paddingHorizontal: responsive.spacing[4],
+    borderRadius: theme.borderRadius.lg,
+    marginBottom: responsive.spacing[2],
+    backgroundColor: colors.neutralBg,
+  },
+  periodOptionActive: {
+    backgroundColor: `${colors.primary}15`,
+  },
+  periodOptionText: {
+    fontSize: responsive.fontSize.md,
+    fontWeight: '500',
+    color: colors.neutralDark,
+  },
+  periodOptionTextActive: {
+    color: colors.primary,
+    fontWeight: '600',
   },
 });
 

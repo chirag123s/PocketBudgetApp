@@ -1,269 +1,519 @@
-import React, { useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, ScrollView, TextInput } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import {
+  View,
+  Text,
+  ScrollView,
+  Pressable,
+  StyleSheet,
+  TextInput,
+  Alert,
+  Modal,
+} from 'react-native';
 import { useRouter } from 'expo-router';
 import { Screen } from '@/components/layout/Screen';
-import { Button } from '@/components/ui/Button';
+import { ScreenHeader } from '@/components/layout/ScreenHeader';
 import { theme } from '@/constants/theme';
 import { responsive, ms } from '@/constants/responsive';
 import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
+import { avatarColors, loadAvatarColor, saveAvatarColor, getAvatarGradientSync } from '@/utils/avatar';
 
-export default function ProfileEdit() {
+// Color Palette - Using theme colors
+const colors = {
+  // Primary Palette
+  primaryDark: theme.colors.info.dark,
+  primary: theme.colors.info.main,
+  primaryLight: theme.colors.info.light,
+
+  // Neutral Palette
+  neutralBg: theme.colors.background.secondary,
+  neutralWhite: theme.colors.background.primary,
+  neutralDarkest: theme.colors.text.primary,
+  neutralDark: theme.colors.text.secondary,
+  neutralMedium: theme.colors.text.tertiary,
+
+  // Functional Palette
+  functionalSuccess: theme.colors.success.main,
+  functionalWarning: theme.colors.warning.main,
+  functionalError: theme.colors.danger.main,
+
+  // Border
+  border: theme.colors.border.light,
+};
+
+interface ProfileData {
+  fullName: string;
+  email: string;
+  phoneNumber: string;
+}
+
+export default function EditProfileScreen() {
   const router = useRouter();
-  const [firstName, setFirstName] = useState('John');
-  const [lastName, setLastName] = useState('Smith');
-  const [email, setEmail] = useState('john@email.com');
-  const [phone, setPhone] = useState('04XX XXX XXX');
 
-  const handleSave = () => {
-    // Save logic
-    router.back();
+  const [profileData, setProfileData] = useState<ProfileData>({
+    fullName: 'Alex Johnson',
+    email: 'alex@email.com',
+    phoneNumber: '+61 4XX XXX XXX',
+  });
+
+  const [hasChanges, setHasChanges] = useState(false);
+  const [showColorPicker, setShowColorPicker] = useState(false);
+  const [selectedColor, setSelectedColor] = useState('blue'); // Preview color
+  const [savedColor, setSavedColor] = useState('blue'); // Persisted color
+  const [hasColorChanged, setHasColorChanged] = useState(false);
+
+  // Load saved avatar color on mount
+  useEffect(() => {
+    loadSavedColor();
+  }, []);
+
+  const loadSavedColor = async () => {
+    const colorId = await loadAvatarColor();
+    setSelectedColor(colorId);
+    setSavedColor(colorId);
+  };
+
+  const handleColorSelect = (colorId: string) => {
+    // Update preview only, don't save yet
+    setSelectedColor(colorId);
+    setShowColorPicker(false);
+
+    // Mark as changed if different from saved color
+    if (colorId !== savedColor) {
+      setHasChanges(true);
+      setHasColorChanged(true);
+    }
+  };
+
+  const getAvatarGradient = () => {
+    return getAvatarGradientSync(selectedColor);
+  };
+
+  const handleBack = () => {
+    if (hasChanges) {
+      Alert.alert(
+        'Unsaved Changes',
+        'You have unsaved changes. Are you sure you want to go back?',
+        [
+          { text: 'Cancel', style: 'cancel' },
+          {
+            text: 'Discard',
+            style: 'destructive',
+            onPress: () => {
+              // Revert color changes
+              if (hasColorChanged) {
+                setSelectedColor(savedColor);
+              }
+              router.back();
+            },
+          },
+        ]
+      );
+    } else {
+      router.back();
+    }
+  };
+
+  const handleSaveChanges = async () => {
+    // Validate data
+    if (!profileData.fullName.trim()) {
+      Alert.alert('Error', 'Please enter your full name');
+      return;
+    }
+
+    if (!profileData.email.trim() || !profileData.email.includes('@')) {
+      Alert.alert('Error', 'Please enter a valid email address');
+      return;
+    }
+
+    // Save avatar color if changed
+    if (hasColorChanged) {
+      await saveAvatarColor(selectedColor);
+      setSavedColor(selectedColor);
+      setHasColorChanged(false);
+    }
+
+    // Save changes
+    console.log('Save profile data:', profileData);
+    Alert.alert('Success', 'Your profile has been updated successfully', [
+      {
+        text: 'OK',
+        onPress: () => {
+          setHasChanges(false);
+          router.back();
+        },
+      },
+    ]);
+  };
+
+  const updateField = (field: keyof ProfileData, value: string) => {
+    setProfileData({ ...profileData, [field]: value });
+    setHasChanges(true);
+  };
+
+  // Get initials from name
+  const getInitials = (name: string) => {
+    const parts = name.trim().split(' ');
+    if (parts.length >= 2) {
+      return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
+    }
+    return name.substring(0, 2).toUpperCase();
   };
 
   return (
-    <Screen noPadding backgroundColor={theme.colors.background.secondary}>
-      {/* Header */}
-      <View style={styles.header}>
-        <TouchableOpacity
-          style={styles.headerButton}
-          onPress={() => router.back()}
-        >
-          <Ionicons name="chevron-back" size={24} color={theme.colors.primary[600]} />
-        </TouchableOpacity>
-        <Text style={styles.headerTitle}>Edit Profile</Text>
-        <View style={styles.placeholder} />
-      </View>
+    <Screen scrollable={false} noPadding backgroundColor={colors.neutralBg} edges={['top']}>
+      <ScreenHeader
+        title="My Profile"
+        onBackPress={handleBack}
+        backgroundColor={colors.neutralBg}
+      />
 
-      <ScrollView contentContainerStyle={styles.content}>
-        {/* Profile Photo */}
-        <View style={styles.photoCard}>
+      <ScrollView
+        style={styles.scrollView}
+        contentContainerStyle={styles.scrollContent}
+        showsVerticalScrollIndicator={false}
+      >
+        {/* Profile Photo Section */}
+        <View style={styles.photoSection}>
+          {/* Avatar with Gradient */}
           <LinearGradient
-            colors={[theme.colors.primary[400], theme.colors.primary[600]]}
-            style={styles.avatarGradient}
+            colors={getAvatarGradient()}
+            style={styles.avatar}
           >
-            <Text style={styles.avatarText}>JS</Text>
+            <Text style={styles.avatarText}>{getInitials(profileData.fullName)}</Text>
           </LinearGradient>
-          <TouchableOpacity>
-            <Text style={styles.changePhotoText}>Change Photo</Text>
-          </TouchableOpacity>
+
+          {/* Change Avatar Color Button */}
+          <Pressable
+            onPress={() => setShowColorPicker(true)}
+            style={({ pressed }) => [
+              styles.changePhotoButton,
+              pressed && styles.changePhotoButtonPressed,
+            ]}
+          >
+            <Text style={styles.changePhotoButtonText}>Change Avatar Color</Text>
+          </Pressable>
         </View>
 
-        {/* Personal Information */}
-        <View style={styles.card}>
-          <Text style={styles.cardTitle}>Personal Information</Text>
-
-          {/* First Name */}
+        {/* Personal Information Form */}
+        <View style={styles.formSection}>
+          {/* Full Name */}
           <View style={styles.inputGroup}>
-            <Text style={styles.label}>First Name</Text>
+            <Text style={styles.label}>Full Name</Text>
             <TextInput
               style={styles.input}
-              value={firstName}
-              onChangeText={setFirstName}
-              placeholderTextColor={theme.colors.text.tertiary}
+              value={profileData.fullName}
+              onChangeText={(text) => updateField('fullName', text)}
+              placeholder="Enter your full name"
+              placeholderTextColor={colors.neutralMedium}
             />
           </View>
 
-          {/* Last Name */}
+          {/* Email Address */}
           <View style={styles.inputGroup}>
-            <Text style={styles.label}>Last Name</Text>
+            <Text style={styles.label}>Email Address</Text>
             <TextInput
               style={styles.input}
-              value={lastName}
-              onChangeText={setLastName}
-              placeholderTextColor={theme.colors.text.tertiary}
-            />
-          </View>
-
-          {/* Email */}
-          <View style={styles.inputGroup}>
-            <Text style={styles.label}>Email</Text>
-            <TextInput
-              style={styles.input}
-              value={email}
-              onChangeText={setEmail}
+              value={profileData.email}
+              onChangeText={(text) => updateField('email', text)}
+              placeholder="Enter your email"
+              placeholderTextColor={colors.neutralMedium}
               keyboardType="email-address"
               autoCapitalize="none"
-              placeholderTextColor={theme.colors.text.tertiary}
             />
-            <View style={styles.verifiedRow}>
-              <Ionicons name="checkmark-circle" size={16} color={theme.colors.success.main} />
-              <Text style={styles.verifiedText}>Verified</Text>
+            <View style={styles.helperRow}>
+              <Ionicons name="checkmark-circle" size={16} color={colors.functionalSuccess} />
+              <Text style={styles.helperText}>Verified • Used for login</Text>
             </View>
           </View>
 
-          {/* Phone */}
+          {/* Phone Number */}
           <View style={styles.inputGroup}>
-            <Text style={styles.label}>Phone (Optional)</Text>
+            <Text style={styles.label}>Phone Number (Optional)</Text>
             <TextInput
               style={styles.input}
-              value={phone}
-              onChangeText={setPhone}
-              placeholder="04XX XXX XXX"
+              value={profileData.phoneNumber}
+              onChangeText={(text) => updateField('phoneNumber', text)}
+              placeholder="+61 4XX XXX XXX"
+              placeholderTextColor={colors.neutralMedium}
               keyboardType="phone-pad"
-              placeholderTextColor={theme.colors.text.tertiary}
             />
-            <TouchableOpacity style={styles.verifyButton}>
-              <Text style={styles.verifyButtonText}>Verify</Text>
-            </TouchableOpacity>
+            <Pressable onPress={() => console.log('Verify phone')}>
+              <Text style={styles.verifyText}>Verify</Text>
+            </Pressable>
           </View>
         </View>
-
-        {/* Save Changes Button */}
-        <Button
-          variant="primary"
-          fullWidth
-          size="large"
-          onPress={handleSave}
-          style={styles.saveButton}
-        >
-          Save Changes
-        </Button>
-
-        {/* Account Actions */}
-        <View style={styles.card}>
-          <Text style={styles.cardTitle}>Account Actions</Text>
-
-          <TouchableOpacity style={styles.actionButton}>
-            <Text style={styles.actionButtonText}>Change Password</Text>
-          </TouchableOpacity>
-
-          <TouchableOpacity style={styles.deleteButton}>
-            <Text style={styles.deleteButtonText}>Delete Account</Text>
-          </TouchableOpacity>
-        </View>
       </ScrollView>
+
+      {/* Bottom Actions */}
+      <View style={styles.footer}>
+        {/* Save Changes Button */}
+        <Pressable
+          onPress={handleSaveChanges}
+          disabled={!hasChanges}
+          style={({ pressed }) => [
+            styles.saveButton,
+            !hasChanges && styles.saveButtonDisabled,
+            pressed && styles.saveButtonPressed,
+          ]}
+          android_ripple={{ color: 'rgba(255, 255, 255, 0.2)' }}
+        >
+          <Text style={styles.saveButtonText}>Save Changes</Text>
+        </Pressable>
+      </View>
+
+      {/* Color Picker Modal */}
+      <Modal
+        visible={showColorPicker}
+        transparent
+        animationType="slide"
+        onRequestClose={() => setShowColorPicker(false)}
+      >
+        <Pressable
+          style={styles.modalOverlay}
+          onPress={() => setShowColorPicker(false)}
+        >
+          <Pressable
+            style={styles.colorPickerSheet}
+            onPress={(e) => e.stopPropagation()}
+          >
+            {/* Header */}
+            <View style={styles.colorPickerHeader}>
+              <Text style={styles.colorPickerTitle}>Choose Avatar Color</Text>
+              <Pressable
+                onPress={() => setShowColorPicker(false)}
+                style={styles.closeButton}
+              >
+                <Ionicons name="close" size={24} color={colors.neutralDarkest} />
+              </Pressable>
+            </View>
+
+            {/* Color Options */}
+            <ScrollView
+              horizontal
+              showsHorizontalScrollIndicator={false}
+              contentContainerStyle={styles.colorOptionsContainer}
+            >
+              {avatarColors.map((color) => (
+                <Pressable
+                  key={color.id}
+                  onPress={() => handleColorSelect(color.id)}
+                  style={styles.colorOptionWrapper}
+                >
+                  <LinearGradient
+                    colors={color.gradient}
+                    style={[
+                      styles.colorOption,
+                      selectedColor === color.id && styles.colorOptionSelected,
+                    ]}
+                  >
+                    <Text style={styles.colorInitials}>
+                      {getInitials(profileData.fullName)}
+                    </Text>
+                    {selectedColor === color.id && (
+                      <View style={styles.selectedBadge}>
+                        <Ionicons name="checkmark" size={16} color={colors.neutralWhite} />
+                      </View>
+                    )}
+                  </LinearGradient>
+                  <Text style={styles.colorName}>{color.name}</Text>
+                </Pressable>
+              ))}
+            </ScrollView>
+          </Pressable>
+        </Pressable>
+      </Modal>
     </Screen>
   );
 }
 
 const styles = StyleSheet.create({
-  header: {
+  scrollView: {
+    flex: 1,
+  },
+  scrollContent: {
+    paddingBottom: ms(100),
+  },
+  photoSection: {
+    alignItems: 'center',
+    gap: responsive.spacing[4],
+    paddingVertical: responsive.spacing[6],
+  },
+  avatar: {
+    width: ms(112),
+    height: ms(112),
+    borderRadius: ms(56),
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  avatarText: {
+    fontSize: responsive.fontSize.h1,
+    fontWeight: '700',
+    color: colors.neutralWhite,
+  },
+  changePhotoButton: {
+    height: ms(36),
+    paddingHorizontal: responsive.spacing[4],
+    borderRadius: theme.borderRadius.lg,
+    backgroundColor: `${colors.primary}15`,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  changePhotoButtonPressed: {
+    opacity: 0.7,
+  },
+  changePhotoButtonText: {
+    fontSize: responsive.fontSize.sm,
+    fontWeight: '700',
+    color: colors.primary,
+    letterSpacing: 0.2,
+  },
+  formSection: {
+    gap: responsive.spacing[4],
+    paddingHorizontal: responsive.spacing[4],
+  },
+  inputGroup: {
+    gap: responsive.spacing[2],
+  },
+  label: {
+    fontSize: responsive.fontSize.sm,
+    fontWeight: '500',
+    color: colors.neutralDarkest,
+  },
+  input: {
+    height: ms(48),
+    borderRadius: theme.borderRadius.lg,
+    borderWidth: 1,
+    borderColor: colors.border,
+    backgroundColor: colors.neutralWhite,
+    paddingHorizontal: responsive.spacing[4],
+    fontSize: responsive.fontSize.md,
+    color: colors.neutralDarkest,
+  },
+  helperRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: responsive.spacing[1.5],
+  },
+  helperText: {
+    fontSize: responsive.fontSize.xs,
+    color: colors.neutralDark,
+  },
+  verifyText: {
+    fontSize: responsive.fontSize.sm,
+    fontWeight: '700',
+    color: colors.primary,
+    letterSpacing: 0.2,
+  },
+  footer: {
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+    right: 0,
+    backgroundColor: colors.neutralWhite,
+    borderTopWidth: 1,
+    borderTopColor: colors.border,
+    paddingHorizontal: responsive.spacing[4],
+    paddingTop: responsive.spacing[4],
+    paddingBottom: responsive.spacing[4],
+  },
+  saveButton: {
+    height: ms(48),
+    borderRadius: theme.borderRadius.lg,
+    backgroundColor: colors.primary,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  saveButtonDisabled: {
+    backgroundColor: `${colors.primary}80`,
+  },
+  saveButtonPressed: {
+    opacity: 0.9,
+  },
+  saveButtonText: {
+    fontSize: responsive.fontSize.md,
+    fontWeight: '700',
+    color: colors.neutralWhite,
+    letterSpacing: 0.2,
+  },
+  // Color Picker Modal Styles
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    justifyContent: 'flex-end',
+  },
+  colorPickerSheet: {
+    backgroundColor: colors.neutralWhite,
+    borderTopLeftRadius: theme.borderRadius.xl * 2,
+    borderTopRightRadius: theme.borderRadius.xl * 2,
+    paddingBottom: responsive.spacing[6],
+    ...theme.shadows.lg,
+  },
+  colorPickerHeader: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    paddingHorizontal: responsive.spacing[4],
-    paddingVertical: responsive.spacing[2],
-    backgroundColor: theme.colors.background.primary,
+    paddingHorizontal: responsive.spacing[6],
+    paddingVertical: responsive.spacing[5],
     borderBottomWidth: 1,
-    borderBottomColor: theme.colors.border.light,
+    borderBottomColor: colors.border,
   },
-  headerButton: {
-    padding: responsive.spacing[2],
-  },
-  headerTitle: {
-    ...theme.typography.styles.h3,
+  colorPickerTitle: {
     fontSize: responsive.fontSize.lg,
-    lineHeight: responsive.fontSize.lg * 1.5,
+    fontWeight: '700',
+    color: colors.neutralDarkest,
   },
-  placeholder: {
-    width: 40,
-  },
-  content: {
-    padding: responsive.spacing[6],
-    paddingBottom: responsive.spacing[8],
-  },
-  photoCard: {
-    backgroundColor: theme.colors.background.primary,
-    borderRadius: theme.borderRadius.xl,
-    padding: responsive.spacing[6],
-    marginBottom: responsive.spacing[4],
-    alignItems: 'center',
-    ...theme.shadows.sm,
-  },
-  avatarGradient: {
-    width: 96,
-    height: 96,
-    borderRadius: 48,
+  closeButton: {
+    width: ms(40),
+    height: ms(40),
     alignItems: 'center',
     justifyContent: 'center',
-    marginBottom: responsive.spacing[4],
   },
-  avatarText: {
+  colorOptionsContainer: {
+    paddingHorizontal: responsive.spacing[6],
+    paddingVertical: responsive.spacing[5],
+    gap: responsive.spacing[4],
+  },
+  colorOptionWrapper: {
+    alignItems: 'center',
+    gap: responsive.spacing[2],
+  },
+  colorOption: {
+    width: ms(80),
+    height: ms(80),
+    borderRadius: ms(40),
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderWidth: 3,
+    borderColor: 'transparent',
+    position: 'relative',
+  },
+  colorOptionSelected: {
+    borderColor: colors.neutralDarkest,
+    transform: [{ scale: 1.05 }],
+  },
+  colorInitials: {
     fontSize: responsive.fontSize.h2,
-    lineHeight: responsive.fontSize.h2 * 1.5,
     fontWeight: '700',
-    color: '#FFFFFF',
+    color: colors.neutralWhite,
   },
-  changePhotoText: {
-    ...theme.typography.styles.button,
-    color: theme.colors.primary[600],
-    fontSize: responsive.fontSize.sm,
-    lineHeight: responsive.fontSize.sm * 1.5,
-  },
-  card: {
-    backgroundColor: theme.colors.background.primary,
-    borderRadius: theme.borderRadius.xl,
-    padding: responsive.spacing[6],
-    marginBottom: responsive.spacing[4],
-    ...theme.shadows.sm,
-  },
-  cardTitle: {
-    ...theme.typography.styles.h3,
-    fontSize: responsive.fontSize.lg,
-    lineHeight: responsive.fontSize.lg * 1.5,
-    marginBottom: responsive.spacing[4],
-  },
-  inputGroup: {
-    marginBottom: responsive.spacing[4],
-  },
-  label: {
-    ...theme.typography.styles.bodySmall,
-    color: theme.colors.text.secondary,
-    marginBottom: responsive.spacing[2],
-  },
-  input: {
-    borderWidth: 1,
-    borderColor: theme.colors.border.main,
-    borderRadius: theme.borderRadius.xl,
-    padding: responsive.spacing[2],
-    ...theme.typography.styles.body,
-    color: theme.colors.text.primary,
-  },
-  verifiedRow: {
-    flexDirection: 'row',
+  selectedBadge: {
+    position: 'absolute',
+    bottom: -2,
+    right: -2,
+    width: ms(24),
+    height: ms(24),
+    borderRadius: ms(12),
+    backgroundColor: colors.functionalSuccess,
     alignItems: 'center',
-    marginTop: responsive.spacing[2],
+    justifyContent: 'center',
+    borderWidth: 2,
+    borderColor: colors.neutralWhite,
   },
-  verifiedText: {
-    ...theme.typography.styles.bodySmall,
-    color: theme.colors.text.secondary,
-    marginLeft: responsive.spacing[2],
-  },
-  verifyButton: {
-    marginTop: responsive.spacing[2],
-  },
-  verifyButtonText: {
-    ...theme.typography.styles.button,
-    color: theme.colors.primary[600],
-    fontSize: responsive.fontSize.sm,
-    lineHeight: responsive.fontSize.sm * 1.5,
-  },
-  saveButton: {
-    marginBottom: responsive.spacing[4],
-  },
-  actionButton: {
-    backgroundColor: theme.colors.background.tertiary,
-    borderRadius: theme.borderRadius.xl,
-    padding: responsive.spacing[2],
-    alignItems: 'center',
-    marginBottom: responsive.spacing[2],
-  },
-  actionButtonText: {
-    ...theme.typography.styles.button,
-    color: theme.colors.text.primary,
-    fontSize: responsive.fontSize.sm,
-    lineHeight: responsive.fontSize.sm * 1.5,
-  },
-  deleteButton: {
-    backgroundColor: theme.colors.danger.light,
-    borderRadius: theme.borderRadius.xl,
-    padding: responsive.spacing[2],
-    alignItems: 'center',
-  },
-  deleteButtonText: {
-    ...theme.typography.styles.button,
-    color: theme.colors.danger.dark,
-    fontSize: responsive.fontSize.sm,
-    lineHeight: responsive.fontSize.sm * 1.5,
+  colorName: {
+    fontSize: responsive.fontSize.xs,
+    color: colors.neutralDark,
+    textAlign: 'center',
+    fontWeight: '500',
   },
 });

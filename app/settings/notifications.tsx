@@ -1,81 +1,150 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, ScrollView, Switch } from 'react-native';
-import { useRouter } from 'expo-router';
+import { View, Text, StyleSheet, ScrollView, Switch, TouchableOpacity } from 'react-native';
 import { Screen } from '@/components/layout/Screen';
+import { ScreenHeader } from '@/components/layout/ScreenHeader';
 import { theme } from '@/constants/theme';
 import { responsive, ms } from '@/constants/responsive';
 import { Ionicons } from '@expo/vector-icons';
-import { TouchableOpacity } from 'react-native';
 
-interface NotificationSettings {
-  category80: boolean;
-  category100: boolean;
-  overBudget: boolean;
-  underBudget: boolean;
-  dueTomorrow: boolean;
-  due3Days: boolean;
-  due1Week: boolean;
-  billChanged: boolean;
-  largePurchases: boolean;
-  unusualSpending: boolean;
-  dailySummary: boolean;
-  bankSyncComplete: boolean;
-  bankIssue: boolean;
-  pushNotifications: boolean;
-  email: boolean;
-  sms: boolean;
-  quietHours: boolean;
+type AlertTiming = 'immediate' | 'daily' | 'weekly';
+
+interface NotificationItem {
+  id: string;
+  title: string;
+  subtitle: string;
+  icon: keyof typeof Ionicons.glyphMap;
+  enabled: boolean;
+  isPremium?: boolean;
 }
 
 export default function NotificationsSettings() {
-  const router = useRouter();
   const [masterToggle, setMasterToggle] = useState(true);
-  const [settings, setSettings] = useState<NotificationSettings>({
-    category80: true,
-    category100: true,
-    overBudget: true,
-    underBudget: false,
-    dueTomorrow: true,
-    due3Days: true,
-    due1Week: false,
-    billChanged: true,
-    largePurchases: false,
-    unusualSpending: false,
-    dailySummary: false,
-    bankSyncComplete: false,
-    bankIssue: true,
-    pushNotifications: true,
+  const [alertTiming, setAlertTiming] = useState<AlertTiming>('immediate');
+
+  // Budget Alerts
+  const [budgetAlerts, setBudgetAlerts] = useState<NotificationItem[]>([
+    { id: 'approaching90', title: 'At 90%', subtitle: 'Budget approaching limit', icon: 'warning-outline', enabled: true },
+    { id: 'approaching100', title: 'At 100%', subtitle: 'Budget limit reached', icon: 'notifications-outline', enabled: true },
+    { id: 'exceeded', title: 'Exceeded', subtitle: 'Over budget', icon: 'alert-circle-outline', enabled: true },
+    { id: 'categoryLimit', title: 'Category Limit', subtitle: 'Category over budget', icon: 'pie-chart-outline', enabled: true },
+    { id: 'underBudget', title: 'Under Budget', subtitle: 'Spending on track', icon: 'checkmark-circle-outline', enabled: false },
+    { id: 'budgetPeriodEnd', title: 'Period Ending', subtitle: '3 days before end', icon: 'calendar-outline', enabled: true },
+  ]);
+
+  // Bill Reminders
+  const [billReminders, setBillReminders] = useState<NotificationItem[]>([
+    { id: 'dueTomorrow', title: 'Due Tomorrow', subtitle: 'Bill due in 1 day', icon: 'time-outline', enabled: true },
+    { id: 'due3Days', title: 'Due in 3 Days', subtitle: 'Bill due soon', icon: 'hourglass-outline', enabled: true },
+    { id: 'due1Week', title: 'Due in 1 Week', subtitle: 'Bill due in 7 days', icon: 'calendar-clear-outline', enabled: false },
+    { id: 'billChanged', title: 'Bill Changed', subtitle: 'Amount updated', icon: 'swap-horizontal-outline', enabled: true },
+  ]);
+
+  // Transaction Alerts
+  const [transactionAlerts, setTransactionAlerts] = useState<NotificationItem[]>([
+    { id: 'largePurchases', title: 'Large Purchase', subtitle: 'Over $500', icon: 'cash-outline', enabled: false },
+    { id: 'unusualSpending', title: 'Unusual Spend', subtitle: 'Above average', icon: 'trending-up-outline', enabled: false, isPremium: true },
+    { id: 'dailySummary', title: 'Daily Summary', subtitle: 'Recap at 6pm', icon: 'stats-chart-outline', enabled: false },
+  ]);
+
+  // Account Updates
+  const [accountUpdates, setAccountUpdates] = useState<NotificationItem[]>([
+    { id: 'bankSyncComplete', title: 'Sync Complete', subtitle: 'Bank updated', icon: 'cloud-done-outline', enabled: false },
+    { id: 'bankIssue', title: 'Bank Issue', subtitle: 'Connection error', icon: 'warning-outline', enabled: true },
+  ]);
+
+  // Delivery Methods
+  const [deliveryMethods, setDeliveryMethods] = useState({
+    push: true,
     email: true,
     sms: false,
-    quietHours: true,
   });
 
-  const toggleSetting = (key: keyof NotificationSettings) => {
-    setSettings(prev => ({ ...prev, [key]: !prev[key] }));
+  const [quietHours, setQuietHours] = useState(true);
+
+  const toggleNotification = (
+    list: NotificationItem[],
+    setList: React.Dispatch<React.SetStateAction<NotificationItem[]>>,
+    id: string
+  ) => {
+    setList(list.map(item =>
+      item.id === id ? { ...item, enabled: !item.enabled } : item
+    ));
   };
+
+  const renderNotificationCard = (
+    item: NotificationItem,
+    onToggle: () => void
+  ) => (
+    <View key={item.id} style={styles.notificationCard}>
+      <View style={styles.cardContent}>
+        <Ionicons
+          name={item.icon}
+          size={ms(24)}
+          color={theme.colors.text.primary}
+        />
+        <View style={styles.cardTextContainer}>
+          <View style={styles.cardTitleRow}>
+            <Text style={styles.cardTitle} numberOfLines={1}>{item.title}</Text>
+            {item.isPremium && (
+              <View style={styles.premiumBadgeSmall}>
+                <Text style={styles.premiumBadgeTextSmall}>Pro</Text>
+              </View>
+            )}
+          </View>
+          <Text style={styles.cardSubtitle} numberOfLines={1}>{item.subtitle}</Text>
+        </View>
+      </View>
+      <View style={styles.switchContainer}>
+        <Switch
+          value={item.enabled}
+          onValueChange={onToggle}
+          trackColor={{ false: theme.colors.border.main, true: theme.colors.success.main }}
+          thumbColor="#FFFFFF"
+        />
+      </View>
+    </View>
+  );
+
+  const renderSection = (
+    title: string,
+    items: NotificationItem[],
+    setItems: React.Dispatch<React.SetStateAction<NotificationItem[]>>
+  ) => (
+    <View style={styles.section}>
+      <Text style={styles.sectionTitle}>{title}</Text>
+      <View style={styles.cardContainer}>
+        {items.map((item, index) => (
+          <React.Fragment key={item.id}>
+            {renderNotificationCard(item, () => toggleNotification(items, setItems, item.id))}
+            {index < items.length - 1 && <View style={styles.cardDivider} />}
+          </React.Fragment>
+        ))}
+      </View>
+    </View>
+  );
 
   return (
     <Screen noPadding backgroundColor={theme.colors.background.secondary}>
-      {/* Header */}
-      <View style={styles.header}>
-        <TouchableOpacity
-          style={styles.headerButton}
-          onPress={() => router.back()}
-        >
-          <Ionicons name="chevron-back" size={24} color={theme.colors.primary[600]} />
-        </TouchableOpacity>
-        <Text style={styles.headerTitle}>Notifications</Text>
-        <View style={styles.placeholder} />
-      </View>
+      <ScreenHeader title="Notifications" />
 
-      <ScrollView contentContainerStyle={styles.content}>
+      <ScrollView
+        contentContainerStyle={styles.content}
+        showsVerticalScrollIndicator={false}
+      >
         {/* Master Toggle */}
-        <View style={styles.card}>
-          <View style={styles.settingRow}>
-            <View>
-              <Text style={styles.settingTitle}>Master Toggle</Text>
-              <Text style={styles.settingSubtitle}>All Notifications</Text>
+        <View style={styles.masterToggleCard}>
+          <View style={styles.masterToggleLeft}>
+            <View style={styles.masterIcon}>
+              <Ionicons name="notifications" size={24} color={theme.colors.primary[600]} />
             </View>
+            <View>
+              <Text style={styles.masterToggleTitle}>All Notifications</Text>
+              <Text style={styles.masterToggleSubtitle}>
+                {masterToggle ? 'Enabled' : 'Disabled'}
+              </Text>
+            </View>
+          </View>
+          <View style={styles.switchContainer}>
             <Switch
               value={masterToggle}
               onValueChange={setMasterToggle}
@@ -86,304 +155,312 @@ export default function NotificationsSettings() {
         </View>
 
         {/* Budget Alerts */}
-        <View style={styles.card}>
-          <Text style={styles.cardTitle}>Budget Alerts</Text>
-
-          <View style={styles.settingsGroup}>
-            <View style={styles.settingRow}>
-              <Text style={styles.settingText}>Category at 80%</Text>
-              <Switch
-                value={settings.category80}
-                onValueChange={() => toggleSetting('category80')}
-                trackColor={{ false: theme.colors.border.main, true: theme.colors.success.main }}
-                thumbColor="#FFFFFF"
-              />
-            </View>
-
-            <View style={styles.settingRow}>
-              <Text style={styles.settingText}>Category at 100%</Text>
-              <Switch
-                value={settings.category100}
-                onValueChange={() => toggleSetting('category100')}
-                trackColor={{ false: theme.colors.border.main, true: theme.colors.success.main }}
-                thumbColor="#FFFFFF"
-              />
-            </View>
-
-            <View style={styles.settingRow}>
-              <Text style={styles.settingText}>Over budget overall</Text>
-              <Switch
-                value={settings.overBudget}
-                onValueChange={() => toggleSetting('overBudget')}
-                trackColor={{ false: theme.colors.border.main, true: theme.colors.success.main }}
-                thumbColor="#FFFFFF"
-              />
-            </View>
-
-            <View style={styles.settingRow}>
-              <Text style={styles.settingText}>Under budget</Text>
-              <Switch
-                value={settings.underBudget}
-                onValueChange={() => toggleSetting('underBudget')}
-                trackColor={{ false: theme.colors.border.main, true: theme.colors.success.main }}
-                thumbColor="#FFFFFF"
-              />
-            </View>
-          </View>
-        </View>
+        {renderSection('BUDGET ALERTS', budgetAlerts, setBudgetAlerts)}
 
         {/* Bill Reminders */}
-        <View style={styles.card}>
-          <Text style={styles.cardTitle}>Bill Reminders</Text>
-
-          <View style={styles.settingsGroup}>
-            <View style={styles.settingRow}>
-              <Text style={styles.settingText}>Due tomorrow</Text>
-              <Switch
-                value={settings.dueTomorrow}
-                onValueChange={() => toggleSetting('dueTomorrow')}
-                trackColor={{ false: theme.colors.border.main, true: theme.colors.success.main }}
-                thumbColor="#FFFFFF"
-              />
-            </View>
-
-            <View style={styles.settingRow}>
-              <Text style={styles.settingText}>Due in 3 days</Text>
-              <Switch
-                value={settings.due3Days}
-                onValueChange={() => toggleSetting('due3Days')}
-                trackColor={{ false: theme.colors.border.main, true: theme.colors.success.main }}
-                thumbColor="#FFFFFF"
-              />
-            </View>
-
-            <View style={styles.settingRow}>
-              <Text style={styles.settingText}>Due in 1 week</Text>
-              <Switch
-                value={settings.due1Week}
-                onValueChange={() => toggleSetting('due1Week')}
-                trackColor={{ false: theme.colors.border.main, true: theme.colors.success.main }}
-                thumbColor="#FFFFFF"
-              />
-            </View>
-
-            <View style={styles.settingRow}>
-              <Text style={styles.settingText}>Bill amount changed</Text>
-              <Switch
-                value={settings.billChanged}
-                onValueChange={() => toggleSetting('billChanged')}
-                trackColor={{ false: theme.colors.border.main, true: theme.colors.success.main }}
-                thumbColor="#FFFFFF"
-              />
-            </View>
-          </View>
-        </View>
+        {renderSection('BILL REMINDERS', billReminders, setBillReminders)}
 
         {/* Transaction Alerts */}
-        <View style={styles.card}>
-          <Text style={styles.cardTitle}>Transaction Alerts</Text>
-
-          <View style={styles.settingsGroup}>
-            <View style={styles.settingRow}>
-              <View>
-                <Text style={styles.settingText}>Large purchases</Text>
-                <Text style={styles.settingHint}>(Over $500)</Text>
-              </View>
-              <Switch
-                value={settings.largePurchases}
-                onValueChange={() => toggleSetting('largePurchases')}
-                trackColor={{ false: theme.colors.border.main, true: theme.colors.success.main }}
-                thumbColor="#FFFFFF"
-              />
-            </View>
-
-            <View style={styles.settingRow}>
-              <View style={styles.settingWithBadge}>
-                <Text style={styles.settingText}>Unusual spending</Text>
-                <View style={styles.premiumBadge}>
-                  <Text style={styles.premiumBadgeText}>Premium</Text>
-                </View>
-              </View>
-              <Switch
-                value={settings.unusualSpending}
-                onValueChange={() => toggleSetting('unusualSpending')}
-                trackColor={{ false: theme.colors.border.main, true: theme.colors.success.main }}
-                thumbColor="#FFFFFF"
-              />
-            </View>
-
-            <View style={styles.settingRow}>
-              <Text style={styles.settingText}>Daily summary</Text>
-              <Switch
-                value={settings.dailySummary}
-                onValueChange={() => toggleSetting('dailySummary')}
-                trackColor={{ false: theme.colors.border.main, true: theme.colors.success.main }}
-                thumbColor="#FFFFFF"
-              />
-            </View>
-          </View>
-        </View>
+        {renderSection('TRANSACTION ALERTS', transactionAlerts, setTransactionAlerts)}
 
         {/* Account Updates */}
-        <View style={styles.card}>
-          <Text style={styles.cardTitle}>Account Updates</Text>
+        {renderSection('ACCOUNT UPDATES', accountUpdates, setAccountUpdates)}
 
-          <View style={styles.settingsGroup}>
-            <View style={styles.settingRow}>
-              <Text style={styles.settingText}>Bank sync complete</Text>
-              <Switch
-                value={settings.bankSyncComplete}
-                onValueChange={() => toggleSetting('bankSyncComplete')}
-                trackColor={{ false: theme.colors.border.main, true: theme.colors.success.main }}
-                thumbColor="#FFFFFF"
-              />
-            </View>
+        {/* Alert Timing */}
+        <View style={styles.section}>
+          <Text style={styles.sectionTitle}>ALERT TIMING</Text>
 
-            <View style={styles.settingRow}>
-              <Text style={styles.settingText}>Bank connection issue</Text>
-              <Switch
-                value={settings.bankIssue}
-                onValueChange={() => toggleSetting('bankIssue')}
-                trackColor={{ false: theme.colors.border.main, true: theme.colors.success.main }}
-                thumbColor="#FFFFFF"
-              />
-            </View>
+          <View style={styles.timingContainer}>
+            <TouchableOpacity
+              style={[
+                styles.timingOption,
+                alertTiming === 'immediate' && styles.timingOptionSelected,
+              ]}
+              onPress={() => setAlertTiming('immediate')}
+            >
+              <View style={styles.radioCircle}>
+                {alertTiming === 'immediate' && <View style={styles.radioCircleInner} />}
+              </View>
+              <View style={styles.timingTextContainer}>
+                <Text style={styles.timingTitle}>Immediate</Text>
+                <Text style={styles.timingSubtitle}>Alert as soon as threshold is reached</Text>
+              </View>
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              style={[
+                styles.timingOption,
+                alertTiming === 'daily' && styles.timingOptionSelected,
+              ]}
+              onPress={() => setAlertTiming('daily')}
+            >
+              <View style={styles.radioCircle}>
+                {alertTiming === 'daily' && <View style={styles.radioCircleInner} />}
+              </View>
+              <View style={styles.timingTextContainer}>
+                <Text style={styles.timingTitle}>Daily Summary</Text>
+                <Text style={styles.timingSubtitle}>One notification per day at 6pm</Text>
+              </View>
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              style={[
+                styles.timingOption,
+                alertTiming === 'weekly' && styles.timingOptionSelected,
+              ]}
+              onPress={() => setAlertTiming('weekly')}
+            >
+              <View style={styles.radioCircle}>
+                {alertTiming === 'weekly' && <View style={styles.radioCircleInner} />}
+              </View>
+              <View style={styles.timingTextContainer}>
+                <Text style={styles.timingTitle}>Weekly Summary</Text>
+                <Text style={styles.timingSubtitle}>Sundays at 6pm</Text>
+              </View>
+            </TouchableOpacity>
           </View>
         </View>
 
         {/* Delivery Method */}
-        <View style={styles.card}>
-          <Text style={styles.cardTitle}>Delivery Method</Text>
+        <View style={styles.section}>
+          <Text style={styles.sectionTitle}>DELIVERY METHOD</Text>
 
-          <View style={styles.checkboxGroup}>
-            <TouchableOpacity
-              style={styles.checkboxRow}
-              onPress={() => toggleSetting('pushNotifications')}
-            >
-              <View style={[styles.checkbox, settings.pushNotifications && styles.checkboxChecked]}>
-                {settings.pushNotifications && (
-                  <Ionicons name="checkmark" size={16} color="#FFFFFF" />
-                )}
-              </View>
-              <Text style={styles.checkboxText}>Push notifications</Text>
-            </TouchableOpacity>
-
-            <TouchableOpacity
-              style={styles.checkboxRow}
-              onPress={() => toggleSetting('email')}
-            >
-              <View style={[styles.checkbox, settings.email && styles.checkboxChecked]}>
-                {settings.email && (
-                  <Ionicons name="checkmark" size={16} color="#FFFFFF" />
-                )}
-              </View>
-              <Text style={styles.checkboxText}>Email</Text>
-            </TouchableOpacity>
-
-            <TouchableOpacity
-              style={styles.checkboxRow}
-              onPress={() => toggleSetting('sms')}
-            >
-              <View style={[styles.checkbox, settings.sms && styles.checkboxChecked]}>
-                {settings.sms && (
-                  <Ionicons name="checkmark" size={16} color="#FFFFFF" />
-                )}
-              </View>
-              <View style={styles.settingWithBadge}>
-                <Text style={styles.checkboxText}>SMS</Text>
-                <View style={styles.premiumBadge}>
-                  <Text style={styles.premiumBadgeText}>Premium</Text>
+          <View style={styles.deliveryCard}>
+            <View style={styles.deliveryRow}>
+              <View style={styles.deliveryLeft}>
+                <Ionicons name="phone-portrait-outline" size={24} color={theme.colors.text.secondary} />
+                <View style={styles.deliveryTextContainer}>
+                  <Text style={styles.deliveryTitle}>Push Notifications</Text>
+                  <Text style={styles.deliverySubtitle}>In-app alerts</Text>
                 </View>
               </View>
-            </TouchableOpacity>
-          </View>
-
-          <View style={styles.divider} />
-
-          <View style={styles.settingRow}>
-            <View>
-              <Text style={styles.settingTitle}>Quiet Hours</Text>
-              <Text style={styles.settingSubtitle}>10:00 PM - 8:00 AM</Text>
+              <View style={styles.switchContainer}>
+                <Switch
+                  value={deliveryMethods.push}
+                  onValueChange={() => setDeliveryMethods(prev => ({ ...prev, push: !prev.push }))}
+                  trackColor={{ false: theme.colors.border.main, true: theme.colors.success.main }}
+                  thumbColor="#FFFFFF"
+                />
+              </View>
             </View>
-            <Switch
-              value={settings.quietHours}
-              onValueChange={() => toggleSetting('quietHours')}
-              trackColor={{ false: theme.colors.border.main, true: theme.colors.success.main }}
-              thumbColor="#FFFFFF"
-            />
+
+            <View style={styles.divider} />
+
+            <View style={styles.deliveryRow}>
+              <View style={styles.deliveryLeft}>
+                <Ionicons name="mail-outline" size={24} color={theme.colors.text.secondary} />
+                <View style={styles.deliveryTextContainer}>
+                  <Text style={styles.deliveryTitle}>Email Notifications</Text>
+                  <Text style={styles.deliverySubtitle}>Send to user@example.com</Text>
+                </View>
+              </View>
+              <View style={styles.switchContainer}>
+                <Switch
+                  value={deliveryMethods.email}
+                  onValueChange={() => setDeliveryMethods(prev => ({ ...prev, email: !prev.email }))}
+                  trackColor={{ false: theme.colors.border.main, true: theme.colors.success.main }}
+                  thumbColor="#FFFFFF"
+                />
+              </View>
+            </View>
+
+            <View style={styles.divider} />
+
+            <View style={styles.deliveryRow}>
+              <View style={styles.deliveryLeft}>
+                <Ionicons name="chatbubble-outline" size={24} color={theme.colors.text.secondary} />
+                <View style={styles.deliveryTextContainer}>
+                  <View style={styles.deliveryTitleRow}>
+                    <Text style={styles.deliveryTitle}>SMS Notifications</Text>
+                    <View style={styles.premiumBadge}>
+                      <Text style={styles.premiumBadgeText}>Premium</Text>
+                    </View>
+                  </View>
+                  <Text style={styles.deliverySubtitle}>Send to +61 4XX XXX XXX</Text>
+                </View>
+              </View>
+              <View style={styles.switchContainer}>
+                <Switch
+                  value={deliveryMethods.sms}
+                  onValueChange={() => setDeliveryMethods(prev => ({ ...prev, sms: !prev.sms }))}
+                  trackColor={{ false: theme.colors.border.main, true: theme.colors.success.main }}
+                  thumbColor="#FFFFFF"
+                  disabled
+                />
+              </View>
+            </View>
+
+            <View style={styles.divider} />
+
+            <View style={styles.deliveryRow}>
+              <View style={styles.deliveryLeft}>
+                <Ionicons name="moon-outline" size={24} color={theme.colors.text.secondary} />
+                <View style={styles.deliveryTextContainer}>
+                  <Text style={styles.deliveryTitle}>Quiet Hours</Text>
+                  <Text style={styles.deliverySubtitle}>10:00 PM - 8:00 AM</Text>
+                </View>
+              </View>
+              <View style={styles.switchContainer}>
+                <Switch
+                  value={quietHours}
+                  onValueChange={setQuietHours}
+                  trackColor={{ false: theme.colors.border.main, true: theme.colors.success.main }}
+                  thumbColor="#FFFFFF"
+                />
+              </View>
+            </View>
           </View>
         </View>
+
+        {/* Example Notification */}
+        <View style={styles.section}>
+          <Text style={styles.sectionTitle}>EXAMPLE NOTIFICATION</Text>
+
+          <View style={styles.exampleCard}>
+            <View style={styles.exampleHeader}>
+              <View style={styles.exampleIconContainer}>
+                <Ionicons name="notifications" size={20} color={theme.colors.warning.dark} />
+              </View>
+              <View style={styles.exampleContent}>
+                <Text style={styles.exampleTitle}>Budget Alert: Groceries</Text>
+                <Text style={styles.exampleMessage}>
+                  You've spent $450 of $500 (90%). You have $50 remaining for the rest of the period.
+                </Text>
+                <Text style={styles.exampleTime}>2 minutes ago</Text>
+              </View>
+            </View>
+          </View>
+        </View>
+
+        {/* Info Box */}
+        <View style={styles.infoBox}>
+          <Ionicons name="information-circle" size={20} color={theme.colors.info.main} />
+          <Text style={styles.infoText}>
+            Notification preferences are saved automatically. Critical alerts like bank connection issues will always be sent immediately.
+          </Text>
+        </View>
+
+        {/* Bottom spacing */}
+        <View style={{ height: responsive.spacing[8] }} />
       </ScrollView>
     </Screen>
   );
 }
 
 const styles = StyleSheet.create({
-  header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    paddingHorizontal: responsive.spacing[4],
-    paddingVertical: responsive.spacing[2],
-    backgroundColor: theme.colors.background.primary,
-    borderBottomWidth: 1,
-    borderBottomColor: theme.colors.border.light,
-  },
-  headerButton: {
-    padding: responsive.spacing[2],
-  },
-  headerTitle: {
-    ...theme.typography.styles.h3,
-    fontSize: responsive.fontSize.lg,
-    lineHeight: responsive.fontSize.lg * 1.5,
-  },
-  placeholder: {
-    width: 40,
-  },
   content: {
     padding: responsive.spacing[6],
     paddingBottom: responsive.spacing[8],
   },
-  card: {
-    backgroundColor: theme.colors.background.primary,
-    borderRadius: theme.borderRadius.xl,
-    padding: responsive.spacing[6],
-    marginBottom: responsive.spacing[4],
-    ...theme.shadows.sm,
-  },
-  cardTitle: {
-    ...theme.typography.styles.h3,
-    fontSize: responsive.fontSize.lg,
-    lineHeight: responsive.fontSize.lg * 1.5,
-    marginBottom: responsive.spacing[4],
-  },
-  settingsGroup: {
-    gap: responsive.spacing[4],
-  },
-  settingRow: {
+  // Master Toggle Card
+  masterToggleCard: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
+    backgroundColor: theme.colors.background.primary,
+    borderRadius: theme.borderRadius.xl,
+    padding: responsive.spacing[4],
+    marginBottom: responsive.spacing[6],
+    ...theme.shadows.sm,
   },
-  settingTitle: {
-    ...theme.typography.styles.body,
-    fontWeight: '600',
-  },
-  settingSubtitle: {
-    ...theme.typography.styles.bodySmall,
-    color: theme.colors.text.tertiary,
-  },
-  settingText: {
-    ...theme.typography.styles.body,
-  },
-  settingHint: {
-    ...theme.typography.styles.caption,
-    color: theme.colors.text.tertiary,
-  },
-  settingWithBadge: {
+  masterToggleLeft: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: responsive.spacing[2],
+    gap: responsive.spacing[3],
+    flex: 1,
+  },
+  masterIcon: {
+    width: ms(48),
+    height: ms(48),
+    borderRadius: ms(24),
+    backgroundColor: theme.colors.primary[50],
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  masterToggleTitle: {
+    ...theme.typography.styles.body,
+    fontSize: responsive.fontSize.md,
+    lineHeight: responsive.fontSize.md * 1.5,
+    fontWeight: '600',
+    marginBottom: 4,
+  },
+  masterToggleSubtitle: {
+    ...theme.typography.styles.bodySmall,
+    fontSize: responsive.fontSize.sm,
+    lineHeight: responsive.fontSize.sm * 1.5,
+    color: theme.colors.text.secondary,
+  },
+  // Section
+  section: {
+    marginBottom: responsive.spacing[6],
+  },
+  sectionTitle: {
+    ...theme.typography.styles.label,
+    fontSize: responsive.fontSize.xs,
+    lineHeight: responsive.fontSize.xs * 1.5,
+    color: theme.colors.text.tertiary,
+    fontWeight: '700',
+    letterSpacing: 1.2,
+    marginBottom: responsive.spacing[3],
+  },
+  cardContainer: {
+    backgroundColor: theme.colors.background.primary,
+    borderRadius: theme.borderRadius.xl,
+    padding: responsive.spacing[4],
+    ...theme.shadows.sm,
+  },
+  // Notification Card
+  notificationCard: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingVertical: responsive.spacing[2],
+    gap: responsive.spacing[3],
+  },
+  cardDivider: {
+    height: 1,
+    backgroundColor: theme.colors.border.light,
+    marginVertical: responsive.spacing[2],
+  },
+  cardContent: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: responsive.spacing[3],
+    flex: 1,
+  },
+  cardTextContainer: {
+    flex: 1,
+  },
+  cardTitleRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: responsive.spacing[1],
+    marginBottom: 2,
+  },
+  cardTitle: {
+    ...theme.typography.styles.body,
+    fontSize: responsive.fontSize.sm,
+    lineHeight: responsive.fontSize.sm * 1.5,
+    fontWeight: '600',
+  },
+  cardSubtitle: {
+    ...theme.typography.styles.bodySmall,
+    fontSize: responsive.fontSize.xs,
+    lineHeight: responsive.fontSize.xs * 1.5,
+    color: theme.colors.text.secondary,
+  },
+  premiumBadgeSmall: {
+    backgroundColor: theme.colors.warning.light,
+    borderRadius: theme.borderRadius.sm,
+    paddingHorizontal: 4,
+    paddingVertical: 1,
+  },
+  premiumBadgeTextSmall: {
+    ...theme.typography.styles.caption,
+    color: theme.colors.warning.dark,
+    fontSize: 10,
+    lineHeight: 12,
+    fontWeight: '600',
   },
   premiumBadge: {
     backgroundColor: theme.colors.warning.light,
@@ -398,34 +475,167 @@ const styles = StyleSheet.create({
     lineHeight: responsive.fontSize.xs * 1.5,
     fontWeight: '600',
   },
-  checkboxGroup: {
+  // Timing Section
+  timingContainer: {
     gap: responsive.spacing[2],
-    marginBottom: responsive.spacing[4],
   },
-  checkboxRow: {
+  timingOption: {
     flexDirection: 'row',
     alignItems: 'center',
+    backgroundColor: theme.colors.background.primary,
+    borderRadius: theme.borderRadius.xl,
+    padding: responsive.spacing[4],
+    borderWidth: 2,
+    borderColor: theme.colors.border.light,
+    ...theme.shadows.sm,
   },
-  checkbox: {
+  timingOptionSelected: {
+    backgroundColor: theme.colors.primary[50],
+    borderColor: theme.colors.primary[500],
+  },
+  radioCircle: {
     width: 20,
     height: 20,
+    borderRadius: 10,
     borderWidth: 2,
     borderColor: theme.colors.border.main,
-    borderRadius: 4,
-    marginRight: responsive.spacing[2],
     alignItems: 'center',
     justifyContent: 'center',
+    marginRight: responsive.spacing[2],
   },
-  checkboxChecked: {
+  radioCircleInner: {
+    width: 10,
+    height: 10,
+    borderRadius: 5,
     backgroundColor: theme.colors.primary[600],
-    borderColor: theme.colors.primary[600],
   },
-  checkboxText: {
+  timingTextContainer: {
+    flex: 1,
+  },
+  timingTitle: {
     ...theme.typography.styles.body,
+    fontSize: responsive.fontSize.sm,
+    lineHeight: responsive.fontSize.sm * 1.5,
+    fontWeight: '600',
+    marginBottom: 4,
+  },
+  timingSubtitle: {
+    ...theme.typography.styles.bodySmall,
+    fontSize: responsive.fontSize.xs,
+    lineHeight: responsive.fontSize.xs * 1.5,
+    color: theme.colors.text.secondary,
+  },
+  // Delivery Method
+  deliveryCard: {
+    backgroundColor: theme.colors.background.primary,
+    borderRadius: theme.borderRadius.xl,
+    padding: responsive.spacing[4],
+    ...theme.shadows.sm,
+  },
+  deliveryRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingVertical: responsive.spacing[2],
+  },
+  deliveryLeft: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    flex: 1,
+    marginRight: responsive.spacing[2],
+    gap: responsive.spacing[3],
+  },
+  deliveryTextContainer: {
+    flex: 1,
+  },
+  deliveryTitleRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: responsive.spacing[2],
+  },
+  deliveryTitle: {
+    ...theme.typography.styles.body,
+    fontSize: responsive.fontSize.sm,
+    lineHeight: responsive.fontSize.sm * 1.5,
+    fontWeight: '600',
+    marginBottom: 4,
+  },
+  deliverySubtitle: {
+    ...theme.typography.styles.bodySmall,
+    fontSize: responsive.fontSize.xs,
+    lineHeight: responsive.fontSize.xs * 1.5,
+    color: theme.colors.text.secondary,
   },
   divider: {
     height: 1,
     backgroundColor: theme.colors.border.light,
-    marginVertical: responsive.spacing[4],
+    marginVertical: responsive.spacing[2],
+  },
+  switchContainer: {
+    transform: [{ scaleX: 1.1 }, { scaleY: 1.1 }],
+  },
+  // Example Card
+  exampleCard: {
+    backgroundColor: theme.colors.background.primary,
+    borderRadius: theme.borderRadius.xl,
+    padding: responsive.spacing[4],
+    borderWidth: 1,
+    borderColor: theme.colors.warning.light,
+    ...theme.shadows.sm,
+  },
+  exampleHeader: {
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+  },
+  exampleIconContainer: {
+    width: 40,
+    height: 40,
+    backgroundColor: theme.colors.warning.light,
+    borderRadius: 20,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginRight: responsive.spacing[2],
+  },
+  exampleContent: {
+    flex: 1,
+  },
+  exampleTitle: {
+    ...theme.typography.styles.body,
+    fontSize: responsive.fontSize.sm,
+    lineHeight: responsive.fontSize.sm * 1.5,
+    fontWeight: '600',
+    marginBottom: responsive.spacing[1],
+  },
+  exampleMessage: {
+    ...theme.typography.styles.bodySmall,
+    fontSize: responsive.fontSize.xs,
+    lineHeight: responsive.fontSize.xs * 1.6,
+    color: theme.colors.text.secondary,
+    marginBottom: responsive.spacing[2],
+  },
+  exampleTime: {
+    ...theme.typography.styles.caption,
+    fontSize: responsive.fontSize.xs,
+    lineHeight: responsive.fontSize.xs * 1.5,
+    color: theme.colors.text.tertiary,
+  },
+  // Info Box
+  infoBox: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: theme.colors.info.light,
+    borderWidth: 1,
+    borderColor: theme.colors.info.main,
+    borderRadius: theme.borderRadius.xl,
+    padding: responsive.spacing[4],
+    marginTop: responsive.spacing[4],
+  },
+  infoText: {
+    ...theme.typography.styles.bodySmall,
+    fontSize: responsive.fontSize.xs,
+    lineHeight: responsive.fontSize.xs * 1.6,
+    color: theme.colors.info.dark,
+    marginLeft: responsive.spacing[2],
+    flex: 1,
   },
 });

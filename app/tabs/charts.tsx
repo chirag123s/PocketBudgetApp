@@ -7,6 +7,7 @@ import {
   StyleSheet,
   StatusBar,
   Pressable,
+  Modal,
 } from 'react-native';
 import { useRouter } from 'expo-router';
 import { Screen } from '@/components/layout/Screen';
@@ -14,6 +15,7 @@ import { theme } from '@/constants/theme';
 import { responsive, ms } from '@/constants/responsive';
 import { Ionicons } from '@expo/vector-icons';
 import Svg, { Circle, Path, Defs, LinearGradient, Stop } from 'react-native-svg';
+import { DonutChart, DonutChartSegment, GaugeChart, GaugeChartSegment } from '@/components/charts';
 
 // Color Palette - Using theme colors
 const colors = {
@@ -40,6 +42,7 @@ interface Category {
   name: string;
   icon: keyof typeof Ionicons.glyphMap;
   amount: number;
+  budget: number;
   percentage: number;
   color: string;
 }
@@ -85,15 +88,26 @@ interface PortfolioItem {
   color: string;
 }
 
+type GraphType = 'donut' | 'bar' | 'line' | 'area';
+
 export default function ChartsTab() {
   const router = useRouter();
   const [selectedView, setSelectedView] = useState<'spending' | 'income' | 'networth'>('spending');
 
+  // Graph type states for each tab
+  const [spendingGraphType, setSpendingGraphType] = useState<GraphType>('donut');
+  const [incomeGraphType, setIncomeGraphType] = useState<GraphType>('donut');
+  const [networthGraphType, setNetworthGraphType] = useState<GraphType>('line');
+
+  // Graph menu state
+  const [showGraphMenu, setShowGraphMenu] = useState(false);
+  const [menuForTab, setMenuForTab] = useState<'spending' | 'income' | 'networth'>('spending');
+
   const categories: Category[] = [
-    { id: '1', name: 'Groceries', icon: 'cart-outline', amount: 450.20, percentage: 42, color: theme.colors.secondary.main },
-    { id: '2', name: 'Transport', icon: 'car-outline', amount: 268.00, percentage: 25, color: colors.functionalSuccess },
-    { id: '3', name: 'Bills', icon: 'receipt-outline', amount: 192.95, percentage: 18, color: colors.primary },
-    { id: '4', name: 'Entertainment', icon: 'film-outline', amount: 160.75, percentage: 15, color: colors.functionalWarning },
+    { id: '1', name: 'Groceries', icon: 'cart-outline', amount: 450.20, budget: 600, percentage: 42, color: theme.colors.secondary.main },
+    { id: '2', name: 'Transport', icon: 'car-outline', amount: 268.00, budget: 300, percentage: 25, color: colors.functionalSuccess },
+    { id: '3', name: 'Bills', icon: 'receipt-outline', amount: 192.95, budget: 250, percentage: 18, color: colors.primary },
+    { id: '4', name: 'Entertainment', icon: 'film-outline', amount: 160.75, budget: 200, percentage: 15, color: colors.functionalWarning },
   ];
 
   const insights: Insight[] = [
@@ -126,6 +140,7 @@ export default function ChartsTab() {
   ];
 
   const totalSpent = categories.reduce((sum, cat) => sum + cat.amount, 0);
+  const totalBudget = categories.reduce((sum, cat) => sum + cat.budget, 0);
 
   // Income data
   const currentIncome = 5120.00;
@@ -174,6 +189,57 @@ export default function ChartsTab() {
   const chartHeight = ms(120);
   const pathData = `M 0 ${chartHeight * 0.7} L ${chartWidth * 0.2} ${chartHeight * 0.6} L ${chartWidth * 0.4} ${chartHeight * 0.5} L ${chartWidth * 0.6} ${chartHeight * 0.3} L ${chartWidth * 0.8} ${chartHeight * 0.4} L ${chartWidth} ${chartHeight * 0.2}`;
   const pathDataFill = `${pathData} L ${chartWidth} ${chartHeight} L 0 ${chartHeight} Z`;
+
+  // Available graph types for each tab
+  const spendingGraphTypes = [
+    { value: 'donut' as GraphType, label: 'Gauge Chart', icon: 'speedometer-outline' },
+    { value: 'bar' as GraphType, label: 'Bar Chart', icon: 'bar-chart-outline' },
+    { value: 'line' as GraphType, label: 'Line Chart', icon: 'trending-up-outline' },
+  ];
+
+  const incomeGraphTypes = [
+    { value: 'donut' as GraphType, label: 'Donut Chart', icon: 'pie-chart-outline' },
+    { value: 'bar' as GraphType, label: 'Bar Chart', icon: 'bar-chart-outline' },
+    { value: 'line' as GraphType, label: 'Line Chart', icon: 'trending-up-outline' },
+  ];
+
+  const networthGraphTypes = [
+    { value: 'line' as GraphType, label: 'Line Chart', icon: 'trending-up-outline' },
+    { value: 'area' as GraphType, label: 'Area Chart', icon: 'analytics-outline' },
+    { value: 'bar' as GraphType, label: 'Bar Chart', icon: 'bar-chart-outline' },
+  ];
+
+  // Handle long press on chart
+  const handleChartLongPress = (tab: 'spending' | 'income' | 'networth') => {
+    setMenuForTab(tab);
+    setShowGraphMenu(true);
+  };
+
+  // Handle graph type selection
+  const handleGraphTypeSelect = (type: GraphType) => {
+    if (menuForTab === 'spending') {
+      setSpendingGraphType(type);
+    } else if (menuForTab === 'income') {
+      setIncomeGraphType(type);
+    } else if (menuForTab === 'networth') {
+      setNetworthGraphType(type);
+    }
+    setShowGraphMenu(false);
+  };
+
+  // Get available graph types for menu
+  const getAvailableGraphTypes = () => {
+    if (menuForTab === 'spending') return spendingGraphTypes;
+    if (menuForTab === 'income') return incomeGraphTypes;
+    return networthGraphTypes;
+  };
+
+  // Get current selected graph type
+  const getCurrentGraphType = () => {
+    if (menuForTab === 'spending') return spendingGraphType;
+    if (menuForTab === 'income') return incomeGraphType;
+    return networthGraphType;
+  };
 
   return (
     <Screen scrollable={false} noPadding backgroundColor={colors.neutralBg} edges={['top']}>
@@ -227,43 +293,188 @@ export default function ChartsTab() {
           {/* Spending View */}
           {selectedView === 'spending' && (
             <>
-              {/* Donut Chart */}
-          <View style={styles.chartCard}>
+              {/* Chart Display */}
+          <Pressable
+            style={styles.chartCard}
+            onLongPress={() => handleChartLongPress('spending')}
+            delayLongPress={500}
+          >
             <View style={styles.chartHeader}>
-              <Text style={styles.sectionTitle}>Spending by Category</Text>
+              <View>
+                <Text style={styles.sectionTitle}>Spending by Category</Text>
+                <Text style={styles.chartHint}>Long press to change chart</Text>
+              </View>
               <Text style={styles.chartPeriod}>This Month</Text>
             </View>
-            <View style={styles.chartContainer}>
-              <Svg width={ms(192)} height={ms(192)} viewBox="0 0 36 36">
-                <Circle cx="18" cy="18" r="15.9154943092" stroke={colors.neutralBg} strokeWidth="3" fill="none" />
-                <Circle cx="18" cy="18" r="15.9154943092" stroke={theme.colors.secondary.main} strokeWidth="3" strokeDasharray="42, 100" fill="none" rotation="-90" origin="18, 18" />
-                <Circle cx="18" cy="18" r="15.9154943092" stroke={colors.functionalSuccess} strokeWidth="3" strokeDasharray="25, 100" strokeDashoffset="-42" fill="none" rotation="-90" origin="18, 18" />
-                <Circle cx="18" cy="18" r="15.9154943092" stroke={colors.primary} strokeWidth="3" strokeDasharray="18, 100" strokeDashoffset="-67" fill="none" rotation="-90" origin="18, 18" />
-                <Circle cx="18" cy="18" r="15.9154943092" stroke={colors.functionalWarning} strokeWidth="3" strokeDasharray="15, 100" strokeDashoffset="-85" fill="none" rotation="-90" origin="18, 18" />
-              </Svg>
-              <View style={styles.chartCenter}>
-                <Text style={styles.chartLabel}>Total Spent</Text>
-                <Text style={styles.chartValue}>${totalSpent.toFixed(2)}</Text>
+
+            {/* Gauge Chart */}
+            {spendingGraphType === 'donut' && (
+              (() => {
+                const chartSize = 192;
+                return (
+                  <GaugeChart
+                    data={[
+                      ...categories.map((cat): GaugeChartSegment => ({
+                        label: cat.name,
+                        value: cat.amount,
+                        color: cat.color,
+                      })),
+                      {
+                        label: 'Remaining',
+                        value: totalBudget - totalSpent,
+                        color: colors.neutralBg,
+                      }
+                    ]}
+                    sizeScale={chartSize}
+                    strokeWidthScale={chartSize * 0.104}
+                    showLegend={false}
+                    legendPosition="bottom"
+                    legendDotSize={chartSize * 0.0625}
+                  >
+                    <View style={{ alignItems: 'center' }}>
+                      <Text style={styles.chartValue}>${totalSpent.toFixed(0)}</Text>
+                      <Text style={styles.chartLabel}>of ${totalBudget.toFixed(0)}</Text>
+                    </View>
+                  </GaugeChart>
+                );
+              })()
+            )}
+
+            {/* Bar Chart */}
+            {spendingGraphType === 'bar' && (
+              <View style={styles.barChartContainer}>
+                {(() => {
+                  // Calculate max value from all categories
+                  const maxValue = Math.max(...categories.map(c => c.amount));
+
+                  return categories.map((category) => {
+                    const barPercentage = (category.amount / maxValue) * 100;
+
+                    return (
+                      <View key={category.id} style={styles.barChartItem}>
+                        <Text style={styles.barChartLabel}>{category.name}</Text>
+                        <View style={styles.barChartRow}>
+                          <View style={styles.barChartBarContainer}>
+                            <View style={[styles.barChartBar, { width: `${barPercentage}%`, backgroundColor: category.color }]} />
+                          </View>
+                          <Text style={styles.barChartValue}>${category.amount.toFixed(0)}</Text>
+                        </View>
+                      </View>
+                    );
+                  });
+                })()}
               </View>
-            </View>
-          </View>
+            )}
+
+            {/* Line Chart */}
+            {spendingGraphType === 'line' && (
+              <View>
+                <View style={styles.lineChartContainer}>
+                  <Svg width={chartWidth} height={chartHeight}>
+                    {(() => {
+                      // Show only top 5 categories by spending
+                      const topCategories = [...categories]
+                        .sort((a, b) => b.amount - a.amount)
+                        .slice(0, 5);
+
+                      return topCategories.map((category, catIndex) => {
+                        // Generate trend data for each category (mock data)
+                        const baseAmount = category.amount;
+                        const points = [
+                          baseAmount * 0.6,
+                          baseAmount * 0.7,
+                          baseAmount * 0.8,
+                          baseAmount * 0.9,
+                          baseAmount * 1.0,
+                        ];
+
+                        const maxValue = Math.max(...topCategories.map(c => c.amount));
+                        const pathData = points.map((value, index) => {
+                          const x = (chartWidth / (points.length - 1)) * index;
+                          const y = chartHeight - (value / maxValue) * chartHeight * 0.8;
+                          return index === 0 ? `M ${x} ${y}` : `L ${x} ${y}`;
+                        }).join(' ');
+
+                        return (
+                          <Path
+                            key={catIndex}
+                            d={pathData}
+                            stroke={category.color}
+                            strokeWidth="2"
+                            fill="none"
+                          />
+                        );
+                      });
+                    })()}
+                  </Svg>
+                </View>
+
+                {/* Legend for line chart */}
+                <View style={styles.lineChartLegend}>
+                  {(() => {
+                    const topCategories = [...categories]
+                      .sort((a, b) => b.amount - a.amount)
+                      .slice(0, 5);
+
+                    return topCategories.map((category) => (
+                      <View key={category.id} style={styles.lineChartLegendItem}>
+                        <View style={[styles.lineChartLegendLine, { backgroundColor: category.color }]} />
+                        <Text style={styles.lineChartLegendText}>{category.name}</Text>
+                        <Text style={styles.lineChartLegendAmount}>${category.amount.toFixed(0)}</Text>
+                      </View>
+                    ));
+                  })()}
+                  {categories.length > 5 && (
+                    <Text style={styles.lineChartNote}>
+                      Showing top 5 categories by spending
+                    </Text>
+                  )}
+                </View>
+              </View>
+            )}
+          </Pressable>
 
           {/* Top Categories */}
           <View style={styles.section}>
             <Text style={styles.sectionHeading}>Top Spending Categories</Text>
             <View style={styles.categoriesList}>
-              {categories.map((category) => (
-                <View key={category.id} style={styles.categoryCard}>
-                  <View style={[styles.categoryIcon, { backgroundColor: `${category.color}20` }]}>
-                    <Ionicons name={category.icon} size={24} color={category.color} />
+              {categories.map((category) => {
+                const budgetPercentage = Math.round((category.amount / category.budget) * 100);
+                const progressColor = category.amount > category.budget
+                  ? colors.functionalError
+                  : budgetPercentage >= 95
+                  ? colors.functionalWarning
+                  : colors.functionalSuccess;
+
+                return (
+                  <View key={category.id} style={styles.categoryCard}>
+                    <View style={[styles.categoryIcon, { backgroundColor: `${category.color}20` }]}>
+                      <Ionicons name={category.icon} size={24} color={category.color} />
+                    </View>
+                    <View style={styles.categoryInfo}>
+                      <Text style={styles.categoryName}>{category.name}</Text>
+                      <Text style={styles.categoryPercentage}>
+                        ${category.amount.toFixed(2)} of ${category.budget.toFixed(2)}
+                      </Text>
+                      {/* Progress Bar */}
+                      <View style={styles.progressBar}>
+                        <View
+                          style={[
+                            styles.progressFill,
+                            {
+                              width: `${Math.min(budgetPercentage, 100)}%`,
+                              backgroundColor: progressColor,
+                            },
+                          ]}
+                        />
+                      </View>
+                    </View>
+                    <Text style={[styles.categoryAmount, { color: progressColor }]}>
+                      {budgetPercentage}%
+                    </Text>
                   </View>
-                  <View style={styles.categoryInfo}>
-                    <Text style={styles.categoryName}>{category.name}</Text>
-                    <Text style={styles.categoryPercentage}>{category.percentage}% of spending</Text>
-                  </View>
-                  <Text style={styles.categoryAmount}>${category.amount.toFixed(2)}</Text>
-                </View>
-              ))}
+                );
+              })}
             </View>
           </View>
 
@@ -311,58 +522,136 @@ export default function ChartsTab() {
               </View>
 
               {/* Income Sources Chart */}
-              <View style={styles.chartCard}>
+              <Pressable
+                style={styles.chartCard}
+                onLongPress={() => handleChartLongPress('income')}
+                delayLongPress={500}
+              >
                 <View style={styles.chartHeader}>
-                  <Text style={styles.sectionTitle}>Income by Source</Text>
+                  <View>
+                    <Text style={styles.sectionTitle}>Income by Source</Text>
+                    <Text style={styles.chartHint}>Long press to change chart</Text>
+                  </View>
                   <Text style={styles.chartPeriod}>This Month</Text>
                 </View>
-                <View style={styles.chartContainer}>
-                  <Svg width={ms(192)} height={ms(192)} viewBox="0 0 36 36">
-                    <Circle cx="18" cy="18" r="15.9154943092" stroke={colors.neutralBg} strokeWidth="3" fill="none" />
-                    {incomeSources.map((source, index) => {
-                      const previousPercentage = incomeSources
-                        .slice(0, index)
-                        .reduce((sum, s) => sum + s.percentage, 0);
 
-                      return (
-                        <Circle
-                          key={source.id}
-                          cx="18"
-                          cy="18"
-                          r="15.9154943092"
-                          stroke={incomeColors[index]}
-                          strokeWidth="3"
-                          strokeDasharray={`${source.percentage}, 100`}
-                          strokeDashoffset={-previousPercentage}
-                          fill="none"
-                          rotation="-90"
-                          origin="18, 18"
-                        />
-                      );
-                    })}
-                  </Svg>
-                  <View style={styles.chartCenter}>
-                    <Text style={styles.chartLabel}>Total Income</Text>
-                    <Text style={styles.chartValue}>${currentIncome.toFixed(2)}</Text>
+                {/* Donut Chart */}
+                {incomeGraphType === 'donut' && (
+                  (() => {
+                    const chartSize = 192;
+                    return (
+                      <DonutChart
+                        data={incomeSources.map((source, index): DonutChartSegment => ({
+                          label: source.name,
+                          value: source.amount,
+                          color: incomeColors[index],
+                        }))}
+                        sizeScale={chartSize}
+                        strokeWidthScale={chartSize * 0.083}
+                        showLegend={true}
+                        legendPosition="bottom"
+                        legendDotSize={chartSize * 0.0625}
+                      >
+                        <Text style={styles.chartLabel}>Total Income</Text>
+                        <Text style={styles.chartValue}>${currentIncome.toFixed(2)}</Text>
+                      </DonutChart>
+                    );
+                  })()
+                )}
+
+                {/* Bar Chart */}
+                {incomeGraphType === 'bar' && (
+                  <View style={styles.barChartContainer}>
+                    {(() => {
+                      // Calculate max value from all income sources
+                      const maxValue = Math.max(...incomeSources.map(s => s.amount));
+
+                      return incomeSources.map((source, index) => {
+                        const barPercentage = (source.amount / maxValue) * 100;
+
+                        return (
+                          <View key={source.id} style={styles.barChartItem}>
+                            <Text style={styles.barChartLabel}>{source.name}</Text>
+                            <View style={styles.barChartRow}>
+                              <View style={styles.barChartBarContainer}>
+                                <View style={[styles.barChartBar, { width: `${barPercentage}%`, backgroundColor: incomeColors[index] }]} />
+                              </View>
+                              <Text style={styles.barChartValue}>${source.amount.toFixed(0)}</Text>
+                            </View>
+                          </View>
+                        );
+                      });
+                    })()}
                   </View>
-                </View>
+                )}
 
-                {/* Legend */}
-                <View style={styles.incomeLegend}>
-                  {incomeSources.map((source, index) => (
-                    <View key={source.id} style={styles.incomeLegendItem}>
-                      <View style={styles.incomeLegendLeft}>
-                        <View style={[styles.incomeLegendDot, { backgroundColor: incomeColors[index] }]} />
-                        <View style={styles.incomeLegendInfo}>
-                          <Text style={styles.incomeLegendName}>{source.name}</Text>
-                          <Text style={styles.incomeLegendAmount}>${source.amount.toFixed(2)}</Text>
-                        </View>
-                      </View>
-                      <Text style={styles.incomeLegendPercentage}>{source.percentage.toFixed(1)}%</Text>
+                {/* Line Chart */}
+                {incomeGraphType === 'line' && (
+                  <View>
+                    <View style={styles.lineChartContainer}>
+                      <Svg width={chartWidth} height={chartHeight}>
+                        {(() => {
+                          // Show only top 5 income sources by amount
+                          const topSources = [...incomeSources]
+                            .sort((a, b) => b.amount - a.amount)
+                            .slice(0, 5);
+
+                          return topSources.map((source, sourceIndex) => {
+                            // Generate trend data for each income source (mock data)
+                            const baseAmount = source.amount;
+                            const points = [
+                              baseAmount * 0.65,
+                              baseAmount * 0.75,
+                              baseAmount * 0.85,
+                              baseAmount * 0.95,
+                              baseAmount * 1.0,
+                            ];
+
+                            const maxValue = Math.max(...topSources.map(s => s.amount));
+                            const pathData = points.map((value, index) => {
+                              const x = (chartWidth / (points.length - 1)) * index;
+                              const y = chartHeight - (value / maxValue) * chartHeight * 0.8;
+                              return index === 0 ? `M ${x} ${y}` : `L ${x} ${y}`;
+                            }).join(' ');
+
+                            return (
+                              <Path
+                                key={sourceIndex}
+                                d={pathData}
+                                stroke={incomeColors[sourceIndex]}
+                                strokeWidth="2"
+                                fill="none"
+                              />
+                            );
+                          });
+                        })()}
+                      </Svg>
                     </View>
-                  ))}
-                </View>
-              </View>
+
+                    {/* Legend for line chart */}
+                    <View style={styles.lineChartLegend}>
+                      {(() => {
+                        const topSources = [...incomeSources]
+                          .sort((a, b) => b.amount - a.amount)
+                          .slice(0, 5);
+
+                        return topSources.map((source, sourceIndex) => (
+                          <View key={source.id} style={styles.lineChartLegendItem}>
+                            <View style={[styles.lineChartLegendLine, { backgroundColor: incomeColors[sourceIndex] }]} />
+                            <Text style={styles.lineChartLegendText}>{source.name}</Text>
+                            <Text style={styles.lineChartLegendAmount}>${source.amount.toFixed(0)}</Text>
+                          </View>
+                        ));
+                      })()}
+                      {incomeSources.length > 5 && (
+                        <Text style={styles.lineChartNote}>
+                          Showing top 5 income sources
+                        </Text>
+                      )}
+                    </View>
+                  </View>
+                )}
+              </Pressable>
 
               {/* Income Sources */}
               <Text style={styles.sourcesTitle}>Income Sources</Text>
@@ -426,26 +715,85 @@ export default function ChartsTab() {
               </View>
 
               {/* Net Worth Chart */}
-              <View style={styles.chartCard}>
-                <Text style={styles.sectionTitle}>Net Worth Trend</Text>
-                <View style={styles.lineChartContainer}>
-                  <Svg width={chartWidth} height={chartHeight}>
-                    <Defs>
-                      <LinearGradient id="gradient" x1="0" y1="0" x2="0" y2="1">
-                        <Stop offset="0" stopColor={colors.primary} stopOpacity="0.3" />
-                        <Stop offset="1" stopColor={colors.primary} stopOpacity="0" />
-                      </LinearGradient>
-                    </Defs>
-                    <Path d={pathDataFill} fill="url(#gradient)" />
-                    <Path
-                      d={pathData}
-                      stroke={colors.primary}
-                      strokeWidth="2"
-                      fill="none"
-                    />
-                  </Svg>
+              <Pressable
+                style={styles.chartCard}
+                onLongPress={() => handleChartLongPress('networth')}
+                delayLongPress={500}
+              >
+                <View style={styles.chartHeader}>
+                  <View>
+                    <Text style={styles.sectionTitle}>Net Worth Trend</Text>
+                    <Text style={styles.chartHint}>Long press to change chart</Text>
+                  </View>
                 </View>
-              </View>
+
+                {/* Line Chart */}
+                {networthGraphType === 'line' && (
+                  <View style={styles.lineChartContainer}>
+                    <Svg width={chartWidth} height={chartHeight}>
+                      <Path
+                        d={pathData}
+                        stroke={colors.primary}
+                        strokeWidth="2"
+                        fill="none"
+                      />
+                    </Svg>
+                  </View>
+                )}
+
+                {/* Area Chart */}
+                {networthGraphType === 'area' && (
+                  <View style={styles.lineChartContainer}>
+                    <Svg width={chartWidth} height={chartHeight}>
+                      <Defs>
+                        <LinearGradient id="networthGradient" x1="0" y1="0" x2="0" y2="1">
+                          <Stop offset="0" stopColor={colors.primary} stopOpacity="0.3" />
+                          <Stop offset="1" stopColor={colors.primary} stopOpacity="0" />
+                        </LinearGradient>
+                      </Defs>
+                      <Path d={pathDataFill} fill="url(#networthGradient)" />
+                      <Path
+                        d={pathData}
+                        stroke={colors.primary}
+                        strokeWidth="2"
+                        fill="none"
+                      />
+                    </Svg>
+                  </View>
+                )}
+
+                {/* Bar Chart */}
+                {networthGraphType === 'bar' && (
+                  <View style={styles.barChartContainer}>
+                    {(() => {
+                      const monthData = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'].map((month, index) => {
+                        const baseValue = 116000;
+                        const value = baseValue + (index * 2500);
+                        return { month, value };
+                      });
+
+                      // Calculate max value from all months
+                      const maxValue = Math.max(...monthData.map(m => m.value));
+
+                      return monthData.map(({ month, value }) => {
+                        const percentage = (value / maxValue) * 100;
+
+                        return (
+                          <View key={month} style={styles.barChartItem}>
+                            <Text style={styles.barChartLabel}>{month}</Text>
+                            <View style={styles.barChartRow}>
+                              <View style={styles.barChartBarContainer}>
+                                <View style={[styles.barChartBar, { width: `${percentage}%`, backgroundColor: colors.primary }]} />
+                              </View>
+                              <Text style={styles.barChartValue}>${(value / 1000).toFixed(0)}k</Text>
+                            </View>
+                          </View>
+                        );
+                      });
+                    })()}
+                  </View>
+                )}
+              </Pressable>
 
               {/* Assets and Liabilities Summary */}
               <View style={styles.summaryRow}>
@@ -556,47 +904,26 @@ export default function ChartsTab() {
               {/* Portfolio Allocation */}
               <View style={styles.chartCard}>
                 <Text style={styles.sectionTitle}>Portfolio Allocation</Text>
-                <View style={styles.chartContainer}>
-                  <Svg width={ms(192)} height={ms(192)} viewBox="0 0 36 36">
-                    <Circle cx="18" cy="18" r="15.9154943092" stroke={colors.neutralBg} strokeWidth="3" fill="none" />
-                    {portfolioAllocation.map((item, index) => {
-                      const previousPercentage = portfolioAllocation
-                        .slice(0, index)
-                        .reduce((sum, i) => sum + i.percentage, 0);
-
-                      return (
-                        <Circle
-                          key={item.id}
-                          cx="18"
-                          cy="18"
-                          r="15.9154943092"
-                          stroke={item.color}
-                          strokeWidth="3"
-                          strokeDasharray={`${item.percentage}, 100`}
-                          strokeDashoffset={-previousPercentage}
-                          fill="none"
-                          rotation="-90"
-                          origin="18, 18"
-                        />
-                      );
-                    })}
-                  </Svg>
-                  <View style={styles.chartCenter}>
-                    <Text style={styles.chartLabel}>Portfolio</Text>
-                    <Text style={styles.chartValue}>100%</Text>
-                  </View>
-                </View>
-
-                {/* Portfolio Legend */}
-                <View style={styles.portfolioLegend}>
-                  {portfolioAllocation.map((item) => (
-                    <View key={item.id} style={styles.portfolioLegendItem}>
-                      <View style={[styles.portfolioLegendDot, { backgroundColor: item.color }]} />
-                      <Text style={styles.portfolioLegendName}>{item.name}</Text>
-                      <Text style={styles.portfolioLegendPercentage}>{item.percentage}%</Text>
-                    </View>
-                  ))}
-                </View>
+                {(() => {
+                  const chartSize = 192;
+                  return (
+                    <DonutChart
+                      data={portfolioAllocation.map((item): DonutChartSegment => ({
+                        label: item.name,
+                        value: item.percentage,
+                        color: item.color,
+                      }))}
+                      sizeScale={chartSize}
+                      strokeWidthScale={chartSize * 0.083}
+                      showLegend={true}
+                      legendPosition="bottom"
+                      legendDotSize={chartSize * 0.0625}
+                    >
+                      <Text style={styles.chartLabel}>Portfolio</Text>
+                      <Text style={styles.chartValue}>100%</Text>
+                    </DonutChart>
+                  );
+                })()}
               </View>
             </>
           )}
@@ -605,6 +932,57 @@ export default function ChartsTab() {
           <View style={{ height: responsive.spacing[4] }} />
         </View>
       </ScrollView>
+
+      {/* Graph Type Selection Modal */}
+      <Modal
+        visible={showGraphMenu}
+        transparent
+        animationType="fade"
+        onRequestClose={() => setShowGraphMenu(false)}
+      >
+        <Pressable
+          style={styles.modalOverlay}
+          onPress={() => setShowGraphMenu(false)}
+        >
+          <View style={styles.graphMenuContainer}>
+            <Text style={styles.graphMenuTitle}>Select Chart Type</Text>
+            {getAvailableGraphTypes().map((graphType) => (
+              <TouchableOpacity
+                key={graphType.value}
+                style={[
+                  styles.graphMenuItem,
+                  getCurrentGraphType() === graphType.value && styles.graphMenuItemActive,
+                ]}
+                onPress={() => handleGraphTypeSelect(graphType.value)}
+                activeOpacity={0.7}
+              >
+                <View style={styles.graphMenuItemLeft}>
+                  <Ionicons
+                    name={graphType.icon as any}
+                    size={24}
+                    color={
+                      getCurrentGraphType() === graphType.value
+                        ? colors.primary
+                        : colors.neutralDarkest
+                    }
+                  />
+                  <Text
+                    style={[
+                      styles.graphMenuItemText,
+                      getCurrentGraphType() === graphType.value && styles.graphMenuItemTextActive,
+                    ]}
+                  >
+                    {graphType.label}
+                  </Text>
+                </View>
+                {getCurrentGraphType() === graphType.value && (
+                  <Ionicons name="checkmark-circle" size={24} color={colors.primary} />
+                )}
+              </TouchableOpacity>
+            ))}
+          </View>
+        </Pressable>
+      </Modal>
     </Screen>
   );
 }
@@ -692,6 +1070,11 @@ const styles = StyleSheet.create({
     fontSize: responsive.fontSize.sm,
     fontWeight: '500',
     color: colors.neutralDark,
+  },
+  chartHint: {
+    fontSize: responsive.fontSize.xs,
+    color: colors.neutralMedium,
+    marginTop: responsive.spacing[1],
   },
   chartContainer: {
     height: ms(192),
@@ -1097,5 +1480,125 @@ const styles = StyleSheet.create({
     fontSize: responsive.fontSize.sm,
     fontWeight: '700',
     color: colors.neutralDark,
+  },
+  // Graph Menu Modal Styles
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: responsive.spacing[4],
+  },
+  graphMenuContainer: {
+    backgroundColor: colors.neutralWhite,
+    borderRadius: theme.borderRadius.xl,
+    padding: responsive.spacing[4],
+    width: '100%',
+    maxWidth: ms(320),
+    ...theme.shadows.lg,
+  },
+  graphMenuTitle: {
+    fontSize: responsive.fontSize.lg,
+    fontWeight: '700',
+    color: colors.neutralDarkest,
+    marginBottom: responsive.spacing[4],
+    textAlign: 'center',
+  },
+  graphMenuItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingVertical: responsive.spacing[3],
+    paddingHorizontal: responsive.spacing[4],
+    borderRadius: theme.borderRadius.lg,
+    marginBottom: responsive.spacing[2],
+  },
+  graphMenuItemActive: {
+    backgroundColor: `${colors.primary}10`,
+  },
+  graphMenuItemLeft: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: responsive.spacing[3],
+  },
+  graphMenuItemText: {
+    fontSize: responsive.fontSize.md,
+    fontWeight: '500',
+    color: colors.neutralDarkest,
+  },
+  graphMenuItemTextActive: {
+    fontWeight: '700',
+    color: colors.primary,
+  },
+  // Bar Chart Styles
+  barChartContainer: {
+    paddingVertical: responsive.spacing[4],
+    gap: responsive.spacing[4],
+  },
+  barChartItem: {
+    gap: responsive.spacing[2],
+  },
+  barChartLabel: {
+    fontSize: responsive.fontSize.sm,
+    fontWeight: '600',
+    color: colors.neutralDarkest,
+    marginBottom: responsive.spacing[1],
+  },
+  barChartRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: responsive.spacing[3],
+  },
+  barChartBarContainer: {
+    flex: 1,
+    height: ms(24),
+    backgroundColor: colors.neutralBg,
+    borderRadius: theme.borderRadius.base,
+    overflow: 'hidden',
+  },
+  barChartBar: {
+    height: '100%',
+    borderRadius: theme.borderRadius.base,
+    minWidth: ms(40),
+  },
+  barChartValue: {
+    fontSize: responsive.fontSize.md,
+    fontWeight: '700',
+    color: colors.neutralDarkest,
+    minWidth: ms(70),
+    textAlign: 'right',
+  },
+  // Line Chart Legend Styles
+  lineChartLegend: {
+    marginTop: responsive.spacing[4],
+    gap: responsive.spacing[2],
+  },
+  lineChartLegendItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: responsive.spacing[2],
+  },
+  lineChartLegendLine: {
+    width: ms(20),
+    height: ms(3),
+    borderRadius: ms(1.5),
+  },
+  lineChartLegendText: {
+    flex: 1,
+    fontSize: responsive.fontSize.sm,
+    fontWeight: '500',
+    color: colors.neutralDarkest,
+  },
+  lineChartLegendAmount: {
+    fontSize: responsive.fontSize.sm,
+    fontWeight: '700',
+    color: colors.neutralDarkest,
+  },
+  lineChartNote: {
+    fontSize: responsive.fontSize.xs,
+    color: colors.neutralMedium,
+    fontStyle: 'italic',
+    marginTop: responsive.spacing[2],
+    textAlign: 'center',
   },
 });

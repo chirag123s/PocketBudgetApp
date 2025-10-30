@@ -1,14 +1,13 @@
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, ScrollView, TextInput } from 'react-native';
-import { useRouter } from 'expo-router';
 import { Screen } from '@/components/layout/Screen';
+import { ScreenHeader } from '@/components/layout/ScreenHeader';
 import { Button } from '@/components/ui/Button';
 import { theme } from '@/constants/theme';
 import { responsive, ms } from '@/constants/responsive';
 import { Ionicons } from '@expo/vector-icons';
 
 export default function ContactSupport() {
-  const router = useRouter();
   const [issueType, setIssueType] = useState('technical');
   const [subject, setSubject] = useState('');
   const [description, setDescription] = useState('');
@@ -19,17 +18,7 @@ export default function ContactSupport() {
 
   return (
     <Screen noPadding backgroundColor={theme.colors.background.secondary}>
-      {/* Header */}
-      <View style={styles.header}>
-        <TouchableOpacity
-          style={styles.headerButton}
-          onPress={() => router.back()}
-        >
-          <Ionicons name="chevron-back" size={24} color={theme.colors.primary[600]} />
-        </TouchableOpacity>
-        <Text style={styles.headerTitle}>Contact Support</Text>
-        <View style={styles.placeholder} />
-      </View>
+      <ScreenHeader title="Contact Support" />
 
       <ScrollView contentContainerStyle={styles.content}>
         <View style={styles.card}>
@@ -98,27 +87,6 @@ export default function ContactSupport() {
 }
 
 const styles = StyleSheet.create({
-  header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    paddingHorizontal: responsive.spacing[4],
-    paddingVertical: responsive.spacing[2],
-    backgroundColor: theme.colors.background.primary,
-    borderBottomWidth: 1,
-    borderBottomColor: theme.colors.border.light,
-  },
-  headerButton: {
-    padding: responsive.spacing[2],
-  },
-  headerTitle: {
-    ...theme.typography.styles.h3,
-    fontSize: responsive.fontSize.lg,
-    lineHeight: responsive.fontSize.lg * 1.5,
-  },
-  placeholder: {
-    width: 40,
-  },
   content: {
     padding: responsive.spacing[6],
     paddingBottom: responsive.spacing[8],

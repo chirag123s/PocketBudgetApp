@@ -1,335 +1,541 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, ScrollView, Switch } from 'react-native';
-import { useRouter } from 'expo-router';
+import {
+  View,
+  Text,
+  StyleSheet,
+  TouchableOpacity,
+  ScrollView,
+  Switch,
+  Alert,
+} from 'react-native';
 import { Screen } from '@/components/layout/Screen';
+import { ScreenHeader } from '@/components/layout/ScreenHeader';
 import { theme } from '@/constants/theme';
 import { responsive, ms } from '@/constants/responsive';
-import { Ionicons } from '@expo/vector-icons';
+import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
+import { Picker } from '@react-native-picker/picker';
+
+// Color Palette - Using theme colors
+const colors = {
+  // Primary Palette
+  primaryDark: theme.colors.info.dark,
+  primary: theme.colors.info.main,
+  primaryLight: theme.colors.info.light,
+
+  // Neutral Palette
+  neutralBg: theme.colors.background.secondary,
+  neutralWhite: theme.colors.background.primary,
+  neutralDarkest: theme.colors.text.primary,
+  neutralDark: theme.colors.text.secondary,
+  neutralMedium: theme.colors.text.tertiary,
+
+  // Functional Palette
+  functionalSuccess: theme.colors.success.main,
+  functionalWarning: theme.colors.warning.main,
+  functionalError: theme.colors.danger.main,
+
+  // Border
+  border: theme.colors.border.light,
+  iconBg: theme.colors.background.tertiary,
+};
+
+interface SettingRowProps {
+  icon: string;
+  title: string;
+  subtitle?: string;
+  onPress?: () => void;
+  rightElement?: 'chevron' | 'toggle' | 'button' | 'none';
+  toggleValue?: boolean;
+  onToggleChange?: (value: boolean) => void;
+  buttonText?: string;
+  isLast?: boolean;
+}
 
 export default function SecurityPrivacy() {
-  const router = useRouter();
-  const [faceID, setFaceID] = useState(true);
-  const [twoFactor, setTwoFactor] = useState(true);
-  const [autoLock, setAutoLock] = useState(true);
-  const [analytics, setAnalytics] = useState(true);
-  const [authSettings, setAuthSettings] = useState({
-    appLaunch: true,
-    transactionEdits: true,
-    viewingBalance: false,
-  });
+  // Authentication states
+  const [biometricEnabled, setBiometricEnabled] = useState(true);
+  const [twoFactorEnabled, setTwoFactorEnabled] = useState(true);
 
-  const toggleAuthSetting = (key: keyof typeof authSettings) => {
-    setAuthSettings(prev => ({ ...prev, [key]: !prev[key] }));
+  // App Security states
+  const [autoLockEnabled, setAutoLockEnabled] = useState(true);
+  const [autoLockTimer, setAutoLockTimer] = useState('5');
+  const [requireAuthLaunch, setRequireAuthLaunch] = useState(true);
+  const [requireAuthEdits, setRequireAuthEdits] = useState(true);
+  const [requireAuthBalance, setRequireAuthBalance] = useState(false);
+
+  // Data Privacy states
+  const [shareAnalytics, setShareAnalytics] = useState(true);
+
+  const SettingRow: React.FC<SettingRowProps> = ({
+    icon,
+    title,
+    subtitle,
+    onPress,
+    rightElement = 'chevron',
+    toggleValue,
+    onToggleChange,
+    buttonText,
+    isLast = false,
+  }) => (
+    <TouchableOpacity
+      style={[
+        styles.settingRow,
+        !isLast && { borderBottomWidth: 1, borderBottomColor: colors.border }
+      ]}
+      onPress={onPress}
+      activeOpacity={rightElement === 'toggle' ? 1 : 0.7}
+      disabled={rightElement === 'toggle'}
+    >
+      <View style={styles.settingLeft}>
+        <View style={styles.iconContainer}>
+          <MaterialCommunityIcons name={icon as any} size={24} color={colors.neutralDarkest} />
+        </View>
+        <View style={{ flex: 1 }}>
+          <Text style={styles.settingTitle}>
+            {title}
+          </Text>
+          {subtitle && (
+            <Text style={styles.settingSubtitle}>
+              {subtitle}
+            </Text>
+          )}
+        </View>
+      </View>
+
+      {rightElement === 'chevron' && (
+        <Ionicons name="chevron-forward" size={20} color={colors.neutralMedium} />
+      )}
+
+      {rightElement === 'toggle' && toggleValue !== undefined && onToggleChange && (
+        <View style={styles.switchContainer}>
+          <Switch
+            value={toggleValue}
+            onValueChange={onToggleChange}
+            trackColor={{
+              false: colors.border,
+              true: colors.functionalSuccess
+            }}
+            thumbColor="#FFFFFF"
+          />
+        </View>
+      )}
+
+      {rightElement === 'button' && buttonText && (
+        <TouchableOpacity onPress={onPress} activeOpacity={0.7}>
+          <Text style={styles.buttonText}>
+            {buttonText}
+          </Text>
+        </TouchableOpacity>
+      )}
+    </TouchableOpacity>
+  );
+
+  const CheckboxRow = ({
+    label,
+    checked,
+    onToggle,
+  }: {
+    label: string;
+    checked: boolean;
+    onToggle: () => void;
+  }) => (
+    <TouchableOpacity
+      style={styles.checkboxRow}
+      onPress={onToggle}
+      activeOpacity={0.7}
+    >
+      <View
+        style={[
+          styles.checkbox,
+          {
+            borderColor: colors.border,
+            backgroundColor: checked ? colors.functionalSuccess : 'transparent',
+          },
+        ]}
+      >
+        {checked && (
+          <Ionicons name="checkmark" size={16} color="#FFFFFF" />
+        )}
+      </View>
+      <Text style={styles.checkboxLabel}>
+        {label}
+      </Text>
+    </TouchableOpacity>
+  );
+
+  const handleDeactivateAccount = () => {
+    Alert.alert(
+      'Deactivate Account',
+      'Are you sure you want to deactivate your account? You can reactivate it later.',
+      [
+        { text: 'Cancel', style: 'cancel' },
+        {
+          text: 'Deactivate',
+          style: 'destructive',
+          onPress: () => {
+            console.log('Deactivate account');
+          }
+        },
+      ]
+    );
+  };
+
+  const handleDeleteAccount = () => {
+    Alert.alert(
+      'Delete Account',
+      'Are you sure you want to permanently delete your account? This action cannot be undone.',
+      [
+        { text: 'Cancel', style: 'cancel' },
+        {
+          text: 'Delete',
+          style: 'destructive',
+          onPress: () => {
+            console.log('Delete account');
+          }
+        },
+      ]
+    );
   };
 
   return (
-    <Screen noPadding backgroundColor={theme.colors.background.secondary}>
-      {/* Header */}
-      <View style={styles.header}>
-        <TouchableOpacity
-          style={styles.headerButton}
-          onPress={() => router.back()}
-        >
-          <Ionicons name="chevron-back" size={24} color={theme.colors.primary[600]} />
-        </TouchableOpacity>
-        <Text style={styles.headerTitle}>Security & Privacy</Text>
-        <View style={styles.placeholder} />
-      </View>
+    <Screen noPadding backgroundColor={colors.neutralBg} edges={['top']}>
+      <ScreenHeader title="Security & Privacy" />
 
-      <ScrollView contentContainerStyle={styles.content}>
-        {/* Authentication */}
-        <View style={styles.card}>
-          <Text style={styles.cardTitle}>Authentication</Text>
-
-          <View style={styles.settingRow}>
-            <View style={styles.settingLeft}>
-              <Text style={styles.settingTitle}>Face ID/Touch ID</Text>
-              <Text style={styles.settingSubtitle}>Require on launch</Text>
-            </View>
-            <Switch
-              value={faceID}
-              onValueChange={setFaceID}
-              trackColor={{ false: theme.colors.border.main, true: theme.colors.success.main }}
-              thumbColor="#FFFFFF"
+      <ScrollView
+        contentContainerStyle={styles.content}
+        showsVerticalScrollIndicator={false}
+      >
+        {/* Authentication Section */}
+        <View style={styles.section}>
+          <Text style={styles.sectionHeader}>
+            AUTHENTICATION
+          </Text>
+          <View style={styles.card}>
+            <SettingRow
+              icon="fingerprint"
+              title="Face ID / Touch ID"
+              subtitle="Require on app launch"
+              rightElement="toggle"
+              toggleValue={biometricEnabled}
+              onToggleChange={setBiometricEnabled}
+            />
+            <SettingRow
+              icon="lock"
+              title="Change Password"
+              subtitle="Last changed: 45 days ago"
+              onPress={() => {}}
+            />
+            <SettingRow
+              icon="message-text"
+              title="Two-Factor Auth"
+              subtitle="via SMS"
+              rightElement="button"
+              buttonText="Configure"
+              onPress={() => {}}
+              isLast
             />
           </View>
-
-          <TouchableOpacity style={styles.actionButton}>
-            <Text style={styles.actionButtonText}>Change Password</Text>
-          </TouchableOpacity>
-          <Text style={styles.hint}>Last changed: 45 days ago</Text>
-
-          <View style={styles.settingRow}>
-            <View style={styles.settingLeft}>
-              <Text style={styles.settingTitle}>Two-Factor Auth</Text>
-              <Text style={styles.settingSubtitle}>Via SMS to 04XX...789</Text>
-            </View>
-            <Switch
-              value={twoFactor}
-              onValueChange={setTwoFactor}
-              trackColor={{ false: theme.colors.border.main, true: theme.colors.success.main }}
-              thumbColor="#FFFFFF"
-            />
-          </View>
-          <TouchableOpacity>
-            <Text style={styles.linkText}>Configure</Text>
-          </TouchableOpacity>
         </View>
 
-        {/* App Security */}
-        <View style={styles.card}>
-          <Text style={styles.cardTitle}>App Security</Text>
-
-          <View style={styles.settingRow}>
-            <Text style={styles.settingTitle}>Auto-lock after</Text>
-            <Switch
-              value={autoLock}
-              onValueChange={setAutoLock}
-              trackColor={{ false: theme.colors.border.main, true: theme.colors.success.main }}
-              thumbColor="#FFFFFF"
-            />
-          </View>
-
-          <TouchableOpacity style={styles.selectButton}>
-            <Text style={styles.selectButtonText}>5 minutes</Text>
-            <Ionicons name="chevron-down" size={16} color={theme.colors.text.tertiary} />
-          </TouchableOpacity>
-
-          <Text style={styles.sectionLabel}>Require auth for:</Text>
-          <View style={styles.checkboxGroup}>
-            <TouchableOpacity
-              style={styles.checkboxRow}
-              onPress={() => toggleAuthSetting('appLaunch')}
-            >
-              <View style={[styles.checkbox, authSettings.appLaunch && styles.checkboxChecked]}>
-                {authSettings.appLaunch && (
-                  <Ionicons name="checkmark" size={16} color="#FFFFFF" />
-                )}
+        {/* App Security Section */}
+        <View style={styles.section}>
+          <Text style={styles.sectionHeader}>
+            APP SECURITY
+          </Text>
+          <View style={styles.card}>
+            <View style={styles.cardContent}>
+              {/* Auto-lock Toggle */}
+              <View style={styles.inlineSettingRow}>
+                <Text style={styles.inlineLabel}>
+                  Auto-lock
+                </Text>
+                <View style={styles.switchContainer}>
+                  <Switch
+                    value={autoLockEnabled}
+                    onValueChange={setAutoLockEnabled}
+                    trackColor={{
+                      false: colors.border,
+                      true: colors.functionalSuccess
+                    }}
+                    thumbColor="#FFFFFF"
+                  />
+                </View>
               </View>
-              <Text style={styles.checkboxText}>App launch</Text>
-            </TouchableOpacity>
 
-            <TouchableOpacity
-              style={styles.checkboxRow}
-              onPress={() => toggleAuthSetting('transactionEdits')}
-            >
-              <View style={[styles.checkbox, authSettings.transactionEdits && styles.checkboxChecked]}>
-                {authSettings.transactionEdits && (
-                  <Ionicons name="checkmark" size={16} color="#FFFFFF" />
-                )}
-              </View>
-              <Text style={styles.checkboxText}>Transaction edits</Text>
-            </TouchableOpacity>
+              {/* Auto-lock Timer Picker */}
+              {autoLockEnabled && (
+                <View style={styles.inlineSettingRow}>
+                  <Text style={styles.inlineLabel}>
+                    Auto-lock timer
+                  </Text>
+                  <View style={styles.pickerContainer}>
+                    <Picker
+                      selectedValue={autoLockTimer}
+                      onValueChange={(value) => setAutoLockTimer(value)}
+                      style={styles.picker}
+                    >
+                      <Picker.Item label="Immediately" value="0" />
+                      <Picker.Item label="1 minute" value="1" />
+                      <Picker.Item label="5 minutes" value="5" />
+                      <Picker.Item label="15 minutes" value="15" />
+                    </Picker>
+                  </View>
+                </View>
+              )}
 
-            <TouchableOpacity
-              style={styles.checkboxRow}
-              onPress={() => toggleAuthSetting('viewingBalance')}
-            >
-              <View style={[styles.checkbox, authSettings.viewingBalance && styles.checkboxChecked]}>
-                {authSettings.viewingBalance && (
-                  <Ionicons name="checkmark" size={16} color="#FFFFFF" />
-                )}
+              {/* Require Auth Checkboxes */}
+              <View style={styles.checkboxSection}>
+                <Text style={styles.checkboxSectionTitle}>
+                  Require auth for:
+                </Text>
+                <View style={styles.checkboxList}>
+                  <CheckboxRow
+                    label="App launch"
+                    checked={requireAuthLaunch}
+                    onToggle={() => setRequireAuthLaunch(!requireAuthLaunch)}
+                  />
+                  <CheckboxRow
+                    label="Transaction edits"
+                    checked={requireAuthEdits}
+                    onToggle={() => setRequireAuthEdits(!requireAuthEdits)}
+                  />
+                  <CheckboxRow
+                    label="Viewing balance"
+                    checked={requireAuthBalance}
+                    onToggle={() => setRequireAuthBalance(!requireAuthBalance)}
+                  />
+                </View>
               </View>
-              <Text style={styles.checkboxText}>Viewing balance</Text>
-            </TouchableOpacity>
+            </View>
           </View>
         </View>
 
-        {/* Data Privacy */}
-        <View style={styles.card}>
-          <Text style={styles.cardTitle}>Data Privacy</Text>
-
-          <TouchableOpacity style={styles.actionButton}>
-            <Text style={styles.actionButtonText}>Download My Data</Text>
-          </TouchableOpacity>
-          <Text style={styles.hint}>Get copy of all data</Text>
-
-          <View style={styles.settingRow}>
-            <View style={styles.settingLeft}>
-              <Text style={styles.settingTitle}>Share Analytics</Text>
-              <Text style={styles.settingSubtitle}>Help improve the app (Anonymous only)</Text>
-            </View>
-            <Switch
-              value={analytics}
-              onValueChange={setAnalytics}
-              trackColor={{ false: theme.colors.border.main, true: theme.colors.success.main }}
-              thumbColor="#FFFFFF"
+        {/* Data Privacy Section */}
+        <View style={styles.section}>
+          <Text style={styles.sectionHeader}>
+            DATA PRIVACY
+          </Text>
+          <View style={styles.card}>
+            <SettingRow
+              icon="download"
+              title="Download My Data"
+              onPress={() => {}}
+            />
+            <SettingRow
+              icon="chart-bar"
+              title="Share Analytics"
+              subtitle="Anonymous only"
+              rightElement="toggle"
+              toggleValue={shareAnalytics}
+              onToggleChange={setShareAnalytics}
+            />
+            <SettingRow
+              icon="shield-check"
+              title="Privacy Policy"
+              onPress={() => {}}
+            />
+            <SettingRow
+              icon="gavel"
+              title="Data Usage Policy"
+              onPress={() => {}}
+              isLast
             />
           </View>
-
-          <TouchableOpacity style={styles.actionButton}>
-            <Text style={styles.actionButtonText}>Privacy Policy</Text>
-          </TouchableOpacity>
-
-          <TouchableOpacity style={styles.actionButton}>
-            <Text style={styles.actionButtonText}>Data Usage Policy</Text>
-          </TouchableOpacity>
         </View>
 
-        {/* Danger Zone */}
-        <View style={styles.dangerCard}>
-          <Text style={styles.dangerTitle}>Danger Zone</Text>
+        {/* Danger Zone Section */}
+        <View style={styles.section}>
+          <Text style={[styles.sectionHeader, styles.dangerHeader]}>
+            DANGER ZONE
+          </Text>
+          <View style={styles.dangerCard}>
+            <View style={styles.cardContent}>
+              <TouchableOpacity
+                style={styles.dangerButton}
+                onPress={handleDeactivateAccount}
+                activeOpacity={0.7}
+              >
+                <Text style={styles.dangerButtonText}>
+                  Deactivate Account
+                </Text>
+              </TouchableOpacity>
 
-          <TouchableOpacity style={styles.actionButton}>
-            <Text style={styles.actionButtonText}>Deactivate Account</Text>
-          </TouchableOpacity>
-
-          <TouchableOpacity style={styles.deleteButton}>
-            <Text style={styles.deleteButtonText}>Delete Account</Text>
-          </TouchableOpacity>
+              <TouchableOpacity
+                style={styles.deleteButton}
+                onPress={handleDeleteAccount}
+                activeOpacity={0.7}
+              >
+                <Text style={styles.deleteButtonText}>
+                  Delete Account
+                </Text>
+              </TouchableOpacity>
+            </View>
+          </View>
         </View>
+
+        {/* Bottom spacing */}
+        <View style={{ height: responsive.spacing[8] }} />
       </ScrollView>
     </Screen>
   );
 }
 
 const styles = StyleSheet.create({
-  header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    paddingHorizontal: responsive.spacing[4],
-    paddingVertical: responsive.spacing[2],
-    backgroundColor: theme.colors.background.primary,
-    borderBottomWidth: 1,
-    borderBottomColor: theme.colors.border.light,
-  },
-  headerButton: {
-    padding: responsive.spacing[2],
-  },
-  headerTitle: {
-    ...theme.typography.styles.h3,
-    fontSize: responsive.fontSize.lg,
-    lineHeight: responsive.fontSize.lg * 1.5,
-  },
-  placeholder: {
-    width: 40,
-  },
   content: {
-    padding: responsive.spacing[6],
-    paddingBottom: responsive.spacing[8],
+    paddingHorizontal: responsive.spacing[6],
+  },
+  section: {
+    marginTop: responsive.spacing[4],
+  },
+  sectionHeader: {
+    fontSize: responsive.fontSize.xs,
+    lineHeight: responsive.fontSize.xs * 1.5,
+    fontWeight: '700',
+    letterSpacing: 1,
+    textTransform: 'uppercase',
+    color: colors.neutralMedium,
+    paddingBottom: responsive.spacing[2],
+    paddingTop: responsive.spacing[4],
+  },
+  dangerHeader: {
+    color: colors.functionalError,
   },
   card: {
-    backgroundColor: theme.colors.background.primary,
+    backgroundColor: colors.neutralWhite,
     borderRadius: theme.borderRadius.xl,
-    padding: responsive.spacing[6],
-    marginBottom: responsive.spacing[4],
+    overflow: 'hidden',
     ...theme.shadows.sm,
   },
-  cardTitle: {
-    ...theme.typography.styles.h3,
-    fontSize: responsive.fontSize.lg,
-    lineHeight: responsive.fontSize.lg * 1.5,
-    marginBottom: responsive.spacing[4],
+  cardContent: {
+    padding: responsive.spacing[4],
+    gap: responsive.spacing[4],
   },
   settingRow: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    marginBottom: responsive.spacing[4],
+    paddingVertical: responsive.spacing[3],
+    paddingHorizontal: responsive.spacing[4],
+    minHeight: ms(72),
   },
   settingLeft: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: responsive.spacing[4],
     flex: 1,
   },
+  iconContainer: {
+    width: ms(40),
+    height: ms(40),
+    borderRadius: theme.borderRadius.lg,
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: colors.iconBg,
+  },
   settingTitle: {
-    ...theme.typography.styles.body,
-    fontWeight: '600',
+    fontSize: responsive.fontSize.md,
+    lineHeight: responsive.fontSize.md * 1.5,
+    fontWeight: '500',
+    color: colors.neutralDarkest,
   },
   settingSubtitle: {
-    ...theme.typography.styles.bodySmall,
-    color: theme.colors.text.tertiary,
-  },
-  actionButton: {
-    backgroundColor: theme.colors.background.tertiary,
-    borderRadius: theme.borderRadius.xl,
-    padding: responsive.spacing[2],
-    alignItems: 'center',
-    marginBottom: responsive.spacing[2],
-  },
-  actionButtonText: {
-    ...theme.typography.styles.button,
-    color: theme.colors.text.primary,
     fontSize: responsive.fontSize.sm,
     lineHeight: responsive.fontSize.sm * 1.5,
+    color: colors.neutralDark,
+    marginTop: 2,
   },
-  hint: {
-    ...theme.typography.styles.caption,
-    color: theme.colors.text.tertiary,
-    marginBottom: responsive.spacing[4],
+  buttonText: {
+    fontSize: responsive.fontSize.md,
+    lineHeight: responsive.fontSize.md * 1.5,
+    fontWeight: '600',
+    color: colors.primary,
   },
-  linkText: {
-    ...theme.typography.styles.button,
-    color: theme.colors.primary[600],
-    fontSize: responsive.fontSize.sm,
-    lineHeight: responsive.fontSize.sm * 1.5,
-    marginTop: responsive.spacing[2],
+  switchContainer: {
+    transform: [{ scaleX: 1.1 }, { scaleY: 1.1 }],
   },
-  selectButton: {
+  inlineSettingRow: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    backgroundColor: theme.colors.background.tertiary,
-    borderRadius: theme.borderRadius.xl,
-    padding: responsive.spacing[2],
-    marginBottom: responsive.spacing[4],
   },
-  selectButtonText: {
-    ...theme.typography.styles.body,
+  inlineLabel: {
+    fontSize: responsive.fontSize.md,
+    lineHeight: responsive.fontSize.md * 1.5,
+    fontWeight: '500',
+    color: colors.neutralDarkest,
   },
-  sectionLabel: {
-    ...theme.typography.styles.bodySmall,
-    color: theme.colors.text.secondary,
-    marginBottom: responsive.spacing[2],
+  pickerContainer: {
+    backgroundColor: colors.iconBg,
+    borderRadius: theme.borderRadius.lg,
+    overflow: 'hidden',
+    minWidth: ms(140),
   },
-  checkboxGroup: {
-    gap: responsive.spacing[2],
+  picker: {
+    height: ms(40),
+    color: colors.neutralDarkest,
+  },
+  checkboxSection: {
+    paddingTop: responsive.spacing[2],
+  },
+  checkboxSectionTitle: {
+    fontSize: responsive.fontSize.md,
+    lineHeight: responsive.fontSize.md * 1.5,
+    fontWeight: '500',
+    color: colors.neutralDarkest,
+    marginBottom: responsive.spacing[3],
+  },
+  checkboxList: {
+    gap: responsive.spacing[3],
   },
   checkboxRow: {
     flexDirection: 'row',
     alignItems: 'center',
+    gap: responsive.spacing[3],
   },
   checkbox: {
     width: 20,
     height: 20,
-    borderWidth: 2,
-    borderColor: theme.colors.border.main,
     borderRadius: 4,
-    marginRight: responsive.spacing[2],
+    borderWidth: 2,
     alignItems: 'center',
     justifyContent: 'center',
   },
-  checkboxChecked: {
-    backgroundColor: theme.colors.primary[600],
-    borderColor: theme.colors.primary[600],
-  },
-  checkboxText: {
-    ...theme.typography.styles.body,
+  checkboxLabel: {
+    fontSize: responsive.fontSize.md,
+    lineHeight: responsive.fontSize.md * 1.5,
+    fontWeight: '400',
+    color: colors.neutralDarkest,
   },
   dangerCard: {
-    backgroundColor: theme.colors.background.primary,
+    backgroundColor: colors.neutralWhite,
     borderRadius: theme.borderRadius.xl,
-    padding: responsive.spacing[6],
-    borderWidth: 2,
-    borderColor: theme.colors.danger.light,
+    borderWidth: 1,
+    borderColor: `${colors.functionalError}80`,
     ...theme.shadows.sm,
   },
-  dangerTitle: {
-    ...theme.typography.styles.h3,
-    fontSize: responsive.fontSize.lg,
-    lineHeight: responsive.fontSize.lg * 1.5,
-    color: theme.colors.danger.main,
-    marginBottom: responsive.spacing[4],
+  dangerButton: {
+    paddingVertical: responsive.spacing[3],
+    borderRadius: theme.borderRadius.lg,
+    alignItems: 'center',
+    backgroundColor: `${colors.functionalError}1A`,
+  },
+  dangerButtonText: {
+    fontSize: responsive.fontSize.md,
+    lineHeight: responsive.fontSize.md * 1.5,
+    fontWeight: '700',
+    color: colors.functionalError,
   },
   deleteButton: {
-    backgroundColor: theme.colors.danger.light,
-    borderRadius: theme.borderRadius.xl,
-    padding: responsive.spacing[2],
+    paddingVertical: responsive.spacing[3],
+    borderRadius: theme.borderRadius.lg,
     alignItems: 'center',
+    backgroundColor: colors.functionalError,
+    marginTop: responsive.spacing[1],
   },
   deleteButtonText: {
-    ...theme.typography.styles.button,
-    color: theme.colors.danger.dark,
-    fontSize: responsive.fontSize.sm,
-    lineHeight: responsive.fontSize.sm * 1.5,
+    color: '#FFFFFF',
+    fontSize: responsive.fontSize.md,
+    lineHeight: responsive.fontSize.md * 1.5,
+    fontWeight: '700',
   },
 });

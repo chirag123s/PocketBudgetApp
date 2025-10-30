@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, ScrollView, Alert, Switch, StatusBar } from 'react-native';
-import { useRouter } from 'expo-router';
+import React, { useState, useEffect, useCallback } from 'react';
+import { View, Text, StyleSheet, TouchableOpacity, ScrollView, Alert, StatusBar } from 'react-native';
+import { useRouter, useFocusEffect } from 'expo-router';
 import { Screen } from '@/components/layout/Screen';
 import { theme } from '@/constants/theme';
 import { responsive, ms } from '@/constants/responsive';
@@ -8,6 +8,8 @@ import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useAuth } from '@/contexts/AuthContext';
 import { clearAllStorage, checkStorageState } from '@/scripts/clearStorage';
+import { loadAvatarColor, getAvatarGradientSync } from '@/utils/avatar';
+import { getInitials } from '@/utils/helpers';
 
 interface SettingsItem {
   title: string;
@@ -40,8 +42,23 @@ const colors = {
 export default function SettingsTab() {
   const router = useRouter();
   const { clearAllData } = useAuth();
-  const [notificationsEnabled, setNotificationsEnabled] = useState(true);
-  const [biometricLockEnabled, setBiometricLockEnabled] = useState(false);
+  const [avatarColorId, setAvatarColorId] = useState('blue');
+
+  // User data (in real app, this would come from auth context)
+  const userName = 'Alex Johnson';
+  const userEmail = 'alex@email.com';
+
+  // Load saved avatar color when screen comes into focus
+  useFocusEffect(
+    useCallback(() => {
+      loadSavedColor();
+    }, [])
+  );
+
+  const loadSavedColor = async () => {
+    const colorId = await loadAvatarColor();
+    setAvatarColorId(colorId);
+  };
 
   const handleNavigation = (route?: string) => {
     if (route) {
@@ -108,14 +125,14 @@ export default function SettingsTab() {
           onPress={() => handleNavigation('/settings/profile')}
         >
           <LinearGradient
-            colors={[colors.primary, colors.primaryDark]}
+            colors={getAvatarGradientSync(avatarColorId)}
             style={styles.avatar}
           >
-            <Text style={styles.avatarText}>A</Text>
+            <Text style={styles.avatarText}>{getInitials(userName)}</Text>
           </LinearGradient>
           <View style={styles.profileInfo}>
-            <Text style={styles.profileName}>Alex Johnson</Text>
-            <Text style={styles.profileEmail}>alex@email.com</Text>
+            <Text style={styles.profileName}>{userName}</Text>
+            <Text style={styles.profileEmail}>{userEmail}</Text>
           </View>
           <Ionicons name="chevron-forward" size={24} color={colors.neutralMedium} />
         </TouchableOpacity>
@@ -123,7 +140,7 @@ export default function SettingsTab() {
         {/* Premium Upgrade Card */}
         <TouchableOpacity
           style={styles.upgradeCard}
-          onPress={() => handleNavigation('/settings/upgrade')}
+          onPress={() => handleNavigation('/settings/subscription')}
         >
           <LinearGradient
             colors={[colors.primary, colors.primaryDark]}
@@ -173,7 +190,7 @@ export default function SettingsTab() {
                 <View style={styles.iconContainer}>
                   <Ionicons name="card-outline" size={20} color={colors.primary} />
                 </View>
-                <Text style={styles.settingsItemText}>Subscription</Text>
+                <Text style={styles.settingsItemText}>Subscription Plan</Text>
               </View>
               <View style={styles.settingsItemRight}>
                 <View style={styles.badge}>
@@ -185,25 +202,54 @@ export default function SettingsTab() {
           </View>
         </View>
 
+        {/* Budget & Categories Section */}
+        <View style={styles.section}>
+          <Text style={styles.sectionTitle}>BUDGET & CATEGORIES</Text>
+          <View style={styles.card}>
+            <TouchableOpacity
+              style={styles.settingsItem}
+              onPress={() => handleNavigation('/budget/categories')}
+            >
+              <View style={styles.settingsItemLeft}>
+                <View style={styles.iconContainer}>
+                  <Ionicons name="pricetag-outline" size={20} color={colors.primary} />
+                </View>
+                <Text style={styles.settingsItemText}>Categories</Text>
+              </View>
+              <Ionicons name="chevron-forward" size={20} color={colors.neutralMedium} />
+            </TouchableOpacity>
+            <View style={styles.divider} />
+            <TouchableOpacity
+              style={styles.settingsItem}
+              onPress={() => handleNavigation('/budget/templates')}
+            >
+              <View style={styles.settingsItemLeft}>
+                <View style={styles.iconContainer}>
+                  <Ionicons name="albums-outline" size={20} color={colors.primary} />
+                </View>
+                <Text style={styles.settingsItemText}>Budget Templates</Text>
+              </View>
+              <Ionicons name="chevron-forward" size={20} color={colors.neutralMedium} />
+            </TouchableOpacity>
+          </View>
+        </View>
+
         {/* Preferences Section */}
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>PREFERENCES</Text>
           <View style={styles.card}>
-            <View style={styles.settingsItem}>
+            <TouchableOpacity
+              style={styles.settingsItem}
+              onPress={() => handleNavigation('/settings/notifications')}
+            >
               <View style={styles.settingsItemLeft}>
                 <View style={styles.iconContainer}>
                   <Ionicons name="notifications-outline" size={20} color={colors.primary} />
                 </View>
                 <Text style={styles.settingsItemText}>Notifications</Text>
               </View>
-              <Switch
-                value={notificationsEnabled}
-                onValueChange={setNotificationsEnabled}
-                trackColor={{ false: colors.neutralMedium, true: colors.primary }}
-                thumbColor={colors.neutralWhite}
-                ios_backgroundColor={colors.neutralMedium}
-              />
-            </View>
+              <Ionicons name="chevron-forward" size={20} color={colors.neutralMedium} />
+            </TouchableOpacity>
             <View style={styles.divider} />
             <TouchableOpacity
               style={styles.settingsItem}
@@ -217,36 +263,33 @@ export default function SettingsTab() {
               </View>
               <Ionicons name="chevron-forward" size={20} color={colors.neutralMedium} />
             </TouchableOpacity>
+            <View style={styles.divider} />
+            <TouchableOpacity
+              style={styles.settingsItem}
+              onPress={() => handleNavigation('/settings/currency-region')}
+            >
+              <View style={styles.settingsItemLeft}>
+                <View style={styles.iconContainer}>
+                  <Ionicons name="globe-outline" size={20} color={colors.primary} />
+                </View>
+                <Text style={styles.settingsItemText}>Currency & Region</Text>
+              </View>
+              <Ionicons name="chevron-forward" size={20} color={colors.neutralMedium} />
+            </TouchableOpacity>
           </View>
         </View>
 
-        {/* Security Section */}
+        {/* Privacy & Data Section */}
         <View style={styles.section}>
-          <Text style={styles.sectionTitle}>SECURITY</Text>
+          <Text style={styles.sectionTitle}>PRIVACY & DATA</Text>
           <View style={styles.card}>
-            <View style={styles.settingsItem}>
-              <View style={styles.settingsItemLeft}>
-                <View style={styles.iconContainer}>
-                  <Ionicons name="finger-print" size={20} color={colors.primary} />
-                </View>
-                <Text style={styles.settingsItemText}>Biometric Lock</Text>
-              </View>
-              <Switch
-                value={biometricLockEnabled}
-                onValueChange={setBiometricLockEnabled}
-                trackColor={{ false: colors.neutralMedium, true: colors.primary }}
-                thumbColor={colors.neutralWhite}
-                ios_backgroundColor={colors.neutralMedium}
-              />
-            </View>
-            <View style={styles.divider} />
             <TouchableOpacity
               style={styles.settingsItem}
               onPress={() => handleNavigation('/settings/security')}
             >
               <View style={styles.settingsItemLeft}>
                 <View style={styles.iconContainer}>
-                  <Ionicons name="lock-closed-outline" size={20} color={colors.primary} />
+                  <Ionicons name="shield-checkmark-outline" size={20} color={colors.primary} />
                 </View>
                 <Text style={styles.settingsItemText}>Security & Privacy</Text>
               </View>
@@ -265,12 +308,38 @@ export default function SettingsTab() {
               </View>
               <Ionicons name="chevron-forward" size={20} color={colors.neutralMedium} />
             </TouchableOpacity>
+            <View style={styles.divider} />
+            <TouchableOpacity
+              style={styles.settingsItem}
+              onPress={() => handleNavigation('/settings/import')}
+            >
+              <View style={styles.settingsItemLeft}>
+                <View style={styles.iconContainer}>
+                  <Ionicons name="cloud-upload-outline" size={20} color={colors.primary} />
+                </View>
+                <Text style={styles.settingsItemText}>Import Data</Text>
+              </View>
+              <Ionicons name="chevron-forward" size={20} color={colors.neutralMedium} />
+            </TouchableOpacity>
+            <View style={styles.divider} />
+            <TouchableOpacity
+              style={styles.settingsItem}
+              onPress={() => handleNavigation('/settings/backup-restore')}
+            >
+              <View style={styles.settingsItemLeft}>
+                <View style={styles.iconContainer}>
+                  <Ionicons name="cloud-done-outline" size={20} color={colors.primary} />
+                </View>
+                <Text style={styles.settingsItemText}>Backup & Restore</Text>
+              </View>
+              <Ionicons name="chevron-forward" size={20} color={colors.neutralMedium} />
+            </TouchableOpacity>
           </View>
         </View>
 
-        {/* Support & Legal Section */}
+        {/* Support Section */}
         <View style={styles.section}>
-          <Text style={styles.sectionTitle}>SUPPORT & LEGAL</Text>
+          <Text style={styles.sectionTitle}>SUPPORT</Text>
           <View style={styles.card}>
             <TouchableOpacity
               style={styles.settingsItem}
@@ -280,20 +349,7 @@ export default function SettingsTab() {
                 <View style={styles.iconContainer}>
                   <Ionicons name="help-circle-outline" size={20} color={colors.primary} />
                 </View>
-                <Text style={styles.settingsItemText}>Help Center</Text>
-              </View>
-              <Ionicons name="chevron-forward" size={20} color={colors.neutralMedium} />
-            </TouchableOpacity>
-            <View style={styles.divider} />
-            <TouchableOpacity
-              style={styles.settingsItem}
-              onPress={() => handleNavigation('/settings/contact')}
-            >
-              <View style={styles.settingsItemLeft}>
-                <View style={styles.iconContainer}>
-                  <Ionicons name="chatbubble-outline" size={20} color={colors.primary} />
-                </View>
-                <Text style={styles.settingsItemText}>Contact Support</Text>
+                <Text style={styles.settingsItemText}>Help & Support</Text>
               </View>
               <Ionicons name="chevron-forward" size={20} color={colors.neutralMedium} />
             </TouchableOpacity>
@@ -313,39 +369,41 @@ export default function SettingsTab() {
           </View>
         </View>
 
-        {/* Developer Section */}
-        <View style={styles.section}>
-          <Text style={styles.sectionTitle}>DEVELOPER</Text>
-          <View style={styles.card}>
-            <TouchableOpacity
-              style={styles.settingsItem}
-              onPress={handleCheckStorage}
-            >
-              <View style={styles.settingsItemLeft}>
-                <View style={[styles.iconContainer, { backgroundColor: `${colors.functionalWarning}20` }]}>
-                  <Ionicons name="bug-outline" size={20} color={colors.functionalWarning} />
+        {/* Developer Section - Only visible in development */}
+        {__DEV__ && (
+          <View style={styles.section}>
+            <Text style={styles.sectionTitle}>DEVELOPER</Text>
+            <View style={styles.card}>
+              <TouchableOpacity
+                style={styles.settingsItem}
+                onPress={handleCheckStorage}
+              >
+                <View style={styles.settingsItemLeft}>
+                  <View style={[styles.iconContainer, { backgroundColor: `${colors.functionalWarning}20` }]}>
+                    <Ionicons name="bug-outline" size={20} color={colors.functionalWarning} />
+                  </View>
+                  <Text style={styles.settingsItemText}>Check Storage State</Text>
                 </View>
-                <Text style={styles.settingsItemText}>Check Storage State</Text>
-              </View>
-              <Ionicons name="terminal-outline" size={20} color={colors.neutralMedium} />
-            </TouchableOpacity>
-            <View style={styles.divider} />
-            <TouchableOpacity
-              style={styles.settingsItem}
-              onPress={handleClearAllData}
-            >
-              <View style={styles.settingsItemLeft}>
-                <View style={[styles.iconContainer, { backgroundColor: `${colors.functionalError}20` }]}>
-                  <Ionicons name="trash-outline" size={20} color={colors.functionalError} />
+                <Ionicons name="terminal-outline" size={20} color={colors.neutralMedium} />
+              </TouchableOpacity>
+              <View style={styles.divider} />
+              <TouchableOpacity
+                style={styles.settingsItem}
+                onPress={handleClearAllData}
+              >
+                <View style={styles.settingsItemLeft}>
+                  <View style={[styles.iconContainer, { backgroundColor: `${colors.functionalError}20` }]}>
+                    <Ionicons name="trash-outline" size={20} color={colors.functionalError} />
+                  </View>
+                  <Text style={[styles.settingsItemText, { color: colors.functionalError }]}>
+                    Clear All Data
+                  </Text>
                 </View>
-                <Text style={[styles.settingsItemText, { color: colors.functionalError }]}>
-                  Clear All Data
-                </Text>
-              </View>
-              <Ionicons name="warning-outline" size={20} color={colors.functionalError} />
-            </TouchableOpacity>
+                <Ionicons name="warning-outline" size={20} color={colors.functionalError} />
+              </TouchableOpacity>
+            </View>
           </View>
-        </View>
+        )}
 
         {/* Logout Button */}
         <TouchableOpacity style={styles.logoutButton}>

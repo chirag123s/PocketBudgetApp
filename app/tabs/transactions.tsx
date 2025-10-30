@@ -5,6 +5,7 @@ import { Screen } from '@/components/layout/Screen';
 import { theme } from '@/constants/theme';
 import { responsive, ms } from '@/constants/responsive';
 import { Ionicons } from '@expo/vector-icons';
+import { CategorizeModal, AddReceiptModal } from '@/components/transaction';
 
 // Color Palette - Using theme colors
 const colors = {
@@ -127,6 +128,11 @@ export default function TransactionsTab() {
   const [expandedTransaction, setExpandedTransaction] = useState<string | null>(null);
   const [activeFilter, setActiveFilter] = useState('All');
 
+  // Modal states
+  const [showCategorizeModal, setShowCategorizeModal] = useState(false);
+  const [showAddReceiptModal, setShowAddReceiptModal] = useState(false);
+  const [selectedTransaction, setSelectedTransaction] = useState<Transaction | null>(null);
+
   const toggleExpanded = (id: string) => {
     setExpandedTransaction(expandedTransaction === id ? null : id);
   };
@@ -138,6 +144,46 @@ export default function TransactionsTab() {
   const handleAddTransaction = () => {
     // TODO: Navigate to add transaction screen or open modal
     console.log('Add transaction');
+  };
+
+  // Categorize handler
+  const handleCategorize = (transaction: Transaction) => {
+    setSelectedTransaction(transaction);
+    setShowCategorizeModal(true);
+  };
+
+  const handleCategorySelected = (categoryId: string) => {
+    console.log('Category selected:', categoryId, 'for transaction:', selectedTransaction?.id);
+    // TODO: Update transaction category in database
+  };
+
+  // Split handler
+  const handleSplit = (transaction: Transaction) => {
+    router.push({
+      pathname: '/transaction/split',
+      params: {
+        transactionId: transaction.id,
+        merchant: transaction.merchant,
+        date: 'Today',
+        amount: transaction.amount.toString(),
+      },
+    });
+  };
+
+  // Attach receipt handler
+  const handleAttach = (transaction: Transaction) => {
+    setSelectedTransaction(transaction);
+    setShowAddReceiptModal(true);
+  };
+
+  const handleReceiptSelected = (uri: string) => {
+    router.push({
+      pathname: '/transaction/receipt-preview',
+      params: {
+        uri,
+        transactionId: selectedTransaction?.id,
+      },
+    });
   };
 
   return (
@@ -271,7 +317,10 @@ export default function TransactionsTab() {
                     {/* Quick Actions (Expandable) */}
                     {transaction.hasActions && expandedTransaction === transaction.id && (
                       <View style={styles.actionsContainer}>
-                        <TouchableOpacity style={styles.actionButton}>
+                        <TouchableOpacity
+                          style={styles.actionButton}
+                          onPress={() => handleAttach(transaction)}
+                        >
                           <Ionicons
                             name="receipt-outline"
                             size={24}
@@ -279,7 +328,10 @@ export default function TransactionsTab() {
                           />
                           <Text style={styles.actionText}>Attach</Text>
                         </TouchableOpacity>
-                        <TouchableOpacity style={styles.actionButton}>
+                        <TouchableOpacity
+                          style={styles.actionButton}
+                          onPress={() => handleCategorize(transaction)}
+                        >
                           <Ionicons
                             name="pricetag-outline"
                             size={24}
@@ -287,7 +339,10 @@ export default function TransactionsTab() {
                           />
                           <Text style={styles.actionText}>Categorize</Text>
                         </TouchableOpacity>
-                        <TouchableOpacity style={styles.actionButton}>
+                        <TouchableOpacity
+                          style={styles.actionButton}
+                          onPress={() => handleSplit(transaction)}
+                        >
                           <Ionicons
                             name="git-branch-outline"
                             size={24}
@@ -314,6 +369,20 @@ export default function TransactionsTab() {
           <Ionicons name="bar-chart" size={28} color={colors.neutralWhite} />
         </TouchableOpacity>
       </View>
+
+      {/* Modals */}
+      <CategorizeModal
+        visible={showCategorizeModal}
+        onClose={() => setShowCategorizeModal(false)}
+        onSelectCategory={handleCategorySelected}
+        selectedCategoryId={selectedTransaction?.category}
+      />
+
+      <AddReceiptModal
+        visible={showAddReceiptModal}
+        onClose={() => setShowAddReceiptModal(false)}
+        onReceiptSelected={handleReceiptSelected}
+      />
     </Screen>
   );
 }

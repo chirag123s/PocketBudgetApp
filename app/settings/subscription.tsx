@@ -1,296 +1,523 @@
-import React from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, ScrollView } from 'react-native';
-import { useRouter } from 'expo-router';
+import React, { useState } from 'react';
+import {
+  View,
+  Text,
+  ScrollView,
+  Pressable,
+  StyleSheet,
+  Linking,
+} from 'react-native';
 import { Screen } from '@/components/layout/Screen';
-import { Button } from '@/components/ui/Button';
+import { ScreenHeader } from '@/components/layout/ScreenHeader';
 import { theme } from '@/constants/theme';
 import { responsive, ms } from '@/constants/responsive';
 import { Ionicons } from '@expo/vector-icons';
-import { LinearGradient } from 'expo-linear-gradient';
+
+// Color Palette - Using theme colors
+const colors = {
+  // Primary Palette
+  primaryDark: theme.colors.info.dark,
+  primary: theme.colors.info.main,
+  primaryLight: theme.colors.info.light,
+
+  // Neutral Palette
+  neutralBg: theme.colors.background.secondary,
+  neutralWhite: theme.colors.background.primary,
+  neutralDarkest: theme.colors.text.primary,
+  neutralDark: theme.colors.text.secondary,
+  neutralMedium: theme.colors.text.tertiary,
+
+  // Functional Palette
+  functionalSuccess: theme.colors.success.main,
+  functionalWarning: theme.colors.warning.main,
+  functionalError: theme.colors.danger.main,
+
+  // Border
+  border: theme.colors.border.light,
+};
 
 interface Feature {
-  icon: string;
+  id: string;
   text: string;
   available: boolean;
 }
 
-const freeFeatures: Feature[] = [
-  { icon: 'checkmark-circle', text: '2 bank accounts', available: true },
-  { icon: 'checkmark-circle', text: '10 categories', available: true },
-  { icon: 'checkmark-circle', text: '3 months history', available: true },
-  { icon: 'checkmark-circle', text: 'Monthly budgets', available: true },
-];
+interface Plan {
+  id: string;
+  name: string;
+  price?: string;
+  period?: string;
+  description: string;
+  features: Feature[];
+  isCurrent?: boolean;
+  isPopular?: boolean;
+}
 
-const premiumFeatures: Feature[] = [
-  { icon: 'close-circle', text: 'Credit card cycles', available: false },
-  { icon: 'close-circle', text: 'Unlimited accounts', available: false },
-  { icon: 'close-circle', text: 'Subscription audit', available: false },
-  { icon: 'close-circle', text: 'Advanced analytics', available: false },
-];
+export default function SubscriptionPlanScreen() {
+  const [billingPeriod, setBillingPeriod] = useState<'monthly' | 'yearly'>('yearly');
 
-export default function SubscriptionManagement() {
-  const router = useRouter();
+  // Pricing
+  const monthlyPrice = 6.99;
+  const yearlyPrice = 69;
+  const yearlySavings = (monthlyPrice * 12 - yearlyPrice).toFixed(2);
+
+  const displayPrice = billingPeriod === 'monthly' ? `$${monthlyPrice.toFixed(2)}` : `$${yearlyPrice.toFixed(2)}`;
+  const displayPeriod = billingPeriod === 'monthly' ? 'month' : 'year';
+
+  const plans: Plan[] = [
+    {
+      id: 'free',
+      name: 'Free',
+      description: 'The essential tools to get your budget started.',
+      isCurrent: true,
+      features: [
+        { id: '1', text: '2 bank accounts', available: true },
+        { id: '2', text: '10 categories', available: true },
+        { id: '3', text: '3 months history', available: true },
+        { id: '4', text: 'Monthly budgets', available: true },
+        { id: '5', text: 'Credit card cycles', available: false },
+        { id: '6', text: 'Unlimited accounts', available: false },
+        { id: '7', text: 'Subscription audit', available: false },
+        { id: '8', text: 'Advanced analytics', available: false },
+      ],
+    },
+    {
+      id: 'premium',
+      name: 'Premium',
+      price: '$6.99',
+      period: 'month',
+      description: 'Unlock all features and take full control of your budget.',
+      isPopular: true,
+      features: [
+        { id: '1', text: 'All Free features, plus:', available: true },
+        { id: '2', text: 'Credit card cycles', available: true },
+        { id: '3', text: 'Unlimited accounts', available: true },
+        { id: '4', text: 'Subscription audit', available: true },
+        { id: '5', text: 'Advanced analytics', available: true },
+        { id: '6', text: 'Full history access', available: true },
+        { id: '7', text: 'Priority support', available: true },
+      ],
+    },
+  ];
+
+  const handleUpgrade = () => {
+    // TODO: Implement payment processing (RevenueCat, Stripe, etc.)
+    // This should trigger the App Store/Play Store in-app purchase flow
+    console.log('Starting 7-day free trial for', billingPeriod, 'plan');
+    // Example: await RevenueCat.purchasePackage(selectedPackage);
+  };
+
+  const handleRestorePurchase = () => {
+    // Implement restore purchase logic
+    console.log('Restore purchase');
+  };
+
+  const handleTerms = () => {
+    // Open terms and conditions
+    Linking.openURL('https://budgetmate.app/terms');
+  };
 
   return (
-    <Screen noPadding backgroundColor={theme.colors.background.secondary}>
-      {/* Header */}
-      <View style={styles.header}>
-        <TouchableOpacity
-          style={styles.headerButton}
-          onPress={() => router.back()}
-        >
-          <Ionicons name="chevron-back" size={24} color={theme.colors.primary[600]} />
-        </TouchableOpacity>
-        <Text style={styles.headerTitle}>Subscription</Text>
-        <View style={styles.placeholder} />
-      </View>
+    <Screen scrollable={false} noPadding backgroundColor={colors.neutralBg} edges={['top']}>
+      <ScreenHeader
+        title="Your Plan & Features"
+        backgroundColor={colors.neutralBg}
+      />
 
-      <ScrollView contentContainerStyle={styles.content}>
-        {/* Current Plan */}
-        <View style={styles.card}>
-          <Text style={styles.sectionLabel}>Current Plan</Text>
-          <View style={styles.planHeader}>
-            <Text style={styles.planEmoji}>🆓</Text>
-            <Text style={styles.planName}>Free</Text>
-          </View>
+      <ScrollView
+        style={styles.scrollView}
+        contentContainerStyle={styles.scrollContent}
+        showsVerticalScrollIndicator={false}
+      >
+        {/* Headline */}
+        <Text style={styles.headline}>You are on the Free Plan</Text>
 
-          <View style={styles.infoBox}>
-            <Text style={styles.infoText}>
-              💡 Upgrade to unlock credit card cycle budgeting and more premium features
-            </Text>
-          </View>
-        </View>
+        {/* Subheadline */}
+        <Text style={styles.subheadline}>
+          Upgrade to Premium for credit card cycle budgeting and more premium features.
+        </Text>
 
-        {/* What You Get */}
-        <View style={styles.card}>
-          <Text style={styles.cardTitle}>What you get:</Text>
-
-          {freeFeatures.map((feature, index) => (
-            <View key={index} style={styles.featureRow}>
-              <Ionicons
-                name={feature.icon as any}
-                size={20}
-                color={theme.colors.success.main}
-              />
-              <Text style={styles.featureText}>{feature.text}</Text>
-            </View>
-          ))}
-        </View>
-
-        {/* Premium Features (Locked) */}
-        <View style={styles.card}>
-          <View style={styles.premiumHeader}>
-            <Text style={styles.cardTitle}>Premium features:</Text>
-            <View style={styles.lockedBadge}>
-              <Text style={styles.lockedBadgeText}>Locked</Text>
-            </View>
-          </View>
-
-          {premiumFeatures.map((feature, index) => (
-            <View key={index} style={[styles.featureRow, styles.featureRowLocked]}>
-              <Ionicons
-                name={feature.icon as any}
-                size={20}
-                color={theme.colors.text.tertiary}
-              />
-              <Text style={styles.featureTextLocked}>{feature.text}</Text>
-            </View>
-          ))}
-        </View>
-
-        {/* Upgrade CTA */}
-        <LinearGradient
-          colors={[theme.colors.primary[600], theme.colors.primary[700]]}
-          style={styles.upgradeCard}
-        >
-          <Text style={styles.upgradeTitle}>Upgrade to Premium ⭐</Text>
-          <Text style={styles.upgradeSubtitle}>
-            Unlock all features and take full control of your budget
-          </Text>
-
-          <View style={styles.pricingBox}>
-            <Text style={styles.priceMain}>$6.99/month</Text>
-            <Text style={styles.priceSub}>or $69/year (save $14)</Text>
-          </View>
-
-          <TouchableOpacity
-            style={styles.upgradeButton}
-            onPress={() => router.push('/settings/upgrade')}
+        {/* Billing Period Toggle */}
+        <View style={styles.billingToggleContainer}>
+          <Pressable
+            style={[
+              styles.billingToggleButton,
+              billingPeriod === 'monthly' && styles.billingToggleButtonActive,
+            ]}
+            onPress={() => setBillingPeriod('monthly')}
           >
-            <Text style={styles.upgradeButtonText}>Upgrade to Premium</Text>
-          </TouchableOpacity>
-        </LinearGradient>
+            <Text
+              style={[
+                styles.billingToggleText,
+                billingPeriod === 'monthly' && styles.billingToggleTextActive,
+              ]}
+            >
+              Monthly
+            </Text>
+          </Pressable>
+          <Pressable
+            style={[
+              styles.billingToggleButton,
+              billingPeriod === 'yearly' && styles.billingToggleButtonActive,
+            ]}
+            onPress={() => setBillingPeriod('yearly')}
+          >
+            <View>
+              <Text
+                style={[
+                  styles.billingToggleText,
+                  billingPeriod === 'yearly' && styles.billingToggleTextActive,
+                ]}
+              >
+                Yearly
+              </Text>
+              {billingPeriod === 'yearly' && (
+                <View style={styles.savingsBadge}>
+                  <Text style={styles.savingsBadgeText}>Save ${yearlySavings}</Text>
+                </View>
+              )}
+            </View>
+          </Pressable>
+        </View>
 
-        {/* Benefits Highlight */}
-        <View style={styles.benefitsCard}>
-          <Text style={styles.benefitsText}>
-            ✨ 7-day free trial • Cancel anytime • No commitments
-          </Text>
+        {/* Pricing Cards */}
+        <View style={styles.cardsContainer}>
+          {/* Free Plan Card */}
+          <View style={styles.planCard}>
+            {/* Header */}
+            <View style={styles.planCardHeader}>
+              <View style={styles.planCardHeaderTop}>
+                <Text style={styles.planName}>{plans[0].name}</Text>
+                {plans[0].isCurrent && (
+                  <View style={styles.currentBadge}>
+                    <Text style={styles.currentBadgeText}>Current Plan</Text>
+                  </View>
+                )}
+              </View>
+              <Text style={styles.planDescription}>{plans[0].description}</Text>
+            </View>
+
+            {/* Features */}
+            <View style={styles.featuresList}>
+              {plans[0].features.map((feature) => (
+                <View key={feature.id} style={styles.featureRow}>
+                  <Ionicons
+                    name={feature.available ? 'checkmark-circle' : 'lock-closed'}
+                    size={20}
+                    color={feature.available ? colors.functionalSuccess : colors.neutralMedium}
+                  />
+                  <Text
+                    style={[
+                      styles.featureText,
+                      !feature.available && styles.featureTextUnavailable,
+                    ]}
+                  >
+                    {feature.text}
+                  </Text>
+                </View>
+              ))}
+            </View>
+          </View>
+
+          {/* Premium Plan Card */}
+          <View style={[styles.planCard, styles.premiumCard]}>
+            {/* Popular Badge */}
+            {plans[1].isPopular && (
+              <View style={styles.popularBadge}>
+                <Text style={styles.popularBadgeText}>Most Popular</Text>
+              </View>
+            )}
+
+            {/* Header */}
+            <View style={styles.planCardHeader}>
+              <Text style={styles.planName}>{plans[1].name}</Text>
+              <View style={styles.priceContainer}>
+                <Text style={styles.priceAmount}>{displayPrice}</Text>
+                <Text style={styles.pricePeriod}>/ {displayPeriod}</Text>
+              </View>
+              {billingPeriod === 'yearly' && (
+                <Text style={styles.yearlyPrice}>Save ${yearlySavings} vs monthly</Text>
+              )}
+            </View>
+
+            {/* Features */}
+            <View style={styles.featuresList}>
+              {plans[1].features.map((feature) => (
+                <View key={feature.id} style={styles.featureRow}>
+                  <Ionicons name="checkmark-circle" size={20} color={colors.primary} />
+                  <Text style={styles.featureText}>{feature.text}</Text>
+                </View>
+              ))}
+            </View>
+          </View>
         </View>
       </ScrollView>
+
+      {/* Footer / CTA Section */}
+      <View style={styles.footer}>
+        {/* Upgrade Button */}
+        <Pressable
+          onPress={handleUpgrade}
+          style={({ pressed }) => [styles.upgradeButton, pressed && styles.upgradeButtonPressed]}
+          android_ripple={{ color: 'rgba(255, 255, 255, 0.2)' }}
+        >
+          <Text style={styles.upgradeButtonText}>
+            Start 7-Day Free Trial
+          </Text>
+        </Pressable>
+
+        {/* Pricing info */}
+        <Text style={styles.priceInfoText}>
+          Then {displayPrice}/{displayPeriod}
+        </Text>
+
+        {/* Benefits */}
+        <Text style={styles.benefitsText}>
+          7-day free trial • Cancel anytime • No commitments
+        </Text>
+
+        {/* Footer Links */}
+        <View style={styles.footerLinks}>
+          <Pressable onPress={handleRestorePurchase}>
+            <Text style={styles.footerLinkText}>Restore Purchase</Text>
+          </Pressable>
+          <Pressable onPress={handleTerms}>
+            <Text style={styles.footerLinkText}>Terms & Conditions</Text>
+          </Pressable>
+        </View>
+      </View>
     </Screen>
   );
 }
 
 const styles = StyleSheet.create({
-  header: {
+  scrollView: {
+    flex: 1,
+  },
+  scrollContent: {
+    paddingBottom: ms(160),
+  },
+  headline: {
+    fontSize: responsive.fontSize.h1,
+    fontWeight: '700',
+    color: colors.neutralDarkest,
+    paddingHorizontal: responsive.spacing[4],
+    paddingTop: responsive.spacing[4],
+    paddingBottom: responsive.spacing[1],
+    letterSpacing: -0.5,
+  },
+  subheadline: {
+    fontSize: responsive.fontSize.md,
+    fontWeight: '400',
+    color: colors.neutralDark,
+    paddingHorizontal: responsive.spacing[4],
+    paddingTop: responsive.spacing[1],
+    paddingBottom: responsive.spacing[4],
+    lineHeight: responsive.fontSize.md * 1.5,
+  },
+  billingToggleContainer: {
+    flexDirection: 'row',
+    marginHorizontal: responsive.spacing[4],
+    marginBottom: responsive.spacing[6],
+    backgroundColor: colors.neutralWhite,
+    borderRadius: theme.borderRadius.lg,
+    padding: responsive.spacing[1],
+    gap: responsive.spacing[2],
+    ...theme.shadows.sm,
+  },
+  billingToggleButton: {
+    flex: 1,
+    paddingVertical: responsive.spacing[3],
+    paddingHorizontal: responsive.spacing[4],
+    borderRadius: theme.borderRadius.md,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  billingToggleButtonActive: {
+    backgroundColor: colors.primary,
+  },
+  billingToggleText: {
+    fontSize: responsive.fontSize.md,
+    fontWeight: '600',
+    color: colors.neutralDark,
+  },
+  billingToggleTextActive: {
+    color: colors.neutralWhite,
+  },
+  savingsBadge: {
+    position: 'absolute',
+    top: ms(-8),
+    right: ms(-12),
+    backgroundColor: colors.functionalSuccess,
+    paddingHorizontal: responsive.spacing[2],
+    paddingVertical: responsive.spacing[0.5],
+    borderRadius: theme.borderRadius.sm,
+  },
+  savingsBadgeText: {
+    fontSize: responsive.fontSize.xs,
+    fontWeight: '700',
+    color: colors.neutralWhite,
+  },
+  cardsContainer: {
+    paddingHorizontal: responsive.spacing[4],
+    gap: responsive.spacing[4],
+  },
+  planCard: {
+    backgroundColor: colors.neutralWhite,
+    borderRadius: theme.borderRadius.xl,
+    borderWidth: 1,
+    borderColor: colors.border,
+    padding: responsive.spacing[6],
+    gap: responsive.spacing[4],
+    ...theme.shadows.sm,
+  },
+  premiumCard: {
+    borderWidth: 2,
+    borderColor: colors.primary,
+    position: 'relative',
+    marginTop: responsive.spacing[12],
+  },
+  planCardHeader: {
+    gap: responsive.spacing[1],
+  },
+  planCardHeaderTop: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    paddingHorizontal: responsive.spacing[4],
-    paddingVertical: responsive.spacing[2],
-    backgroundColor: theme.colors.background.primary,
-    borderBottomWidth: 1,
-    borderBottomColor: theme.colors.border.light,
-  },
-  headerButton: {
-    padding: responsive.spacing[2],
-  },
-  headerTitle: {
-    ...theme.typography.styles.h3,
-    fontSize: responsive.fontSize.lg,
-    lineHeight: responsive.fontSize.lg * 1.5,
-  },
-  placeholder: {
-    width: 40,
-  },
-  content: {
-    padding: responsive.spacing[6],
-    paddingBottom: responsive.spacing[8],
-  },
-  card: {
-    backgroundColor: theme.colors.background.primary,
-    borderRadius: theme.borderRadius.xl,
-    padding: responsive.spacing[6],
-    marginBottom: responsive.spacing[4],
-    ...theme.shadows.sm,
-  },
-  sectionLabel: {
-    ...theme.typography.styles.bodySmall,
-    color: theme.colors.text.secondary,
-    marginBottom: responsive.spacing[2],
-  },
-  planHeader: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: responsive.spacing[4],
-  },
-  planEmoji: {
-    fontSize: responsive.fontSize.h2,
-    lineHeight: responsive.fontSize.h2 * 1.5,
-    marginRight: responsive.spacing[2],
   },
   planName: {
-    fontSize: responsive.fontSize.h3,
-    lineHeight: responsive.fontSize.h3 * 1.5,
+    fontSize: responsive.fontSize.md,
     fontWeight: '700',
-    color: theme.colors.text.primary,
+    color: colors.neutralDarkest,
   },
-  infoBox: {
-    backgroundColor: theme.colors.info.light,
-    borderRadius: theme.borderRadius.xl,
-    padding: responsive.spacing[4],
+  currentBadge: {
+    backgroundColor: `${colors.functionalSuccess}15`,
+    paddingHorizontal: responsive.spacing[3],
+    paddingVertical: responsive.spacing[1],
+    borderRadius: theme.borderRadius.lg,
   },
-  infoText: {
-    ...theme.typography.styles.bodySmall,
-    color: theme.colors.info.dark,
+  currentBadgeText: {
+    fontSize: responsive.fontSize.xs,
+    fontWeight: '500',
+    color: colors.functionalSuccess,
+    letterSpacing: 0.2,
   },
-  cardTitle: {
-    ...theme.typography.styles.h3,
-    fontSize: responsive.fontSize.lg,
-    lineHeight: responsive.fontSize.lg * 1.5,
-    marginBottom: responsive.spacing[4],
+  planDescription: {
+    fontSize: responsive.fontSize.sm,
+    color: colors.neutralDark,
+  },
+  priceContainer: {
+    flexDirection: 'row',
+    alignItems: 'baseline',
+    gap: responsive.spacing[1],
+  },
+  priceAmount: {
+    fontSize: responsive.fontSize.h1,
+    fontWeight: '800',
+    color: colors.neutralDarkest,
+    letterSpacing: -1,
+  },
+  pricePeriod: {
+    fontSize: responsive.fontSize.md,
+    fontWeight: '700',
+    color: colors.neutralDark,
+  },
+  yearlyPrice: {
+    fontSize: responsive.fontSize.sm,
+    fontWeight: '500',
+    color: colors.neutralDark,
+    marginTop: responsive.spacing[1],
+  },
+  featuresList: {
+    gap: responsive.spacing[3],
+    paddingTop: responsive.spacing[2],
   },
   featureRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: responsive.spacing[2],
-  },
-  featureRowLocked: {
-    opacity: 0.6,
+    gap: responsive.spacing[3],
   },
   featureText: {
-    ...theme.typography.styles.body,
-    marginLeft: responsive.spacing[2],
+    flex: 1,
+    fontSize: responsive.fontSize.sm,
+    fontWeight: '500',
+    color: colors.neutralDarkest,
   },
-  featureTextLocked: {
-    ...theme.typography.styles.body,
-    color: theme.colors.text.secondary,
-    marginLeft: responsive.spacing[2],
+  featureTextUnavailable: {
+    color: colors.neutralMedium,
   },
-  premiumHeader: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    marginBottom: responsive.spacing[4],
+  popularBadge: {
+    position: 'absolute',
+    top: ms(-40),
+    left: responsive.spacing[2],
+    backgroundColor: `${colors.primary}15`,
+    paddingHorizontal: responsive.spacing[3],
+    paddingVertical: responsive.spacing[1],
+    borderRadius: theme.borderRadius.lg,
+    borderWidth: 1,
+    borderColor: `${colors.primary}30`,
   },
-  lockedBadge: {
-    backgroundColor: theme.colors.warning.light,
-    borderRadius: theme.borderRadius.full,
-    paddingHorizontal: responsive.spacing[2],
-    paddingVertical: 4,
-  },
-  lockedBadgeText: {
-    ...theme.typography.styles.caption,
-    color: theme.colors.warning.dark,
+  popularBadgeText: {
     fontSize: responsive.fontSize.xs,
-    lineHeight: responsive.fontSize.xs * 1.5,
-    fontWeight: '600',
+    fontWeight: '500',
+    color: colors.primary,
+    letterSpacing: 0.2,
   },
-  upgradeCard: {
-    borderRadius: theme.borderRadius.xl,
-    padding: responsive.spacing[6],
-    marginBottom: responsive.spacing[4],
-    ...theme.shadows.lg,
-  },
-  upgradeTitle: {
-    fontSize: responsive.fontSize.xl,
-    lineHeight: responsive.fontSize.xl * 1.5,
-    fontWeight: '700',
-    color: '#FFFFFF',
-    marginBottom: responsive.spacing[2],
-  },
-  upgradeSubtitle: {
-    ...theme.typography.styles.bodySmall,
-    color: 'rgba(255, 255, 255, 0.9)',
-    marginBottom: responsive.spacing[4],
-  },
-  pricingBox: {
-    backgroundColor: 'rgba(255, 255, 255, 0.2)',
-    borderRadius: theme.borderRadius.xl,
-    padding: responsive.spacing[2],
-    marginBottom: responsive.spacing[4],
-  },
-  priceMain: {
-    fontSize: responsive.fontSize.h4,
-    lineHeight: responsive.fontSize.h4 * 1.5,
-    fontWeight: '700',
-    color: '#FFFFFF',
-  },
-  priceSub: {
-    ...theme.typography.styles.bodySmall,
-    color: 'rgba(255, 255, 255, 0.9)',
+  footer: {
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+    right: 0,
+    backgroundColor: colors.neutralBg,
+    borderTopWidth: 1,
+    borderTopColor: colors.border,
+    paddingHorizontal: responsive.spacing[4],
+    paddingTop: responsive.spacing[2],
+    paddingBottom: responsive.spacing[4],
   },
   upgradeButton: {
-    backgroundColor: '#FFFFFF',
-    borderRadius: theme.borderRadius.xl,
-    padding: responsive.spacing[4],
+    height: ms(56),
+    borderRadius: theme.borderRadius.lg,
+    backgroundColor: colors.primary,
     alignItems: 'center',
+    justifyContent: 'center',
+    marginTop: responsive.spacing[3],
+    marginBottom: responsive.spacing[2],
+    ...theme.shadows.md,
+  },
+  upgradeButtonPressed: {
+    opacity: 0.9,
   },
   upgradeButtonText: {
-    ...theme.typography.styles.button,
-    color: theme.colors.primary[600],
+    fontSize: responsive.fontSize.md,
     fontWeight: '700',
+    color: colors.neutralWhite,
+    letterSpacing: 0.2,
   },
-  benefitsCard: {
-    backgroundColor: theme.colors.background.primary,
-    borderRadius: theme.borderRadius.xl,
-    padding: responsive.spacing[6],
-    ...theme.shadows.sm,
+  priceInfoText: {
+    fontSize: responsive.fontSize.sm,
+    fontWeight: '500',
+    color: colors.neutralDark,
+    textAlign: 'center',
+    marginTop: responsive.spacing[2],
   },
   benefitsText: {
-    ...theme.typography.styles.bodySmall,
-    color: theme.colors.text.secondary,
+    fontSize: responsive.fontSize.xs,
+    fontWeight: '500',
+    color: colors.neutralDark,
     textAlign: 'center',
+    marginTop: responsive.spacing[1],
+  },
+  footerLinks: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: responsive.spacing[6],
+    paddingTop: responsive.spacing[2],
+  },
+  footerLinkText: {
+    fontSize: responsive.fontSize.xs,
+    fontWeight: '500',
+    color: colors.neutralMedium,
   },
 });
