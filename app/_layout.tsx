@@ -6,6 +6,7 @@ import { StatusBar } from 'expo-status-bar';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { AuthProvider, useAuth } from '@/contexts/AuthContext';
+import { WidgetProvider } from '@/contexts/WidgetContext';
 import ErrorBoundary from '@/components/ErrorBoundary';
 
 console.log('✅ _layout.tsx imports complete');
@@ -122,8 +123,10 @@ export default function RootLayout() {
       <ErrorBoundary>
         <SafeAreaProvider>
           <AuthProvider>
-            <StatusBar style="auto" />
-            <RootLayoutNav />
+            <WidgetProvider>
+              <StatusBar style="auto" />
+              <RootLayoutNav />
+            </WidgetProvider>
           </AuthProvider>
         </SafeAreaProvider>
       </ErrorBoundary>

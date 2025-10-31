@@ -6,6 +6,8 @@ import { theme } from '@/constants/theme';
 import { responsive, ms } from '@/constants/responsive';
 import { Ionicons } from '@expo/vector-icons';
 import { settingsTypography, settingsFontWeights, settingsTextStyles } from './typography';
+import { useWidgets } from '@/contexts/WidgetContext';
+import { WIDGET_REGISTRY, WidgetId } from '@/components/widgets';
 
 // Color Palette - Using theme colors
 const colors = {
@@ -33,65 +35,21 @@ const colors = {
 
 type ThemeType = 'light' | 'dark' | 'system';
 
-interface Widget {
-  id: string;
-  icon: string;
-  title: string;
-  description: string;
-  enabled: boolean;
-  isPrimary?: boolean;
-}
+// Icon mapping for widgets (not used, keeping for reference)
+const widgetIconMap: Record<WidgetId, keyof typeof Ionicons.glyphMap> = {
+  'budget-overview': 'wallet-outline',
+  'spending-summary': 'bar-chart-outline',
+  'recent-transactions': 'receipt-outline',
+  'category-breakdown': 'pie-chart-outline',
+  'bank-accounts': 'business-outline',
+  'upcoming-bills': 'calendar-outline',
+  'savings-goal': 'flag-outline',
+  'card-cycle': 'card-outline',
+};
 
 export default function AppearanceSettings() {
   const [selectedTheme, setSelectedTheme] = useState<ThemeType>('system');
-  const [widgets, setWidgets] = useState<Widget[]>([
-    {
-      id: '1',
-      icon: 'wallet-outline',
-      title: 'Account Balances',
-      description: 'View your current balance.',
-      enabled: true,
-      isPrimary: true,
-    },
-    {
-      id: '2',
-      icon: 'receipt-outline',
-      title: 'Recent Transactions',
-      description: 'Your latest spending.',
-      enabled: true,
-      isPrimary: true,
-    },
-    {
-      id: '3',
-      icon: 'pie-chart-outline',
-      title: 'Spending by Category',
-      description: 'Breakdown of your expenses.',
-      enabled: true,
-      isPrimary: false,
-    },
-    {
-      id: '4',
-      icon: 'time-outline',
-      title: 'Upcoming Bills',
-      description: 'Never miss a payment.',
-      enabled: false,
-      isPrimary: false,
-    },
-    {
-      id: '5',
-      icon: 'cash-outline',
-      title: 'Savings Goals',
-      description: 'Track your goal progress.',
-      enabled: false,
-      isPrimary: true,
-    },
-  ]);
-
-  const toggleWidget = (id: string) => {
-    setWidgets(widgets.map(widget =>
-      widget.id === id ? { ...widget, enabled: !widget.enabled } : widget
-    ));
-  };
+  const { enabledWidgets, widgetOrder, toggleWidget, isLoading } = useWidgets();
 
   const ThemeOption = ({
     icon,
@@ -130,54 +88,46 @@ export default function AppearanceSettings() {
     );
   };
 
-  const WidgetItem = ({ widget }: { widget: Widget }) => (
-    <View style={styles.widgetItem}>
-      <Ionicons
-        name="reorder-three-outline"
-        size={20}
-        color={colors.neutralMedium}
-        style={styles.dragHandle}
-      />
+  const WidgetItem = ({ widgetId }: { widgetId: WidgetId }) => {
+    const widget = WIDGET_REGISTRY[widgetId];
+    const isEnabled = enabledWidgets.includes(widgetId);
 
-      <View
-        style={[
-          styles.widgetIconContainer,
-          {
-            backgroundColor: widget.isPrimary
-              ? `${colors.functionalSuccess}20`
-              : `${colors.primary}20`
-          },
-        ]}
-      >
+    return (
+      <View style={styles.widgetItem}>
         <Ionicons
-          name={widget.icon as any}
+          name="reorder-three-outline"
           size={20}
-          color={widget.isPrimary ? colors.functionalSuccess : colors.primary}
+          color={colors.neutralMedium}
+          style={styles.dragHandle}
         />
-      </View>
 
-      <View style={styles.widgetContent}>
-        <Text style={styles.widgetTitle}>
-          {widget.title}
-        </Text>
-        <Text style={styles.widgetDescription}>
-          {widget.description}
-        </Text>
-      </View>
+        <View style={styles.widgetIconContainer}>
+          <Text style={styles.widgetEmoji}>{widget.icon}</Text>
+        </View>
 
-      <View style={styles.switchContainer}>
-        <Switch
-          value={widget.enabled}
-          onValueChange={() => toggleWidget(widget.id)}
-          trackColor={{
-            false: colors.border,
-            true: colors.functionalSuccess
-          }}
-          thumbColor="#FFFFFF"
-        />
+        <View style={styles.widgetContent}>
+          <Text style={styles.widgetTitle}>
+            {widget.name}
+          </Text>
+          <Text style={styles.widgetDescription}>
+            {widget.description}
+          </Text>
+        </View>
+
+        <View style={styles.switchContainer}>
+          <Switch
+            value={isEnabled}
+            onValueChange={() => toggleWidget(widgetId)}
+            trackColor={{
+              false: colors.border,
+              true: colors.functionalSuccess
+            }}
+            thumbColor="#FFFFFF"
+          />
+        </View>
       </View>
-    </View>
-  );
+    );
+  };
 
   return (
     <Screen scrollable={false} noPadding backgroundColor={colors.neutralBg} edges={['top', 'bottom']}>
@@ -205,14 +155,20 @@ export default function AppearanceSettings() {
         <View style={styles.widgetsSection}>
           <Text style={styles.sectionTitle}>Home Screen Widgets</Text>
           <Text style={styles.sectionDescription}>
-            Add, remove, or drag to reorder the widgets on your home screen.
+            Customize widgets shown on your dashboard. Drag to reorder.
           </Text>
 
-          <View style={styles.widgetsList}>
-            {widgets.map((widget) => (
-              <WidgetItem key={widget.id} widget={widget} />
-            ))}
-          </View>
+          {isLoading ? (
+            <View style={styles.loadingContainer}>
+              <Text style={styles.loadingText}>Loading widgets...</Text>
+            </View>
+          ) : (
+            <View style={styles.widgetsList}>
+              {widgetOrder.map((widgetId) => (
+                <WidgetItem key={widgetId} widgetId={widgetId} />
+              ))}
+            </View>
+          )}
         </View>
 
         {/* Bottom spacing */}
@@ -297,9 +253,20 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
+  widgetEmoji: {
+    fontSize: 24,
+  },
   widgetContent: {
     flex: 1,
     gap: 2,
+  },
+  loadingContainer: {
+    paddingVertical: responsive.spacing[6],
+    alignItems: 'center',
+  },
+  loadingText: {
+    fontSize: settingsTypography.secondary,
+    color: colors.neutralDark,
   },
   widgetTitle: {
     fontSize: settingsTypography.primary,

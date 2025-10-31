@@ -18,6 +18,24 @@ import { responsive, ms } from '@/constants/responsive';
 import { loadAvatarColor, getAvatarGradientSync } from '@/utils/avatar';
 import { getInitials } from '@/utils/helpers';
 import { GaugeChart, GaugeChartSegment } from '@/components/charts';
+import { useWidgets } from '@/contexts/WidgetContext';
+import {
+  WIDGET_REGISTRY,
+  WidgetContainer,
+  BudgetOverviewWidget,
+  SpendingSummaryWidget,
+  RecentTransactionsWidget,
+  CategoryBreakdownWidget,
+  BankAccountsWidget,
+  UpcomingBillsWidget,
+  SavingsGoalWidget,
+  CardCycleWidget,
+  BankAccount,
+  Bill,
+  SavingsGoal,
+  CardCycle,
+} from '@/components/widgets';
+import { Transaction as TransactionType } from '@/types/models';
 
 // Color Palette - Using theme colors
 const colors = {
@@ -67,6 +85,9 @@ const DashboardScreen: React.FC = () => {
   const [showPeriodSelector, setShowPeriodSelector] = useState(false);
   const [selectedPeriod, setSelectedPeriod] = useState<'week' | 'month' | 'year'>('month');
   const [unreadNotifications, setUnreadNotifications] = useState(2); // TODO: Get from context/state
+
+  // Widget system
+  const { enabledWidgets, widgetOrder, widgetConfig } = useWidgets();
 
   // User data (in real app, this would come from auth context)
   const userName = 'Alex Johnson';
@@ -169,6 +190,119 @@ const DashboardScreen: React.FC = () => {
     { category: 'Entertainment', spent: 80, total: 200, status: 'warning' },
   ];
 
+  const bankAccounts: BankAccount[] = [
+    {
+      id: '1',
+      name: 'CBA Smart Access',
+      balance: 15280.14,
+      icon: 'business-outline',
+      iconColor: colors.primary,
+      type: 'bank',
+    },
+    {
+      id: '2',
+      name: 'ING Savings',
+      balance: 25051.36,
+      icon: 'wallet-outline',
+      iconColor: colors.primary,
+      type: 'savings',
+    },
+    {
+      id: '3',
+      name: 'Amex Platinum',
+      balance: -2500.00,
+      icon: 'card-outline',
+      iconColor: colors.secondaryRed,
+      type: 'credit',
+    },
+    {
+      id: '4',
+      name: 'Raiz Investment',
+      balance: 5000.00,
+      icon: 'trending-up-outline',
+      iconColor: colors.secondaryGreen,
+      type: 'investment',
+    },
+  ];
+
+  const today = new Date();
+  const upcomingBills: Bill[] = [
+    {
+      id: '1',
+      companyName: 'Netflix',
+      companyLogo: 'https://logo.clearbit.com/netflix.com',
+      amount: 16.99,
+      dueDate: new Date(today.getFullYear(), today.getMonth(), today.getDate() + 3),
+      isPaid: false,
+      category: 'Entertainment',
+    },
+    {
+      id: '2',
+      companyName: 'AGL Energy',
+      companyLogo: 'https://logo.clearbit.com/agl.com.au',
+      amount: 85.50,
+      dueDate: new Date(today.getFullYear(), today.getMonth(), today.getDate() + 5),
+      isPaid: false,
+      category: 'Bills & Utilities',
+    },
+    {
+      id: '3',
+      companyName: 'Telstra',
+      companyLogo: 'https://logo.clearbit.com/telstra.com.au',
+      amount: 60.00,
+      dueDate: new Date(today.getFullYear(), today.getMonth(), today.getDate() + 10),
+      isPaid: false,
+      category: 'Bills & Utilities',
+    },
+    {
+      id: '4',
+      companyName: 'Spotify',
+      companyLogo: 'https://logo.clearbit.com/spotify.com',
+      amount: 11.99,
+      dueDate: new Date(today.getFullYear(), today.getMonth(), today.getDate() + 15),
+      isPaid: false,
+      category: 'Entertainment',
+    },
+    {
+      id: '5',
+      companyName: 'Private Health',
+      amount: 89.00,
+      dueDate: new Date(today.getFullYear(), today.getMonth(), today.getDate() + 20),
+      isPaid: false,
+      category: 'Healthcare',
+    },
+  ];
+
+  const savingsGoals: SavingsGoal[] = [
+    {
+      id: '1',
+      name: 'Trip to Japan',
+      targetAmount: 8000,
+      currentAmount: 5250,
+      dueDate: new Date(2024, 9, 1), // Oct 2024
+      icon: 'airplane-outline',
+      iconColor: colors.secondaryYellow,
+    },
+    {
+      id: '2',
+      name: 'Emergency Fund',
+      targetAmount: 10000,
+      currentAmount: 7500,
+      dueDate: new Date(2024, 11, 31), // Dec 2024
+      icon: 'shield-checkmark-outline',
+      iconColor: colors.functionalSuccess,
+    },
+  ];
+
+  const cardCycle: CardCycle = {
+    id: '1',
+    cardName: 'Amex Platinum',
+    spent: 1850.75,
+    limit: 5000,
+    cycleEndDate: new Date(2024, 7, 25), // 25 Aug
+    paymentDueDate: new Date(2024, 8, 15), // 15 Sep
+  };
+
   // Spending categories for the chart (with budgets)
   const spendingCategories = [
     { label: 'Groceries', spent: 840, budget: 1000, color: colors.primary },
@@ -213,6 +347,117 @@ const DashboardScreen: React.FC = () => {
     if (color === colors.secondaryYellow) return `${colors.secondaryYellow}33`;
     if (color === colors.secondaryRed) return `${colors.secondaryRed}33`;
     return `${colors.primary}1A`;
+  };
+
+  // Render widget based on ID
+  const renderWidget = (widgetId: string) => {
+    const widget = WIDGET_REGISTRY[widgetId];
+    if (!widget) return null;
+
+    switch (widgetId) {
+      case 'budget-overview':
+        return (
+          <BudgetOverviewWidget
+            budgetItems={budgetItems}
+            onViewAll={handleViewAllBudgets}
+            onBudgetPress={handleBudgetCardPress}
+          />
+        );
+
+      case 'spending-summary':
+        return (
+          <SpendingSummaryWidget
+            gaugeChartData={gaugeChartData}
+            totalSpending={totalSpending}
+            totalBudget={totalBudget}
+            onPeriodSelect={() => setShowPeriodSelector(true)}
+          />
+        );
+
+      case 'recent-transactions':
+        return (
+          <RecentTransactionsWidget
+            transactions={transactions}
+            onViewAll={handleViewAllTransactions}
+            onTransactionPress={handleTransactionPress}
+          />
+        );
+
+      case 'category-breakdown':
+        return (
+          <CategoryBreakdownWidget
+            categories={spendingCategories.map(cat => ({
+              name: cat.label,
+              icon: cat.label === 'Groceries' ? '🛒' : cat.label === 'Shopping' ? '🛍️' : cat.label === 'Transport' ? '🚗' : '📦',
+              spent: cat.spent,
+              budget: cat.budget,
+              color: cat.color,
+            }))}
+            onPeriodSelect={(period) => {
+              console.log('Period selected:', period);
+              // TODO: Fetch data for selected period
+            }}
+            onCategoryPress={(category) => {
+              console.log('Category pressed:', category);
+              // TODO: Navigate to category details
+            }}
+          />
+        );
+
+      case 'bank-accounts':
+        return (
+          <BankAccountsWidget
+            accounts={bankAccounts}
+            onViewAll={() => router.push('/accounts')}
+            onAccountPress={(account) => {
+              console.log('Account pressed:', account);
+              // TODO: Navigate to account details
+            }}
+          />
+        );
+
+      case 'upcoming-bills':
+        return (
+          <UpcomingBillsWidget
+            bills={upcomingBills}
+            onSeeAllBills={() => router.push('/bills')}
+            onBillPress={(bill) => {
+              console.log('Bill pressed:', bill);
+              // TODO: Navigate to bill details
+            }}
+          />
+        );
+
+      case 'savings-goal':
+        return (
+          <SavingsGoalWidget
+            goals={savingsGoals}
+            onViewAll={() => router.push('/savings-goals')}
+            onGoalPress={(goal) => {
+              console.log('Goal pressed:', goal);
+              // TODO: Navigate to goal details
+            }}
+          />
+        );
+
+      case 'card-cycle':
+        return (
+          <CardCycleWidget
+            cardCycle={cardCycle}
+            onMorePress={() => {
+              console.log('More pressed');
+              // TODO: Show options menu
+            }}
+            onCardPress={() => {
+              console.log('Card pressed');
+              // TODO: Navigate to card details
+            }}
+          />
+        );
+
+      default:
+        return null;
+    }
   };
 
   return (
@@ -264,124 +509,35 @@ const DashboardScreen: React.FC = () => {
           </View>
         </View>
 
-        {/* Spending Chart Card */}
-        <View style={[styles.spendingCard, styles.cardShadow]}>
-          <View style={styles.spendingHeader}>
-            <Text style={styles.sectionTitle}>Spending</Text>
+        {/* Customizable Widgets */}
+        {enabledWidgets.length > 0 ? (
+          <View style={styles.widgetsSection}>
+            {widgetOrder
+              .filter((widgetId) => enabledWidgets.includes(widgetId))
+              .map((widgetId) => (
+                <WidgetContainer key={widgetId}>
+                  {renderWidget(widgetId)}
+                </WidgetContainer>
+              ))}
+          </View>
+        ) : (
+          <View style={styles.emptyStateContainer}>
+            <View style={styles.emptyStateIcon}>
+              <Ionicons name="cube-outline" size={64} color={colors.neutralMedium} />
+            </View>
+            <Text style={styles.emptyStateTitle}>No Widgets Added</Text>
+            <Text style={styles.emptyStateDescription}>
+              Add widgets to customize your dashboard and view your financial data
+            </Text>
             <TouchableOpacity
-              style={styles.dropdownButton}
-              onPress={() => setShowPeriodSelector(true)}
+              style={styles.addWidgetsButton}
+              onPress={() => router.push('/settings/appearance')}
             >
-              <Text style={styles.dropdownText}>{getPeriodLabel()}</Text>
-              <Ionicons name="chevron-down" size={16} color={colors.primary} />
+              <Ionicons name="add-circle-outline" size={20} color={colors.neutralWhite} />
+              <Text style={styles.addWidgetsButtonText}>Add Widgets</Text>
             </TouchableOpacity>
           </View>
-
-          {(() => {
-            const chartSize = responsive.layout.chartSizeCompact;
-            return (
-              <GaugeChart
-                data={gaugeChartData}
-                sizeScale={chartSize}
-                strokeWidthScale={chartSize * 0.1}
-                showLegend={true}
-                legendPosition="right"
-                legendDotSize={chartSize * 0.083}
-                showNavigation={false}
-              >
-                <View style={{ alignItems: 'center' }}>
-                  <Text style={styles.circleAmount}>
-                    ${(totalSpending / 1000).toFixed(1)}k
-                  </Text>
-                  <Text style={styles.circleLabel}>
-                    of ${(totalBudget / 1000).toFixed(1)}k
-                  </Text>
-                </View>
-              </GaugeChart>
-            );
-          })()}
-        </View>
-
-        {/* Budget Progress */}
-        <View style={styles.transactionsHeader}>
-          <Text style={styles.sectionHeading}>Budget Progress</Text>
-          <TouchableOpacity onPress={handleViewAllBudgets}>
-            <Text style={styles.viewAllButton}>View All</Text>
-          </TouchableOpacity>
-        </View>
-        <View style={styles.budgetContainer}>
-          {budgetItems.map((item, index) => (
-            <TouchableOpacity
-              key={index}
-              style={[styles.budgetCard, styles.cardShadow]}
-              onPress={() => handleBudgetCardPress(item)}
-            >
-              <View style={styles.budgetHeader}>
-                <Text style={styles.budgetCategory}>{item.category}</Text>
-                {item.status === 'over' ? (
-                  <Text style={styles.budgetOverText}>
-                    ${item.spent - item.total} over budget!
-                  </Text>
-                ) : (
-                  <Text style={styles.budgetRemaining}>
-                    ${item.total - item.spent} left of ${item.total}
-                  </Text>
-                )}
-              </View>
-              <View style={styles.progressBar}>
-                <View
-                  style={[
-                    styles.progressFill,
-                    {
-                      width: `${Math.min((item.spent / item.total) * 100, 100)}%`,
-                      backgroundColor: getProgressColor(item.status),
-                    },
-                  ]}
-                />
-              </View>
-            </TouchableOpacity>
-          ))}
-        </View>
-
-        {/* Recent Transactions */}
-        <View style={styles.transactionsHeader}>
-          <Text style={styles.sectionHeading}>Recent Transactions</Text>
-          <TouchableOpacity onPress={handleViewAllTransactions}>
-            <Text style={styles.viewAllButton}>View All</Text>
-          </TouchableOpacity>
-        </View>
-
-        <View style={[styles.transactionsCard, styles.cardShadow]}>
-          {transactions.map((transaction, index) => (
-            <View key={transaction.id}>
-              <TouchableOpacity
-                style={styles.transactionItem}
-                onPress={() => handleTransactionPress(transaction.id)}
-              >
-                <View
-                  style={[
-                    styles.transactionIcon,
-                    { backgroundColor: getIconBackgroundColor(transaction.color) },
-                  ]}
-                >
-                  <Ionicons
-                    name={transaction.icon as any}
-                    size={20}
-                    color={transaction.color}
-                  />
-                </View>
-                <View style={styles.transactionDetails}>
-                  <Text style={styles.transactionMerchant}>{transaction.merchant}</Text>
-                  <Text style={styles.transactionDate}>{transaction.date}</Text>
-                </View>
-                <Text style={styles.transactionAmount}>
-                  -${transaction.amount.toFixed(2)}
-                </Text>
-              </TouchableOpacity>
-              {index < transactions.length - 1 && <View style={styles.divider} />}
-            </View>
-          ))}
-        </View>
+        )}
 
         {/* Bottom spacing */}
         <View style={{ height: responsive.spacing[4] }} />
@@ -552,6 +708,10 @@ const styles = StyleSheet.create({
     fontSize: responsive.fontSize.sm,
     fontWeight: '500',
     color: colors.functionalSuccess,
+  },
+  widgetsSection: {
+    paddingHorizontal: responsive.spacing[4],
+    marginTop: responsive.spacing[4],
   },
   spendingCard: {
     marginHorizontal: responsive.spacing[4],
@@ -789,6 +949,49 @@ const styles = StyleSheet.create({
   periodOptionTextActive: {
     color: colors.primary,
     fontWeight: '600',
+  },
+  emptyStateContainer: {
+    marginHorizontal: responsive.spacing[4],
+    marginTop: responsive.spacing[6],
+    backgroundColor: colors.neutralWhite,
+    borderRadius: theme.borderRadius.xl,
+    padding: responsive.spacing[8],
+    alignItems: 'center',
+    ...theme.shadows.sm,
+  },
+  emptyStateIcon: {
+    marginBottom: responsive.spacing[4],
+    opacity: 0.5,
+  },
+  emptyStateTitle: {
+    fontSize: responsive.fontSize.xl,
+    fontWeight: '700',
+    color: colors.neutralDarkest,
+    marginBottom: responsive.spacing[2],
+    textAlign: 'center',
+  },
+  emptyStateDescription: {
+    fontSize: responsive.fontSize.md,
+    fontWeight: '400',
+    color: colors.neutralDark,
+    textAlign: 'center',
+    marginBottom: responsive.spacing[6],
+    paddingHorizontal: responsive.spacing[4],
+  },
+  addWidgetsButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: responsive.spacing[2],
+    backgroundColor: colors.primary,
+    paddingVertical: responsive.spacing[3],
+    paddingHorizontal: responsive.spacing[6],
+    borderRadius: theme.borderRadius.full,
+    ...theme.shadows.sm,
+  },
+  addWidgetsButtonText: {
+    fontSize: responsive.fontSize.md,
+    fontWeight: '600',
+    color: colors.neutralWhite,
   },
 });
 

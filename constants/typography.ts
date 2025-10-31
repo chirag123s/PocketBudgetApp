@@ -46,25 +46,25 @@ export const typography = {
     h1: {
       fontSize: 32,
       fontWeight: '700' as const,
-      lineHeight: 1.2,
+      lineHeight: 38,
       color: '#111827',
     },
     h2: {
       fontSize: 24,
       fontWeight: '600' as const,
-      lineHeight: 1.3,
+      lineHeight: 31,
       color: '#111827',
     },
     h3: {
       fontSize: 20,
       fontWeight: '600' as const,
-      lineHeight: 1.4,
+      lineHeight: 28,
       color: '#1F2937',
     },
     h4: {
       fontSize: 18,
       fontWeight: '600' as const,
-      lineHeight: 1.4,
+      lineHeight: 25,
       color: '#1F2937',
     },
 
@@ -72,19 +72,19 @@ export const typography = {
     bodyLarge: {
       fontSize: 18,
       fontWeight: '400' as const,
-      lineHeight: 1.5,
+      lineHeight: 27,
       color: '#374151',
     },
     body: {
       fontSize: 16,
       fontWeight: '400' as const,
-      lineHeight: 1.5,
+      lineHeight: 24,
       color: '#4B5563',
     },
     bodySmall: {
       fontSize: 14,
       fontWeight: '400' as const,
-      lineHeight: 1.5,
+      lineHeight: 21,
       color: '#6B7280',
     },
 
@@ -92,18 +92,18 @@ export const typography = {
     button: {
       fontSize: 16,
       fontWeight: '600' as const,
-      lineHeight: 1.2,
+      lineHeight: 19,
     },
     caption: {
       fontSize: 12,
       fontWeight: '400' as const,
-      lineHeight: 1.5,
+      lineHeight: 18,
       color: '#9CA3AF',
     },
     label: {
       fontSize: 14,
       fontWeight: '500' as const,
-      lineHeight: 1.5,
+      lineHeight: 21,
       color: '#374151',
     },
 
@@ -111,12 +111,12 @@ export const typography = {
     currency: {
       fontSize: 24,
       fontWeight: '700' as const,
-      lineHeight: 1.2,
+      lineHeight: 29,
     },
     currencyLarge: {
       fontSize: 36,
       fontWeight: '700' as const,
-      lineHeight: 1.2,
+      lineHeight: 43,
     },
   },
 };
