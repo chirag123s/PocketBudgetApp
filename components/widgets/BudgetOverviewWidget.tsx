@@ -2,6 +2,7 @@ import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { theme } from '@/constants/theme';
 import { responsive, ms } from '@/constants/responsive';
+import { formatCurrencyCompact } from '@/utils/currency';
 
 const colors = {
   primary: theme.colors.info.main,
@@ -46,7 +47,7 @@ export const BudgetOverviewWidget: React.FC<BudgetOverviewWidgetProps> = ({
   };
 
   return (
-    <>
+    <View style={styles.container}>
       <View style={styles.transactionsHeader}>
         <Text style={styles.sectionHeading}>Budget Progress</Text>
         {onViewAll && (
@@ -59,7 +60,7 @@ export const BudgetOverviewWidget: React.FC<BudgetOverviewWidgetProps> = ({
         {budgetItems.map((item, index) => (
           <TouchableOpacity
             key={index}
-            style={[styles.budgetCard, styles.cardShadow]}
+            style={styles.budgetCard}
             onPress={() => onBudgetPress?.(item)}
             disabled={!onBudgetPress}
           >
@@ -67,11 +68,11 @@ export const BudgetOverviewWidget: React.FC<BudgetOverviewWidgetProps> = ({
               <Text style={styles.budgetCategory}>{item.category}</Text>
               {item.status === 'over' ? (
                 <Text style={styles.budgetOverText}>
-                  ${item.spent - item.total} over budget!
+                  {formatCurrencyCompact(item.spent - item.total)} over budget!
                 </Text>
               ) : (
                 <Text style={styles.budgetRemaining}>
-                  ${item.total - item.spent} left of ${item.total}
+                  {formatCurrencyCompact(item.total - item.spent)} left of {formatCurrencyCompact(item.total)}
                 </Text>
               )}
             </View>
@@ -89,16 +90,22 @@ export const BudgetOverviewWidget: React.FC<BudgetOverviewWidgetProps> = ({
           </TouchableOpacity>
         ))}
       </View>
-    </>
+    </View>
   );
 };
 
 const styles = StyleSheet.create({
+  container: {
+    backgroundColor: colors.neutralWhite,
+    borderRadius: theme.borderRadius.xl,
+    padding: responsive.spacing[5],
+    ...theme.shadows.sm,
+  },
   transactionsHeader: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    paddingBottom: responsive.spacing[3],
+    marginBottom: responsive.spacing[3],
   },
   sectionHeading: {
     fontSize: responsive.fontSize.lg,
@@ -114,13 +121,10 @@ const styles = StyleSheet.create({
     gap: responsive.spacing[3],
   },
   budgetCard: {
-    backgroundColor: colors.neutralWhite,
-    borderRadius: theme.borderRadius.xl,
+    backgroundColor: colors.neutralBg,
+    borderRadius: theme.borderRadius.lg,
     padding: responsive.spacing[4],
     gap: responsive.spacing[2],
-  },
-  cardShadow: {
-    ...theme.shadows.sm,
   },
   budgetHeader: {
     flexDirection: 'row',

@@ -3,6 +3,7 @@ import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { theme } from '@/constants/theme';
 import { responsive, ms } from '@/constants/responsive';
+import { formatCurrencyCompact } from '@/utils/currency';
 
 const colors = {
   primary: theme.colors.info.main,
@@ -54,8 +55,9 @@ export const CardCycleWidget: React.FC<CardCycleWidgetProps> = ({
       {/* Header */}
       <View style={styles.header}>
         <View style={styles.headerLeft}>
-          <Ionicons name="card" size={20} color={colors.neutralDarkest} />
+          
           <Text style={styles.title}>Card Cycle</Text>
+          {/* <Ionicons name="card" size={20} color={colors.neutralDarkest} /> */}
         </View>
         {onMorePress && (
           <TouchableOpacity onPress={onMorePress} hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}>
@@ -75,10 +77,10 @@ export const CardCycleWidget: React.FC<CardCycleWidgetProps> = ({
         {/* Amounts */}
         <View style={styles.amountsRow}>
           <Text style={styles.spentAmount}>
-            ${cardCycle.spent.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+            {formatCurrencyCompact(cardCycle.spent)}
           </Text>
           <Text style={styles.limitAmount}>
-            ${cardCycle.limit.toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 0 })}
+            {formatCurrencyCompact(cardCycle.limit)}
           </Text>
         </View>
 
@@ -159,7 +161,7 @@ const styles = StyleSheet.create({
     alignItems: 'baseline',
   },
   spentAmount: {
-    fontSize: responsive.fontSize.xxl,
+    fontSize: responsive.fontSize.xl,
     fontWeight: '700',
     color: colors.neutralDarkest,
   },

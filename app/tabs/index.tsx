@@ -24,6 +24,7 @@ import { theme } from '@/constants/theme';
 import { responsive, ms } from '@/constants/responsive';
 import { loadAvatarColor, getAvatarGradientSync } from '@/utils/avatar';
 import { getInitials } from '@/utils/helpers';
+import { formatCurrencyCompact } from '@/utils/currency';
 import { GaugeChart, GaugeChartSegment } from '@/components/charts';
 import { useWidgets } from '@/contexts/WidgetContext';
 import {
@@ -99,6 +100,8 @@ const DashboardScreen: React.FC = () => {
 
   // User data (in real app, this would come from auth context)
   const userName = 'Alex Johnson';
+  const netWorth = 42831.50;
+  const totalSpent = 1850.75;
 
   // Load saved avatar color when screen comes into focus
   useFocusEffect(
@@ -498,12 +501,12 @@ const DashboardScreen: React.FC = () => {
       <View style={styles.statsContainer}>
         <View style={[styles.statCard, styles.cardShadow]}>
           <Text style={styles.statLabel}>Net Worth</Text>
-          <Text style={styles.statValue}>$42,831.50</Text>
+          <Text style={styles.statValue}>{formatCurrencyCompact(netWorth)}</Text>
           <Text style={styles.statChange}>+2.1%</Text>
         </View>
         <View style={[styles.statCard, styles.cardShadow]}>
           <Text style={styles.statLabel}>Total Spent</Text>
-          <Text style={styles.statValue}>$1,850.75</Text>
+          <Text style={styles.statValue}>{formatCurrencyCompact(totalSpent)}</Text>
           <Text style={[styles.statChange, { color: colors.functionalError }]}>
             +5.0%
           </Text>
@@ -607,6 +610,7 @@ const DashboardScreen: React.FC = () => {
             ListEmptyComponent={renderEmptyState}
             ListFooterComponent={renderFooter}
             showsVerticalScrollIndicator={false}
+            contentContainerStyle={{ paddingHorizontal: responsive.spacing[4] }}
           />
         ) : isEditMode ? (
           <DraggableFlatList
@@ -719,7 +723,6 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    paddingHorizontal: responsive.spacing[4],
     paddingVertical: responsive.spacing[3],
     backgroundColor: colors.neutralBg,
   },
@@ -770,7 +773,6 @@ const styles = StyleSheet.create({
   },
   statsContainer: {
     flexDirection: 'row',
-    paddingHorizontal: responsive.spacing[4],
     gap: responsive.spacing[4],
     marginTop: responsive.spacing[1],
   },
@@ -803,7 +805,6 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    paddingHorizontal: responsive.spacing[4],
     paddingTop: responsive.spacing[4],
     paddingBottom: responsive.spacing[2],
   },
@@ -1082,7 +1083,6 @@ const styles = StyleSheet.create({
     fontWeight: '600',
   },
   emptyStateContainer: {
-    marginHorizontal: responsive.spacing[4],
     marginTop: responsive.spacing[6],
     backgroundColor: colors.neutralWhite,
     borderRadius: theme.borderRadius.xl,

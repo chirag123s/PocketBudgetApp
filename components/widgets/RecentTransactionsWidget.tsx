@@ -43,7 +43,7 @@ export const RecentTransactionsWidget: React.FC<RecentTransactionsWidgetProps> =
   };
 
   return (
-    <>
+    <View style={styles.container}>
       <View style={styles.transactionsHeader}>
         <Text style={styles.sectionHeading}>Recent Transactions</Text>
         {onViewAll && (
@@ -53,7 +53,7 @@ export const RecentTransactionsWidget: React.FC<RecentTransactionsWidgetProps> =
         )}
       </View>
 
-      <View style={[styles.transactionsCard, styles.cardShadow]}>
+      <View style={styles.transactionsContent}>
         {transactions.map((transaction, index) => (
           <View key={transaction.id}>
             <TouchableOpacity
@@ -85,16 +85,22 @@ export const RecentTransactionsWidget: React.FC<RecentTransactionsWidgetProps> =
           </View>
         ))}
       </View>
-    </>
+    </View>
   );
 };
 
 const styles = StyleSheet.create({
+  container: {
+    backgroundColor: colors.neutralWhite,
+    borderRadius: theme.borderRadius.xl,
+    padding: responsive.spacing[5],
+    ...theme.shadows.sm,
+  },
   transactionsHeader: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    paddingBottom: responsive.spacing[3],
+    marginBottom: responsive.spacing[3],
   },
   sectionHeading: {
     fontSize: responsive.fontSize.lg,
@@ -106,13 +112,8 @@ const styles = StyleSheet.create({
     fontWeight: '700',
     color: colors.primary,
   },
-  transactionsCard: {
-    backgroundColor: colors.neutralWhite,
-    borderRadius: theme.borderRadius.xl,
-    padding: responsive.spacing[4],
-  },
-  cardShadow: {
-    ...theme.shadows.sm,
+  transactionsContent: {
+    gap: 0,
   },
   transactionItem: {
     flexDirection: 'row',

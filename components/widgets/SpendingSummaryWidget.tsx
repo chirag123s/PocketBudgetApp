@@ -3,6 +3,7 @@ import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { theme } from '@/constants/theme';
 import { responsive, ms } from '@/constants/responsive';
+import { formatCurrencyCompact } from '@/utils/currency';
 import { GaugeChart, GaugeChartSegment } from '@/components/charts';
 
 const colors = {
@@ -68,10 +69,10 @@ export const SpendingSummaryWidget: React.FC<SpendingSummaryWidgetProps> = ({
           >
             <View style={{ alignItems: 'center' }}>
               <Text style={styles.circleAmount}>
-                ${(totalSpending / 1000).toFixed(1)}k
+                {formatCurrencyCompact(totalSpending)}
               </Text>
               <Text style={styles.circleLabel}>
-                of ${(totalBudget / 1000).toFixed(1)}k
+                of {formatCurrencyCompact(totalBudget)}
               </Text>
             </View>
           </GaugeChart>

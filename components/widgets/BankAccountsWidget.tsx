@@ -3,6 +3,7 @@ import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { theme } from '@/constants/theme';
 import { responsive, ms } from '@/constants/responsive';
+import { formatCurrencyCompact } from '@/utils/currency';
 
 const colors = {
   primary: theme.colors.info.main,
@@ -35,17 +36,12 @@ export const BankAccountsWidget: React.FC<BankAccountsWidgetProps> = ({
   onViewAll,
   onAccountPress,
 }) => {
-  const formatBalance = (balance: number) => {
-    const formatted = Math.abs(balance).toFixed(2);
-    return balance < 0 ? `-$${formatted}` : `$${formatted}`;
-  };
-
   const getBalanceColor = (balance: number) => {
     return balance < 0 ? colors.functionalError : colors.neutralDarkest;
   };
 
   return (
-    <>
+    <View style={styles.container}>
       <View style={styles.accountsHeader}>
         <Text style={styles.sectionHeading}>Accounts</Text>
         {onViewAll && (
@@ -59,7 +55,7 @@ export const BankAccountsWidget: React.FC<BankAccountsWidgetProps> = ({
         {accounts.map((account) => (
           <TouchableOpacity
             key={account.id}
-            style={[styles.accountCard, styles.cardShadow]}
+            style={styles.accountCard}
             onPress={() => onAccountPress?.(account)}
             disabled={!onAccountPress}
           >
@@ -81,21 +77,27 @@ export const BankAccountsWidget: React.FC<BankAccountsWidgetProps> = ({
               </Text>
             </View>
             <Text style={[styles.accountBalance, { color: getBalanceColor(account.balance) }]}>
-              {formatBalance(account.balance)}
+              {formatCurrencyCompact(account.balance)}
             </Text>
           </TouchableOpacity>
         ))}
       </View>
-    </>
+    </View>
   );
 };
 
 const styles = StyleSheet.create({
+  container: {
+    backgroundColor: colors.neutralWhite,
+    borderRadius: theme.borderRadius.xl,
+    padding: responsive.spacing[5],
+    ...theme.shadows.sm,
+  },
   accountsHeader: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    paddingBottom: responsive.spacing[3],
+    marginBottom: responsive.spacing[3],
   },
   sectionHeading: {
     fontSize: responsive.fontSize.lg,
@@ -115,13 +117,10 @@ const styles = StyleSheet.create({
   accountCard: {
     flex: 1,
     minWidth: '45%',
-    backgroundColor: colors.neutralWhite,
-    borderRadius: theme.borderRadius.xl,
+    backgroundColor: colors.neutralBg,
+    borderRadius: theme.borderRadius.lg,
     padding: responsive.spacing[3],
     gap: responsive.spacing[2],
-  },
-  cardShadow: {
-    ...theme.shadows.sm,
   },
   accountHeader: {
     flexDirection: 'row',

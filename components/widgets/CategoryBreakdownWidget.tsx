@@ -3,6 +3,7 @@ import { View, Text, StyleSheet, TouchableOpacity, Modal } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { theme } from '@/constants/theme';
 import { responsive, ms } from '@/constants/responsive';
+import { formatCurrencyCompact } from '@/utils/currency';
 
 const colors = {
   primary: theme.colors.info.main,
@@ -122,7 +123,7 @@ export const CategoryBreakdownWidget: React.FC<CategoryBreakdownWidgetProps> = (
                     <Text style={styles.categoryName}>{category.name}</Text>
                   </View>
                   <Text style={styles.categoryAmount}>
-                    ${category.spent.toFixed(2)}
+                    {formatCurrencyCompact(category.spent)}
                   </Text>
                 </View>
 

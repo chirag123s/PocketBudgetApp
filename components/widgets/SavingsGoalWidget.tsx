@@ -3,6 +3,7 @@ import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { theme } from '@/constants/theme';
 import { responsive, ms } from '@/constants/responsive';
+import { formatCurrencyCompact } from '@/utils/currency';
 
 const colors = {
   primary: theme.colors.info.main,
@@ -47,11 +48,11 @@ export const SavingsGoalWidget: React.FC<SavingsGoalWidgetProps> = ({
 
   if (!displayGoal) {
     return (
-      <View>
+      <View style={styles.container}>
         <View style={styles.header}>
           <Text style={styles.headerTitle}>Savings Goal</Text>
         </View>
-        <View style={styles.emptyState}>
+        <View style={styles.emptyStateContent}>
           <Ionicons name="flag-outline" size={64} color={colors.neutralDark} />
           <Text style={styles.emptyTitle}>No Savings Goals</Text>
           <Text style={styles.emptySubtitle}>
@@ -65,7 +66,7 @@ export const SavingsGoalWidget: React.FC<SavingsGoalWidgetProps> = ({
   const progress = (displayGoal.currentAmount / displayGoal.targetAmount) * 100;
 
   return (
-    <>
+    <View style={styles.container}>
       <View style={styles.header}>
         <Text style={styles.headerTitle}>Savings Goal</Text>
         {onViewAll && goals.length > 1 && (
@@ -76,7 +77,7 @@ export const SavingsGoalWidget: React.FC<SavingsGoalWidgetProps> = ({
       </View>
 
       <TouchableOpacity
-        style={styles.goalCard}
+        style={styles.goalContent}
         onPress={() => onGoalPress?.(displayGoal)}
         disabled={!onGoalPress}
         activeOpacity={0.7}
@@ -98,7 +99,7 @@ export const SavingsGoalWidget: React.FC<SavingsGoalWidgetProps> = ({
           <View style={styles.goalInfo}>
             <Text style={styles.goalName}>{displayGoal.name}</Text>
             <Text style={styles.goalTarget}>
-              Goal: ${displayGoal.targetAmount.toLocaleString()}
+              Goal: {formatCurrencyCompact(displayGoal.targetAmount)}
             </Text>
           </View>
         </View>
@@ -107,7 +108,7 @@ export const SavingsGoalWidget: React.FC<SavingsGoalWidgetProps> = ({
         <View style={styles.progressSection}>
           <View style={styles.progressHeader}>
             <Text style={styles.currentAmount}>
-              ${displayGoal.currentAmount.toLocaleString()}{' '}
+              {formatCurrencyCompact(displayGoal.currentAmount)}{' '}
               <Text style={styles.savedLabel}>saved</Text>
             </Text>
             <Text style={styles.dueDate}>
@@ -129,16 +130,22 @@ export const SavingsGoalWidget: React.FC<SavingsGoalWidgetProps> = ({
           </View>
         </View>
       </TouchableOpacity>
-    </>
+    </View>
   );
 };
 
 const styles = StyleSheet.create({
+  container: {
+    backgroundColor: colors.neutralWhite,
+    borderRadius: theme.borderRadius.xl,
+    padding: responsive.spacing[5],
+    ...theme.shadows.sm,
+  },
   header: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    paddingBottom: responsive.spacing[3],
+    marginBottom: responsive.spacing[3],
   },
   headerTitle: {
     fontSize: responsive.fontSize.lg,
@@ -151,13 +158,9 @@ const styles = StyleSheet.create({
     color: colors.primary,
   },
 
-  // Goal Card
-  goalCard: {
-    backgroundColor: colors.neutralWhite,
-    borderRadius: theme.borderRadius.xl,
-    padding: responsive.spacing[5],
+  // Goal Content
+  goalContent: {
     gap: responsive.spacing[4],
-    ...theme.shadows.sm,
   },
 
   // Goal Header
@@ -229,13 +232,10 @@ const styles = StyleSheet.create({
   },
 
   // Empty State
-  emptyState: {
-    backgroundColor: colors.neutralWhite,
-    borderRadius: theme.borderRadius.xl,
-    padding: responsive.spacing[8],
+  emptyStateContent: {
+    paddingVertical: responsive.spacing[4],
     alignItems: 'center',
     gap: responsive.spacing[3],
-    ...theme.shadows.sm,
   },
   emptyTitle: {
     fontSize: responsive.fontSize.lg,
