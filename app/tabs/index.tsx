@@ -2,16 +2,23 @@ import React, { useState, useCallback } from 'react';
 import {
   View,
   Text,
-  ScrollView,
+  FlatList,
   TouchableOpacity,
   StyleSheet,
   StatusBar,
   Modal,
+  ListRenderItem,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useFocusEffect, useRouter } from 'expo-router';
 import Svg, { Circle } from 'react-native-svg';
+import DraggableFlatList, {
+  ScaleDecorator,
+  OpacityDecorator,
+  RenderItemParams,
+} from 'react-native-draggable-flatlist';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { Screen } from '@/components/layout/Screen';
 import { theme } from '@/constants/theme';
 import { responsive, ms } from '@/constants/responsive';
@@ -85,9 +92,10 @@ const DashboardScreen: React.FC = () => {
   const [showPeriodSelector, setShowPeriodSelector] = useState(false);
   const [selectedPeriod, setSelectedPeriod] = useState<'week' | 'month' | 'year'>('month');
   const [unreadNotifications, setUnreadNotifications] = useState(2); // TODO: Get from context/state
+  const [isEditMode, setIsEditMode] = useState(false);
 
   // Widget system
-  const { enabledWidgets, widgetOrder, widgetConfig } = useWidgets();
+  const { enabledWidgets, widgetOrder, widgetConfig, updateWidgetOrder } = useWidgets();
 
   // User data (in real app, this would come from auth context)
   const userName = 'Alex Johnson';
@@ -460,88 +468,172 @@ const DashboardScreen: React.FC = () => {
     }
   };
 
-  return (
-    <Screen
-      scrollable={false}
-      noPadding
-      backgroundColor={colors.neutralBg}
-      edges={['top']}
-    >
-      <StatusBar barStyle="dark-content" backgroundColor={colors.neutralBg} />
+  // Header component to be used in ListHeaderComponent
+  const renderHeader = () => (
+    <>
+      {/* Header */}
+      <View style={styles.header}>
+        <View style={styles.headerLeft}>
+          <LinearGradient
+            colors={getAvatarGradientSync(avatarColorId)}
+            style={styles.profilePic}
+          >
+            <Text style={styles.profileInitial}>{getInitials(userName)}</Text>
+          </LinearGradient>
+          <Text style={styles.greeting}>Good morning, {userName.split(' ')[0]}</Text>
+        </View>
+        <TouchableOpacity style={styles.notificationButton} onPress={handleNotificationPress}>
+          <Ionicons name="notifications-outline" size={24} color={colors.neutralDark} />
+          {unreadNotifications > 0 && (
+            <View style={styles.notificationBadge}>
+              <Text style={styles.notificationBadgeText}>
+                {unreadNotifications > 9 ? '9+' : unreadNotifications}
+              </Text>
+            </View>
+          )}
+        </TouchableOpacity>
+      </View>
 
-      <ScrollView style={styles.scrollView} showsVerticalScrollIndicator={false}>
-        {/* Header */}
-        <View style={styles.header}>
-          <View style={styles.headerLeft}>
-            <LinearGradient
-              colors={getAvatarGradientSync(avatarColorId)}
-              style={styles.profilePic}
-            >
-              <Text style={styles.profileInitial}>{getInitials(userName)}</Text>
-            </LinearGradient>
-            <Text style={styles.greeting}>Good morning, {userName.split(' ')[0]}</Text>
-          </View>
-          <TouchableOpacity style={styles.notificationButton} onPress={handleNotificationPress}>
-            <Ionicons name="notifications-outline" size={24} color={colors.neutralDark} />
-            {unreadNotifications > 0 && (
-              <View style={styles.notificationBadge}>
-                <Text style={styles.notificationBadgeText}>
-                  {unreadNotifications > 9 ? '9+' : unreadNotifications}
-                </Text>
-              </View>
-            )}
+      {/* Stats Cards */}
+      <View style={styles.statsContainer}>
+        <View style={[styles.statCard, styles.cardShadow]}>
+          <Text style={styles.statLabel}>Net Worth</Text>
+          <Text style={styles.statValue}>$42,831.50</Text>
+          <Text style={styles.statChange}>+2.1%</Text>
+        </View>
+        <View style={[styles.statCard, styles.cardShadow]}>
+          <Text style={styles.statLabel}>Total Spent</Text>
+          <Text style={styles.statValue}>$1,850.75</Text>
+          <Text style={[styles.statChange, { color: colors.functionalError }]}>
+            +5.0%
+          </Text>
+        </View>
+      </View>
+
+      {/* Widgets Header with Edit Button */}
+      {enabledWidgets.length > 0 && (
+        <View style={styles.widgetsHeader}>
+          <Text style={styles.widgetsHeaderTitle}>Your Widgets</Text>
+          <TouchableOpacity
+            style={styles.editButton}
+            onPress={() => setIsEditMode(!isEditMode)}
+          >
+            <Text style={[styles.editButtonText, isEditMode && styles.editButtonTextActive]}>
+              {isEditMode ? 'Done' : 'Edit'}
+            </Text>
           </TouchableOpacity>
         </View>
+      )}
+    </>
+  );
 
-        {/* Stats Cards */}
-        <View style={styles.statsContainer}>
-          <View style={[styles.statCard, styles.cardShadow]}>
-            <Text style={styles.statLabel}>Net Worth</Text>
-            <Text style={styles.statValue}>$42,831.50</Text>
-            <Text style={styles.statChange}>+2.1%</Text>
-          </View>
-          <View style={[styles.statCard, styles.cardShadow]}>
-            <Text style={styles.statLabel}>Total Spent</Text>
-            <Text style={styles.statValue}>$1,850.75</Text>
-            <Text style={[styles.statChange, { color: colors.functionalError }]}>
-              +5.0%
-            </Text>
-          </View>
-        </View>
+  // Render normal widget item
+  const renderWidgetItem: ListRenderItem<string> = ({ item: widgetId }) => (
+    <WidgetContainer>
+      {renderWidget(widgetId)}
+    </WidgetContainer>
+  );
 
-        {/* Customizable Widgets */}
-        {enabledWidgets.length > 0 ? (
-          <View style={styles.widgetsSection}>
-            {widgetOrder
-              .filter((widgetId) => enabledWidgets.includes(widgetId))
-              .map((widgetId) => (
-                <WidgetContainer key={widgetId}>
-                  {renderWidget(widgetId)}
-                </WidgetContainer>
-              ))}
+  // Render draggable widget item
+  const renderDraggableWidgetItem = ({ item: widgetId, drag, isActive }: RenderItemParams<string>) => (
+    <ScaleDecorator>
+      <OpacityDecorator activeOpacity={0.9}>
+        <TouchableOpacity
+          onLongPress={drag}
+          disabled={isActive}
+          delayLongPress={200}
+          style={[
+            styles.draggableWidget,
+            isActive && styles.draggingWidget,
+          ]}
+          activeOpacity={1}
+        >
+          <View style={styles.dragHandleLeft}>
+            <Ionicons
+              name="reorder-three-outline"
+              size={24}
+              color={colors.neutralMedium}
+            />
           </View>
+          <View style={{ flex: 1 }}>
+            <WidgetContainer>
+              {renderWidget(widgetId)}
+            </WidgetContainer>
+          </View>
+        </TouchableOpacity>
+      </OpacityDecorator>
+    </ScaleDecorator>
+  );
+
+  // Footer component (bottom spacing)
+  const renderFooter = () => <View style={{ height: responsive.spacing[4] }} />;
+
+  // Empty state component
+  const renderEmptyState = () => (
+    <View style={styles.emptyStateContainer}>
+      <View style={styles.emptyStateIcon}>
+        <Ionicons name="cube-outline" size={64} color={colors.neutralMedium} />
+      </View>
+      <Text style={styles.emptyStateTitle}>No Widgets Added</Text>
+      <Text style={styles.emptyStateDescription}>
+        Add widgets to customize your dashboard and view your financial data
+      </Text>
+      <TouchableOpacity
+        style={styles.addWidgetsButton}
+        onPress={() => router.push('/settings/appearance')}
+      >
+        <Ionicons name="add-circle-outline" size={20} color={colors.neutralWhite} />
+        <Text style={styles.addWidgetsButtonText}>Add Widgets</Text>
+      </TouchableOpacity>
+    </View>
+  );
+
+  const widgetData = widgetOrder.filter((widgetId) => enabledWidgets.includes(widgetId));
+
+  return (
+    <GestureHandlerRootView style={{ flex: 1 }}>
+      <Screen
+        scrollable={false}
+        noPadding
+        backgroundColor={colors.neutralBg}
+        edges={['top']}
+      >
+        <StatusBar barStyle="dark-content" backgroundColor={colors.neutralBg} />
+
+        {enabledWidgets.length === 0 ? (
+          <FlatList
+            data={[]}
+            ListHeaderComponent={renderHeader}
+            ListEmptyComponent={renderEmptyState}
+            ListFooterComponent={renderFooter}
+            showsVerticalScrollIndicator={false}
+          />
+        ) : isEditMode ? (
+          <DraggableFlatList
+            data={widgetData}
+            ListHeaderComponent={renderHeader}
+            ListFooterComponent={renderFooter}
+            onDragEnd={({ data }) => {
+              const disabledWidgets = widgetOrder.filter(id => !enabledWidgets.includes(id));
+              const newOrder = [...data, ...disabledWidgets];
+              updateWidgetOrder(newOrder);
+            }}
+            keyExtractor={(item) => item}
+            renderItem={renderDraggableWidgetItem}
+            showsVerticalScrollIndicator={false}
+            contentContainerStyle={{ paddingHorizontal: responsive.spacing[4] }}
+          />
         ) : (
-          <View style={styles.emptyStateContainer}>
-            <View style={styles.emptyStateIcon}>
-              <Ionicons name="cube-outline" size={64} color={colors.neutralMedium} />
-            </View>
-            <Text style={styles.emptyStateTitle}>No Widgets Added</Text>
-            <Text style={styles.emptyStateDescription}>
-              Add widgets to customize your dashboard and view your financial data
-            </Text>
-            <TouchableOpacity
-              style={styles.addWidgetsButton}
-              onPress={() => router.push('/settings/appearance')}
-            >
-              <Ionicons name="add-circle-outline" size={20} color={colors.neutralWhite} />
-              <Text style={styles.addWidgetsButtonText}>Add Widgets</Text>
-            </TouchableOpacity>
-          </View>
+          <FlatList
+            data={widgetData}
+            ListHeaderComponent={renderHeader}
+            ListFooterComponent={renderFooter}
+            renderItem={renderWidgetItem}
+            keyExtractor={(item) => item}
+            showsVerticalScrollIndicator={false}
+            contentContainerStyle={{ paddingHorizontal: responsive.spacing[4] }}
+          />
         )}
-
-        {/* Bottom spacing */}
-        <View style={{ height: responsive.spacing[4] }} />
-      </ScrollView>
 
       {/* Period Selector Modal */}
       <Modal
@@ -617,14 +709,12 @@ const DashboardScreen: React.FC = () => {
           </View>
         </TouchableOpacity>
       </Modal>
-    </Screen>
+      </Screen>
+    </GestureHandlerRootView>
   );
 };
 
 const styles = StyleSheet.create({
-  scrollView: {
-    flex: 1,
-  },
   header: {
     flexDirection: 'row',
     justifyContent: 'space-between',
@@ -709,9 +799,50 @@ const styles = StyleSheet.create({
     fontWeight: '500',
     color: colors.functionalSuccess,
   },
+  widgetsHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingHorizontal: responsive.spacing[4],
+    paddingTop: responsive.spacing[4],
+    paddingBottom: responsive.spacing[2],
+  },
+  widgetsHeaderTitle: {
+    fontSize: responsive.fontSize.lg,
+    fontWeight: '700',
+    color: colors.neutralDarkest,
+  },
+  editButton: {
+    paddingHorizontal: responsive.spacing[4],
+    paddingVertical: responsive.spacing[2],
+    borderRadius: theme.borderRadius.lg,
+    backgroundColor: colors.neutralBg,
+  },
+  editButtonText: {
+    fontSize: responsive.fontSize.sm,
+    fontWeight: '600',
+    color: colors.primary,
+  },
+  editButtonTextActive: {
+    color: colors.functionalSuccess,
+  },
   widgetsSection: {
     paddingHorizontal: responsive.spacing[4],
-    marginTop: responsive.spacing[4],
+    marginTop: responsive.spacing[2],
+  },
+  draggableWidget: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: responsive.spacing[4],
+    gap: responsive.spacing[2],
+  },
+  draggingWidget: {
+    opacity: 0.9,
+    transform: [{ scale: 1.02 }],
+  },
+  dragHandleLeft: {
+    paddingRight: responsive.spacing[2],
+    paddingVertical: responsive.spacing[2],
   },
   spendingCard: {
     marginHorizontal: responsive.spacing[4],
