@@ -1,19 +1,9 @@
 import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
-import { theme } from '@/constants/theme';
+import { getTheme } from '@/constants/theme';
 import { responsive, ms } from '@/constants/responsive';
 import { formatCurrencyCompact } from '@/utils/currency';
-
-const colors = {
-  primary: theme.colors.info.main,
-  neutralBg: theme.colors.background.secondary,
-  neutralWhite: theme.colors.background.primary,
-  neutralDarkest: theme.colors.text.primary,
-  neutralDark: theme.colors.text.secondary,
-  functionalSuccess: theme.colors.success.main,
-  functionalWarning: theme.colors.warning.main,
-  functionalError: theme.colors.danger.main,
-};
+import { useTheme } from '@/contexts/ThemeContext';
 
 export interface BudgetItem {
   category: string;
@@ -33,6 +23,20 @@ export const BudgetOverviewWidget: React.FC<BudgetOverviewWidgetProps> = ({
   onViewAll,
   onBudgetPress,
 }) => {
+  const { theme: themeMode } = useTheme();
+  const theme = getTheme(themeMode);
+
+  const colors = {
+    primary: theme.colors.info.main,
+    neutralBg: theme.colors.background.secondary,
+    neutralWhite: theme.colors.background.primary,
+    neutralDarkest: theme.colors.text.primary,
+    neutralDark: theme.colors.text.secondary,
+    functionalSuccess: theme.colors.success.main,
+    functionalWarning: theme.colors.warning.main,
+    functionalError: theme.colors.danger.main,
+  };
+
   const getProgressColor = (status: string) => {
     switch (status) {
       case 'good':
@@ -45,6 +49,71 @@ export const BudgetOverviewWidget: React.FC<BudgetOverviewWidgetProps> = ({
         return colors.primary;
     }
   };
+
+  const styles = StyleSheet.create({
+    container: {
+      backgroundColor: colors.neutralWhite,
+      borderRadius: theme.borderRadius.xl,
+      padding: responsive.spacing[5],
+      ...theme.shadows.sm,
+    },
+    transactionsHeader: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+      marginBottom: responsive.spacing[3],
+    },
+    sectionHeading: {
+      fontSize: responsive.fontSize.lg,
+      fontWeight: '700',
+      color: colors.neutralDarkest,
+    },
+    viewAllButton: {
+      fontSize: responsive.fontSize.sm,
+      fontWeight: '700',
+      color: colors.primary,
+    },
+    budgetContainer: {
+      gap: responsive.spacing[3],
+    },
+    budgetCard: {
+      backgroundColor: colors.neutralBg,
+      borderRadius: theme.borderRadius.lg,
+      padding: responsive.spacing[4],
+      gap: responsive.spacing[2],
+    },
+    budgetHeader: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      alignItems: 'baseline',
+    },
+    budgetCategory: {
+      fontSize: responsive.fontSize.md,
+      fontWeight: '600',
+      color: colors.neutralDarkest,
+    },
+    budgetRemaining: {
+      fontSize: responsive.fontSize.sm,
+      fontWeight: '500',
+      color: colors.neutralDark,
+    },
+    budgetOverText: {
+      fontSize: responsive.fontSize.sm,
+      fontWeight: '700',
+      color: colors.functionalError,
+    },
+    progressBar: {
+      width: '100%',
+      height: ms(10),
+      backgroundColor: colors.neutralBg,
+      borderRadius: ms(5),
+      overflow: 'hidden',
+    },
+    progressFill: {
+      height: '100%',
+      borderRadius: ms(5),
+    },
+  });
 
   return (
     <View style={styles.container}>
@@ -93,68 +162,3 @@ export const BudgetOverviewWidget: React.FC<BudgetOverviewWidgetProps> = ({
     </View>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    backgroundColor: colors.neutralWhite,
-    borderRadius: theme.borderRadius.xl,
-    padding: responsive.spacing[5],
-    ...theme.shadows.sm,
-  },
-  transactionsHeader: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: responsive.spacing[3],
-  },
-  sectionHeading: {
-    fontSize: responsive.fontSize.lg,
-    fontWeight: '700',
-    color: colors.neutralDarkest,
-  },
-  viewAllButton: {
-    fontSize: responsive.fontSize.sm,
-    fontWeight: '700',
-    color: colors.primary,
-  },
-  budgetContainer: {
-    gap: responsive.spacing[3],
-  },
-  budgetCard: {
-    backgroundColor: colors.neutralBg,
-    borderRadius: theme.borderRadius.lg,
-    padding: responsive.spacing[4],
-    gap: responsive.spacing[2],
-  },
-  budgetHeader: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'baseline',
-  },
-  budgetCategory: {
-    fontSize: responsive.fontSize.md,
-    fontWeight: '600',
-    color: colors.neutralDarkest,
-  },
-  budgetRemaining: {
-    fontSize: responsive.fontSize.sm,
-    fontWeight: '500',
-    color: colors.neutralDark,
-  },
-  budgetOverText: {
-    fontSize: responsive.fontSize.sm,
-    fontWeight: '700',
-    color: colors.functionalError,
-  },
-  progressBar: {
-    width: '100%',
-    height: ms(10),
-    backgroundColor: colors.neutralBg,
-    borderRadius: ms(5),
-    overflow: 'hidden',
-  },
-  progressFill: {
-    height: '100%',
-    borderRadius: ms(5),
-  },
-});

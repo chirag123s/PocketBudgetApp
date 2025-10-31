@@ -2,36 +2,13 @@ import React, { useState } from 'react';
 import { View, Text, StyleSheet, ScrollView, Switch, TouchableOpacity } from 'react-native';
 import { Screen } from '@/components/layout/Screen';
 import { ScreenHeader } from '@/components/layout/ScreenHeader';
-import { theme } from '@/constants/theme';
+import { getTheme } from '@/constants/theme';
 import { responsive, ms } from '@/constants/responsive';
 import { Ionicons } from '@expo/vector-icons';
 import { settingsTypography, settingsFontWeights, settingsTextStyles } from './typography';
 import { useWidgets } from '@/contexts/WidgetContext';
+import { useTheme } from '@/contexts/ThemeContext';
 import { WIDGET_REGISTRY, WidgetId } from '@/components/widgets';
-
-// Color Palette - Using theme colors
-const colors = {
-  // Primary Palette
-  primaryDark: theme.colors.info.dark,
-  primary: theme.colors.info.main,
-  primaryLight: theme.colors.info.light,
-
-  // Neutral Palette
-  neutralBg: theme.colors.background.secondary,
-  neutralWhite: theme.colors.background.primary,
-  neutralDarkest: theme.colors.text.primary,
-  neutralDark: theme.colors.text.secondary,
-  neutralMedium: theme.colors.text.tertiary,
-
-  // Functional Palette
-  functionalSuccess: theme.colors.success.main,
-  functionalWarning: theme.colors.warning.main,
-  functionalError: theme.colors.danger.main,
-
-  // Border
-  border: theme.colors.border.light,
-  iconBg: theme.colors.background.tertiary,
-};
 
 type ThemeType = 'light' | 'dark' | 'system';
 
@@ -48,8 +25,33 @@ const widgetIconMap: Record<WidgetId, keyof typeof Ionicons.glyphMap> = {
 };
 
 export default function AppearanceSettings() {
-  const [selectedTheme, setSelectedTheme] = useState<ThemeType>('system');
+  const { theme: currentTheme, themeMode, setThemeMode } = useTheme();
   const { enabledWidgets, widgetOrder, toggleWidget, isLoading } = useWidgets();
+  const theme = getTheme(currentTheme);
+
+  // Color Palette - Using theme colors
+  const colors = {
+    // Primary Palette
+    primaryDark: theme.colors.info.dark,
+    primary: theme.colors.info.main,
+    primaryLight: theme.colors.info.light,
+
+    // Neutral Palette
+    neutralBg: theme.colors.background.secondary,
+    neutralWhite: theme.colors.background.primary,
+    neutralDarkest: theme.colors.text.primary,
+    neutralDark: theme.colors.text.secondary,
+    neutralMedium: theme.colors.text.tertiary,
+
+    // Functional Palette
+    functionalSuccess: theme.colors.success.main,
+    functionalWarning: theme.colors.warning.main,
+    functionalError: theme.colors.danger.main,
+
+    // Border
+    border: theme.colors.border.light,
+    iconBg: theme.colors.background.tertiary,
+  };
 
   const ThemeOption = ({
     icon,
@@ -60,7 +62,7 @@ export default function AppearanceSettings() {
     label: string;
     value: ThemeType;
   }) => {
-    const isSelected = selectedTheme === value;
+    const isSelected = themeMode === value;
 
     return (
       <TouchableOpacity
@@ -68,7 +70,7 @@ export default function AppearanceSettings() {
           styles.themeOption,
           isSelected && styles.themeOptionSelected,
         ]}
-        onPress={() => setSelectedTheme(value)}
+        onPress={() => setThemeMode(value)}
         activeOpacity={0.7}
       >
         <Ionicons
@@ -129,56 +131,7 @@ export default function AppearanceSettings() {
     );
   };
 
-  return (
-    <Screen scrollable={false} noPadding backgroundColor={colors.neutralBg} edges={['top', 'bottom']}>
-      <ScreenHeader title="Appearance" />
-
-      <ScrollView
-        contentContainerStyle={styles.content}
-        showsVerticalScrollIndicator={false}
-      >
-        {/* Theme Section */}
-        <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Theme</Text>
-          <Text style={styles.sectionDescription}>
-            Changes will apply across the app.
-          </Text>
-
-          <View style={styles.themeContainer}>
-            <ThemeOption icon="sunny" label="Light" value="light" />
-            <ThemeOption icon="moon" label="Dark" value="dark" />
-            <ThemeOption icon="contrast" label="System" value="system" />
-          </View>
-        </View>
-
-        {/* Home Screen Widgets Section */}
-        <View style={styles.widgetsSection}>
-          <Text style={styles.sectionTitle}>Home Screen Widgets</Text>
-          <Text style={styles.sectionDescription}>
-            Customize widgets shown on your dashboard. Drag to reorder.
-          </Text>
-
-          {isLoading ? (
-            <View style={styles.loadingContainer}>
-              <Text style={styles.loadingText}>Loading widgets...</Text>
-            </View>
-          ) : (
-            <View style={styles.widgetsList}>
-              {widgetOrder.map((widgetId) => (
-                <WidgetItem key={widgetId} widgetId={widgetId} />
-              ))}
-            </View>
-          )}
-        </View>
-
-        {/* Bottom spacing */}
-        <View style={{ height: responsive.spacing[8] }} />
-      </ScrollView>
-    </Screen>
-  );
-}
-
-const styles = StyleSheet.create({
+  const styles = StyleSheet.create({
   content: {
     paddingHorizontal: responsive.spacing[4],
   },
@@ -283,3 +236,52 @@ const styles = StyleSheet.create({
     transform: [{ scaleX: 1.1 }, { scaleY: 1.1 }],
   },
 });
+
+  return (
+    <Screen scrollable={false} noPadding backgroundColor={colors.neutralBg} edges={['top', 'bottom']}>
+      <ScreenHeader title="Appearance" />
+
+      <ScrollView
+        contentContainerStyle={styles.content}
+        showsVerticalScrollIndicator={false}
+      >
+        {/* Theme Section */}
+        <View style={styles.section}>
+          <Text style={styles.sectionTitle}>Theme</Text>
+          <Text style={styles.sectionDescription}>
+            Changes will apply across the app.
+          </Text>
+
+          <View style={styles.themeContainer}>
+            <ThemeOption icon="sunny" label="Light" value="light" />
+            <ThemeOption icon="moon" label="Dark" value="dark" />
+            <ThemeOption icon="contrast" label="System" value="system" />
+          </View>
+        </View>
+
+        {/* Home Screen Widgets Section */}
+        <View style={styles.widgetsSection}>
+          <Text style={styles.sectionTitle}>Home Screen Widgets</Text>
+          <Text style={styles.sectionDescription}>
+            Customize widgets shown on your dashboard. Drag to reorder.
+          </Text>
+
+          {isLoading ? (
+            <View style={styles.loadingContainer}>
+              <Text style={styles.loadingText}>Loading widgets...</Text>
+            </View>
+          ) : (
+            <View style={styles.widgetsList}>
+              {widgetOrder.map((widgetId) => (
+                <WidgetItem key={widgetId} widgetId={widgetId} />
+              ))}
+            </View>
+          )}
+        </View>
+
+        {/* Bottom spacing */}
+        <View style={{ height: responsive.spacing[8] }} />
+      </ScrollView>
+    </Screen>
+  );
+}

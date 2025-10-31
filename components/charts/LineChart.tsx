@@ -1,16 +1,9 @@
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import Svg, { Line, Circle, Polyline } from 'react-native-svg';
-import { theme } from '@/constants/theme';
+import { getTheme } from '@/constants/theme';
+import { useTheme } from '@/contexts/ThemeContext';
 import { responsive, ms } from '@/constants/responsive';
-
-// Color Palette
-const colors = {
-  primary: theme.colors.info.main,
-  neutralWhite: theme.colors.background.primary,
-  neutralMedium: theme.colors.text.tertiary,
-  neutralBg: theme.colors.background.secondary,
-};
 
 export interface LineChartDataPoint {
   label: string;
@@ -39,15 +32,30 @@ export const LineChart: React.FC<LineChartProps> = ({
   showGrid = true,
   showLabels = true,
   showLegend = false,
-  primaryColor = colors.primary,
-  compareColor = colors.neutralMedium,
+  primaryColor,
+  compareColor,
   primaryLabel = 'Actual Spending',
   compareLabel = 'Budget Limit',
   showCompare = true,
 }) => {
+  const { theme: themeMode } = useTheme();
+  const theme = getTheme(themeMode);
+
+  // Color Palette
+  const colors = {
+    primary: theme.colors.info.main,
+    neutralWhite: theme.colors.background.primary,
+    neutralMedium: theme.colors.text.tertiary,
+    neutralBg: theme.colors.background.secondary,
+  };
+
   // Use responsive scaling
   const height = ms(heightScale);
   const width = ms(widthScale);
+
+  // Set default colors using the dynamic theme
+  const actualPrimaryColor = primaryColor ?? colors.primary;
+  const actualCompareColor = compareColor ?? colors.neutralMedium;
 
   // Calculate chart dimensions
   const maxValue = Math.max(
@@ -78,6 +86,51 @@ export const LineChart: React.FC<LineChartProps> = ({
     ? comparePoints.map(p => `${p.x},${p.y}`).join(' ')
     : '';
 
+  const styles = StyleSheet.create({
+    container: {
+      gap: responsive.spacing[2],
+    },
+    chartContainer: {
+      alignItems: 'center',
+      justifyContent: 'center',
+      paddingVertical: responsive.spacing[3],
+      borderRadius: theme.borderRadius.lg,
+      overflow: 'hidden',
+      backgroundColor: colors.neutralBg,
+    },
+    labels: {
+      flexDirection: 'row',
+      justifyContent: 'space-around',
+      marginTop: responsive.spacing[2],
+    },
+    labelText: {
+      fontSize: responsive.fontSize.xs,
+      fontWeight: '700',
+      color: theme.colors.text.secondary,
+    },
+    legend: {
+      flexDirection: 'row',
+      gap: responsive.spacing[4],
+      marginTop: responsive.spacing[4],
+      justifyContent: 'center',
+    },
+    legendItem: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: responsive.spacing[2],
+    },
+    legendDot: {
+      width: ms(12),
+      height: ms(12),
+      borderRadius: ms(6),
+    },
+    legendText: {
+      fontSize: responsive.fontSize.sm,
+      fontWeight: '400',
+      color: theme.colors.text.secondary,
+    },
+  });
+
   return (
     <View style={styles.container}>
       {/* SVG Chart */}
@@ -106,7 +159,7 @@ export const LineChart: React.FC<LineChartProps> = ({
               <Polyline
                 points={comparePath}
                 fill="none"
-                stroke={compareColor}
+                stroke={actualCompareColor}
                 strokeWidth={ms(2)}
                 strokeDasharray="6,4"
               />
@@ -116,7 +169,7 @@ export const LineChart: React.FC<LineChartProps> = ({
                   cx={point.x}
                   cy={point.y}
                   r={ms(3)}
-                  fill={compareColor}
+                  fill={actualCompareColor}
                   stroke={colors.neutralWhite}
                   strokeWidth={ms(2)}
                 />
@@ -128,7 +181,7 @@ export const LineChart: React.FC<LineChartProps> = ({
           <Polyline
             points={primaryPath}
             fill="none"
-            stroke={primaryColor}
+            stroke={actualPrimaryColor}
             strokeWidth={ms(3)}
             strokeLinecap="round"
             strokeLinejoin="round"
@@ -141,7 +194,7 @@ export const LineChart: React.FC<LineChartProps> = ({
               cx={point.x}
               cy={point.y}
               r={ms(4)}
-              fill={primaryColor}
+              fill={actualPrimaryColor}
               stroke={colors.neutralWhite}
               strokeWidth={ms(2)}
             />
@@ -162,12 +215,12 @@ export const LineChart: React.FC<LineChartProps> = ({
       {showLegend && (
         <View style={styles.legend}>
           <View style={styles.legendItem}>
-            <View style={[styles.legendDot, { backgroundColor: primaryColor }]} />
+            <View style={[styles.legendDot, { backgroundColor: actualPrimaryColor }]} />
             <Text style={styles.legendText}>{primaryLabel}</Text>
           </View>
           {showCompare && (
             <View style={styles.legendItem}>
-              <View style={[styles.legendDot, { backgroundColor: compareColor }]} />
+              <View style={[styles.legendDot, { backgroundColor: actualCompareColor }]} />
               <Text style={styles.legendText}>{compareLabel}</Text>
             </View>
           )}
@@ -176,47 +229,3 @@ export const LineChart: React.FC<LineChartProps> = ({
     </View>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    gap: responsive.spacing[2],
-  },
-  chartContainer: {
-    alignItems: 'center',
-    justifyContent: 'center',
-    paddingVertical: responsive.spacing[3],
-    borderRadius: theme.borderRadius.lg,
-    overflow: 'hidden',
-  },
-  labels: {
-    flexDirection: 'row',
-    justifyContent: 'space-around',
-    marginTop: responsive.spacing[2],
-  },
-  labelText: {
-    fontSize: responsive.fontSize.xs,
-    fontWeight: '700',
-    color: theme.colors.text.secondary,
-  },
-  legend: {
-    flexDirection: 'row',
-    gap: responsive.spacing[4],
-    marginTop: responsive.spacing[4],
-    justifyContent: 'center',
-  },
-  legendItem: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: responsive.spacing[2],
-  },
-  legendDot: {
-    width: ms(12),
-    height: ms(12),
-    borderRadius: ms(6),
-  },
-  legendText: {
-    fontSize: responsive.fontSize.sm,
-    fontWeight: '400',
-    color: theme.colors.text.secondary,
-  },
-});

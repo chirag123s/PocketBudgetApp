@@ -1,8 +1,8 @@
 import React from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, ScrollView } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, ScrollView, StatusBar } from 'react-native';
 import { useRouter } from 'expo-router';
 import { Screen } from '@/components/layout/Screen';
-import { theme } from '@/constants/theme';
+import { getTheme, useTheme } from '@/constants/theme';
 import { responsive, ms } from '@/constants/responsive';
 import { Ionicons } from '@expo/vector-icons';
 
@@ -25,20 +25,175 @@ const historyData: HistoryPeriod[] = [
 
 export default function BudgetHistory() {
   const router = useRouter();
+  const { currentTheme, isDark } = useTheme();
+  const theme = getTheme(currentTheme);
 
   const underBudgetCount = historyData.filter(p => p.status === 'under').length;
   const overBudgetCount = historyData.filter(p => p.status === 'over').length;
   const avgSpending = Math.round(historyData.reduce((sum, p) => sum + p.spent, 0) / historyData.length);
 
+  const colors = {
+    background: theme.colors.background.primary,
+    backgroundSecondary: theme.colors.background.secondary,
+    backgroundTertiary: theme.colors.background.tertiary,
+    text: theme.colors.text.primary,
+    textSecondary: theme.colors.text.secondary,
+    textTertiary: theme.colors.text.tertiary,
+    primary: theme.colors.primary[600],
+    border: theme.colors.border.light,
+    borderMain: theme.colors.border.main,
+    success: theme.colors.success.main,
+    successLight: theme.colors.success.light,
+    successDark: theme.colors.success.dark,
+    danger: theme.colors.danger.main,
+    dangerLight: theme.colors.danger.light,
+    dangerDark: theme.colors.danger.dark,
+  };
+
+  const styles = StyleSheet.create({
+    header: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'space-between',
+      paddingHorizontal: responsive.spacing[4],
+      paddingVertical: responsive.spacing[2],
+      backgroundColor: colors.background,
+      borderBottomWidth: 1,
+      borderBottomColor: colors.border,
+    },
+    backButton: {
+      padding: responsive.spacing[2],
+    },
+    headerTitle: {
+      ...theme.typography.styles.h3,
+      fontSize: responsive.fontSize.lg,
+      lineHeight: responsive.fontSize.lg * 1.5,
+      color: colors.text,
+    },
+    placeholder: {
+      width: 40,
+    },
+    content: {
+      padding: responsive.spacing[6],
+      paddingBottom: responsive.spacing[8],
+    },
+    summaryCard: {
+      backgroundColor: colors.background,
+      borderRadius: theme.borderRadius.xl,
+      padding: responsive.spacing[4],
+      marginBottom: responsive.spacing[6],
+      ...theme.shadows.sm,
+    },
+    summaryLabel: {
+      ...theme.typography.styles.label,
+      fontSize: responsive.fontSize.xs,
+      lineHeight: responsive.fontSize.xs * 1.5,
+      color: colors.textTertiary,
+      fontWeight: '600',
+      marginBottom: responsive.spacing[2],
+    },
+    statsRow: {
+      flexDirection: 'row',
+      justifyContent: 'space-around',
+      alignItems: 'center',
+    },
+    statItem: {
+      alignItems: 'center',
+      flex: 1,
+    },
+    statValue: {
+      fontSize: responsive.fontSize.h3,
+      lineHeight: responsive.fontSize.h3 * 1.5,
+      fontWeight: '700',
+      color: colors.success,
+    },
+    statLabel: {
+      ...theme.typography.styles.caption,
+      color: colors.textSecondary,
+      marginTop: responsive.spacing[1],
+    },
+    divider: {
+      width: 1,
+      height: 40,
+      backgroundColor: colors.border,
+    },
+    historyList: {
+      gap: responsive.spacing[2],
+    },
+    periodCard: {
+      backgroundColor: colors.background,
+      borderRadius: theme.borderRadius.xl,
+      padding: responsive.spacing[4],
+      ...theme.shadows.sm,
+    },
+    periodHeader: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'space-between',
+      marginBottom: responsive.spacing[2],
+    },
+    periodTitle: {
+      ...theme.typography.styles.body,
+      color: colors.text,
+      fontWeight: '600',
+    },
+    periodStats: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'space-between',
+      marginBottom: responsive.spacing[2],
+    },
+    periodAmount: {
+      ...theme.typography.styles.body,
+      color: colors.textSecondary,
+    },
+    statusBadge: {
+      borderRadius: theme.borderRadius.full,
+      paddingHorizontal: responsive.spacing[2],
+      paddingVertical: 4,
+    },
+    statusText: {
+      ...theme.typography.styles.caption,
+      fontSize: responsive.fontSize.xs,
+      lineHeight: responsive.fontSize.xs * 1.5,
+      fontWeight: '500',
+    },
+    miniProgressBar: {
+      height: 6,
+      backgroundColor: colors.backgroundTertiary,
+      borderRadius: theme.borderRadius.full,
+      overflow: 'hidden',
+    },
+    miniProgressFill: {
+      height: '100%',
+    },
+    loadMoreButton: {
+      borderWidth: 2,
+      borderStyle: 'dashed',
+      borderColor: colors.borderMain,
+      borderRadius: theme.borderRadius.xl,
+      padding: responsive.spacing[4],
+      alignItems: 'center',
+      marginTop: responsive.spacing[4],
+    },
+    loadMoreText: {
+      ...theme.typography.styles.button,
+      color: colors.textSecondary,
+      fontSize: responsive.fontSize.sm,
+      lineHeight: responsive.fontSize.sm * 1.5,
+    },
+  });
+
   return (
-    <Screen noPadding backgroundColor={theme.colors.background.secondary}>
+    <Screen noPadding backgroundColor={colors.backgroundSecondary}>
+      <StatusBar barStyle={isDark ? 'light-content' : 'dark-content'} />
       {/* Header */}
       <View style={styles.header}>
         <TouchableOpacity
           style={styles.backButton}
           onPress={() => router.back()}
         >
-          <Ionicons name="chevron-back" size={24} color={theme.colors.primary[600]} />
+          <Ionicons name="chevron-back" size={24} color={colors.primary} />
         </TouchableOpacity>
         <Text style={styles.headerTitle}>Budget History</Text>
         <View style={styles.placeholder} />
@@ -55,7 +210,7 @@ export default function BudgetHistory() {
             </View>
             <View style={styles.divider} />
             <View style={styles.statItem}>
-              <Text style={[styles.statValue, { color: theme.colors.danger.main }]}>
+              <Text style={[styles.statValue, { color: colors.danger }]}>
                 {overBudgetCount}
               </Text>
               <Text style={styles.statLabel}>Over Budget</Text>
@@ -80,7 +235,7 @@ export default function BudgetHistory() {
             >
               <View style={styles.periodHeader}>
                 <Text style={styles.periodTitle}>{period.period}</Text>
-                <Ionicons name="chevron-forward" size={20} color={theme.colors.text.tertiary} />
+                <Ionicons name="chevron-forward" size={20} color={colors.textTertiary} />
               </View>
 
               <View style={styles.periodStats}>
@@ -89,11 +244,11 @@ export default function BudgetHistory() {
                 </Text>
                 <View style={[
                   styles.statusBadge,
-                  { backgroundColor: period.status === 'under' ? theme.colors.success.light : theme.colors.danger.light }
+                  { backgroundColor: period.status === 'under' ? colors.successLight : colors.dangerLight }
                 ]}>
                   <Text style={[
                     styles.statusText,
-                    { color: period.status === 'under' ? theme.colors.success.dark : theme.colors.danger.dark }
+                    { color: period.status === 'under' ? colors.successDark : colors.dangerDark }
                   ]}>
                     {period.status === 'under' ? '✓' : '⚠'} ${Math.abs(period.variance)} {period.status === 'under' ? 'under' : 'over'}
                   </Text>
@@ -107,7 +262,7 @@ export default function BudgetHistory() {
                     styles.miniProgressFill,
                     {
                       width: `${Math.min((period.spent / period.budget) * 100, 100)}%`,
-                      backgroundColor: period.status === 'under' ? theme.colors.success.main : theme.colors.danger.main,
+                      backgroundColor: period.status === 'under' ? colors.success : colors.danger,
                     },
                   ]}
                 />
@@ -124,135 +279,3 @@ export default function BudgetHistory() {
     </Screen>
   );
 }
-
-const styles = StyleSheet.create({
-  header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    paddingHorizontal: responsive.spacing[4],
-    paddingVertical: responsive.spacing[2],
-    backgroundColor: theme.colors.background.primary,
-    borderBottomWidth: 1,
-    borderBottomColor: theme.colors.border.light,
-  },
-  backButton: {
-    padding: responsive.spacing[2],
-  },
-  headerTitle: {
-    ...theme.typography.styles.h3,
-    fontSize: responsive.fontSize.lg,
-    lineHeight: responsive.fontSize.lg * 1.5,
-  },
-  placeholder: {
-    width: 40,
-  },
-  content: {
-    padding: responsive.spacing[6],
-    paddingBottom: responsive.spacing[8],
-  },
-  summaryCard: {
-    backgroundColor: theme.colors.background.primary,
-    borderRadius: theme.borderRadius.xl,
-    padding: responsive.spacing[4],
-    marginBottom: responsive.spacing[6],
-    ...theme.shadows.sm,
-  },
-  summaryLabel: {
-    ...theme.typography.styles.label,
-    fontSize: responsive.fontSize.xs,
-    lineHeight: responsive.fontSize.xs * 1.5,
-    color: theme.colors.text.tertiary,
-    fontWeight: '600',
-    marginBottom: responsive.spacing[2],
-  },
-  statsRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-around',
-    alignItems: 'center',
-  },
-  statItem: {
-    alignItems: 'center',
-    flex: 1,
-  },
-  statValue: {
-    fontSize: responsive.fontSize.h3,
-    lineHeight: responsive.fontSize.h3 * 1.5,
-    fontWeight: '700',
-    color: theme.colors.success.main,
-  },
-  statLabel: {
-    ...theme.typography.styles.caption,
-    color: theme.colors.text.secondary,
-    marginTop: responsive.spacing[1],
-  },
-  divider: {
-    width: 1,
-    height: 40,
-    backgroundColor: theme.colors.border.light,
-  },
-  historyList: {
-    gap: responsive.spacing[2],
-  },
-  periodCard: {
-    backgroundColor: theme.colors.background.primary,
-    borderRadius: theme.borderRadius.xl,
-    padding: responsive.spacing[4],
-    ...theme.shadows.sm,
-  },
-  periodHeader: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    marginBottom: responsive.spacing[2],
-  },
-  periodTitle: {
-    ...theme.typography.styles.body,
-    fontWeight: '600',
-  },
-  periodStats: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    marginBottom: responsive.spacing[2],
-  },
-  periodAmount: {
-    ...theme.typography.styles.body,
-    color: theme.colors.text.secondary,
-  },
-  statusBadge: {
-    borderRadius: theme.borderRadius.full,
-    paddingHorizontal: responsive.spacing[2],
-    paddingVertical: 4,
-  },
-  statusText: {
-    ...theme.typography.styles.caption,
-    fontSize: responsive.fontSize.xs,
-    lineHeight: responsive.fontSize.xs * 1.5,
-    fontWeight: '500',
-  },
-  miniProgressBar: {
-    height: 6,
-    backgroundColor: theme.colors.background.tertiary,
-    borderRadius: theme.borderRadius.full,
-    overflow: 'hidden',
-  },
-  miniProgressFill: {
-    height: '100%',
-  },
-  loadMoreButton: {
-    borderWidth: 2,
-    borderStyle: 'dashed',
-    borderColor: theme.colors.border.main,
-    borderRadius: theme.borderRadius.xl,
-    padding: responsive.spacing[4],
-    alignItems: 'center',
-    marginTop: responsive.spacing[4],
-  },
-  loadMoreText: {
-    ...theme.typography.styles.button,
-    color: theme.colors.text.secondary,
-    fontSize: responsive.fontSize.sm,
-    lineHeight: responsive.fontSize.sm * 1.5,
-  },
-});

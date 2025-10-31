@@ -4,35 +4,15 @@ import {
   Text,
   ScrollView,
   Pressable,
+  StatusBar,
 } from 'react-native';
+import { useRouter } from 'expo-router';
 import { Screen } from '@/components/layout/Screen';
 import { ScreenHeader } from '@/components/layout/ScreenHeader';
-import { theme } from '@/constants/theme';
+import { getTheme } from '@/constants/theme';
+import { useTheme } from '@/contexts/ThemeContext';
 import { responsive, ms } from '@/constants/responsive';
 import { Ionicons } from '@expo/vector-icons';
-
-// Color Palette - Using theme colors
-const colors = {
-  // Primary Palette
-  primaryDark: theme.colors.info.dark,
-  primary: theme.colors.info.main,
-  primaryLight: theme.colors.info.light,
-
-  // Neutral Palette
-  neutralBg: theme.colors.background.secondary,
-  neutralWhite: theme.colors.background.primary,
-  neutralDarkest: theme.colors.text.primary,
-  neutralDark: theme.colors.text.secondary,
-  neutralMedium: theme.colors.text.tertiary,
-
-  // Functional Palette
-  functionalSuccess: theme.colors.success.main,
-  functionalWarning: theme.colors.warning.main,
-  functionalError: theme.colors.danger.main,
-
-  // Border
-  border: theme.colors.border.light,
-};
 
 interface Category {
   id: string;
@@ -48,6 +28,33 @@ interface CategorySection {
 }
 
 export default function CategoriesScreen() {
+  const router = useRouter();
+  const { theme: themeMode } = useTheme();
+  const theme = getTheme(themeMode);
+
+  // Color Palette - Using dynamic theme colors
+  const colors = {
+    // Primary Palette
+    primaryDark: theme.colors.info.dark,
+    primary: theme.colors.info.main,
+    primaryLight: theme.colors.info.light,
+
+    // Neutral Palette
+    neutralBg: theme.colors.background.secondary,
+    neutralWhite: theme.colors.background.primary,
+    neutralDarkest: theme.colors.text.primary,
+    neutralDark: theme.colors.text.secondary,
+    neutralMedium: theme.colors.text.tertiary,
+
+    // Functional Palette
+    functionalSuccess: theme.colors.success.main,
+    functionalWarning: theme.colors.warning.main,
+    functionalError: theme.colors.danger.main,
+
+    // Border
+    border: theme.colors.border.light,
+  };
+
   const sections: CategorySection[] = [
     {
       title: 'ESSENTIALS',
@@ -156,6 +163,7 @@ export default function CategoriesScreen() {
 
   return (
     <Screen scrollable={false} noPadding backgroundColor={colors.neutralBg} edges={['top']}>
+      <StatusBar barStyle={themeMode === 'dark' ? 'light-content' : 'dark-content'} />
       <ScreenHeader
         title="Categories"
         backgroundColor={colors.neutralBg}

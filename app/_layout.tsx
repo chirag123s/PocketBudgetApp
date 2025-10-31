@@ -7,6 +7,7 @@ import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { AuthProvider, useAuth } from '@/contexts/AuthContext';
 import { WidgetProvider } from '@/contexts/WidgetContext';
+import { ThemeProvider } from '@/contexts/ThemeContext';
 import ErrorBoundary from '@/components/ErrorBoundary';
 
 console.log('✅ _layout.tsx imports complete');
@@ -122,12 +123,14 @@ export default function RootLayout() {
     <GestureHandlerRootView style={{ flex: 1 }}>
       <ErrorBoundary>
         <SafeAreaProvider>
-          <AuthProvider>
-            <WidgetProvider>
-              <StatusBar style="auto" />
-              <RootLayoutNav />
-            </WidgetProvider>
-          </AuthProvider>
+          <ThemeProvider>
+            <AuthProvider>
+              <WidgetProvider>
+                <StatusBar style="auto" />
+                <RootLayoutNav />
+              </WidgetProvider>
+            </AuthProvider>
+          </ThemeProvider>
         </SafeAreaProvider>
       </ErrorBoundary>
     </GestureHandlerRootView>

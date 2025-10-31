@@ -12,8 +12,9 @@ console.log('✅ expo-router imported');
 import { useAuth } from '@/contexts/AuthContext';
 console.log('✅ AuthContext imported');
 
-import { theme } from '@/constants/theme';
-console.log('✅ theme imported - colors.primary[600]:', theme.colors.primary[600]);
+import { getTheme } from '@/constants/theme';
+import { useTheme } from '@/contexts/ThemeContext';
+console.log('✅ theme imported');
 
 import { useScreenTracker } from '@/utils/screenTracker';
 console.log('✅ screenTracker imported');
@@ -21,7 +22,7 @@ console.log('✅ screenTracker imported');
 import { Screen } from '@/components/layout/Screen';
 console.log('✅ Screen component imported');
 
-console.log('📦 index.tsx MODULE LOADED - About to create StyleSheet');
+console.log('📦 index.tsx MODULE LOADED');
 
 /**
  * Splash/Index Screen
@@ -33,6 +34,8 @@ export default function Index() {
   useScreenTracker('IndexScreen');
   const router = useRouter();
   const { isAuthenticated, isGuestMode, isLoading, hasCompletedOnboarding } = useAuth();
+  const { theme: themeMode } = useTheme();
+  const theme = getTheme(themeMode);
 
   useEffect(() => {
     if (isLoading) return;
@@ -58,6 +61,14 @@ export default function Index() {
     console.error('❌ ActivityIndicator prop ERROR: color is', typeof activityColor, '- value:', activityColor);
   }
 
+  const styles = StyleSheet.create({
+    container: {
+      flex: 1,
+      justifyContent: 'center',
+      alignItems: 'center',
+    },
+  });
+
   return (
     <Screen scrollable={false} backgroundColor={theme.colors.background.primary}>
       <View style={styles.container}>
@@ -71,15 +82,4 @@ export default function Index() {
   );
 }
 
-console.log('🎨 Creating StyleSheet for index.tsx');
-console.log('   backgroundColor value:', theme.colors.background.primary, 'type:', typeof theme.colors.background.primary);
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-});
-
-console.log('✅ StyleSheet created successfully for index.tsx');
+console.log('✅ Index component defined successfully');

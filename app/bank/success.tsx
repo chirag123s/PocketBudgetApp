@@ -1,9 +1,10 @@
 import React, { useEffect, useRef } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Animated } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, Animated, StatusBar } from 'react-native';
 import { useRouter } from 'expo-router';
 import { Screen } from '@/components/layout/Screen';
 import { Button } from '@/components/ui/Button';
-import { theme } from '@/constants/theme';
+import { getTheme } from '@/constants/theme';
+import { useTheme } from '@/contexts/ThemeContext';
 import { responsive, ms } from '@/constants/responsive';
 import { Ionicons } from '@expo/vector-icons';
 
@@ -11,6 +12,147 @@ export default function ImportSuccess() {
   const router = useRouter();
   const scaleAnim = useRef(new Animated.Value(0)).current;
   const pulseAnim = useRef(new Animated.Value(1)).current;
+  const { theme: themeMode } = useTheme();
+  const theme = getTheme(themeMode);
+
+  const colors = {
+    background: theme.colors.background.primary,
+    backgroundSecondary: theme.colors.background.secondary,
+    backgroundTertiary: theme.colors.background.tertiary,
+    textPrimary: theme.colors.text.primary,
+    textSecondary: theme.colors.text.secondary,
+    primary: theme.colors.primary[500],
+    primaryDark: theme.colors.primary[600],
+    primaryLight: theme.colors.primary[200],
+    success: theme.colors.success.main,
+    infoLight: theme.colors.info.light,
+    infoDark: theme.colors.info.dark,
+  };
+
+  const styles = StyleSheet.create({
+    container: {
+      flex: 1,
+      justifyContent: 'center',
+      alignItems: 'center',
+      paddingHorizontal: responsive.spacing[6],
+    },
+    iconContainer: {
+      position: 'relative',
+      marginBottom: responsive.spacing[8],
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
+    pulseCircle: {
+      position: 'absolute',
+      width: 128,
+      height: 128,
+      borderRadius: 64,
+      borderWidth: 4,
+      borderColor: colors.primaryLight,
+    },
+    iconCircle: {
+      width: 128,
+      height: 128,
+      borderRadius: 64,
+      backgroundColor: colors.primary,
+      alignItems: 'center',
+      justifyContent: 'center',
+      ...theme.shadows.lg,
+    },
+    title: {
+      ...theme.typography.styles.h1,
+      fontSize: responsive.fontSize.md,
+      lineHeight: responsive.fontSize.md * 1.5,
+      textAlign: 'center',
+      marginBottom: responsive.spacing[2],
+      color: colors.textPrimary,
+    },
+    message: {
+      ...theme.typography.styles.h4,
+      textAlign: 'center',
+      color: colors.textSecondary,
+      marginBottom: responsive.spacing[8],
+    },
+    messageHighlight: {
+      fontWeight: '600',
+      color: colors.primaryDark,
+    },
+    accountsCard: {
+      width: '100%',
+      maxWidth: 400,
+      backgroundColor: colors.backgroundSecondary,
+      borderRadius: 20,
+      padding: responsive.spacing[4],
+      marginBottom: responsive.spacing[8],
+    },
+    bankHeader: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: responsive.spacing[2],
+      marginBottom: responsive.spacing[2],
+    },
+    bankLogo: {
+      width: 40,
+      height: 40,
+      backgroundColor: colors.backgroundTertiary,
+      borderRadius: 12,
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
+    bankLogoText: {
+      fontSize: responsive.fontSize.md,
+      lineHeight: responsive.fontSize.md * 1.5,
+    },
+    bankName: {
+      ...theme.typography.styles.body,
+      fontWeight: '600',
+      color: colors.textPrimary,
+    },
+    accountsList: {
+      gap: responsive.spacing[1],
+      marginLeft: 48,
+    },
+    accountItem: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: responsive.spacing[2],
+    },
+    accountName: {
+      ...theme.typography.styles.bodySmall,
+      color: colors.textSecondary,
+    },
+    nextStepCard: {
+      width: '100%',
+      maxWidth: 400,
+      backgroundColor: colors.infoLight,
+      borderRadius: 20,
+      padding: responsive.spacing[4],
+      marginBottom: responsive.spacing[4],
+    },
+    nextStepTitle: {
+      ...theme.typography.styles.body,
+      fontWeight: '600',
+      color: colors.infoDark,
+      marginBottom: responsive.spacing[1],
+    },
+    nextStepDescription: {
+      ...theme.typography.styles.bodySmall,
+      color: colors.infoDark,
+    },
+    buttonContainer: {
+      width: '100%',
+      maxWidth: 400,
+    },
+    skipButton: {
+      paddingVertical: responsive.spacing[2],
+      alignItems: 'center',
+      marginTop: responsive.spacing[2],
+    },
+    skipButtonText: {
+      ...theme.typography.styles.button,
+      color: colors.textSecondary,
+    },
+  });
 
   useEffect(() => {
     // Initial scale animation
@@ -39,7 +181,8 @@ export default function ImportSuccess() {
   }, []);
 
   return (
-    <Screen backgroundColor={theme.colors.background.primary}>
+    <Screen backgroundColor={colors.background}>
+      <StatusBar barStyle={themeMode === 'dark' ? 'light-content' : 'dark-content'} backgroundColor={colors.background} />
       <View style={styles.container}>
         {/* Success Icon */}
         <View style={styles.iconContainer}>
@@ -77,11 +220,11 @@ export default function ImportSuccess() {
           </View>
           <View style={styles.accountsList}>
             <View style={styles.accountItem}>
-              <Ionicons name="checkmark" size={16} color={theme.colors.success.main} />
+              <Ionicons name="checkmark" size={16} color={colors.success} />
               <Text style={styles.accountName}>Smart Access</Text>
             </View>
             <View style={styles.accountItem}>
-              <Ionicons name="checkmark" size={16} color={theme.colors.success.main} />
+              <Ionicons name="checkmark" size={16} color={colors.success} />
               <Text style={styles.accountName}>Complete Freedom</Text>
             </View>
           </View>
@@ -121,127 +264,3 @@ export default function ImportSuccess() {
     </Screen>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    paddingHorizontal: responsive.spacing[6],
-  },
-  iconContainer: {
-    position: 'relative',
-    marginBottom: responsive.spacing[8],
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  pulseCircle: {
-    position: 'absolute',
-    width: 128,
-    height: 128,
-    borderRadius: 64,
-    borderWidth: 4,
-    borderColor: theme.colors.primary[200],
-  },
-  iconCircle: {
-    width: 128,
-    height: 128,
-    borderRadius: 64,
-    backgroundColor: theme.colors.primary[500],
-    alignItems: 'center',
-    justifyContent: 'center',
-    ...theme.shadows.lg,
-  },
-  title: {
-    ...theme.typography.styles.h1,
-    fontSize: responsive.fontSize.md,
-    lineHeight: responsive.fontSize.md * 1.5,
-    textAlign: 'center',
-    marginBottom: responsive.spacing[2],
-    color: theme.colors.text.primary,
-  },
-  message: {
-    ...theme.typography.styles.h4,
-    textAlign: 'center',
-    color: theme.colors.text.secondary,
-    marginBottom: responsive.spacing[8],
-  },
-  messageHighlight: {
-    fontWeight: '600',
-    color: theme.colors.primary[600],
-  },
-  accountsCard: {
-    width: '100%',
-    maxWidth: 400,
-    backgroundColor: theme.colors.background.secondary,
-    borderRadius: 20,
-    padding: responsive.spacing[4],
-    marginBottom: responsive.spacing[8],
-  },
-  bankHeader: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: responsive.spacing[2],
-    marginBottom: responsive.spacing[2],
-  },
-  bankLogo: {
-    width: 40,
-    height: 40,
-    backgroundColor: theme.colors.background.tertiary,
-    borderRadius: 12,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  bankLogoText: {
-    fontSize: responsive.fontSize.md,
-    lineHeight: responsive.fontSize.md * 1.5,
-  },
-  bankName: {
-    ...theme.typography.styles.body,
-    fontWeight: '600',
-  },
-  accountsList: {
-    gap: responsive.spacing[1],
-    marginLeft: 48,
-  },
-  accountItem: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: responsive.spacing[2],
-  },
-  accountName: {
-    ...theme.typography.styles.bodySmall,
-    color: theme.colors.text.secondary,
-  },
-  nextStepCard: {
-    width: '100%',
-    maxWidth: 400,
-    backgroundColor: theme.colors.info.light,
-    borderRadius: 20,
-    padding: responsive.spacing[4],
-    marginBottom: responsive.spacing[4],
-  },
-  nextStepTitle: {
-    ...theme.typography.styles.body,
-    fontWeight: '600',
-    color: theme.colors.info.dark,
-    marginBottom: responsive.spacing[1],
-  },
-  nextStepDescription: {
-    ...theme.typography.styles.bodySmall,
-    color: theme.colors.info.dark,
-  },
-  buttonContainer: {
-    width: '100%',
-    maxWidth: 400,
-  },
-  skipButton: {
-    paddingVertical: responsive.spacing[2],
-    alignItems: 'center',
-    marginTop: responsive.spacing[2],
-  },
-  skipButtonText: {
-    ...theme.typography.styles.button,
-    color: theme.colors.text.secondary,
-  },
-});

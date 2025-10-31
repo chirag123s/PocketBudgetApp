@@ -1,20 +1,10 @@
 import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { theme } from '@/constants/theme';
+import { getTheme } from '@/constants/theme';
 import { responsive, ms } from '@/constants/responsive';
 import { formatCurrencyCompact } from '@/utils/currency';
-
-const colors = {
-  primary: theme.colors.info.main,
-  secondaryRed: '#FF6B6B',
-  secondaryGreen: theme.colors.success.main,
-  neutralBg: theme.colors.background.secondary,
-  neutralWhite: theme.colors.background.primary,
-  neutralDarkest: theme.colors.text.primary,
-  neutralDark: theme.colors.text.secondary,
-  functionalError: theme.colors.danger.main,
-};
+import { useTheme } from '@/contexts/ThemeContext';
 
 export interface BankAccount {
   id: string;
@@ -36,9 +26,84 @@ export const BankAccountsWidget: React.FC<BankAccountsWidgetProps> = ({
   onViewAll,
   onAccountPress,
 }) => {
+  const { theme: themeMode } = useTheme();
+  const theme = getTheme(themeMode);
+
+  const colors = {
+    primary: theme.colors.info.main,
+    secondaryRed: '#FF6B6B',
+    secondaryGreen: theme.colors.success.main,
+    neutralBg: theme.colors.background.secondary,
+    neutralWhite: theme.colors.background.primary,
+    neutralDarkest: theme.colors.text.primary,
+    neutralDark: theme.colors.text.secondary,
+    functionalError: theme.colors.danger.main,
+  };
+
   const getBalanceColor = (balance: number) => {
     return balance < 0 ? colors.functionalError : colors.neutralDarkest;
   };
+
+  const styles = StyleSheet.create({
+    container: {
+      backgroundColor: colors.neutralWhite,
+      borderRadius: theme.borderRadius.xl,
+      padding: responsive.spacing[5],
+      ...theme.shadows.sm,
+    },
+    accountsHeader: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+      marginBottom: responsive.spacing[3],
+    },
+    sectionHeading: {
+      fontSize: responsive.fontSize.lg,
+      fontWeight: '700',
+      color: colors.neutralDarkest,
+    },
+    viewAllButton: {
+      fontSize: responsive.fontSize.sm,
+      fontWeight: '700',
+      color: colors.primary,
+    },
+    accountsGrid: {
+      flexDirection: 'row',
+      flexWrap: 'wrap',
+      gap: responsive.spacing[4],
+    },
+    accountCard: {
+      flex: 1,
+      minWidth: '45%',
+      backgroundColor: colors.neutralBg,
+      borderRadius: theme.borderRadius.lg,
+      padding: responsive.spacing[3],
+      gap: responsive.spacing[2],
+    },
+    accountHeader: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: responsive.spacing[2],
+    },
+    accountIconContainer: {
+      width: ms(32),
+      height: ms(32),
+      borderRadius: ms(8),
+      justifyContent: 'center',
+      alignItems: 'center',
+      flexShrink: 0,
+    },
+    accountName: {
+      fontSize: responsive.fontSize.sm,
+      fontWeight: '600',
+      color: colors.neutralDarkest,
+      flex: 1,
+    },
+    accountBalance: {
+      fontSize: responsive.fontSize.lg,
+      fontWeight: '700',
+    },
+  });
 
   return (
     <View style={styles.container}>
@@ -85,64 +150,3 @@ export const BankAccountsWidget: React.FC<BankAccountsWidgetProps> = ({
     </View>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    backgroundColor: colors.neutralWhite,
-    borderRadius: theme.borderRadius.xl,
-    padding: responsive.spacing[5],
-    ...theme.shadows.sm,
-  },
-  accountsHeader: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: responsive.spacing[3],
-  },
-  sectionHeading: {
-    fontSize: responsive.fontSize.lg,
-    fontWeight: '700',
-    color: colors.neutralDarkest,
-  },
-  viewAllButton: {
-    fontSize: responsive.fontSize.sm,
-    fontWeight: '700',
-    color: colors.primary,
-  },
-  accountsGrid: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: responsive.spacing[4],
-  },
-  accountCard: {
-    flex: 1,
-    minWidth: '45%',
-    backgroundColor: colors.neutralBg,
-    borderRadius: theme.borderRadius.lg,
-    padding: responsive.spacing[3],
-    gap: responsive.spacing[2],
-  },
-  accountHeader: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: responsive.spacing[2],
-  },
-  accountIconContainer: {
-    width: ms(32),
-    height: ms(32),
-    borderRadius: ms(8),
-    justifyContent: 'center',
-    alignItems: 'center',
-    flexShrink: 0,
-  },
-  accountName: {
-    fontSize: responsive.fontSize.sm,
-    fontWeight: '600',
-    color: colors.neutralDarkest,
-    flex: 1,
-  },
-  accountBalance: {
-    fontSize: responsive.fontSize.lg,
-    fontWeight: '700',
-  },
-});

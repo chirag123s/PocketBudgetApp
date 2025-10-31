@@ -1,18 +1,10 @@
 import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { theme } from '@/constants/theme';
+import { getTheme } from '@/constants/theme';
 import { responsive, ms } from '@/constants/responsive';
 import { formatCurrencyCompact } from '@/utils/currency';
-
-const colors = {
-  primary: theme.colors.info.main,
-  secondaryYellow: theme.colors.warning.main,
-  neutralBg: theme.colors.background.secondary,
-  neutralWhite: theme.colors.background.primary,
-  neutralDarkest: theme.colors.text.primary,
-  neutralDark: theme.colors.text.secondary,
-};
+import { useTheme } from '@/contexts/ThemeContext';
 
 export interface SavingsGoal {
   id: string;
@@ -43,8 +35,136 @@ export const SavingsGoalWidget: React.FC<SavingsGoalWidgetProps> = ({
   onViewAll,
   onGoalPress,
 }) => {
+  const { theme: themeMode } = useTheme();
+  const theme = getTheme(themeMode);
+
+  const colors = {
+    primary: theme.colors.info.main,
+    secondaryYellow: theme.colors.warning.main,
+    neutralBg: theme.colors.background.secondary,
+    neutralWhite: theme.colors.background.primary,
+    neutralDarkest: theme.colors.text.primary,
+    neutralDark: theme.colors.text.secondary,
+  };
+
   // Show only the first goal (or most prioritized)
   const displayGoal = goals.length > 0 ? goals[0] : null;
+
+  const styles = StyleSheet.create({
+    container: {
+      backgroundColor: colors.neutralWhite,
+      borderRadius: theme.borderRadius.xl,
+      padding: responsive.spacing[5],
+      ...theme.shadows.sm,
+    },
+    header: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'space-between',
+      marginBottom: responsive.spacing[3],
+    },
+    headerTitle: {
+      fontSize: responsive.fontSize.lg,
+      fontWeight: '700',
+      color: colors.neutralDarkest,
+    },
+    viewAllButton: {
+      fontSize: responsive.fontSize.sm,
+      fontWeight: '700',
+      color: colors.primary,
+    },
+
+    // Goal Content
+    goalContent: {
+      gap: responsive.spacing[4],
+    },
+
+    // Goal Header
+    goalHeader: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: responsive.spacing[3],
+    },
+    iconContainer: {
+      width: ms(40),
+      height: ms(40),
+      borderRadius: ms(20),
+      alignItems: 'center',
+      justifyContent: 'center',
+      flexShrink: 0,
+    },
+    goalInfo: {
+      flex: 1,
+    },
+    goalName: {
+      fontSize: responsive.fontSize.md,
+      fontWeight: '700',
+      color: colors.neutralDarkest,
+      marginBottom: 2,
+    },
+    goalTarget: {
+      fontSize: responsive.fontSize.sm,
+      fontWeight: '400',
+      color: colors.neutralDark,
+    },
+
+    // Progress Section
+    progressSection: {
+      gap: responsive.spacing[1],
+    },
+    progressHeader: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      alignItems: 'baseline',
+      marginBottom: responsive.spacing[1],
+    },
+    currentAmount: {
+      fontSize: responsive.fontSize.md,
+      fontWeight: '700',
+      color: colors.neutralDarkest,
+    },
+    savedLabel: {
+      fontSize: responsive.fontSize.sm,
+      fontWeight: '500',
+      color: colors.neutralDark,
+    },
+    dueDate: {
+      fontSize: responsive.fontSize.sm,
+      fontWeight: '500',
+      color: colors.neutralDark,
+    },
+
+    // Progress Bar
+    progressBarContainer: {
+      width: '100%',
+      height: ms(10),
+      backgroundColor: colors.neutralBg,
+      borderRadius: ms(5),
+      overflow: 'hidden',
+    },
+    progressBarFill: {
+      height: '100%',
+      borderRadius: ms(5),
+    },
+
+    // Empty State
+    emptyStateContent: {
+      paddingVertical: responsive.spacing[4],
+      alignItems: 'center',
+      gap: responsive.spacing[3],
+    },
+    emptyTitle: {
+      fontSize: responsive.fontSize.lg,
+      fontWeight: '600',
+      color: colors.neutralDarkest,
+    },
+    emptySubtitle: {
+      fontSize: responsive.fontSize.sm,
+      fontWeight: '400',
+      color: colors.neutralDark,
+      textAlign: 'center',
+    },
+  });
 
   if (!displayGoal) {
     return (
@@ -133,119 +253,3 @@ export const SavingsGoalWidget: React.FC<SavingsGoalWidgetProps> = ({
     </View>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    backgroundColor: colors.neutralWhite,
-    borderRadius: theme.borderRadius.xl,
-    padding: responsive.spacing[5],
-    ...theme.shadows.sm,
-  },
-  header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    marginBottom: responsive.spacing[3],
-  },
-  headerTitle: {
-    fontSize: responsive.fontSize.lg,
-    fontWeight: '700',
-    color: colors.neutralDarkest,
-  },
-  viewAllButton: {
-    fontSize: responsive.fontSize.sm,
-    fontWeight: '700',
-    color: colors.primary,
-  },
-
-  // Goal Content
-  goalContent: {
-    gap: responsive.spacing[4],
-  },
-
-  // Goal Header
-  goalHeader: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: responsive.spacing[3],
-  },
-  iconContainer: {
-    width: ms(40),
-    height: ms(40),
-    borderRadius: ms(20),
-    alignItems: 'center',
-    justifyContent: 'center',
-    flexShrink: 0,
-  },
-  goalInfo: {
-    flex: 1,
-  },
-  goalName: {
-    fontSize: responsive.fontSize.md,
-    fontWeight: '700',
-    color: colors.neutralDarkest,
-    marginBottom: 2,
-  },
-  goalTarget: {
-    fontSize: responsive.fontSize.sm,
-    fontWeight: '400',
-    color: colors.neutralDark,
-  },
-
-  // Progress Section
-  progressSection: {
-    gap: responsive.spacing[1],
-  },
-  progressHeader: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'baseline',
-    marginBottom: responsive.spacing[1],
-  },
-  currentAmount: {
-    fontSize: responsive.fontSize.md,
-    fontWeight: '700',
-    color: colors.neutralDarkest,
-  },
-  savedLabel: {
-    fontSize: responsive.fontSize.sm,
-    fontWeight: '500',
-    color: colors.neutralDark,
-  },
-  dueDate: {
-    fontSize: responsive.fontSize.sm,
-    fontWeight: '500',
-    color: colors.neutralDark,
-  },
-
-  // Progress Bar
-  progressBarContainer: {
-    width: '100%',
-    height: ms(10),
-    backgroundColor: colors.neutralBg,
-    borderRadius: ms(5),
-    overflow: 'hidden',
-  },
-  progressBarFill: {
-    height: '100%',
-    borderRadius: ms(5),
-  },
-
-  // Empty State
-  emptyStateContent: {
-    paddingVertical: responsive.spacing[4],
-    alignItems: 'center',
-    gap: responsive.spacing[3],
-  },
-  emptyTitle: {
-    fontSize: responsive.fontSize.lg,
-    fontWeight: '600',
-    color: colors.neutralDarkest,
-  },
-  emptySubtitle: {
-    fontSize: responsive.fontSize.sm,
-    fontWeight: '400',
-    color: colors.neutralDark,
-    textAlign: 'center',
-  },
-});

@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, FlatList, TextInput } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, FlatList, TextInput, StatusBar } from 'react-native';
 import { useRouter } from 'expo-router';
 import { Screen } from '@/components/layout/Screen';
 import { Card } from '@/components/ui/Card';
-import { theme } from '@/constants/theme';
+import { getTheme } from '@/constants/theme';
+import { useTheme } from '@/contexts/ThemeContext';
 import { responsive, ms } from '@/constants/responsive';
 import { Ionicons } from '@expo/vector-icons';
 
@@ -34,6 +35,136 @@ const banksData = {
 export default function BankSelection() {
   const router = useRouter();
   const [searchQuery, setSearchQuery] = useState('');
+  const { theme: themeMode } = useTheme();
+  const theme = getTheme(themeMode);
+
+  const colors = {
+    background: theme.colors.background.primary,
+    backgroundSecondary: theme.colors.background.secondary,
+    backgroundTertiary: theme.colors.background.tertiary,
+    textPrimary: theme.colors.text.primary,
+    textSecondary: theme.colors.text.secondary,
+    textTertiary: theme.colors.text.tertiary,
+    borderLight: theme.colors.border.light,
+  };
+
+  const styles = StyleSheet.create({
+    header: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: responsive.spacing[2],
+      paddingHorizontal: responsive.spacing[6],
+      paddingVertical: responsive.spacing[2],
+      backgroundColor: colors.background,
+      borderBottomWidth: 1,
+      borderBottomColor: colors.borderLight,
+    },
+    backButton: {
+      padding: responsive.spacing[2],
+    },
+    headerTitle: {
+      ...theme.typography.styles.h3,
+      fontSize: responsive.fontSize.h4,
+      lineHeight: responsive.fontSize.h4 * 1.5,
+      color: colors.textPrimary,
+    },
+    searchContainer: {
+      padding: responsive.spacing[4],
+      backgroundColor: colors.backgroundSecondary,
+    },
+    searchBar: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: responsive.spacing[2],
+      backgroundColor: colors.background,
+      borderRadius: 20,
+      paddingHorizontal: responsive.spacing[4],
+      paddingVertical: responsive.spacing[2],
+      ...theme.shadows.sm,
+    },
+    searchInput: {
+      flex: 1,
+      ...theme.typography.styles.body,
+      fontSize: responsive.fontSize.md,
+      lineHeight: responsive.fontSize.md * 1.5,
+      paddingVertical: 0,
+      color: colors.textPrimary,
+    },
+    list: {
+      flex: 1,
+    },
+    listContent: {
+      paddingHorizontal: responsive.spacing[6],
+      paddingBottom: responsive.spacing[4],
+    },
+    sectionHeader: {
+      ...theme.typography.styles.label,
+      fontSize: responsive.fontSize.sm,
+      lineHeight: responsive.fontSize.sm * 1.5,
+      color: colors.textSecondary,
+      textTransform: 'uppercase',
+      marginTop: responsive.spacing[4],
+      marginBottom: responsive.spacing[2],
+      paddingHorizontal: responsive.spacing[2],
+    },
+    bankItem: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'space-between',
+      backgroundColor: colors.background,
+      padding: responsive.spacing[4],
+      marginBottom: responsive.spacing[2],
+      borderRadius: 20,
+      ...theme.shadows.sm,
+    },
+    bankInfo: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: responsive.spacing[2],
+    },
+    bankLogo: {
+      width: 48,
+      height: 48,
+      borderRadius: 12,
+      backgroundColor: colors.backgroundTertiary,
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
+    bankLogoText: {
+      fontSize: responsive.fontSize.h4,
+      lineHeight: responsive.fontSize.h4 * 1.5,
+    },
+    bankName: {
+      ...theme.typography.styles.body,
+      fontSize: responsive.fontSize.md,
+      lineHeight: responsive.fontSize.md * 1.5,
+      fontWeight: '600',
+      color: colors.textPrimary,
+    },
+    bankTime: {
+      ...theme.typography.styles.caption,
+      fontSize: responsive.fontSize.xs,
+      lineHeight: responsive.fontSize.xs * 1.5,
+      color: colors.textSecondary,
+    },
+    footer: {
+      marginTop: responsive.spacing[4],
+      marginBottom: responsive.spacing[8],
+    },
+    cantFindButton: {
+      backgroundColor: colors.background,
+      padding: responsive.spacing[4],
+      borderRadius: 20,
+      alignItems: 'center',
+      ...theme.shadows.sm,
+    },
+    cantFindText: {
+      ...theme.typography.styles.button,
+      fontSize: responsive.fontSize.md,
+      lineHeight: responsive.fontSize.md * 1.5,
+      color: colors.textPrimary,
+    },
+  });
 
   const renderBankItem = ({ item }: { item: Bank }) => (
     <TouchableOpacity
@@ -49,19 +180,20 @@ export default function BankSelection() {
           <Text style={styles.bankTime}>{item.time}</Text>
         </View>
       </View>
-      <Ionicons name="chevron-forward" size={20} color={theme.colors.text.tertiary} />
+      <Ionicons name="chevron-forward" size={20} color={colors.textTertiary} />
     </TouchableOpacity>
   );
 
   return (
-    <Screen noPadding backgroundColor={theme.colors.background.secondary}>
+    <Screen noPadding backgroundColor={colors.backgroundSecondary}>
+      <StatusBar barStyle={themeMode === 'dark' ? 'light-content' : 'dark-content'} backgroundColor={colors.backgroundSecondary} />
       {/* Header */}
       <View style={styles.header}>
         <TouchableOpacity
           style={styles.backButton}
           onPress={() => router.back()}
         >
-          <Ionicons name="chevron-back" size={24} color={theme.colors.text.primary} />
+          <Ionicons name="chevron-back" size={24} color={colors.textPrimary} />
         </TouchableOpacity>
         <Text style={styles.headerTitle}>Select Your Bank</Text>
       </View>
@@ -69,13 +201,13 @@ export default function BankSelection() {
       {/* Search Bar */}
       <View style={styles.searchContainer}>
         <View style={styles.searchBar}>
-          <Ionicons name="search" size={20} color={theme.colors.text.tertiary} />
+          <Ionicons name="search" size={20} color={colors.textTertiary} />
           <TextInput
             style={styles.searchInput}
             placeholder="Search banks..."
             value={searchQuery}
             onChangeText={setSearchQuery}
-            placeholderTextColor={theme.colors.text.tertiary}
+            placeholderTextColor={colors.textTertiary}
           />
         </View>
       </View>
@@ -113,118 +245,3 @@ export default function BankSelection() {
     </Screen>
   );
 }
-
-const styles = StyleSheet.create({
-  header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: responsive.spacing[2],
-    paddingHorizontal: responsive.spacing[6],
-    paddingVertical: responsive.spacing[2],
-    backgroundColor: theme.colors.background.primary,
-    borderBottomWidth: 1,
-    borderBottomColor: theme.colors.border.light,
-  },
-  backButton: {
-    padding: responsive.spacing[2],
-  },
-  headerTitle: {
-    ...theme.typography.styles.h3,
-    fontSize: responsive.fontSize.h4,
-    lineHeight: responsive.fontSize.h4 * 1.5,
-  },
-  searchContainer: {
-    padding: responsive.spacing[4],
-    backgroundColor: theme.colors.background.secondary,
-  },
-  searchBar: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: responsive.spacing[2],
-    backgroundColor: theme.colors.background.primary,
-    borderRadius: 20,
-    paddingHorizontal: responsive.spacing[4],
-    paddingVertical: responsive.spacing[2],
-    ...theme.shadows.sm,
-  },
-  searchInput: {
-    flex: 1,
-    ...theme.typography.styles.body,
-    fontSize: responsive.fontSize.md,
-    lineHeight: responsive.fontSize.md * 1.5,
-    paddingVertical: 0,
-  },
-  list: {
-    flex: 1,
-  },
-  listContent: {
-    paddingHorizontal: responsive.spacing[6],
-    paddingBottom: responsive.spacing[4],
-  },
-  sectionHeader: {
-    ...theme.typography.styles.label,
-    fontSize: responsive.fontSize.sm,
-    lineHeight: responsive.fontSize.sm * 1.5,
-    color: theme.colors.text.secondary,
-    textTransform: 'uppercase',
-    marginTop: responsive.spacing[4],
-    marginBottom: responsive.spacing[2],
-    paddingHorizontal: responsive.spacing[2],
-  },
-  bankItem: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    backgroundColor: theme.colors.background.primary,
-    padding: responsive.spacing[4],
-    marginBottom: responsive.spacing[2],
-    borderRadius: 20,
-    ...theme.shadows.sm,
-  },
-  bankInfo: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: responsive.spacing[2],
-  },
-  bankLogo: {
-    width: 48,
-    height: 48,
-    borderRadius: 12,
-    backgroundColor: theme.colors.background.tertiary,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  bankLogoText: {
-    fontSize: responsive.fontSize.h4,
-    lineHeight: responsive.fontSize.h4 * 1.5,
-  },
-  bankName: {
-    ...theme.typography.styles.body,
-    fontSize: responsive.fontSize.md,
-    lineHeight: responsive.fontSize.md * 1.5,
-    fontWeight: '600',
-  },
-  bankTime: {
-    ...theme.typography.styles.caption,
-    fontSize: responsive.fontSize.xs,
-    lineHeight: responsive.fontSize.xs * 1.5,
-    color: theme.colors.text.secondary,
-  },
-  footer: {
-    marginTop: responsive.spacing[4],
-    marginBottom: responsive.spacing[8],
-  },
-  cantFindButton: {
-    backgroundColor: theme.colors.background.primary,
-    padding: responsive.spacing[4],
-    borderRadius: 20,
-    alignItems: 'center',
-    ...theme.shadows.sm,
-  },
-  cantFindText: {
-    ...theme.typography.styles.button,
-    fontSize: responsive.fontSize.md,
-    lineHeight: responsive.fontSize.md * 1.5,
-    color: theme.colors.text.primary,
-  },
-});

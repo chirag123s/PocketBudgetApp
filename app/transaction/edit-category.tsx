@@ -3,7 +3,8 @@ import { View, Text, StyleSheet, TouchableOpacity, Modal, FlatList } from 'react
 import { useRouter } from 'expo-router';
 import { Screen } from '@/components/layout/Screen';
 import { Button } from '@/components/ui/Button';
-import { theme } from '@/constants/theme';
+import { getTheme } from '@/constants/theme';
+import { useTheme } from '@/contexts/ThemeContext';
 import { responsive, ms } from '@/constants/responsive';
 
 interface Category {
@@ -30,7 +31,106 @@ const allCategories: Category[] = [
 
 export default function EditCategoryQuickAction() {
   const router = useRouter();
+  const { theme: themeMode } = useTheme();
+  const theme = getTheme(themeMode);
+
   const [selectedCategory, setSelectedCategory] = useState('Groceries');
+
+  const colors = {
+    cardBg: theme.colors.background.primary,
+    secondaryBg: theme.colors.background.secondary,
+    primaryText: theme.colors.text.primary,
+    secondaryText: theme.colors.text.secondary,
+    borderColor: theme.colors.border.light,
+    borderMain: theme.colors.border.main,
+    primary50: theme.colors.primary[50],
+    primaryColor: theme.colors.primary[600],
+    modalOverlay: themeMode === 'dark' ? 'rgba(0, 0, 0, 0.7)' : 'rgba(0, 0, 0, 0.5)',
+  };
+
+  const styles = StyleSheet.create({
+    overlay: {
+      flex: 1,
+      backgroundColor: colors.modalOverlay,
+      justifyContent: 'flex-end',
+    },
+    bottomSheet: {
+      backgroundColor: colors.cardBg,
+      borderTopLeftRadius: 24,
+      borderTopRightRadius: 24,
+      maxHeight: '70%',
+      ...theme.shadows.lg,
+    },
+    handle: {
+      width: 48,
+      height: 4,
+      backgroundColor: colors.borderMain,
+      borderRadius: 2,
+      alignSelf: 'center',
+      marginTop: responsive.spacing[2],
+      marginBottom: responsive.spacing[2],
+    },
+    header: {
+      paddingHorizontal: responsive.spacing[6],
+      paddingVertical: responsive.spacing[4],
+      borderBottomWidth: 1,
+      borderBottomColor: colors.borderColor,
+    },
+    title: {
+      ...theme.typography.styles.h3,
+    },
+    listContent: {
+      paddingHorizontal: responsive.spacing[6],
+      paddingBottom: responsive.spacing[6],
+    },
+    section: {
+      marginTop: responsive.spacing[6],
+    },
+    sectionLabel: {
+      ...theme.typography.styles.label,
+      fontSize: responsive.fontSize.xs,
+      lineHeight: responsive.fontSize.xs * 1.5,
+      color: colors.secondaryText,
+      marginBottom: responsive.spacing[2],
+      textTransform: 'uppercase',
+    },
+    categoryItem: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      backgroundColor: colors.secondaryBg,
+      padding: responsive.spacing[2],
+      borderRadius: 20,
+      marginBottom: responsive.spacing[2],
+    },
+    categoryItemSelected: {
+      backgroundColor: colors.primary50,
+      borderWidth: 2,
+      borderColor: colors.primaryColor,
+    },
+    currentCategory: {
+      backgroundColor: colors.primary50,
+      borderWidth: 2,
+      borderColor: colors.primaryColor,
+    },
+    categoryIcon: {
+      fontSize: responsive.fontSize.h4,
+      lineHeight: responsive.fontSize.h4 * 1.5,
+      marginRight: responsive.spacing[2],
+    },
+    categoryName: {
+      ...theme.typography.styles.body,
+      fontWeight: '500',
+      flex: 1,
+    },
+    checkmark: {
+      fontSize: responsive.fontSize.xl,
+      lineHeight: responsive.fontSize.xl * 1.5,
+      color: colors.primaryColor,
+    },
+    createButtonContainer: {
+      marginTop: responsive.spacing[6],
+    },
+  });
 
   const renderCategoryItem = ({ item }: { item: Category }, isSelected: boolean) => (
     <TouchableOpacity
@@ -138,87 +238,3 @@ export default function EditCategoryQuickAction() {
     </Modal>
   );
 }
-
-const styles = StyleSheet.create({
-  overlay: {
-    flex: 1,
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
-    justifyContent: 'flex-end',
-  },
-  bottomSheet: {
-    backgroundColor: theme.colors.background.primary,
-    borderTopLeftRadius: 24,
-    borderTopRightRadius: 24,
-    maxHeight: '70%',
-    ...theme.shadows.lg,
-  },
-  handle: {
-    width: 48,
-    height: 4,
-    backgroundColor: theme.colors.border.main,
-    borderRadius: 2,
-    alignSelf: 'center',
-    marginTop: responsive.spacing[2],
-    marginBottom: responsive.spacing[2],
-  },
-  header: {
-    paddingHorizontal: responsive.spacing[6],
-    paddingVertical: responsive.spacing[4],
-    borderBottomWidth: 1,
-    borderBottomColor: theme.colors.border.light,
-  },
-  title: {
-    ...theme.typography.styles.h3,
-  },
-  listContent: {
-    paddingHorizontal: responsive.spacing[6],
-    paddingBottom: responsive.spacing[6],
-  },
-  section: {
-    marginTop: responsive.spacing[6],
-  },
-  sectionLabel: {
-    ...theme.typography.styles.label,
-    fontSize: responsive.fontSize.xs,
-    lineHeight: responsive.fontSize.xs * 1.5,
-    color: theme.colors.text.secondary,
-    marginBottom: responsive.spacing[2],
-    textTransform: 'uppercase',
-  },
-  categoryItem: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: theme.colors.background.secondary,
-    padding: responsive.spacing[2],
-    borderRadius: 20,
-    marginBottom: responsive.spacing[2],
-  },
-  categoryItemSelected: {
-    backgroundColor: theme.colors.primary[50],
-    borderWidth: 2,
-    borderColor: theme.colors.primary[600],
-  },
-  currentCategory: {
-    backgroundColor: theme.colors.primary[50],
-    borderWidth: 2,
-    borderColor: theme.colors.primary[600],
-  },
-  categoryIcon: {
-    fontSize: responsive.fontSize.h4,
-    lineHeight: responsive.fontSize.h4 * 1.5,
-    marginRight: responsive.spacing[2],
-  },
-  categoryName: {
-    ...theme.typography.styles.body,
-    fontWeight: '500',
-    flex: 1,
-  },
-  checkmark: {
-    fontSize: responsive.fontSize.xl,
-    lineHeight: responsive.fontSize.xl * 1.5,
-    color: theme.colors.primary[600],
-  },
-  createButtonContainer: {
-    marginTop: responsive.spacing[6],
-  },
-});

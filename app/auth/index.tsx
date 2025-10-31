@@ -22,6 +22,8 @@ import { Ionicons } from '@expo/vector-icons';
 import { BudgetMateLogo } from './BudgetMateLogo';
 import { useRouter } from 'expo-router';
 import { useAuth } from '@/contexts/AuthContext';
+import { getTheme } from '@/constants/theme';
+import { useTheme } from '@/contexts/ThemeContext';
 
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get('window');
 
@@ -41,6 +43,8 @@ interface Ripple {
 export default function SplashScreen() {
   const router = useRouter();
   const { isAuthenticated, isGuestMode, hasCompletedOnboarding, isLoading } = useAuth();
+  const { theme: themeMode } = useTheme();
+  const theme = getTheme(themeMode);
   const [ripples, setRipples] = useState<Ripple[]>([]);
   const [isPressed, setIsPressed] = useState(false);
 
@@ -127,6 +131,115 @@ export default function SplashScreen() {
         { rotate: `${logoRotate.value}deg` },
       ],
     };
+  });
+
+  const styles = StyleSheet.create({
+    container: {
+      flex: 1,
+      backgroundColor: '#3B82F6',
+    },
+    contentContainer: {
+      flex: 1,
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
+    logoContainer: {
+      alignItems: 'center',
+      gap: 32,
+      zIndex: 10,
+    },
+    logoCircle: {
+      width: 160,
+      height: 160,
+      borderRadius: 80,
+      backgroundColor: 'white',
+      justifyContent: 'center',
+      alignItems: 'center',
+      shadowColor: '#000',
+      shadowOffset: { width: 0, height: 10 },
+      shadowOpacity: 0.3,
+      shadowRadius: 20,
+      elevation: 10,
+      position: 'relative',
+    },
+    logoCircleInner: {
+      width: 160,
+      height: 160,
+      borderRadius: 80,
+      backgroundColor: 'white',
+      justifyContent: 'center',
+      alignItems: 'center',
+      overflow: 'hidden',
+    },
+    logoIcon: {
+      width: 96,
+      height: 96,
+      zIndex: 10,
+    },
+    pulsingRing: {
+      position: 'absolute',
+      top: 0,
+      left: 0,
+      right: 0,
+      bottom: 0,
+      borderRadius: 80,
+      borderWidth: 4,
+      borderColor: 'white',
+    },
+    textContainer: {
+      alignItems: 'center',
+      gap: 8,
+    },
+    appName: {
+      color: 'white',
+      fontSize: 48,
+      fontWeight: '300',
+      letterSpacing: -1,
+    },
+    tagline: {
+      color: 'rgba(255, 255, 255, 0.9)',
+      fontSize: 18,
+      textAlign: 'center',
+      lineHeight: 27,
+    },
+    loadingContainer: {
+      flexDirection: 'row',
+      gap: 8,
+      marginTop: 16,
+    },
+    loadingDot: {
+      width: 12,
+      height: 12,
+      borderRadius: 6,
+      backgroundColor: 'white',
+    },
+    floatingIcon: {
+      position: 'absolute',
+    },
+    ripple: {
+      position: 'absolute',
+      width: 128,
+      height: 128,
+      borderRadius: 64,
+      borderWidth: 4,
+      borderColor: 'white',
+      pointerEvents: 'none',
+    },
+    backgroundPattern: {
+      position: 'absolute',
+      top: 0,
+      left: 0,
+      right: 0,
+      bottom: 0,
+      opacity: 0.1,
+    },
+    particle: {
+      position: 'absolute',
+      width: 8,
+      height: 8,
+      borderRadius: 4,
+      backgroundColor: 'white',
+    },
   });
 
   return (
@@ -229,6 +342,12 @@ function FloatingIcon({
   const scale = useSharedValue(0);
   const translateY = useSharedValue(y);
 
+  const styles = StyleSheet.create({
+    floatingIcon: {
+      position: 'absolute',
+    },
+  });
+
   useEffect(() => {
     opacity.value = withRepeat(
       withSequence(
@@ -288,6 +407,18 @@ function RippleEffect({ x, y }: { x: number; y: number }) {
   const scale = useSharedValue(0);
   const opacity = useSharedValue(0.6);
 
+  const styles = StyleSheet.create({
+    ripple: {
+      position: 'absolute',
+      width: 128,
+      height: 128,
+      borderRadius: 64,
+      borderWidth: 4,
+      borderColor: 'white',
+      pointerEvents: 'none',
+    },
+  });
+
   useEffect(() => {
     scale.value = withTiming(3, {
       duration: 1000,
@@ -325,6 +456,19 @@ function PulsingRing() {
   const scale = useSharedValue(1);
   const opacity = useSharedValue(0.5);
 
+  const styles = StyleSheet.create({
+    pulsingRing: {
+      position: 'absolute',
+      top: 0,
+      left: 0,
+      right: 0,
+      bottom: 0,
+      borderRadius: 80,
+      borderWidth: 4,
+      borderColor: 'white',
+    },
+  });
+
   useEffect(() => {
     scale.value = withRepeat(
       withSequence(
@@ -361,6 +505,15 @@ function PulsingRing() {
 function LoadingDot({ index }: { index: number }) {
   const scale = useSharedValue(1);
   const opacity = useSharedValue(0.5);
+
+  const styles = StyleSheet.create({
+    loadingDot: {
+      width: 12,
+      height: 12,
+      borderRadius: 6,
+      backgroundColor: 'white',
+    },
+  });
 
   useEffect(() => {
     scale.value = withRepeat(
@@ -402,6 +555,17 @@ function BackgroundPattern({
   mouseX: Animated.SharedValue<number>;
   mouseY: Animated.SharedValue<number>;
 }) {
+  const styles = StyleSheet.create({
+    backgroundPattern: {
+      position: 'absolute',
+      top: 0,
+      left: 0,
+      right: 0,
+      bottom: 0,
+      opacity: 0.1,
+    },
+  });
+
   const animatedStyle = useAnimatedStyle(() => {
     return {
       transform: [
@@ -422,6 +586,16 @@ function BackgroundPattern({
 function FloatingParticle({ index }: { index: number }) {
   const translateY = useSharedValue(SCREEN_HEIGHT + 50);
   const opacity = useSharedValue(0);
+
+  const styles = StyleSheet.create({
+    particle: {
+      position: 'absolute',
+      width: 8,
+      height: 8,
+      borderRadius: 4,
+      backgroundColor: 'white',
+    },
+  });
 
   useEffect(() => {
     const duration = 6000 + Math.random() * 4000;
@@ -468,112 +642,3 @@ function FloatingParticle({ index }: { index: number }) {
     />
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#3B82F6',
-  },
-  contentContainer: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  logoContainer: {
-    alignItems: 'center',
-    gap: 32,
-    zIndex: 10,
-  },
-  logoCircle: {
-    width: 160,
-    height: 160,
-    borderRadius: 80,
-    backgroundColor: 'white',
-    justifyContent: 'center',
-    alignItems: 'center',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 10 },
-    shadowOpacity: 0.3,
-    shadowRadius: 20,
-    elevation: 10,
-    position: 'relative',
-  },
-  logoCircleInner: {
-    width: 160,
-    height: 160,
-    borderRadius: 80,
-    backgroundColor: 'white',
-    justifyContent: 'center',
-    alignItems: 'center',
-    overflow: 'hidden',
-  },
-  logoIcon: {
-    width: 96,
-    height: 96,
-    zIndex: 10,
-  },
-  pulsingRing: {
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
-    borderRadius: 80,
-    borderWidth: 4,
-    borderColor: 'white',
-  },
-  textContainer: {
-    alignItems: 'center',
-    gap: 8,
-  },
-  appName: {
-    color: 'white',
-    fontSize: 48,
-    fontWeight: '300',
-    letterSpacing: -1,
-  },
-  tagline: {
-    color: 'rgba(255, 255, 255, 0.9)',
-    fontSize: 18,
-    textAlign: 'center',
-    lineHeight: 27,
-  },
-  loadingContainer: {
-    flexDirection: 'row',
-    gap: 8,
-    marginTop: 16,
-  },
-  loadingDot: {
-    width: 12,
-    height: 12,
-    borderRadius: 6,
-    backgroundColor: 'white',
-  },
-  floatingIcon: {
-    position: 'absolute',
-  },
-  ripple: {
-    position: 'absolute',
-    width: 128,
-    height: 128,
-    borderRadius: 64,
-    borderWidth: 4,
-    borderColor: 'white',
-    pointerEvents: 'none',
-  },
-  backgroundPattern: {
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
-    opacity: 0.1,
-  },
-  particle: {
-    position: 'absolute',
-    width: 8,
-    height: 8,
-    borderRadius: 4,
-    backgroundColor: 'white',
-  },
-});

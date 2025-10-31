@@ -1,9 +1,10 @@
 import React from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, ScrollView } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, ScrollView, StatusBar } from 'react-native';
 import { useRouter } from 'expo-router';
 import { Screen } from '@/components/layout/Screen';
 import { Button } from '@/components/ui/Button';
-import { theme } from '@/constants/theme';
+import { getTheme } from '@/constants/theme';
+import { useTheme } from '@/contexts/ThemeContext';
 import { responsive, ms } from '@/constants/responsive';
 
 const templates = ['Single person', 'Couple', 'Family', 'Student', 'Homeowner'];
@@ -16,9 +17,151 @@ const benefits = [
 
 export default function BudgetSetupWelcome() {
   const router = useRouter();
+  const { theme: themeMode } = useTheme();
+  const theme = getTheme(themeMode);
+
+  const colors = {
+    background: theme.colors.background.secondary,
+    backgroundPrimary: theme.colors.background.primary,
+    backgroundTertiary: theme.colors.background.tertiary,
+    textPrimary: theme.colors.text.primary,
+    textSecondary: theme.colors.text.secondary,
+    textTertiary: theme.colors.text.tertiary,
+    primary: theme.colors.primary[500],
+    primary50: theme.colors.primary[50],
+    primary100: theme.colors.primary[100],
+    primary600: theme.colors.primary[600],
+    borderLight: theme.colors.border.light,
+  };
+
+  const styles = StyleSheet.create({
+    content: {
+      padding: responsive.spacing[6],
+      paddingBottom: responsive.spacing[8],
+    },
+    header: {
+      alignItems: 'center',
+      marginTop: responsive.spacing[8],
+      marginBottom: responsive.spacing[6],
+    },
+    title: {
+      ...theme.typography.styles.h1,
+      fontSize: responsive.fontSize.h2,
+      lineHeight: responsive.fontSize.h2 * 1.5,
+      textAlign: 'center',
+      color: colors.textPrimary,
+    },
+    illustrationContainer: {
+      backgroundColor: colors.primary50,
+      borderRadius: 20,
+      height: 192,
+      alignItems: 'center',
+      justifyContent: 'center',
+      marginBottom: responsive.spacing[8],
+    },
+    illustrationIcon: {
+      fontSize: 64,
+    },
+    descriptionCard: {
+      backgroundColor: colors.backgroundPrimary,
+      borderRadius: theme.borderRadius.xl,
+      padding: responsive.spacing[6],
+      marginBottom: responsive.spacing[6],
+      ...theme.shadows.sm,
+    },
+    descriptionText: {
+      ...theme.typography.styles.body,
+      color: colors.textSecondary,
+      textAlign: 'center',
+      lineHeight: 24,
+      marginBottom: responsive.spacing[4],
+    },
+    timeIndicator: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
+    dot: {
+      width: 4,
+      height: 4,
+      borderRadius: 2,
+      backgroundColor: colors.primary,
+      marginHorizontal: responsive.spacing[1],
+    },
+    timeText: {
+      ...theme.typography.styles.bodySmall,
+      color: colors.textTertiary,
+    },
+    benefitsContainer: {
+      gap: responsive.spacing[2],
+      marginBottom: responsive.spacing[8],
+    },
+    benefitItem: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      backgroundColor: colors.backgroundPrimary,
+      borderRadius: theme.borderRadius.xl,
+      padding: responsive.spacing[4],
+      ...theme.shadows.sm,
+    },
+    checkmarkContainer: {
+      width: 40,
+      height: 40,
+      backgroundColor: colors.primary100,
+      borderRadius: 20,
+      alignItems: 'center',
+      justifyContent: 'center',
+      marginRight: responsive.spacing[2],
+    },
+    checkmark: {
+      fontSize: responsive.fontSize.xl,
+      lineHeight: responsive.fontSize.xl * 1.5,
+      color: colors.primary600,
+    },
+    benefitText: {
+      ...theme.typography.styles.body,
+      color: colors.textSecondary,
+      flex: 1,
+    },
+    primaryButton: {
+      marginBottom: responsive.spacing[2],
+    },
+    secondaryButton: {
+      marginBottom: responsive.spacing[8],
+    },
+    templatesCard: {
+      backgroundColor: colors.backgroundTertiary,
+      borderRadius: theme.borderRadius.xl,
+      padding: responsive.spacing[4],
+    },
+    templatesLabel: {
+      ...theme.typography.styles.label,
+      fontSize: responsive.fontSize.xs,
+      lineHeight: responsive.fontSize.xs * 1.5,
+      color: colors.textSecondary,
+      fontWeight: '600',
+      marginBottom: responsive.spacing[2],
+    },
+    templatesGrid: {
+      flexDirection: 'row',
+      flexWrap: 'wrap',
+      gap: responsive.spacing[2],
+    },
+    templateChip: {
+      backgroundColor: colors.backgroundPrimary,
+      borderRadius: theme.borderRadius.lg,
+      paddingHorizontal: responsive.spacing[2],
+      paddingVertical: 6,
+    },
+    templateChipText: {
+      ...theme.typography.styles.caption,
+      color: colors.textSecondary,
+    },
+  });
 
   return (
-    <Screen scrollable={false} backgroundColor={theme.colors.background.secondary}>
+    <Screen scrollable={false} backgroundColor={colors.background}>
+      <StatusBar barStyle={themeMode === 'dark' ? 'light-content' : 'dark-content'} backgroundColor={colors.background} />
       <ScrollView contentContainerStyle={styles.content}>
         {/* Header */}
         <View style={styles.header}>
@@ -93,127 +236,3 @@ export default function BudgetSetupWelcome() {
     </Screen>
   );
 }
-
-const styles = StyleSheet.create({
-  content: {
-    padding: responsive.spacing[6],
-    paddingBottom: responsive.spacing[8],
-  },
-  header: {
-    alignItems: 'center',
-    marginTop: responsive.spacing[8],
-    marginBottom: responsive.spacing[6],
-  },
-  title: {
-    ...theme.typography.styles.h1,
-    fontSize: responsive.fontSize.h2,
-    lineHeight: responsive.fontSize.h2 * 1.5,
-    textAlign: 'center',
-  },
-  illustrationContainer: {
-    backgroundColor: theme.colors.primary[50],
-    borderRadius: 20,
-    height: 192,
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginBottom: responsive.spacing[8],
-  },
-  illustrationIcon: {
-    fontSize: 64,
-  },
-  descriptionCard: {
-    backgroundColor: theme.colors.background.primary,
-    borderRadius: theme.borderRadius.xl,
-    padding: responsive.spacing[6],
-    marginBottom: responsive.spacing[6],
-    ...theme.shadows.sm,
-  },
-  descriptionText: {
-    ...theme.typography.styles.body,
-    color: theme.colors.text.secondary,
-    textAlign: 'center',
-    lineHeight: 24,
-    marginBottom: responsive.spacing[4],
-  },
-  timeIndicator: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  dot: {
-    width: 4,
-    height: 4,
-    borderRadius: 2,
-    backgroundColor: theme.colors.primary[500],
-    marginHorizontal: responsive.spacing[1],
-  },
-  timeText: {
-    ...theme.typography.styles.bodySmall,
-    color: theme.colors.text.tertiary,
-  },
-  benefitsContainer: {
-    gap: responsive.spacing[2],
-    marginBottom: responsive.spacing[8],
-  },
-  benefitItem: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: theme.colors.background.primary,
-    borderRadius: theme.borderRadius.xl,
-    padding: responsive.spacing[4],
-    ...theme.shadows.sm,
-  },
-  checkmarkContainer: {
-    width: 40,
-    height: 40,
-    backgroundColor: theme.colors.primary[100],
-    borderRadius: 20,
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginRight: responsive.spacing[2],
-  },
-  checkmark: {
-    fontSize: responsive.fontSize.xl,
-    lineHeight: responsive.fontSize.xl * 1.5,
-    color: theme.colors.primary[600],
-  },
-  benefitText: {
-    ...theme.typography.styles.body,
-    color: theme.colors.text.secondary,
-    flex: 1,
-  },
-  primaryButton: {
-    marginBottom: responsive.spacing[2],
-  },
-  secondaryButton: {
-    marginBottom: responsive.spacing[8],
-  },
-  templatesCard: {
-    backgroundColor: theme.colors.background.tertiary,
-    borderRadius: theme.borderRadius.xl,
-    padding: responsive.spacing[4],
-  },
-  templatesLabel: {
-    ...theme.typography.styles.label,
-    fontSize: responsive.fontSize.xs,
-    lineHeight: responsive.fontSize.xs * 1.5,
-    color: theme.colors.text.secondary,
-    fontWeight: '600',
-    marginBottom: responsive.spacing[2],
-  },
-  templatesGrid: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: responsive.spacing[2],
-  },
-  templateChip: {
-    backgroundColor: theme.colors.background.primary,
-    borderRadius: theme.borderRadius.lg,
-    paddingHorizontal: responsive.spacing[2],
-    paddingVertical: 6,
-  },
-  templateChipText: {
-    ...theme.typography.styles.caption,
-    color: theme.colors.text.secondary,
-  },
-});

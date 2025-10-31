@@ -1,16 +1,9 @@
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import Svg, { Circle } from 'react-native-svg';
-import { theme } from '@/constants/theme';
+import { getTheme } from '@/constants/theme';
+import { useTheme } from '@/contexts/ThemeContext';
 import { responsive, ms } from '@/constants/responsive';
-
-// Color Palette
-const colors = {
-  neutralBg: theme.colors.background.secondary,
-  functionalSuccess: theme.colors.success.main,
-  functionalWarning: theme.colors.warning.main,
-  functionalError: theme.colors.danger.main,
-};
 
 export interface CircularProgressProps {
   percentage: number;
@@ -31,6 +24,17 @@ export const CircularProgress: React.FC<CircularProgressProps> = ({
   children,
   autoColor = true,
 }) => {
+  const { theme: themeMode } = useTheme();
+  const theme = getTheme(themeMode);
+
+  // Color Palette
+  const colors = {
+    neutralBg: theme.colors.background.secondary,
+    functionalSuccess: theme.colors.success.main,
+    functionalWarning: theme.colors.warning.main,
+    functionalError: theme.colors.danger.main,
+  };
+
   // Use responsive scaling
   const size = ms(sizeScale);
   // Default stroke width is 10% of size if not provided
@@ -52,6 +56,24 @@ export const CircularProgress: React.FC<CircularProgressProps> = ({
       progressColor = colors.functionalSuccess;
     }
   }
+
+  const styles = StyleSheet.create({
+    container: {
+      alignItems: 'center',
+      justifyContent: 'center',
+      position: 'relative',
+    },
+    centerContent: {
+      position: 'absolute',
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
+    percentageText: {
+      fontSize: responsive.fontSize.h2,
+      fontWeight: '700',
+      color: theme.colors.text.primary,
+    },
+  });
 
   return (
     <View style={styles.container}>
@@ -93,21 +115,3 @@ export const CircularProgress: React.FC<CircularProgressProps> = ({
     </View>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    alignItems: 'center',
-    justifyContent: 'center',
-    position: 'relative',
-  },
-  centerContent: {
-    position: 'absolute',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  percentageText: {
-    fontSize: responsive.fontSize.h2,
-    fontWeight: '700',
-    color: theme.colors.text.primary,
-  },
-});

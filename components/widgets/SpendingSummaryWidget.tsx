@@ -1,18 +1,11 @@
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { theme } from '@/constants/theme';
+import { getTheme } from '@/constants/theme';
 import { responsive, ms } from '@/constants/responsive';
 import { formatCurrencyCompact } from '@/utils/currency';
 import { GaugeChart, GaugeChartSegment } from '@/components/charts';
-
-const colors = {
-  primary: theme.colors.info.main,
-  neutralBg: theme.colors.background.secondary,
-  neutralWhite: theme.colors.background.primary,
-  neutralDarkest: theme.colors.text.primary,
-  neutralDark: theme.colors.text.secondary,
-};
+import { useTheme } from '@/contexts/ThemeContext';
 
 export interface SpendingSummaryWidgetProps {
   gaugeChartData: GaugeChartSegment[];
@@ -27,6 +20,17 @@ export const SpendingSummaryWidget: React.FC<SpendingSummaryWidgetProps> = ({
   totalBudget,
   onPeriodSelect,
 }) => {
+  const { theme: themeMode } = useTheme();
+  const theme = getTheme(themeMode);
+
+  const colors = {
+    primary: theme.colors.info.main,
+    neutralBg: theme.colors.background.secondary,
+    neutralWhite: theme.colors.background.primary,
+    neutralDarkest: theme.colors.text.primary,
+    neutralDark: theme.colors.text.secondary,
+  };
+
   const [selectedPeriod, setSelectedPeriod] = useState<'week' | 'month' | 'year'>('month');
 
   const getPeriodLabel = () => {
@@ -41,6 +45,49 @@ export const SpendingSummaryWidget: React.FC<SpendingSummaryWidgetProps> = ({
         return 'This Month';
     }
   };
+
+  const styles = StyleSheet.create({
+    spendingCard: {
+      backgroundColor: colors.neutralWhite,
+      borderRadius: theme.borderRadius.xl,
+      padding: responsive.spacing[5],
+    },
+    cardShadow: {
+      ...theme.shadows.sm,
+    },
+    spendingHeader: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+      marginBottom: responsive.spacing[4],
+    },
+    sectionTitle: {
+      fontSize: responsive.fontSize.lg,
+      fontWeight: '700',
+      color: colors.neutralDarkest,
+    },
+    dropdownButton: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: responsive.spacing[1],
+    },
+    dropdownText: {
+      fontSize: responsive.fontSize.sm,
+      fontWeight: '500',
+      color: colors.primary,
+    },
+    circleAmount: {
+      fontSize: responsive.fontSize.xl,
+      fontWeight: '700',
+      color: colors.neutralDarkest,
+    },
+    circleLabel: {
+      fontSize: responsive.fontSize.xs,
+      fontWeight: '500',
+      color: colors.neutralDark,
+      marginTop: responsive.spacing[1],
+    },
+  });
 
   return (
     <View style={[styles.spendingCard, styles.cardShadow]}>
@@ -81,46 +128,3 @@ export const SpendingSummaryWidget: React.FC<SpendingSummaryWidgetProps> = ({
     </View>
   );
 };
-
-const styles = StyleSheet.create({
-  spendingCard: {
-    backgroundColor: colors.neutralWhite,
-    borderRadius: theme.borderRadius.xl,
-    padding: responsive.spacing[5],
-  },
-  cardShadow: {
-    ...theme.shadows.sm,
-  },
-  spendingHeader: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: responsive.spacing[4],
-  },
-  sectionTitle: {
-    fontSize: responsive.fontSize.lg,
-    fontWeight: '700',
-    color: colors.neutralDarkest,
-  },
-  dropdownButton: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: responsive.spacing[1],
-  },
-  dropdownText: {
-    fontSize: responsive.fontSize.sm,
-    fontWeight: '500',
-    color: colors.primary,
-  },
-  circleAmount: {
-    fontSize: responsive.fontSize.xl,
-    fontWeight: '700',
-    color: colors.neutralDarkest,
-  },
-  circleLabel: {
-    fontSize: responsive.fontSize.xs,
-    fontWeight: '500',
-    color: colors.neutralDark,
-    marginTop: responsive.spacing[1],
-  },
-});

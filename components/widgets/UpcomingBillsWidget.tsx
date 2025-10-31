@@ -8,21 +8,9 @@ import {
   Image,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { theme } from '@/constants/theme';
+import { getTheme } from '@/constants/theme';
 import { responsive, ms } from '@/constants/responsive';
-
-const colors = {
-  primary: theme.colors.info.main,
-  success: theme.colors.success.main,
-  neutralBg: theme.colors.background.secondary,
-  neutralWhite: theme.colors.background.primary,
-  neutralDarkest: theme.colors.text.primary,
-  neutralDark: theme.colors.text.secondary,
-  neutralMedium: theme.colors.text.tertiary,
-  border: theme.colors.border.light,
-  timelineAxis: '#DBE6E1',
-  timelineNode: '#DBE6E1',
-};
+import { useTheme } from '@/contexts/ThemeContext';
 
 export interface Bill {
   id: string;
@@ -71,11 +59,229 @@ export const UpcomingBillsWidget: React.FC<UpcomingBillsWidgetProps> = ({
   onSeeAllBills,
   onBillPress,
 }) => {
+  const { theme: themeMode } = useTheme();
+  const theme = getTheme(themeMode);
+
+  const colors = {
+    primary: theme.colors.info.main,
+    success: theme.colors.success.main,
+    neutralBg: theme.colors.background.secondary,
+    neutralWhite: theme.colors.background.primary,
+    neutralDarkest: theme.colors.text.primary,
+    neutralDark: theme.colors.text.secondary,
+    neutralMedium: theme.colors.text.tertiary,
+    border: theme.colors.border.light,
+    timelineAxis: '#DBE6E1',
+    timelineNode: '#DBE6E1',
+  };
+
   // Sort bills by due date and filter unpaid
   const sortedBills = [...bills]
     .filter((bill) => !bill.isPaid)
     .sort((a, b) => a.dueDate.getTime() - b.dueDate.getTime())
     .slice(0, 10); // Show max 10 bills
+
+  const styles = StyleSheet.create({
+    container: {
+      backgroundColor: colors.neutralWhite,
+      borderRadius: theme.borderRadius.xl,
+      ...theme.shadows.sm,
+      overflow: 'hidden',
+    },
+
+    // Header
+    header: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'space-between',
+      paddingHorizontal: responsive.spacing[4],
+      paddingTop: responsive.spacing[4],
+      paddingBottom: responsive.spacing[2],
+    },
+    headerTitle: {
+      fontSize: responsive.fontSize.lg,
+      fontWeight: '700',
+      color: colors.neutralDarkest,
+    },
+    seeAllButton: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: responsive.spacing[1],
+      paddingHorizontal: responsive.spacing[2],
+      paddingVertical: responsive.spacing[2],
+    },
+    seeAllText: {
+      fontSize: responsive.fontSize.sm,
+      fontWeight: '700',
+      color: colors.primary,
+    },
+
+    // Timeline Container
+    timelineContainer: {
+      position: 'relative',
+      paddingTop: responsive.spacing[4],
+      paddingBottom: responsive.spacing[6],
+    },
+    timelineContent: {
+      paddingLeft: responsive.spacing[8],
+      paddingRight: responsive.spacing[12],
+      alignItems: 'flex-start',
+    },
+
+    // Timeline Axis (horizontal line)
+    timelineAxis: {
+      position: 'absolute',
+      top: ms(108),
+      left: 0,
+      right: 0,
+      height: 2,
+      backgroundColor: colors.timelineAxis,
+    },
+
+    // Timeline Items Container
+    timelineItems: {
+      flexDirection: 'row',
+      alignItems: 'flex-start',
+      gap: responsive.spacing[12],
+    },
+
+    // Today Marker
+    todayMarker: {
+      alignItems: 'center',
+    },
+    todayCard: {
+      backgroundColor: `${colors.primary}15`,
+      borderRadius: theme.borderRadius.lg,
+      borderWidth: 2,
+      borderColor: colors.primary,
+      padding: responsive.spacing[3],
+      alignItems: 'center',
+      gap: responsive.spacing[2],
+      minWidth: ms(80),
+    },
+    todayIconContainer: {
+      width: ms(40),
+      height: ms(40),
+      borderRadius: ms(20),
+      backgroundColor: colors.neutralWhite,
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
+    todayLabel: {
+      fontSize: responsive.fontSize.sm,
+      fontWeight: '700',
+      color: colors.primary,
+    },
+    todayNodeConnector: {
+      width: 2,
+      height: ms(16),
+      marginTop: responsive.spacing[2],
+      backgroundColor: colors.primary,
+    },
+    todayTimelineNode: {
+      width: ms(16),
+      height: ms(16),
+      borderRadius: ms(8),
+      backgroundColor: colors.primary,
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
+    todayTimelineNodeInner: {
+      width: ms(8),
+      height: ms(8),
+      borderRadius: ms(4),
+      backgroundColor: colors.neutralWhite,
+    },
+
+    // Bill Items
+    billItemContainer: {
+      alignItems: 'center',
+    },
+    billCard: {
+      width: ms(160),
+      borderRadius: theme.borderRadius.lg,
+      borderWidth: 1,
+      borderColor: colors.border,
+      padding: responsive.spacing[3],
+      alignItems: 'center',
+      backgroundColor: colors.neutralWhite,
+      ...theme.shadows.sm,
+    },
+    billHeader: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'center',
+      marginBottom: responsive.spacing[2],
+      gap: responsive.spacing[2],
+      width: '100%',
+    },
+    companyLogo: {
+      width: ms(24),
+      height: ms(24),
+      borderRadius: ms(12),
+    },
+    companyLogoPlaceholder: {
+      width: ms(24),
+      height: ms(24),
+      borderRadius: ms(12),
+      backgroundColor: colors.primary,
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
+    companyName: {
+      fontSize: responsive.fontSize.md,
+      fontWeight: '600',
+      color: colors.neutralDarkest,
+      flex: 1,
+    },
+    billAmount: {
+      fontSize: responsive.fontSize.lg,
+      fontWeight: '700',
+      color: colors.primary,
+      marginBottom: responsive.spacing[1],
+    },
+    billDueDate: {
+      fontSize: responsive.fontSize.sm,
+      fontWeight: '400',
+      color: colors.neutralDark,
+    },
+
+    // Timeline Node
+    nodeConnector: {
+      width: 2,
+      height: ms(16),
+      marginTop: responsive.spacing[2],
+      backgroundColor: colors.timelineAxis,
+    },
+    timelineNode: {
+      width: ms(12),
+      height: ms(12),
+      borderRadius: ms(6),
+      backgroundColor: colors.timelineNode,
+      borderWidth: 2,
+      borderColor: colors.neutralWhite,
+    },
+
+    // Empty State
+    emptyState: {
+      alignItems: 'center',
+      justifyContent: 'center',
+      paddingVertical: responsive.spacing[8],
+      paddingHorizontal: responsive.spacing[4],
+      gap: responsive.spacing[3],
+    },
+    emptyTitle: {
+      fontSize: responsive.fontSize.lg,
+      fontWeight: '600',
+      color: colors.neutralDarkest,
+    },
+    emptySubtitle: {
+      fontSize: responsive.fontSize.md,
+      fontWeight: '400',
+      color: colors.neutralDark,
+      textAlign: 'center',
+    },
+  });
 
   // Empty state - all bills paid
   if (sortedBills.length === 0) {
@@ -197,205 +403,3 @@ export const UpcomingBillsWidget: React.FC<UpcomingBillsWidgetProps> = ({
     </View>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    backgroundColor: colors.neutralWhite,
-    borderRadius: theme.borderRadius.xl,
-    ...theme.shadows.sm,
-    overflow: 'hidden',
-  },
-
-  // Header
-  header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    paddingHorizontal: responsive.spacing[4],
-    paddingTop: responsive.spacing[4],
-    paddingBottom: responsive.spacing[2],
-  },
-  headerTitle: {
-    fontSize: responsive.fontSize.lg,
-    fontWeight: '700',
-    color: colors.neutralDarkest,
-  },
-  seeAllButton: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: responsive.spacing[1],
-    paddingHorizontal: responsive.spacing[2],
-    paddingVertical: responsive.spacing[2],
-  },
-  seeAllText: {
-    fontSize: responsive.fontSize.sm,
-    fontWeight: '700',
-    color: colors.primary,
-  },
-
-  // Timeline Container
-  timelineContainer: {
-    position: 'relative',
-    paddingTop: responsive.spacing[4],
-    paddingBottom: responsive.spacing[6],
-  },
-  timelineContent: {
-    paddingLeft: responsive.spacing[8],
-    paddingRight: responsive.spacing[12],
-    alignItems: 'flex-start',
-  },
-
-  // Timeline Axis (horizontal line)
-  timelineAxis: {
-    position: 'absolute',
-    top: ms(108),
-    left: 0,
-    right: 0,
-    height: 2,
-    backgroundColor: colors.timelineAxis,
-  },
-
-  // Timeline Items Container
-  timelineItems: {
-    flexDirection: 'row',
-    alignItems: 'flex-start',
-    gap: responsive.spacing[12],
-  },
-
-  // Today Marker
-  todayMarker: {
-    alignItems: 'center',
-  },
-  todayCard: {
-    backgroundColor: `${colors.primary}15`,
-    borderRadius: theme.borderRadius.lg,
-    borderWidth: 2,
-    borderColor: colors.primary,
-    padding: responsive.spacing[3],
-    alignItems: 'center',
-    gap: responsive.spacing[2],
-    minWidth: ms(80),
-  },
-  todayIconContainer: {
-    width: ms(40),
-    height: ms(40),
-    borderRadius: ms(20),
-    backgroundColor: colors.neutralWhite,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  todayLabel: {
-    fontSize: responsive.fontSize.sm,
-    fontWeight: '700',
-    color: colors.primary,
-  },
-  todayNodeConnector: {
-    width: 2,
-    height: ms(16),
-    marginTop: responsive.spacing[2],
-    backgroundColor: colors.primary,
-  },
-  todayTimelineNode: {
-    width: ms(16),
-    height: ms(16),
-    borderRadius: ms(8),
-    backgroundColor: colors.primary,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  todayTimelineNodeInner: {
-    width: ms(8),
-    height: ms(8),
-    borderRadius: ms(4),
-    backgroundColor: colors.neutralWhite,
-  },
-
-  // Bill Items
-  billItemContainer: {
-    alignItems: 'center',
-  },
-  billCard: {
-    width: ms(160),
-    borderRadius: theme.borderRadius.lg,
-    borderWidth: 1,
-    borderColor: colors.border,
-    padding: responsive.spacing[3],
-    alignItems: 'center',
-    backgroundColor: colors.neutralWhite,
-    ...theme.shadows.sm,
-  },
-  billHeader: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginBottom: responsive.spacing[2],
-    gap: responsive.spacing[2],
-    width: '100%',
-  },
-  companyLogo: {
-    width: ms(24),
-    height: ms(24),
-    borderRadius: ms(12),
-  },
-  companyLogoPlaceholder: {
-    width: ms(24),
-    height: ms(24),
-    borderRadius: ms(12),
-    backgroundColor: colors.primary,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  companyName: {
-    fontSize: responsive.fontSize.md,
-    fontWeight: '600',
-    color: colors.neutralDarkest,
-    flex: 1,
-  },
-  billAmount: {
-    fontSize: responsive.fontSize.lg,
-    fontWeight: '700',
-    color: colors.primary,
-    marginBottom: responsive.spacing[1],
-  },
-  billDueDate: {
-    fontSize: responsive.fontSize.sm,
-    fontWeight: '400',
-    color: colors.neutralDark,
-  },
-
-  // Timeline Node
-  nodeConnector: {
-    width: 2,
-    height: ms(16),
-    marginTop: responsive.spacing[2],
-    backgroundColor: colors.timelineAxis,
-  },
-  timelineNode: {
-    width: ms(12),
-    height: ms(12),
-    borderRadius: ms(6),
-    backgroundColor: colors.timelineNode,
-    borderWidth: 2,
-    borderColor: colors.neutralWhite,
-  },
-
-  // Empty State
-  emptyState: {
-    alignItems: 'center',
-    justifyContent: 'center',
-    paddingVertical: responsive.spacing[8],
-    paddingHorizontal: responsive.spacing[4],
-    gap: responsive.spacing[3],
-  },
-  emptyTitle: {
-    fontSize: responsive.fontSize.lg,
-    fontWeight: '600',
-    color: colors.neutralDarkest,
-  },
-  emptySubtitle: {
-    fontSize: responsive.fontSize.md,
-    fontWeight: '400',
-    color: colors.neutralDark,
-    textAlign: 'center',
-  },
-});

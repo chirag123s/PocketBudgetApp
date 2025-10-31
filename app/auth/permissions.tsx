@@ -5,13 +5,16 @@ import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Screen } from '@/components/layout/Screen';
 import { Button } from '@/components/ui/Button';
-import { theme } from '@/constants/theme';
+import { getTheme } from '@/constants/theme';
 import { responsive, wp, hp, ms } from '@/constants/responsive';
+import { useTheme } from '@/contexts/ThemeContext';
 
 type PermissionScreen = 'notifications' | 'biometric';
 
 export default function PermissionsScreen() {
   const router = useRouter();
+  const { theme: themeMode } = useTheme();
+  const theme = getTheme(themeMode);
   const [screen, setScreen] = useState<PermissionScreen>('notifications');
 
   const handleEnableNotifications = () => {
@@ -31,6 +34,98 @@ export default function PermissionsScreen() {
       router.replace('/bank/intro');
     }
   };
+
+  const styles = StyleSheet.create({
+    container: {
+      flex: 1,
+      padding: responsive.spacing[6],
+      maxWidth: responsive.layout.maxContentWidth,
+      width: '100%',
+      alignSelf: 'center',
+    },
+    progressContainer: {
+      flexDirection: 'row',
+      gap: responsive.spacing[2],
+      marginBottom: responsive.spacing[6],
+    },
+    progressBar: {
+      flex: 1,
+      height: ms(4),
+      backgroundColor: theme.colors.neutral[200],
+      borderRadius: ms(2),
+    },
+    progressBarActive: {
+      backgroundColor: theme.colors.primary[600],
+    },
+    content: {
+      flex: 1,
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
+    iconContainer: {
+      marginBottom: responsive.device.isShortDevice ? responsive.spacing[6] : responsive.spacing[8],
+      position: 'relative',
+    },
+    gradientCircle: {
+      width: ms(128),
+      height: ms(128),
+      borderRadius: ms(64),
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
+    badge: {
+      position: 'absolute',
+      top: ms(-8),
+      right: ms(-8),
+      width: ms(32),
+      height: ms(32),
+      borderRadius: ms(16),
+      backgroundColor: theme.colors.danger.main,
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
+    badgeText: {
+      ...theme.typography.styles.caption,
+      fontSize: responsive.fontSize.xs,
+      lineHeight: responsive.fontSize.xs * 1.4,
+      color: 'white',
+      fontWeight: 'bold',
+    },
+    title: {
+      ...theme.typography.styles.h1,
+      fontSize: responsive.fontSize.h2,
+      lineHeight: responsive.fontSize.h2 * 1.3,
+      textAlign: 'center',
+      marginBottom: responsive.spacing[4],
+    },
+    description: {
+      ...theme.typography.styles.body,
+      fontSize: responsive.fontSize.base,
+      lineHeight: responsive.fontSize.base * 1.5,
+      color: theme.colors.text.secondary,
+      textAlign: 'center',
+      marginBottom: responsive.device.isShortDevice ? responsive.spacing[8] : responsive.spacing[12],
+      maxWidth: wp(320),
+    },
+    skipButton: {
+      marginTop: responsive.spacing[4],
+      padding: responsive.spacing[2],
+    },
+    skipText: {
+      ...theme.typography.styles.body,
+      fontSize: responsive.fontSize.base,
+      lineHeight: responsive.fontSize.base * 1.5,
+      color: theme.colors.text.secondary,
+    },
+    infoText: {
+      ...theme.typography.styles.caption,
+      fontSize: responsive.fontSize.xs,
+      lineHeight: responsive.fontSize.xs * 1.4,
+      color: theme.colors.text.tertiary,
+      textAlign: 'center',
+      marginBottom: responsive.spacing[4],
+    },
+  });
 
   // Notifications Permission Screen
   if (screen === 'notifications') {
@@ -137,95 +232,3 @@ export default function PermissionsScreen() {
     </Screen>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    padding: responsive.spacing[6],
-    maxWidth: responsive.layout.maxContentWidth,
-    width: '100%',
-    alignSelf: 'center',
-  },
-  progressContainer: {
-    flexDirection: 'row',
-    gap: responsive.spacing[2],
-    marginBottom: responsive.spacing[6],
-  },
-  progressBar: {
-    flex: 1,
-    height: ms(4),
-    backgroundColor: theme.colors.neutral[200],
-    borderRadius: ms(2),
-  },
-  progressBarActive: {
-    backgroundColor: theme.colors.primary[600],
-  },
-  content: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  iconContainer: {
-    marginBottom: responsive.device.isShortDevice ? responsive.spacing[6] : responsive.spacing[8],
-    position: 'relative',
-  },
-  gradientCircle: {
-    width: ms(128),
-    height: ms(128),
-    borderRadius: ms(64),
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  badge: {
-    position: 'absolute',
-    top: ms(-8),
-    right: ms(-8),
-    width: ms(32),
-    height: ms(32),
-    borderRadius: ms(16),
-    backgroundColor: theme.colors.danger.main,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  badgeText: {
-    ...theme.typography.styles.caption,
-    fontSize: responsive.fontSize.xs,
-    lineHeight: responsive.fontSize.xs * 1.4,
-    color: 'white',
-    fontWeight: 'bold',
-  },
-  title: {
-    ...theme.typography.styles.h1,
-    fontSize: responsive.fontSize.h2,
-    lineHeight: responsive.fontSize.h2 * 1.3,
-    textAlign: 'center',
-    marginBottom: responsive.spacing[4],
-  },
-  description: {
-    ...theme.typography.styles.body,
-    fontSize: responsive.fontSize.base,
-    lineHeight: responsive.fontSize.base * 1.5,
-    color: theme.colors.text.secondary,
-    textAlign: 'center',
-    marginBottom: responsive.device.isShortDevice ? responsive.spacing[8] : responsive.spacing[12],
-    maxWidth: wp(320),
-  },
-  skipButton: {
-    marginTop: responsive.spacing[4],
-    padding: responsive.spacing[2],
-  },
-  skipText: {
-    ...theme.typography.styles.body,
-    fontSize: responsive.fontSize.base,
-    lineHeight: responsive.fontSize.base * 1.5,
-    color: theme.colors.text.secondary,
-  },
-  infoText: {
-    ...theme.typography.styles.caption,
-    fontSize: responsive.fontSize.xs,
-    lineHeight: responsive.fontSize.xs * 1.4,
-    color: theme.colors.text.tertiary,
-    textAlign: 'center',
-    marginBottom: responsive.spacing[4],
-  },
-});

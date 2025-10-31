@@ -1,19 +1,10 @@
 import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { theme } from '@/constants/theme';
+import { getTheme } from '@/constants/theme';
 import { responsive, ms } from '@/constants/responsive';
 import { formatCurrencyCompact } from '@/utils/currency';
-
-const colors = {
-  primary: theme.colors.info.main,
-  secondaryRed: '#FF6B6B',
-  neutralBg: theme.colors.background.secondary,
-  neutralWhite: theme.colors.background.primary,
-  neutralDarkest: theme.colors.text.primary,
-  neutralDark: theme.colors.text.secondary,
-  neutralMedium: theme.colors.text.tertiary,
-};
+import { useTheme } from '@/contexts/ThemeContext';
 
 export interface CardCycle {
   id: string;
@@ -43,7 +34,118 @@ export const CardCycleWidget: React.FC<CardCycleWidgetProps> = ({
   onMorePress,
   onCardPress,
 }) => {
+  const { theme: themeMode } = useTheme();
+  const theme = getTheme(themeMode);
+
+  const colors = {
+    primary: theme.colors.info.main,
+    secondaryRed: '#FF6B6B',
+    neutralBg: theme.colors.background.secondary,
+    neutralWhite: theme.colors.background.primary,
+    neutralDarkest: theme.colors.text.primary,
+    neutralDark: theme.colors.text.secondary,
+    neutralMedium: theme.colors.text.tertiary,
+  };
+
   const usagePercentage = (cardCycle.spent / cardCycle.limit) * 100;
+
+  const styles = StyleSheet.create({
+    card: {
+      backgroundColor: colors.neutralWhite,
+      borderRadius: theme.borderRadius.xl,
+      padding: responsive.spacing[5],
+      gap: responsive.spacing[4],
+      ...theme.shadows.sm,
+    },
+
+    // Header
+    header: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'space-between',
+    },
+    headerLeft: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: responsive.spacing[2],
+    },
+    title: {
+      fontSize: responsive.fontSize.lg,
+      fontWeight: '700',
+      color: colors.neutralDarkest,
+    },
+
+    // Spending Section
+    spendingSection: {
+      gap: responsive.spacing[2],
+    },
+    labelsRow: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+    },
+    label: {
+      fontSize: responsive.fontSize.sm,
+      fontWeight: '500',
+      color: colors.neutralDark,
+    },
+    amountsRow: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      alignItems: 'baseline',
+    },
+    spentAmount: {
+      fontSize: responsive.fontSize.xl,
+      fontWeight: '700',
+      color: colors.neutralDarkest,
+    },
+    limitAmount: {
+      fontSize: responsive.fontSize.lg,
+      fontWeight: '600',
+      color: colors.neutralDarkest,
+    },
+
+    // Progress Bar
+    progressBar: {
+      width: '100%',
+      height: ms(10),
+      backgroundColor: colors.neutralBg,
+      borderRadius: ms(5),
+      overflow: 'hidden',
+      marginTop: responsive.spacing[2],
+    },
+    progressFill: {
+      height: '100%',
+      borderRadius: ms(5),
+    },
+
+    // Dates Section
+    datesSection: {
+      flexDirection: 'row',
+      backgroundColor: colors.neutralBg,
+      borderRadius: theme.borderRadius.lg,
+      padding: responsive.spacing[3],
+      justifyContent: 'space-between',
+    },
+    dateItem: {
+      flex: 1,
+      gap: responsive.spacing[1],
+    },
+    divider: {
+      width: 1,
+      backgroundColor: `${colors.neutralMedium}33`,
+      marginHorizontal: responsive.spacing[3],
+    },
+    dateLabel: {
+      fontSize: responsive.fontSize.xs,
+      fontWeight: '500',
+      color: colors.neutralDark,
+    },
+    dateValue: {
+      fontSize: responsive.fontSize.sm,
+      fontWeight: '600',
+      color: colors.neutralDarkest,
+    },
+  });
 
   return (
     <TouchableOpacity
@@ -115,101 +217,3 @@ export const CardCycleWidget: React.FC<CardCycleWidgetProps> = ({
     </TouchableOpacity>
   );
 };
-
-const styles = StyleSheet.create({
-  card: {
-    backgroundColor: colors.neutralWhite,
-    borderRadius: theme.borderRadius.xl,
-    padding: responsive.spacing[5],
-    gap: responsive.spacing[4],
-    ...theme.shadows.sm,
-  },
-
-  // Header
-  header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-  },
-  headerLeft: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: responsive.spacing[2],
-  },
-  title: {
-    fontSize: responsive.fontSize.lg,
-    fontWeight: '700',
-    color: colors.neutralDarkest,
-  },
-
-  // Spending Section
-  spendingSection: {
-    gap: responsive.spacing[2],
-  },
-  labelsRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-  },
-  label: {
-    fontSize: responsive.fontSize.sm,
-    fontWeight: '500',
-    color: colors.neutralDark,
-  },
-  amountsRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'baseline',
-  },
-  spentAmount: {
-    fontSize: responsive.fontSize.xl,
-    fontWeight: '700',
-    color: colors.neutralDarkest,
-  },
-  limitAmount: {
-    fontSize: responsive.fontSize.lg,
-    fontWeight: '600',
-    color: colors.neutralDarkest,
-  },
-
-  // Progress Bar
-  progressBar: {
-    width: '100%',
-    height: ms(10),
-    backgroundColor: colors.neutralBg,
-    borderRadius: ms(5),
-    overflow: 'hidden',
-    marginTop: responsive.spacing[2],
-  },
-  progressFill: {
-    height: '100%',
-    borderRadius: ms(5),
-  },
-
-  // Dates Section
-  datesSection: {
-    flexDirection: 'row',
-    backgroundColor: colors.neutralBg,
-    borderRadius: theme.borderRadius.lg,
-    padding: responsive.spacing[3],
-    justifyContent: 'space-between',
-  },
-  dateItem: {
-    flex: 1,
-    gap: responsive.spacing[1],
-  },
-  divider: {
-    width: 1,
-    backgroundColor: `${colors.neutralMedium}33`,
-    marginHorizontal: responsive.spacing[3],
-  },
-  dateLabel: {
-    fontSize: responsive.fontSize.xs,
-    fontWeight: '500',
-    color: colors.neutralDark,
-  },
-  dateValue: {
-    fontSize: responsive.fontSize.sm,
-    fontWeight: '600',
-    color: colors.neutralDarkest,
-  },
-});

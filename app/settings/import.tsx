@@ -5,37 +5,15 @@ import {
   StyleSheet,
   Pressable,
   ScrollView,
+  StatusBar,
 } from 'react-native';
 import { Screen } from '@/components/layout/Screen';
 import { ScreenHeader } from '@/components/layout/ScreenHeader';
-import { theme } from '@/constants/theme';
+import { getTheme } from '@/constants/theme';
+import { useTheme } from '@/contexts/ThemeContext';
 import { responsive, ms } from '@/constants/responsive';
 import { Ionicons } from '@expo/vector-icons';
 import { settingsTypography, settingsFontWeights, settingsTextStyles } from './typography';
-
-// Color Palette - Using theme colors
-const colors = {
-  // Primary Palette
-  primaryDark: theme.colors.info.dark,
-  primary: theme.colors.info.main,
-  primaryLight: theme.colors.info.light,
-
-  // Neutral Palette
-  neutralBg: theme.colors.background.secondary,
-  neutralWhite: theme.colors.background.primary,
-  neutralDarkest: theme.colors.text.primary,
-  neutralDark: theme.colors.text.secondary,
-  neutralMedium: theme.colors.text.tertiary,
-
-  // Functional Palette
-  functionalSuccess: theme.colors.success.main,
-  functionalWarning: theme.colors.warning.main,
-  functionalError: theme.colors.danger.main,
-
-  // Border
-  border: theme.colors.border.light,
-  iconBg: theme.colors.background.tertiary,
-};
 
 interface ImportOption {
   id: string;
@@ -46,6 +24,33 @@ interface ImportOption {
 }
 
 export default function ImportData() {
+  const { theme: themeMode } = useTheme();
+  const theme = getTheme(themeMode);
+
+  // Color Palette - Using theme colors
+  const colors = {
+    // Primary Palette
+    primaryDark: theme.colors.info.dark,
+    primary: theme.colors.info.main,
+    primaryLight: theme.colors.info.light,
+
+    // Neutral Palette
+    neutralBg: theme.colors.background.secondary,
+    neutralWhite: theme.colors.background.primary,
+    neutralDarkest: theme.colors.text.primary,
+    neutralDark: theme.colors.text.secondary,
+    neutralMedium: theme.colors.text.tertiary,
+
+    // Functional Palette
+    functionalSuccess: theme.colors.success.main,
+    functionalWarning: theme.colors.warning.main,
+    functionalError: theme.colors.danger.main,
+
+    // Border
+    border: theme.colors.border.light,
+    iconBg: theme.colors.background.tertiary,
+  };
+
   const importOptions: ImportOption[] = [
     {
       id: 'csv',
@@ -75,8 +80,133 @@ export default function ImportData() {
     // Navigate to specific import flow
   };
 
+  const styles = StyleSheet.create({
+    scrollView: {
+      flex: 1,
+    },
+    scrollContent: {
+      paddingHorizontal: responsive.spacing[4],
+      paddingTop: responsive.spacing[6],
+      paddingBottom: responsive.spacing[8],
+    },
+    section: {
+      marginBottom: responsive.spacing[4],
+    },
+    sectionHeader: {
+      fontSize: settingsTypography.tertiary,
+      lineHeight: settingsTypography.tertiary * 1.5,
+      fontWeight: settingsFontWeights.bold,
+      letterSpacing: 1,
+      textTransform: 'uppercase',
+      color: colors.neutralMedium,
+      marginBottom: responsive.spacing[3],
+    },
+    importOption: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      backgroundColor: colors.neutralWhite,
+      borderRadius: theme.borderRadius.xl,
+      padding: responsive.spacing[4],
+      marginBottom: responsive.spacing[3],
+      ...theme.shadows.sm,
+    },
+    importOptionPressed: {
+      opacity: 0.7,
+    },
+    iconContainer: {
+      width: ms(48),
+      height: ms(48),
+      borderRadius: ms(24),
+      backgroundColor: colors.iconBg,
+      alignItems: 'center',
+      justifyContent: 'center',
+      marginRight: responsive.spacing[3],
+    },
+    optionContent: {
+      flex: 1,
+      gap: 2,
+    },
+    optionTitle: {
+      fontSize: settingsTypography.primary,
+      lineHeight: settingsTypography.primary * 1.5,
+      fontWeight: settingsFontWeights.semibold,
+      color: colors.neutralDarkest,
+    },
+    optionDescription: {
+      fontSize: settingsTypography.secondary,
+      lineHeight: settingsTypography.secondary * 1.5,
+      color: colors.neutralDark,
+      marginTop: 2,
+    },
+    card: {
+      backgroundColor: colors.neutralWhite,
+      borderRadius: theme.borderRadius.xl,
+      padding: responsive.spacing[6],
+      marginBottom: responsive.spacing[4],
+      ...theme.shadows.sm,
+    },
+    cardHeader: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: responsive.spacing[3],
+      marginBottom: responsive.spacing[4],
+    },
+    cardTitle: {
+      fontSize: settingsTypography.sectionHeading,
+      lineHeight: settingsTypography.sectionHeading * 1.5,
+      fontWeight: settingsFontWeights.bold,
+      color: colors.neutralDarkest,
+    },
+    guidelinesList: {
+      gap: responsive.spacing[4],
+    },
+    guidelineItem: {
+      flexDirection: 'row',
+      alignItems: 'flex-start',
+      gap: responsive.spacing[3],
+    },
+    guidelineBullet: {
+      width: ms(24),
+      height: ms(24),
+      borderRadius: ms(12),
+      backgroundColor: colors.primaryLight,
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
+    guidelineBulletText: {
+      fontSize: settingsTypography.tertiary,
+      lineHeight: settingsTypography.tertiary * 1.5,
+      fontWeight: settingsFontWeights.bold,
+      color: colors.primary,
+    },
+    guidelineText: {
+      flex: 1,
+      fontSize: settingsTypography.secondary,
+      lineHeight: settingsTypography.secondary * 1.6,
+      color: colors.neutralDark,
+    },
+    infoBox: {
+      flexDirection: 'row',
+      alignItems: 'flex-start',
+      gap: responsive.spacing[3],
+      padding: responsive.spacing[4],
+      borderRadius: theme.borderRadius.xl,
+      backgroundColor: `${colors.functionalSuccess}15`,
+      borderWidth: 1,
+      borderColor: `${colors.functionalSuccess}40`,
+    },
+    infoText: {
+      flex: 1,
+      fontSize: settingsTypography.secondary,
+      lineHeight: settingsTypography.secondary * 1.6,
+      color: colors.neutralDarkest,
+      fontWeight: settingsFontWeights.regular,
+    },
+  });
+
   return (
     <Screen scrollable={false} noPadding backgroundColor={colors.neutralBg} edges={['top', 'bottom']}>
+      <StatusBar barStyle={themeMode === 'dark' ? 'light-content' : 'dark-content'} backgroundColor={colors.neutralBg} />
       <ScreenHeader
         title="Import Data"
         backgroundColor={colors.neutralBg}
@@ -170,127 +300,3 @@ export default function ImportData() {
     </Screen>
   );
 }
-
-const styles = StyleSheet.create({
-  scrollView: {
-    flex: 1,
-  },
-  scrollContent: {
-    paddingHorizontal: responsive.spacing[4],
-    paddingTop: responsive.spacing[6],
-    paddingBottom: responsive.spacing[8],
-  },
-  section: {
-    marginBottom: responsive.spacing[4],
-  },
-  sectionHeader: {
-    fontSize: settingsTypography.tertiary,
-    lineHeight: settingsTypography.tertiary * 1.5,
-    fontWeight: settingsFontWeights.bold,
-    letterSpacing: 1,
-    textTransform: 'uppercase',
-    color: colors.neutralMedium,
-    marginBottom: responsive.spacing[3],
-  },
-  importOption: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: colors.neutralWhite,
-    borderRadius: theme.borderRadius.xl,
-    padding: responsive.spacing[4],
-    marginBottom: responsive.spacing[3],
-    ...theme.shadows.sm,
-  },
-  importOptionPressed: {
-    opacity: 0.7,
-  },
-  iconContainer: {
-    width: ms(48),
-    height: ms(48),
-    borderRadius: ms(24),
-    backgroundColor: colors.iconBg,
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginRight: responsive.spacing[3],
-  },
-  optionContent: {
-    flex: 1,
-    gap: 2,
-  },
-  optionTitle: {
-    fontSize: settingsTypography.primary,
-    lineHeight: settingsTypography.primary * 1.5,
-    fontWeight: settingsFontWeights.semibold,
-    color: colors.neutralDarkest,
-  },
-  optionDescription: {
-    fontSize: settingsTypography.secondary,
-    lineHeight: settingsTypography.secondary * 1.5,
-    color: colors.neutralDark,
-    marginTop: 2,
-  },
-  card: {
-    backgroundColor: colors.neutralWhite,
-    borderRadius: theme.borderRadius.xl,
-    padding: responsive.spacing[6],
-    marginBottom: responsive.spacing[4],
-    ...theme.shadows.sm,
-  },
-  cardHeader: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: responsive.spacing[3],
-    marginBottom: responsive.spacing[4],
-  },
-  cardTitle: {
-    fontSize: settingsTypography.sectionHeading,
-    lineHeight: settingsTypography.sectionHeading * 1.5,
-    fontWeight: settingsFontWeights.bold,
-    color: colors.neutralDarkest,
-  },
-  guidelinesList: {
-    gap: responsive.spacing[4],
-  },
-  guidelineItem: {
-    flexDirection: 'row',
-    alignItems: 'flex-start',
-    gap: responsive.spacing[3],
-  },
-  guidelineBullet: {
-    width: ms(24),
-    height: ms(24),
-    borderRadius: ms(12),
-    backgroundColor: colors.primaryLight,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  guidelineBulletText: {
-    fontSize: settingsTypography.tertiary,
-    lineHeight: settingsTypography.tertiary * 1.5,
-    fontWeight: settingsFontWeights.bold,
-    color: colors.primary,
-  },
-  guidelineText: {
-    flex: 1,
-    fontSize: settingsTypography.secondary,
-    lineHeight: settingsTypography.secondary * 1.6,
-    color: colors.neutralDark,
-  },
-  infoBox: {
-    flexDirection: 'row',
-    alignItems: 'flex-start',
-    gap: responsive.spacing[3],
-    padding: responsive.spacing[4],
-    borderRadius: theme.borderRadius.xl,
-    backgroundColor: `${colors.functionalSuccess}15`,
-    borderWidth: 1,
-    borderColor: `${colors.functionalSuccess}40`,
-  },
-  infoText: {
-    flex: 1,
-    fontSize: settingsTypography.secondary,
-    lineHeight: settingsTypography.secondary * 1.6,
-    color: colors.neutralDarkest,
-    fontWeight: settingsFontWeights.regular,
-  },
-});

@@ -3,14 +3,9 @@ import { View, Text, StyleSheet, TouchableOpacity, TouchableWithoutFeedback } fr
 import Svg, { Path, G } from 'react-native-svg';
 import { GestureDetector, Gesture } from 'react-native-gesture-handler';
 import * as Haptics from 'expo-haptics';
-import { theme } from '@/constants/theme';
+import { getTheme } from '@/constants/theme';
+import { useTheme } from '@/contexts/ThemeContext';
 import { responsive, ms } from '@/constants/responsive';
-
-// Color Palette
-const colors = {
-  neutralWhite: theme.colors.background.primary,
-  neutralBg: theme.colors.background.secondary,
-};
 
 export interface DonutChartSegment {
   label: string;
@@ -43,6 +38,15 @@ export const DonutChart: React.FC<DonutChartProps> = ({
   interactive = true,
   showNavigation = true,
 }) => {
+  const { theme: themeMode } = useTheme();
+  const theme = getTheme(themeMode);
+
+  // Color Palette
+  const colors = {
+    neutralWhite: theme.colors.background.primary,
+    neutralBg: theme.colors.background.secondary,
+  };
+
   const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
   const [tooltipVisible, setTooltipVisible] = useState(false);
   const [tooltipPosition, setTooltipPosition] = useState({ x: 0, y: 0 });
@@ -182,6 +186,127 @@ export const DonutChart: React.FC<DonutChartProps> = ({
 
   // Get selected segment data
   const selectedSegment = selectedIndex !== null ? segments[selectedIndex] : null;
+
+  const styles = StyleSheet.create({
+    container: {
+      gap: responsive.spacing[4],
+    },
+    containerHorizontal: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: responsive.spacing[4],
+    },
+    chartContainer: {
+      alignItems: 'center',
+      justifyContent: 'center',
+      position: 'relative',
+    },
+    centerContent: {
+      position: 'absolute',
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
+    totalAmount: {
+      fontSize: responsive.fontSize.h2,
+      fontWeight: '700',
+      color: theme.colors.text.primary,
+    },
+    totalLabel: {
+      fontSize: responsive.fontSize.xs,
+      fontWeight: '500',
+      color: theme.colors.text.secondary,
+      marginTop: responsive.spacing[1],
+    },
+    percentageLabel: {
+      fontSize: responsive.fontSize.xs,
+      fontWeight: '600',
+      color: theme.colors.text.tertiary,
+      marginTop: responsive.spacing[0.5],
+    },
+    tooltip: {
+      position: 'absolute',
+      backgroundColor: theme.colors.background.primary,
+      borderRadius: theme.borderRadius.md,
+      padding: responsive.spacing[2],
+      ...theme.shadows.base,
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: responsive.spacing[2],
+      minWidth: ms(120),
+      maxWidth: ms(150),
+      transform: [{ translateX: '-50%' }, { translateY: '-50%' }],
+      zIndex: 1000,
+      elevation: 5,
+      paddingRight: responsive.spacing[3],
+    },
+    tooltipClose: {
+      position: 'absolute',
+      top: responsive.spacing[1],
+      right: responsive.spacing[1],
+      fontSize: responsive.fontSize.xs,
+      fontWeight: '600',
+      color: theme.colors.text.tertiary,
+      opacity: 0.6,
+    },
+    tooltipDot: {
+      width: ms(8),
+      height: ms(8),
+      borderRadius: ms(4),
+    },
+    tooltipContent: {
+      flex: 1,
+    },
+    tooltipLabel: {
+      fontSize: responsive.fontSize.xs,
+      fontWeight: '600',
+      color: theme.colors.text.primary,
+    },
+    tooltipValue: {
+      fontSize: responsive.fontSize.sm,
+      fontWeight: '700',
+      color: theme.colors.text.primary,
+      marginTop: responsive.spacing[0.5],
+    },
+    tooltipPercentage: {
+      fontSize: responsive.fontSize.xs,
+      fontWeight: '500',
+      color: theme.colors.text.secondary,
+    },
+    legend: {
+      gap: responsive.spacing[3],
+    },
+    legendRight: {
+      flex: 1,
+      gap: responsive.spacing[2],
+    },
+    legendItem: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: responsive.spacing[2],
+    },
+    legendDot: {
+      // Size set dynamically via props
+    },
+    legendTextContainer: {
+      flex: 1,
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+      minWidth: 0, // Allows flex to shrink properly
+    },
+    legendLabel: {
+      fontSize: responsive.fontSize.sm,
+      fontWeight: '500',
+      color: theme.colors.text.primary,
+      flexShrink: 1,
+    },
+    legendValue: {
+      fontSize: responsive.fontSize.sm,
+      fontWeight: '700',
+      color: theme.colors.text.primary,
+      marginLeft: responsive.spacing[2],
+    },
+  });
 
   return (
     <View style={[
@@ -358,124 +483,3 @@ export const DonutChart: React.FC<DonutChartProps> = ({
     </View>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    gap: responsive.spacing[4],
-  },
-  containerHorizontal: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: responsive.spacing[4],
-  },
-  chartContainer: {
-    alignItems: 'center',
-    justifyContent: 'center',
-    position: 'relative',
-  },
-  centerContent: {
-    position: 'absolute',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  totalAmount: {
-    fontSize: responsive.fontSize.h2,
-    fontWeight: '700',
-    color: theme.colors.text.primary,
-  },
-  totalLabel: {
-    fontSize: responsive.fontSize.xs,
-    fontWeight: '500',
-    color: theme.colors.text.secondary,
-    marginTop: responsive.spacing[1],
-  },
-  percentageLabel: {
-    fontSize: responsive.fontSize.xs,
-    fontWeight: '600',
-    color: theme.colors.text.tertiary,
-    marginTop: responsive.spacing[0.5],
-  },
-  tooltip: {
-    position: 'absolute',
-    backgroundColor: theme.colors.background.primary,
-    borderRadius: theme.borderRadius.md,
-    padding: responsive.spacing[2],
-    ...theme.shadows.base,
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: responsive.spacing[2],
-    minWidth: ms(120),
-    maxWidth: ms(150),
-    transform: [{ translateX: '-50%' }, { translateY: '-50%' }],
-    zIndex: 1000,
-    elevation: 5,
-    paddingRight: responsive.spacing[3],
-  },
-  tooltipClose: {
-    position: 'absolute',
-    top: responsive.spacing[1],
-    right: responsive.spacing[1],
-    fontSize: responsive.fontSize.xs,
-    fontWeight: '600',
-    color: theme.colors.text.tertiary,
-    opacity: 0.6,
-  },
-  tooltipDot: {
-    width: ms(8),
-    height: ms(8),
-    borderRadius: ms(4),
-  },
-  tooltipContent: {
-    flex: 1,
-  },
-  tooltipLabel: {
-    fontSize: responsive.fontSize.xs,
-    fontWeight: '600',
-    color: theme.colors.text.primary,
-  },
-  tooltipValue: {
-    fontSize: responsive.fontSize.sm,
-    fontWeight: '700',
-    color: theme.colors.text.primary,
-    marginTop: responsive.spacing[0.5],
-  },
-  tooltipPercentage: {
-    fontSize: responsive.fontSize.xs,
-    fontWeight: '500',
-    color: theme.colors.text.secondary,
-  },
-  legend: {
-    gap: responsive.spacing[3],
-  },
-  legendRight: {
-    flex: 1,
-    gap: responsive.spacing[2],
-  },
-  legendItem: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: responsive.spacing[2],
-  },
-  legendDot: {
-    // Size set dynamically via props
-  },
-  legendTextContainer: {
-    flex: 1,
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    minWidth: 0, // Allows flex to shrink properly
-  },
-  legendLabel: {
-    fontSize: responsive.fontSize.sm,
-    fontWeight: '500',
-    color: theme.colors.text.primary,
-    flexShrink: 1,
-  },
-  legendValue: {
-    fontSize: responsive.fontSize.sm,
-    fontWeight: '700',
-    color: theme.colors.text.primary,
-    marginLeft: responsive.spacing[2],
-  },
-});

@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, ScrollView, TextInput } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, ScrollView, TextInput, StatusBar } from 'react-native';
 import { useRouter } from 'expo-router';
 import { Screen } from '@/components/layout/Screen';
 import { Button } from '@/components/ui/Button';
-import { theme } from '@/constants/theme';
+import { getTheme } from '@/constants/theme';
+import { useTheme } from '@/contexts/ThemeContext';
 import { responsive, ms } from '@/constants/responsive';
 import { Ionicons } from '@expo/vector-icons';
 
@@ -20,6 +21,13 @@ const TOTAL_INCOME = 3200;
 
 export default function SetBudgetAmounts() {
   const router = useRouter();
+  const { theme: themeMode } = useTheme();
+  const theme = getTheme(themeMode);
+
+  const colors = {
+    neutralBg: theme.colors.background.secondary,
+  };
+
   const [budgets, setBudgets] = useState<BudgetItem[]>([
     { id: 'housing', name: 'Housing', icon: '🏠', amount: '1800', suggested: 1800 },
     { id: 'groceries', name: 'Groceries', icon: '🛒', amount: '500', suggested: 450, avg: 475 },
@@ -50,8 +58,258 @@ export default function SetBudgetAmounts() {
     }
   };
 
+  const styles = StyleSheet.create({
+    header: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'space-between',
+      paddingHorizontal: responsive.spacing[4],
+      paddingVertical: responsive.spacing[2],
+      backgroundColor: theme.colors.background.primary,
+      borderBottomWidth: 1,
+      borderBottomColor: theme.colors.border.light,
+    },
+    backButton: {
+      padding: responsive.spacing[2],
+    },
+    headerCenter: {
+      flex: 1,
+      alignItems: 'center',
+    },
+    headerTitle: {
+      ...theme.typography.styles.h3,
+      fontSize: responsive.fontSize.lg,
+      lineHeight: responsive.fontSize.lg * 1.5,
+    },
+    headerSubtitle: {
+      ...theme.typography.styles.caption,
+      color: theme.colors.text.tertiary,
+      marginTop: responsive.spacing[1],
+    },
+    placeholder: {
+      width: 40,
+    },
+    summaryCard: {
+      backgroundColor: theme.colors.background.primary,
+      paddingHorizontal: responsive.spacing[6],
+      paddingVertical: responsive.spacing[4],
+      ...theme.shadows.sm,
+    },
+    summaryRow: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      marginBottom: responsive.spacing[2],
+    },
+    summaryLabel: {
+      ...theme.typography.styles.bodySmall,
+      color: theme.colors.text.secondary,
+    },
+    summaryRemaining: {
+      ...theme.typography.styles.bodySmall,
+      fontWeight: '600',
+    },
+    progressContainer: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      marginBottom: responsive.spacing[1],
+    },
+    progressBar: {
+      flex: 1,
+      height: 8,
+      backgroundColor: theme.colors.background.tertiary,
+      borderRadius: theme.borderRadius.full,
+      overflow: 'hidden',
+      marginRight: responsive.spacing[2],
+    },
+    progressFill: {
+      height: '100%',
+    },
+    percentage: {
+      ...theme.typography.styles.bodySmall,
+      fontWeight: '600',
+      color: theme.colors.text.primary,
+    },
+    allocated: {
+      ...theme.typography.styles.caption,
+      color: theme.colors.text.tertiary,
+    },
+    content: {
+      padding: responsive.spacing[6],
+      paddingBottom: responsive.spacing[8],
+    },
+    itemsContainer: {
+      gap: responsive.spacing[2],
+      marginBottom: responsive.spacing[6],
+    },
+    budgetItem: {
+      backgroundColor: theme.colors.background.primary,
+      borderRadius: theme.borderRadius.xl,
+      padding: responsive.spacing[4],
+      ...theme.shadows.sm,
+    },
+    itemHeader: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'space-between',
+      marginBottom: responsive.spacing[2],
+    },
+    itemLeft: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      flex: 1,
+    },
+    itemIcon: {
+      fontSize: responsive.fontSize.h4,
+      lineHeight: responsive.fontSize.h4 * 1.5,
+      marginRight: responsive.spacing[2],
+    },
+    itemName: {
+      ...theme.typography.styles.body,
+      fontWeight: '600',
+    },
+    suggestButton: {
+      backgroundColor: theme.colors.info.light,
+      borderRadius: theme.borderRadius.lg,
+      paddingHorizontal: responsive.spacing[2],
+      paddingVertical: 4,
+    },
+    suggestButtonText: {
+      ...theme.typography.styles.caption,
+      color: theme.colors.info.dark,
+      fontSize: responsive.fontSize.xs,
+      lineHeight: responsive.fontSize.xs * 1.5,
+      fontWeight: '500',
+    },
+    amountContainer: {
+      flexDirection: 'row',
+      alignItems: 'center',
+    },
+    currencySymbol: {
+      fontSize: responsive.fontSize.xl,
+      lineHeight: responsive.fontSize.xl * 1.5,
+      color: theme.colors.text.tertiary,
+      marginRight: responsive.spacing[2],
+    },
+    amountInput: {
+      flex: 1,
+      fontSize: responsive.fontSize.h4,
+      lineHeight: responsive.fontSize.h4 * 1.5,
+      fontWeight: '600',
+      color: theme.colors.text.primary,
+    },
+    avgText: {
+      ...theme.typography.styles.caption,
+      color: theme.colors.text.tertiary,
+      marginTop: responsive.spacing[2],
+    },
+    suggestionsCard: {
+      backgroundColor: theme.colors.info.light,
+      borderWidth: 1,
+      borderColor: theme.colors.info.main,
+      borderRadius: theme.borderRadius.xl,
+      padding: responsive.spacing[4],
+      marginBottom: responsive.spacing[6],
+    },
+    suggestionsTitle: {
+      ...theme.typography.styles.body,
+      fontWeight: '600',
+      color: theme.colors.info.dark,
+      marginBottom: responsive.spacing[2],
+    },
+    suggestionsText: {
+      ...theme.typography.styles.bodySmall,
+      color: theme.colors.info.dark,
+      marginBottom: responsive.spacing[2],
+    },
+    applyAllButton: {
+      backgroundColor: theme.colors.info.main,
+      borderRadius: theme.borderRadius.lg,
+      paddingVertical: responsive.spacing[2],
+      alignItems: 'center',
+    },
+    applyAllButtonText: {
+      ...theme.typography.styles.button,
+      color: '#FFFFFF',
+      fontSize: responsive.fontSize.sm,
+      lineHeight: responsive.fontSize.sm * 1.5,
+    },
+    warningCard: {
+      backgroundColor: theme.colors.danger.light,
+      borderWidth: 1,
+      borderColor: theme.colors.danger.main,
+      borderRadius: theme.borderRadius.xl,
+      padding: responsive.spacing[4],
+      marginBottom: responsive.spacing[6],
+    },
+    warningTitle: {
+      ...theme.typography.styles.body,
+      fontWeight: '600',
+      color: theme.colors.danger.dark,
+      marginBottom: responsive.spacing[1],
+    },
+    warningText: {
+      ...theme.typography.styles.bodySmall,
+      color: theme.colors.danger.dark,
+      marginBottom: responsive.spacing[2],
+    },
+    warningActions: {
+      flexDirection: 'row',
+      gap: responsive.spacing[2],
+    },
+    adjustButton: {
+      flex: 1,
+      borderWidth: 1,
+      borderColor: theme.colors.danger.main,
+      borderRadius: theme.borderRadius.lg,
+      paddingVertical: responsive.spacing[2],
+      alignItems: 'center',
+    },
+    adjustButtonText: {
+      ...theme.typography.styles.button,
+      color: theme.colors.danger.main,
+      fontSize: responsive.fontSize.sm,
+      lineHeight: responsive.fontSize.sm * 1.5,
+    },
+    continueAnywayButton: {
+      flex: 1,
+      backgroundColor: theme.colors.danger.main,
+      borderRadius: theme.borderRadius.lg,
+      paddingVertical: responsive.spacing[2],
+      alignItems: 'center',
+    },
+    continueAnywayButtonText: {
+      ...theme.typography.styles.button,
+      color: '#FFFFFF',
+      fontSize: responsive.fontSize.sm,
+      lineHeight: responsive.fontSize.sm * 1.5,
+    },
+    quickActions: {
+      flexDirection: 'row',
+      gap: responsive.spacing[2],
+      marginBottom: responsive.spacing[6],
+    },
+    quickActionButton: {
+      flex: 1,
+      borderWidth: 1,
+      borderColor: theme.colors.border.main,
+      borderRadius: theme.borderRadius.xl,
+      paddingVertical: responsive.spacing[2],
+      alignItems: 'center',
+    },
+    quickActionText: {
+      ...theme.typography.styles.button,
+      color: theme.colors.text.secondary,
+      fontSize: responsive.fontSize.sm,
+      lineHeight: responsive.fontSize.sm * 1.5,
+    },
+    finishButton: {
+      marginBottom: 0,
+    },
+  });
+
   return (
-    <Screen noPadding backgroundColor={theme.colors.background.secondary}>
+    <Screen noPadding backgroundColor={colors.neutralBg}>
+      <StatusBar barStyle={themeMode === 'dark' ? 'light-content' : 'dark-content'} backgroundColor={colors.neutralBg} />
       {/* Header */}
       <View style={styles.header}>
         <TouchableOpacity
@@ -196,252 +454,3 @@ export default function SetBudgetAmounts() {
     </Screen>
   );
 }
-
-const styles = StyleSheet.create({
-  header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    paddingHorizontal: responsive.spacing[4],
-    paddingVertical: responsive.spacing[2],
-    backgroundColor: theme.colors.background.primary,
-    borderBottomWidth: 1,
-    borderBottomColor: theme.colors.border.light,
-  },
-  backButton: {
-    padding: responsive.spacing[2],
-  },
-  headerCenter: {
-    flex: 1,
-    alignItems: 'center',
-  },
-  headerTitle: {
-    ...theme.typography.styles.h3,
-    fontSize: responsive.fontSize.lg,
-    lineHeight: responsive.fontSize.lg * 1.5,
-  },
-  headerSubtitle: {
-    ...theme.typography.styles.caption,
-    color: theme.colors.text.tertiary,
-    marginTop: responsive.spacing[1],
-  },
-  placeholder: {
-    width: 40,
-  },
-  summaryCard: {
-    backgroundColor: theme.colors.background.primary,
-    paddingHorizontal: responsive.spacing[6],
-    paddingVertical: responsive.spacing[4],
-    ...theme.shadows.sm,
-  },
-  summaryRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    marginBottom: responsive.spacing[2],
-  },
-  summaryLabel: {
-    ...theme.typography.styles.bodySmall,
-    color: theme.colors.text.secondary,
-  },
-  summaryRemaining: {
-    ...theme.typography.styles.bodySmall,
-    fontWeight: '600',
-  },
-  progressContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: responsive.spacing[1],
-  },
-  progressBar: {
-    flex: 1,
-    height: 8,
-    backgroundColor: theme.colors.background.tertiary,
-    borderRadius: theme.borderRadius.full,
-    overflow: 'hidden',
-    marginRight: responsive.spacing[2],
-  },
-  progressFill: {
-    height: '100%',
-  },
-  percentage: {
-    ...theme.typography.styles.bodySmall,
-    fontWeight: '600',
-    color: theme.colors.text.primary,
-  },
-  allocated: {
-    ...theme.typography.styles.caption,
-    color: theme.colors.text.tertiary,
-  },
-  content: {
-    padding: responsive.spacing[6],
-    paddingBottom: responsive.spacing[8],
-  },
-  itemsContainer: {
-    gap: responsive.spacing[2],
-    marginBottom: responsive.spacing[6],
-  },
-  budgetItem: {
-    backgroundColor: theme.colors.background.primary,
-    borderRadius: theme.borderRadius.xl,
-    padding: responsive.spacing[4],
-    ...theme.shadows.sm,
-  },
-  itemHeader: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    marginBottom: responsive.spacing[2],
-  },
-  itemLeft: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    flex: 1,
-  },
-  itemIcon: {
-    fontSize: responsive.fontSize.h4,
-    lineHeight: responsive.fontSize.h4 * 1.5,
-    marginRight: responsive.spacing[2],
-  },
-  itemName: {
-    ...theme.typography.styles.body,
-    fontWeight: '600',
-  },
-  suggestButton: {
-    backgroundColor: theme.colors.info.light,
-    borderRadius: theme.borderRadius.lg,
-    paddingHorizontal: responsive.spacing[2],
-    paddingVertical: 4,
-  },
-  suggestButtonText: {
-    ...theme.typography.styles.caption,
-    color: theme.colors.info.dark,
-    fontSize: responsive.fontSize.xs,
-    lineHeight: responsive.fontSize.xs * 1.5,
-    fontWeight: '500',
-  },
-  amountContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  currencySymbol: {
-    fontSize: responsive.fontSize.xl,
-    lineHeight: responsive.fontSize.xl * 1.5,
-    color: theme.colors.text.tertiary,
-    marginRight: responsive.spacing[2],
-  },
-  amountInput: {
-    flex: 1,
-    fontSize: responsive.fontSize.h4,
-    lineHeight: responsive.fontSize.h4 * 1.5,
-    fontWeight: '600',
-    color: theme.colors.text.primary,
-  },
-  avgText: {
-    ...theme.typography.styles.caption,
-    color: theme.colors.text.tertiary,
-    marginTop: responsive.spacing[2],
-  },
-  suggestionsCard: {
-    backgroundColor: theme.colors.info.light,
-    borderWidth: 1,
-    borderColor: theme.colors.info.main,
-    borderRadius: theme.borderRadius.xl,
-    padding: responsive.spacing[4],
-    marginBottom: responsive.spacing[6],
-  },
-  suggestionsTitle: {
-    ...theme.typography.styles.body,
-    fontWeight: '600',
-    color: theme.colors.info.dark,
-    marginBottom: responsive.spacing[2],
-  },
-  suggestionsText: {
-    ...theme.typography.styles.bodySmall,
-    color: theme.colors.info.dark,
-    marginBottom: responsive.spacing[2],
-  },
-  applyAllButton: {
-    backgroundColor: theme.colors.info.main,
-    borderRadius: theme.borderRadius.lg,
-    paddingVertical: responsive.spacing[2],
-    alignItems: 'center',
-  },
-  applyAllButtonText: {
-    ...theme.typography.styles.button,
-    color: '#FFFFFF',
-    fontSize: responsive.fontSize.sm,
-    lineHeight: responsive.fontSize.sm * 1.5,
-  },
-  warningCard: {
-    backgroundColor: theme.colors.danger.light,
-    borderWidth: 1,
-    borderColor: theme.colors.danger.main,
-    borderRadius: theme.borderRadius.xl,
-    padding: responsive.spacing[4],
-    marginBottom: responsive.spacing[6],
-  },
-  warningTitle: {
-    ...theme.typography.styles.body,
-    fontWeight: '600',
-    color: theme.colors.danger.dark,
-    marginBottom: responsive.spacing[1],
-  },
-  warningText: {
-    ...theme.typography.styles.bodySmall,
-    color: theme.colors.danger.dark,
-    marginBottom: responsive.spacing[2],
-  },
-  warningActions: {
-    flexDirection: 'row',
-    gap: responsive.spacing[2],
-  },
-  adjustButton: {
-    flex: 1,
-    borderWidth: 1,
-    borderColor: theme.colors.danger.main,
-    borderRadius: theme.borderRadius.lg,
-    paddingVertical: responsive.spacing[2],
-    alignItems: 'center',
-  },
-  adjustButtonText: {
-    ...theme.typography.styles.button,
-    color: theme.colors.danger.main,
-    fontSize: responsive.fontSize.sm,
-    lineHeight: responsive.fontSize.sm * 1.5,
-  },
-  continueAnywayButton: {
-    flex: 1,
-    backgroundColor: theme.colors.danger.main,
-    borderRadius: theme.borderRadius.lg,
-    paddingVertical: responsive.spacing[2],
-    alignItems: 'center',
-  },
-  continueAnywayButtonText: {
-    ...theme.typography.styles.button,
-    color: '#FFFFFF',
-    fontSize: responsive.fontSize.sm,
-    lineHeight: responsive.fontSize.sm * 1.5,
-  },
-  quickActions: {
-    flexDirection: 'row',
-    gap: responsive.spacing[2],
-    marginBottom: responsive.spacing[6],
-  },
-  quickActionButton: {
-    flex: 1,
-    borderWidth: 1,
-    borderColor: theme.colors.border.main,
-    borderRadius: theme.borderRadius.xl,
-    paddingVertical: responsive.spacing[2],
-    alignItems: 'center',
-  },
-  quickActionText: {
-    ...theme.typography.styles.button,
-    color: theme.colors.text.secondary,
-    fontSize: responsive.fontSize.sm,
-    lineHeight: responsive.fontSize.sm * 1.5,
-  },
-  finishButton: {
-    marginBottom: 0,
-  },
-});

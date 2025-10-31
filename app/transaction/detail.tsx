@@ -1,16 +1,268 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, ScrollView, TextInput, Modal } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, ScrollView, TextInput, Modal, StatusBar } from 'react-native';
 import { useRouter } from 'expo-router';
 import { Screen } from '@/components/layout/Screen';
 import { Button } from '@/components/ui/Button';
-import { theme } from '@/constants/theme';
+import { getTheme } from '@/constants/theme';
+import { useTheme } from '@/contexts/ThemeContext';
 import { responsive, ms } from '@/constants/responsive';
 import { Ionicons } from '@expo/vector-icons';
 
 export default function TransactionDetail() {
   const router = useRouter();
+  const { theme: themeMode } = useTheme();
+  const theme = getTheme(themeMode);
+
   const [showMoreMenu, setShowMoreMenu] = useState(false);
   const [notes, setNotes] = useState('Weekly grocery shop');
+
+  const colors = {
+    neutralBg: theme.colors.background.secondary,
+    cardBg: theme.colors.background.primary,
+    primaryText: theme.colors.text.primary,
+    secondaryText: theme.colors.text.secondary,
+    tertiaryText: theme.colors.text.tertiary,
+    borderColor: theme.colors.border.light,
+    inputBg: theme.colors.background.tertiary,
+    dangerLight: theme.colors.danger.light,
+    dangerMain: theme.colors.danger.main,
+    primaryColor: theme.colors.primary[600],
+    primary50: theme.colors.primary[50],
+    primary700: theme.colors.primary[700],
+    warningLight: theme.colors.warning.light,
+    warningDark: theme.colors.warning.dark,
+    modalOverlay: themeMode === 'dark' ? 'rgba(0, 0, 0, 0.7)' : 'rgba(0, 0, 0, 0.5)',
+  };
+
+  const styles = StyleSheet.create({
+    header: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'space-between',
+      paddingHorizontal: responsive.spacing[6],
+      paddingVertical: responsive.spacing[2],
+      backgroundColor: colors.cardBg,
+      borderBottomWidth: 1,
+      borderBottomColor: colors.borderColor,
+    },
+    backButton: {
+      padding: responsive.spacing[2],
+    },
+    headerTitle: {
+      ...theme.typography.styles.h3,
+      fontSize: responsive.fontSize.lg,
+      lineHeight: responsive.fontSize.lg * 1.5,
+    },
+    moreButton: {
+      padding: responsive.spacing[2],
+    },
+    content: {
+      padding: responsive.spacing[6],
+      paddingBottom: responsive.spacing[8],
+    },
+    headerCard: {
+      backgroundColor: colors.cardBg,
+      borderRadius: 20,
+      padding: responsive.spacing[6],
+      marginBottom: responsive.spacing[4],
+      alignItems: 'center',
+      ...theme.shadows.sm,
+    },
+    merchantName: {
+      ...theme.typography.styles.h3,
+      marginBottom: responsive.spacing[2],
+    },
+    location: {
+      ...theme.typography.styles.bodySmall,
+      color: colors.secondaryText,
+      marginBottom: responsive.spacing[4],
+    },
+    amount: {
+      fontSize: responsive.fontSize.h3,
+      lineHeight: responsive.fontSize.h3 * 1.5,
+      fontWeight: '700',
+      color: colors.dangerMain,
+      marginBottom: responsive.spacing[2],
+    },
+    date: {
+      ...theme.typography.styles.bodySmall,
+      color: colors.secondaryText,
+    },
+    time: {
+      ...theme.typography.styles.caption,
+      color: colors.tertiaryText,
+    },
+    card: {
+      backgroundColor: colors.cardBg,
+      borderRadius: 20,
+      padding: responsive.spacing[6],
+      marginBottom: responsive.spacing[4],
+      ...theme.shadows.sm,
+    },
+    sectionTitle: {
+      ...theme.typography.styles.h4,
+      marginBottom: responsive.spacing[4],
+    },
+    detailRow: {
+      paddingBottom: responsive.spacing[4],
+      marginBottom: responsive.spacing[4],
+      borderBottomWidth: 1,
+      borderBottomColor: colors.borderColor,
+    },
+    lastDetailRow: {
+      borderBottomWidth: 0,
+      marginBottom: 0,
+      paddingBottom: 0,
+    },
+    detailLabel: {
+      ...theme.typography.styles.bodySmall,
+      color: colors.secondaryText,
+      marginBottom: responsive.spacing[2],
+    },
+    detailValueRow: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'space-between',
+    },
+    detailValueColumn: {
+      gap: responsive.spacing[1],
+    },
+    detailValue: {
+      ...theme.typography.styles.body,
+      fontWeight: '500',
+    },
+    detailSubvalue: {
+      ...theme.typography.styles.bodySmall,
+      color: colors.secondaryText,
+    },
+    emoji: {
+      marginRight: responsive.spacing[2],
+    },
+    editButton: {
+      ...theme.typography.styles.button,
+      color: colors.primaryColor,
+      fontSize: responsive.fontSize.sm,
+      lineHeight: responsive.fontSize.sm * 1.5,
+    },
+    notesInput: {
+      ...theme.typography.styles.body,
+      color: colors.primaryText,
+      minHeight: 40,
+    },
+    premiumHeader: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'space-between',
+      marginBottom: responsive.spacing[2],
+    },
+    premiumBadge: {
+      backgroundColor: colors.warningLight,
+      paddingHorizontal: responsive.spacing[2],
+      paddingVertical: 4,
+      borderRadius: theme.borderRadius.full,
+    },
+    premiumBadgeText: {
+      ...theme.typography.styles.caption,
+      color: colors.warningDark,
+      fontWeight: '600',
+      fontSize: responsive.fontSize.xs,
+      lineHeight: responsive.fontSize.xs * 1.5,
+    },
+    addButton: {
+      marginBottom: responsive.spacing[2],
+    },
+    addButtonText: {
+      ...theme.typography.styles.button,
+      color: colors.primaryColor,
+      fontSize: responsive.fontSize.sm,
+      lineHeight: responsive.fontSize.sm * 1.5,
+    },
+    tagsContainer: {
+      flexDirection: 'row',
+      flexWrap: 'wrap',
+      gap: responsive.spacing[2],
+    },
+    tag: {
+      backgroundColor: colors.primary50,
+      paddingHorizontal: responsive.spacing[2],
+      paddingVertical: responsive.spacing[1],
+      borderRadius: theme.borderRadius.full,
+    },
+    tagText: {
+      ...theme.typography.styles.bodySmall,
+      color: colors.primary700,
+    },
+    receiptButtons: {
+      flexDirection: 'row',
+      gap: responsive.spacing[2],
+    },
+    receiptButton: {
+      flex: 1,
+      backgroundColor: colors.inputBg,
+      paddingVertical: responsive.spacing[2],
+      paddingHorizontal: responsive.spacing[4],
+      borderRadius: 20,
+      alignItems: 'center',
+    },
+    receiptButtonText: {
+      ...theme.typography.styles.button,
+      color: colors.secondaryText,
+      fontSize: responsive.fontSize.sm,
+      lineHeight: responsive.fontSize.sm * 1.5,
+    },
+    actionButton: {
+      backgroundColor: colors.inputBg,
+      paddingVertical: responsive.spacing[2],
+      paddingHorizontal: responsive.spacing[4],
+      borderRadius: 20,
+      alignItems: 'center',
+      marginBottom: responsive.spacing[2],
+    },
+    actionButtonText: {
+      ...theme.typography.styles.button,
+      color: colors.secondaryText,
+      fontSize: responsive.fontSize.sm,
+      lineHeight: responsive.fontSize.sm * 1.5,
+    },
+    deleteButton: {
+      backgroundColor: colors.dangerLight,
+      marginBottom: 0,
+    },
+    deleteButtonText: {
+      ...theme.typography.styles.button,
+      color: colors.dangerMain,
+      fontSize: responsive.fontSize.sm,
+      lineHeight: responsive.fontSize.sm * 1.5,
+    },
+    modalOverlay: {
+      flex: 1,
+      backgroundColor: colors.modalOverlay,
+      justifyContent: 'flex-start',
+      alignItems: 'flex-end',
+      paddingTop: 60,
+      paddingRight: responsive.spacing[6],
+    },
+    moreMenu: {
+      backgroundColor: colors.cardBg,
+      borderRadius: 20,
+      ...theme.shadows.lg,
+      minWidth: 200,
+      overflow: 'hidden',
+    },
+    moreMenuItem: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      paddingHorizontal: responsive.spacing[4],
+      paddingVertical: responsive.spacing[2],
+      gap: responsive.spacing[2],
+      borderBottomWidth: 1,
+      borderBottomColor: colors.borderColor,
+    },
+    moreMenuText: {
+      ...theme.typography.styles.body,
+      color: colors.primaryText,
+    },
+  });
 
   const moreMenuOptions = [
     { label: 'Copy transaction', icon: 'copy-outline' },
@@ -20,21 +272,22 @@ export default function TransactionDetail() {
   ];
 
   return (
-    <Screen noPadding backgroundColor={theme.colors.background.secondary}>
+    <Screen noPadding backgroundColor={colors.neutralBg}>
+      <StatusBar barStyle={themeMode === 'dark' ? 'light-content' : 'dark-content'} backgroundColor={colors.neutralBg} />
       {/* Header */}
       <View style={styles.header}>
         <TouchableOpacity
           style={styles.backButton}
           onPress={() => router.back()}
         >
-          <Ionicons name="chevron-back" size={24} color={theme.colors.text.primary} />
+          <Ionicons name="chevron-back" size={24} color={colors.primaryText} />
         </TouchableOpacity>
         <Text style={styles.headerTitle}>Transaction</Text>
         <TouchableOpacity
           style={styles.moreButton}
           onPress={() => setShowMoreMenu(true)}
         >
-          <Ionicons name="ellipsis-vertical" size={24} color={theme.colors.text.primary} />
+          <Ionicons name="ellipsis-vertical" size={24} color={colors.primaryText} />
         </TouchableOpacity>
       </View>
 
@@ -96,7 +349,7 @@ export default function TransactionDetail() {
             value={notes}
             onChangeText={setNotes}
             placeholder="Add note..."
-            placeholderTextColor={theme.colors.text.tertiary}
+            placeholderTextColor={colors.tertiaryText}
             multiline
           />
         </View>
@@ -177,7 +430,7 @@ export default function TransactionDetail() {
                   // Handle action
                 }}
               >
-                <Ionicons name={option.icon as any} size={20} color={theme.colors.text.secondary} />
+                <Ionicons name={option.icon as any} size={20} color={colors.secondaryText} />
                 <Text style={styles.moreMenuText}>{option.label}</Text>
               </TouchableOpacity>
             ))}
@@ -187,233 +440,3 @@ export default function TransactionDetail() {
     </Screen>
   );
 }
-
-const styles = StyleSheet.create({
-  header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    paddingHorizontal: responsive.spacing[6],
-    paddingVertical: responsive.spacing[2],
-    backgroundColor: theme.colors.background.primary,
-    borderBottomWidth: 1,
-    borderBottomColor: theme.colors.border.light,
-  },
-  backButton: {
-    padding: responsive.spacing[2],
-  },
-  headerTitle: {
-    ...theme.typography.styles.h3,
-    fontSize: responsive.fontSize.lg,
-    lineHeight: responsive.fontSize.lg * 1.5,
-  },
-  moreButton: {
-    padding: responsive.spacing[2],
-  },
-  content: {
-    padding: responsive.spacing[6],
-    paddingBottom: responsive.spacing[8],
-  },
-  headerCard: {
-    backgroundColor: theme.colors.background.primary,
-    borderRadius: 20,
-    padding: responsive.spacing[6],
-    marginBottom: responsive.spacing[4],
-    alignItems: 'center',
-    ...theme.shadows.sm,
-  },
-  merchantName: {
-    ...theme.typography.styles.h3,
-    marginBottom: responsive.spacing[2],
-  },
-  location: {
-    ...theme.typography.styles.bodySmall,
-    color: theme.colors.text.secondary,
-    marginBottom: responsive.spacing[4],
-  },
-  amount: {
-    fontSize: responsive.fontSize.h3,
-    lineHeight: responsive.fontSize.h3 * 1.5,
-    fontWeight: '700',
-    color: theme.colors.danger.main,
-    marginBottom: responsive.spacing[2],
-  },
-  date: {
-    ...theme.typography.styles.bodySmall,
-    color: theme.colors.text.secondary,
-  },
-  time: {
-    ...theme.typography.styles.caption,
-    color: theme.colors.text.tertiary,
-  },
-  card: {
-    backgroundColor: theme.colors.background.primary,
-    borderRadius: 20,
-    padding: responsive.spacing[6],
-    marginBottom: responsive.spacing[4],
-    ...theme.shadows.sm,
-  },
-  sectionTitle: {
-    ...theme.typography.styles.h4,
-    marginBottom: responsive.spacing[4],
-  },
-  detailRow: {
-    paddingBottom: responsive.spacing[4],
-    marginBottom: responsive.spacing[4],
-    borderBottomWidth: 1,
-    borderBottomColor: theme.colors.border.light,
-  },
-  lastDetailRow: {
-    borderBottomWidth: 0,
-    marginBottom: 0,
-    paddingBottom: 0,
-  },
-  detailLabel: {
-    ...theme.typography.styles.bodySmall,
-    color: theme.colors.text.secondary,
-    marginBottom: responsive.spacing[2],
-  },
-  detailValueRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-  },
-  detailValueColumn: {
-    gap: responsive.spacing[1],
-  },
-  detailValue: {
-    ...theme.typography.styles.body,
-    fontWeight: '500',
-  },
-  detailSubvalue: {
-    ...theme.typography.styles.bodySmall,
-    color: theme.colors.text.secondary,
-  },
-  emoji: {
-    marginRight: responsive.spacing[2],
-  },
-  editButton: {
-    ...theme.typography.styles.button,
-    color: theme.colors.primary[600],
-    fontSize: responsive.fontSize.sm,
-    lineHeight: responsive.fontSize.sm * 1.5,
-  },
-  notesInput: {
-    ...theme.typography.styles.body,
-    color: theme.colors.text.primary,
-    minHeight: 40,
-  },
-  premiumHeader: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    marginBottom: responsive.spacing[2],
-  },
-  premiumBadge: {
-    backgroundColor: theme.colors.warning.light,
-    paddingHorizontal: responsive.spacing[2],
-    paddingVertical: 4,
-    borderRadius: theme.borderRadius.full,
-  },
-  premiumBadgeText: {
-    ...theme.typography.styles.caption,
-    color: theme.colors.warning.dark,
-    fontWeight: '600',
-    fontSize: responsive.fontSize.xs,
-    lineHeight: responsive.fontSize.xs * 1.5,
-  },
-  addButton: {
-    marginBottom: responsive.spacing[2],
-  },
-  addButtonText: {
-    ...theme.typography.styles.button,
-    color: theme.colors.primary[600],
-    fontSize: responsive.fontSize.sm,
-    lineHeight: responsive.fontSize.sm * 1.5,
-  },
-  tagsContainer: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: responsive.spacing[2],
-  },
-  tag: {
-    backgroundColor: theme.colors.primary[50],
-    paddingHorizontal: responsive.spacing[2],
-    paddingVertical: responsive.spacing[1],
-    borderRadius: theme.borderRadius.full,
-  },
-  tagText: {
-    ...theme.typography.styles.bodySmall,
-    color: theme.colors.primary[700],
-  },
-  receiptButtons: {
-    flexDirection: 'row',
-    gap: responsive.spacing[2],
-  },
-  receiptButton: {
-    flex: 1,
-    backgroundColor: theme.colors.background.tertiary,
-    paddingVertical: responsive.spacing[2],
-    paddingHorizontal: responsive.spacing[4],
-    borderRadius: 20,
-    alignItems: 'center',
-  },
-  receiptButtonText: {
-    ...theme.typography.styles.button,
-    color: theme.colors.text.secondary,
-    fontSize: responsive.fontSize.sm,
-    lineHeight: responsive.fontSize.sm * 1.5,
-  },
-  actionButton: {
-    backgroundColor: theme.colors.background.tertiary,
-    paddingVertical: responsive.spacing[2],
-    paddingHorizontal: responsive.spacing[4],
-    borderRadius: 20,
-    alignItems: 'center',
-    marginBottom: responsive.spacing[2],
-  },
-  actionButtonText: {
-    ...theme.typography.styles.button,
-    color: theme.colors.text.secondary,
-    fontSize: responsive.fontSize.sm,
-    lineHeight: responsive.fontSize.sm * 1.5,
-  },
-  deleteButton: {
-    backgroundColor: theme.colors.danger.light,
-    marginBottom: 0,
-  },
-  deleteButtonText: {
-    ...theme.typography.styles.button,
-    color: theme.colors.danger.main,
-    fontSize: responsive.fontSize.sm,
-    lineHeight: responsive.fontSize.sm * 1.5,
-  },
-  modalOverlay: {
-    flex: 1,
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
-    justifyContent: 'flex-start',
-    alignItems: 'flex-end',
-    paddingTop: 60,
-    paddingRight: responsive.spacing[6],
-  },
-  moreMenu: {
-    backgroundColor: theme.colors.background.primary,
-    borderRadius: 20,
-    ...theme.shadows.lg,
-    minWidth: 200,
-    overflow: 'hidden',
-  },
-  moreMenuItem: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingHorizontal: responsive.spacing[4],
-    paddingVertical: responsive.spacing[2],
-    gap: responsive.spacing[2],
-    borderBottomWidth: 1,
-    borderBottomColor: theme.colors.border.light,
-  },
-  moreMenuText: {
-    ...theme.typography.styles.body,
-    color: theme.colors.text.primary,
-  },
-});

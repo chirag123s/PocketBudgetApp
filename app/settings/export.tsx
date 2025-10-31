@@ -6,37 +6,15 @@ import {
   Pressable,
   ScrollView,
   Alert,
+  StatusBar,
 } from 'react-native';
 import { Screen } from '@/components/layout/Screen';
 import { ScreenHeader } from '@/components/layout/ScreenHeader';
-import { theme } from '@/constants/theme';
+import { getTheme } from '@/constants/theme';
+import { useTheme } from '@/contexts/ThemeContext';
 import { responsive, ms } from '@/constants/responsive';
 import { Ionicons } from '@expo/vector-icons';
 import { settingsTypography, settingsFontWeights, settingsTextStyles } from './typography';
-
-// Color Palette - Using theme colors
-const colors = {
-  // Primary Palette
-  primaryDark: theme.colors.info.dark,
-  primary: theme.colors.info.main,
-  primaryLight: theme.colors.info.light,
-
-  // Neutral Palette
-  neutralBg: theme.colors.background.secondary,
-  neutralWhite: theme.colors.background.primary,
-  neutralDarkest: theme.colors.text.primary,
-  neutralDark: theme.colors.text.secondary,
-  neutralMedium: theme.colors.text.tertiary,
-
-  // Functional Palette
-  functionalSuccess: theme.colors.success.main,
-  functionalWarning: theme.colors.warning.main,
-  functionalError: theme.colors.danger.main,
-
-  // Border
-  border: theme.colors.border.light,
-  iconBg: theme.colors.background.tertiary,
-};
 
 type FormatType = 'csv' | 'pdf' | 'json';
 
@@ -63,6 +41,33 @@ interface RecentExport {
 }
 
 export default function ExportData() {
+  const { theme: themeMode } = useTheme();
+  const theme = getTheme(themeMode);
+
+  // Color Palette - Using theme colors
+  const colors = {
+    // Primary Palette
+    primaryDark: theme.colors.info.dark,
+    primary: theme.colors.info.main,
+    primaryLight: theme.colors.info.light,
+
+    // Neutral Palette
+    neutralBg: theme.colors.background.secondary,
+    neutralWhite: theme.colors.background.primary,
+    neutralDarkest: theme.colors.text.primary,
+    neutralDark: theme.colors.text.secondary,
+    neutralMedium: theme.colors.text.tertiary,
+
+    // Functional Palette
+    functionalSuccess: theme.colors.success.main,
+    functionalWarning: theme.colors.warning.main,
+    functionalError: theme.colors.danger.main,
+
+    // Border
+    border: theme.colors.border.light,
+    iconBg: theme.colors.background.tertiary,
+  };
+
   const [exportOptions, setExportOptions] = useState<ExportOptions>({
     transactions: true,
     budgets: false,
@@ -136,8 +141,228 @@ export default function ExportData() {
     }
   };
 
+  const styles = StyleSheet.create({
+    scrollView: {
+      flex: 1,
+    },
+    scrollContent: {
+      paddingHorizontal: responsive.spacing[4],
+      paddingTop: responsive.spacing[4],
+      paddingBottom: responsive.spacing[8],
+    },
+    card: {
+      backgroundColor: colors.neutralWhite,
+      borderRadius: theme.borderRadius.xl,
+      padding: responsive.spacing[6],
+      marginBottom: responsive.spacing[4],
+      ...theme.shadows.sm,
+    },
+    sectionTitle: {
+      fontSize: settingsTypography.subsectionHeading,
+      fontWeight: settingsFontWeights.semibold,
+      color: colors.neutralDarkest,
+      marginBottom: responsive.spacing[3],
+    },
+    checkboxGroup: {
+      gap: responsive.spacing[3],
+      marginBottom: responsive.spacing[6],
+      borderTopWidth: 1,
+      borderTopColor: colors.border,
+      paddingTop: responsive.spacing[3],
+    },
+    checkboxRow: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      paddingVertical: responsive.spacing[1],
+    },
+    checkbox: {
+      width: ms(20),
+      height: ms(20),
+      borderWidth: 2,
+      borderColor: colors.border,
+      borderRadius: theme.borderRadius.sm,
+      marginRight: responsive.spacing[3],
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
+    checkboxChecked: {
+      backgroundColor: colors.primary,
+      borderColor: colors.primary,
+    },
+    checkboxText: {
+      fontSize: settingsTypography.primary,
+      color: colors.neutralDarkest,
+      fontWeight: settingsFontWeights.regular,
+    },
+    dateRow: {
+      flexDirection: 'row',
+      gap: responsive.spacing[3],
+      marginBottom: responsive.spacing[6],
+    },
+    dateField: {
+      flex: 1,
+    },
+    label: {
+      fontSize: settingsTypography.secondary,
+      fontWeight: settingsFontWeights.medium,
+      color: colors.neutralDark,
+      marginBottom: responsive.spacing[2],
+    },
+    selectButton: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'space-between',
+      height: ms(48),
+      backgroundColor: colors.iconBg,
+      borderRadius: theme.borderRadius.lg,
+      borderWidth: 1,
+      borderColor: colors.border,
+      paddingHorizontal: responsive.spacing[4],
+    },
+    selectButtonText: {
+      fontSize: settingsTypography.primary,
+      color: colors.neutralDarkest,
+      fontWeight: settingsFontWeights.regular,
+    },
+    formatList: {
+      gap: responsive.spacing[3],
+      marginBottom: responsive.spacing[6],
+    },
+    formatOption: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'space-between',
+      borderWidth: 2,
+      borderColor: colors.border,
+      borderRadius: theme.borderRadius.lg,
+      padding: responsive.spacing[4],
+      backgroundColor: colors.neutralWhite,
+    },
+    formatOptionSelected: {
+      backgroundColor: `${colors.primary}15`,
+      borderColor: colors.primary,
+    },
+    formatOptionLeft: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: responsive.spacing[3],
+      flex: 1,
+    },
+    formatOptionContent: {
+      flex: 1,
+    },
+    formatOptionTitle: {
+      fontSize: settingsTypography.primary,
+      fontWeight: settingsFontWeights.semibold,
+      color: colors.neutralDarkest,
+      marginBottom: responsive.spacing[0.5],
+    },
+    formatOptionDescription: {
+      fontSize: settingsTypography.secondary,
+      color: colors.neutralDark,
+    },
+    radioCircle: {
+      width: ms(20),
+      height: ms(20),
+      borderRadius: ms(10),
+      borderWidth: 2,
+      borderColor: colors.border,
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
+    radioCircleInner: {
+      width: ms(10),
+      height: ms(10),
+      borderRadius: ms(5),
+      backgroundColor: colors.primary,
+    },
+    generateButton: {
+      height: ms(48),
+      borderRadius: theme.borderRadius.lg,
+      backgroundColor: colors.functionalSuccess,
+      alignItems: 'center',
+      justifyContent: 'center',
+      ...theme.shadows.md,
+    },
+    generateButtonPressed: {
+      opacity: 0.9,
+    },
+    generateButtonText: {
+      fontSize: settingsTypography.primary,
+      fontWeight: settingsFontWeights.bold,
+      color: colors.neutralWhite,
+      letterSpacing: 0.3,
+    },
+    exportsList: {
+      gap: responsive.spacing[3],
+    },
+    exportItem: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'space-between',
+      backgroundColor: colors.iconBg,
+      borderRadius: theme.borderRadius.lg,
+      padding: responsive.spacing[4],
+      gap: responsive.spacing[3],
+    },
+    exportItemLeft: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: responsive.spacing[3],
+      flex: 1,
+    },
+    exportIconContainer: {
+      width: ms(48),
+      height: ms(48),
+      borderRadius: ms(24),
+      backgroundColor: colors.iconBg,
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
+    exportItemContent: {
+      flex: 1,
+    },
+    exportName: {
+      fontSize: settingsTypography.secondary,
+      fontWeight: settingsFontWeights.semibold,
+      color: colors.neutralDarkest,
+      marginBottom: responsive.spacing[0.5],
+    },
+    exportDate: {
+      fontSize: settingsTypography.tertiary,
+      color: colors.neutralDark,
+    },
+    downloadButton: {
+      paddingHorizontal: responsive.spacing[4],
+      paddingVertical: responsive.spacing[2],
+      borderRadius: theme.borderRadius.lg,
+      backgroundColor: colors.primary,
+      ...theme.shadows.sm,
+    },
+    downloadButtonPressed: {
+      opacity: 0.9,
+    },
+    downloadButtonText: {
+      fontSize: settingsTypography.secondary,
+      fontWeight: settingsFontWeights.bold,
+      color: colors.neutralWhite,
+    },
+    emptyState: {
+      paddingVertical: responsive.spacing[8],
+      alignItems: 'center',
+    },
+    emptyStateText: {
+      fontSize: settingsTypography.primary,
+      color: colors.neutralMedium,
+    },
+    bottomSpacer: {
+      height: responsive.spacing[4],
+    },
+  });
+
   return (
     <Screen scrollable={false} noPadding backgroundColor={colors.neutralBg} edges={['top', 'bottom']}>
+      <StatusBar barStyle={themeMode === 'dark' ? 'light-content' : 'dark-content'} backgroundColor={colors.neutralBg} />
       <ScreenHeader
         title="Export Data"
         backgroundColor={colors.neutralBg}
@@ -323,222 +548,3 @@ export default function ExportData() {
     </Screen>
   );
 }
-
-const styles = StyleSheet.create({
-  scrollView: {
-    flex: 1,
-  },
-  scrollContent: {
-    paddingHorizontal: responsive.spacing[4],
-    paddingTop: responsive.spacing[4],
-    paddingBottom: responsive.spacing[8],
-  },
-  card: {
-    backgroundColor: colors.neutralWhite,
-    borderRadius: theme.borderRadius.xl,
-    padding: responsive.spacing[6],
-    marginBottom: responsive.spacing[4],
-    ...theme.shadows.sm,
-  },
-  sectionTitle: {
-    fontSize: settingsTypography.subsectionHeading,
-    fontWeight: settingsFontWeights.semibold,
-    color: colors.neutralDarkest,
-    marginBottom: responsive.spacing[3],
-  },
-  checkboxGroup: {
-    gap: responsive.spacing[3],
-    marginBottom: responsive.spacing[6],
-    borderTopWidth: 1,
-    borderTopColor: colors.border,
-    paddingTop: responsive.spacing[3],
-  },
-  checkboxRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingVertical: responsive.spacing[1],
-  },
-  checkbox: {
-    width: ms(20),
-    height: ms(20),
-    borderWidth: 2,
-    borderColor: colors.border,
-    borderRadius: theme.borderRadius.sm,
-    marginRight: responsive.spacing[3],
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  checkboxChecked: {
-    backgroundColor: colors.primary,
-    borderColor: colors.primary,
-  },
-  checkboxText: {
-    fontSize: settingsTypography.primary,
-    color: colors.neutralDarkest,
-    fontWeight: settingsFontWeights.regular,
-  },
-  dateRow: {
-    flexDirection: 'row',
-    gap: responsive.spacing[3],
-    marginBottom: responsive.spacing[6],
-  },
-  dateField: {
-    flex: 1,
-  },
-  label: {
-    fontSize: settingsTypography.secondary,
-    fontWeight: settingsFontWeights.medium,
-    color: colors.neutralDark,
-    marginBottom: responsive.spacing[2],
-  },
-  selectButton: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    height: ms(48),
-    backgroundColor: colors.iconBg,
-    borderRadius: theme.borderRadius.lg,
-    borderWidth: 1,
-    borderColor: colors.border,
-    paddingHorizontal: responsive.spacing[4],
-  },
-  selectButtonText: {
-    fontSize: settingsTypography.primary,
-    color: colors.neutralDarkest,
-    fontWeight: settingsFontWeights.regular,
-  },
-  formatList: {
-    gap: responsive.spacing[3],
-    marginBottom: responsive.spacing[6],
-  },
-  formatOption: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    borderWidth: 2,
-    borderColor: colors.border,
-    borderRadius: theme.borderRadius.lg,
-    padding: responsive.spacing[4],
-    backgroundColor: colors.neutralWhite,
-  },
-  formatOptionSelected: {
-    backgroundColor: `${colors.primary}15`,
-    borderColor: colors.primary,
-  },
-  formatOptionLeft: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: responsive.spacing[3],
-    flex: 1,
-  },
-  formatOptionContent: {
-    flex: 1,
-  },
-  formatOptionTitle: {
-    fontSize: settingsTypography.primary,
-    fontWeight: settingsFontWeights.semibold,
-    color: colors.neutralDarkest,
-    marginBottom: responsive.spacing[0.5],
-  },
-  formatOptionDescription: {
-    fontSize: settingsTypography.secondary,
-    color: colors.neutralDark,
-  },
-  radioCircle: {
-    width: ms(20),
-    height: ms(20),
-    borderRadius: ms(10),
-    borderWidth: 2,
-    borderColor: colors.border,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  radioCircleInner: {
-    width: ms(10),
-    height: ms(10),
-    borderRadius: ms(5),
-    backgroundColor: colors.primary,
-  },
-  generateButton: {
-    height: ms(48),
-    borderRadius: theme.borderRadius.lg,
-    backgroundColor: colors.functionalSuccess,
-    alignItems: 'center',
-    justifyContent: 'center',
-    ...theme.shadows.md,
-  },
-  generateButtonPressed: {
-    opacity: 0.9,
-  },
-  generateButtonText: {
-    fontSize: settingsTypography.primary,
-    fontWeight: settingsFontWeights.bold,
-    color: colors.neutralWhite,
-    letterSpacing: 0.3,
-  },
-  exportsList: {
-    gap: responsive.spacing[3],
-  },
-  exportItem: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    backgroundColor: colors.iconBg,
-    borderRadius: theme.borderRadius.lg,
-    padding: responsive.spacing[4],
-    gap: responsive.spacing[3],
-  },
-  exportItemLeft: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: responsive.spacing[3],
-    flex: 1,
-  },
-  exportIconContainer: {
-    width: ms(48),
-    height: ms(48),
-    borderRadius: ms(24),
-    backgroundColor: colors.iconBg,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  exportItemContent: {
-    flex: 1,
-  },
-  exportName: {
-    fontSize: settingsTypography.secondary,
-    fontWeight: settingsFontWeights.semibold,
-    color: colors.neutralDarkest,
-    marginBottom: responsive.spacing[0.5],
-  },
-  exportDate: {
-    fontSize: settingsTypography.tertiary,
-    color: colors.neutralDark,
-  },
-  downloadButton: {
-    paddingHorizontal: responsive.spacing[4],
-    paddingVertical: responsive.spacing[2],
-    borderRadius: theme.borderRadius.lg,
-    backgroundColor: colors.primary,
-    ...theme.shadows.sm,
-  },
-  downloadButtonPressed: {
-    opacity: 0.9,
-  },
-  downloadButtonText: {
-    fontSize: settingsTypography.secondary,
-    fontWeight: settingsFontWeights.bold,
-    color: colors.neutralWhite,
-  },
-  emptyState: {
-    paddingVertical: responsive.spacing[8],
-    alignItems: 'center',
-  },
-  emptyStateText: {
-    fontSize: settingsTypography.primary,
-    color: colors.neutralMedium,
-  },
-  bottomSpacer: {
-    height: responsive.spacing[4],
-  },
-});

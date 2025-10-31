@@ -1,18 +1,9 @@
 import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { theme } from '@/constants/theme';
+import { getTheme } from '@/constants/theme';
 import { responsive, ms } from '@/constants/responsive';
-
-const colors = {
-  primary: theme.colors.info.main,
-  neutralBg: theme.colors.background.secondary,
-  neutralWhite: theme.colors.background.primary,
-  neutralDarkest: theme.colors.text.primary,
-  neutralDark: theme.colors.text.secondary,
-  secondaryYellow: theme.colors.warning.main,
-  secondaryRed: '#FF6B6B',
-};
+import { useTheme } from '@/contexts/ThemeContext';
 
 export interface Transaction {
   id: string;
@@ -35,12 +26,88 @@ export const RecentTransactionsWidget: React.FC<RecentTransactionsWidgetProps> =
   onViewAll,
   onTransactionPress,
 }) => {
+  const { theme: themeMode } = useTheme();
+  const theme = getTheme(themeMode);
+
+  const colors = {
+    primary: theme.colors.info.main,
+    neutralBg: theme.colors.background.secondary,
+    neutralWhite: theme.colors.background.primary,
+    neutralDarkest: theme.colors.text.primary,
+    neutralDark: theme.colors.text.secondary,
+    secondaryYellow: theme.colors.warning.main,
+    secondaryRed: '#FF6B6B',
+  };
+
   const getIconBackgroundColor = (color: string) => {
     if (color === colors.primary) return `${colors.primary}1A`;
     if (color === colors.secondaryYellow) return `${colors.secondaryYellow}33`;
     if (color === colors.secondaryRed) return `${colors.secondaryRed}33`;
     return `${colors.primary}1A`;
   };
+
+  const styles = StyleSheet.create({
+    container: {
+      backgroundColor: colors.neutralWhite,
+      borderRadius: theme.borderRadius.xl,
+      padding: responsive.spacing[5],
+      ...theme.shadows.sm,
+    },
+    transactionsHeader: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+      marginBottom: responsive.spacing[3],
+    },
+    sectionHeading: {
+      fontSize: responsive.fontSize.lg,
+      fontWeight: '700',
+      color: colors.neutralDarkest,
+    },
+    viewAllButton: {
+      fontSize: responsive.fontSize.sm,
+      fontWeight: '700',
+      color: colors.primary,
+    },
+    transactionsContent: {
+      gap: 0,
+    },
+    transactionItem: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: responsive.spacing[4],
+      paddingVertical: responsive.spacing[3],
+    },
+    transactionIcon: {
+      width: ms(40),
+      height: ms(40),
+      borderRadius: ms(20),
+      justifyContent: 'center',
+      alignItems: 'center',
+    },
+    transactionDetails: {
+      flex: 1,
+      gap: responsive.spacing[1],
+    },
+    transactionMerchant: {
+      fontSize: responsive.fontSize.md,
+      fontWeight: '600',
+      color: colors.neutralDarkest,
+    },
+    transactionDate: {
+      fontSize: responsive.fontSize.sm,
+      color: colors.neutralDark,
+    },
+    transactionAmount: {
+      fontSize: responsive.fontSize.md,
+      fontWeight: '700',
+      color: colors.neutralDarkest,
+    },
+    divider: {
+      height: 1,
+      backgroundColor: colors.neutralBg,
+    },
+  });
 
   return (
     <View style={styles.container}>
@@ -88,66 +155,3 @@ export const RecentTransactionsWidget: React.FC<RecentTransactionsWidgetProps> =
     </View>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    backgroundColor: colors.neutralWhite,
-    borderRadius: theme.borderRadius.xl,
-    padding: responsive.spacing[5],
-    ...theme.shadows.sm,
-  },
-  transactionsHeader: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: responsive.spacing[3],
-  },
-  sectionHeading: {
-    fontSize: responsive.fontSize.lg,
-    fontWeight: '700',
-    color: colors.neutralDarkest,
-  },
-  viewAllButton: {
-    fontSize: responsive.fontSize.sm,
-    fontWeight: '700',
-    color: colors.primary,
-  },
-  transactionsContent: {
-    gap: 0,
-  },
-  transactionItem: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: responsive.spacing[4],
-    paddingVertical: responsive.spacing[3],
-  },
-  transactionIcon: {
-    width: ms(40),
-    height: ms(40),
-    borderRadius: ms(20),
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  transactionDetails: {
-    flex: 1,
-    gap: responsive.spacing[1],
-  },
-  transactionMerchant: {
-    fontSize: responsive.fontSize.md,
-    fontWeight: '600',
-    color: colors.neutralDarkest,
-  },
-  transactionDate: {
-    fontSize: responsive.fontSize.sm,
-    color: colors.neutralDark,
-  },
-  transactionAmount: {
-    fontSize: responsive.fontSize.md,
-    fontWeight: '700',
-    color: colors.neutralDarkest,
-  },
-  divider: {
-    height: 1,
-    backgroundColor: colors.neutralBg,
-  },
-});

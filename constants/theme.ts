@@ -1,6 +1,6 @@
 console.log('📦 theme.ts MODULE LOADING');
 
-import { colors } from './colors';
+import { colors, darkColors } from './colors';
 console.log('✅ colors imported');
 
 import { typography } from './typography';
@@ -73,5 +73,65 @@ export const theme = {
 console.log('✅ theme object created successfully');
 console.log('   Checking theme.colors.primary[600]:', theme.colors.primary[600], typeof theme.colors.primary[600]);
 console.log('   Checking theme.colors.background.primary:', theme.colors.background.primary, typeof theme.colors.background.primary);
+
+// Dark theme
+export const darkTheme = {
+  ...theme,
+  colors: {
+    ...colors,
+    ...darkColors,
+    // Merge deep objects
+    primary: darkColors.primary,
+    background: darkColors.background,
+    text: darkColors.text,
+    border: darkColors.border,
+    success: darkColors.success,
+    warning: darkColors.warning,
+    danger: darkColors.danger,
+    // Keep rest of colors from light theme
+    info: colors.info,
+    accent: colors.accent,
+    secondary: colors.secondary,
+    neutral: colors.neutral,
+    transaction: colors.transaction,
+    categories: colors.categories,
+    shadow: colors.shadow,
+  },
+  shadows: {
+    sm: {
+      shadowColor: colors.shadow.main,
+      shadowOffset: { width: 0, height: 1 },
+      shadowOpacity: 0.3,
+      shadowRadius: 2,
+      elevation: 2,
+    },
+    base: {
+      shadowColor: colors.shadow.main,
+      shadowOffset: { width: 0, height: 2 },
+      shadowOpacity: 0.3,
+      shadowRadius: 4,
+      elevation: 3,
+    },
+    lg: {
+      shadowColor: colors.shadow.dark,
+      shadowOffset: { width: 0, height: 4 },
+      shadowOpacity: 0.4,
+      shadowRadius: 8,
+      elevation: 5,
+    },
+    primary: {
+      shadowColor: colors.primary[600],
+      shadowOffset: { width: 0, height: 4 },
+      shadowOpacity: 0.5,
+      shadowRadius: 8,
+      elevation: 5,
+    },
+  },
+};
+
+// Helper function to get theme based on mode
+export const getTheme = (mode: 'light' | 'dark') => {
+  return mode === 'dark' ? darkTheme : theme;
+};
 
 export type Theme = typeof theme;

@@ -12,35 +12,13 @@ import {
 import { useRouter } from 'expo-router';
 import { Screen } from '@/components/layout/Screen';
 import { ScreenHeader } from '@/components/layout/ScreenHeader';
-import { theme } from '@/constants/theme';
+import { getTheme } from '@/constants/theme';
+import { useTheme } from '@/contexts/ThemeContext';
 import { responsive, ms } from '@/constants/responsive';
 import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
 import { avatarColors, loadAvatarColor, saveAvatarColor, getAvatarGradientSync } from '@/utils/avatar';
 import { settingsTypography, settingsFontWeights, settingsTextStyles } from './typography';
-
-// Color Palette - Using theme colors
-const colors = {
-  // Primary Palette
-  primaryDark: theme.colors.info.dark,
-  primary: theme.colors.info.main,
-  primaryLight: theme.colors.info.light,
-
-  // Neutral Palette
-  neutralBg: theme.colors.background.secondary,
-  neutralWhite: theme.colors.background.primary,
-  neutralDarkest: theme.colors.text.primary,
-  neutralDark: theme.colors.text.secondary,
-  neutralMedium: theme.colors.text.tertiary,
-
-  // Functional Palette
-  functionalSuccess: theme.colors.success.main,
-  functionalWarning: theme.colors.warning.main,
-  functionalError: theme.colors.danger.main,
-
-  // Border
-  border: theme.colors.border.light,
-};
 
 interface ProfileData {
   fullName: string;
@@ -49,6 +27,8 @@ interface ProfileData {
 }
 
 export default function EditProfileScreen() {
+  const { theme: themeMode } = useTheme();
+  const theme = getTheme(themeMode);
   const router = useRouter();
 
   const [profileData, setProfileData] = useState<ProfileData>({
@@ -62,6 +42,20 @@ export default function EditProfileScreen() {
   const [selectedColor, setSelectedColor] = useState('blue'); // Preview color
   const [savedColor, setSavedColor] = useState('blue'); // Persisted color
   const [hasColorChanged, setHasColorChanged] = useState(false);
+
+  const colors = {
+    primaryDark: theme.colors.info.dark,
+    primary: theme.colors.info.main,
+    primaryLight: theme.colors.info.light,
+    neutralBg: theme.colors.background.secondary,
+    neutralWhite: theme.colors.background.primary,
+    neutralDarkest: theme.colors.text.primary,
+    neutralDark: theme.colors.text.secondary,
+    neutralMedium: theme.colors.text.tertiary,
+    functionalSuccess: theme.colors.success.main,
+    functionalWarning: theme.colors.warning.main,
+    functionalError: theme.colors.danger.main,
+  };
 
   // Load saved avatar color on mount
   useEffect(() => {
@@ -160,6 +154,197 @@ export default function EditProfileScreen() {
     }
     return name.substring(0, 2).toUpperCase();
   };
+
+  const styles = StyleSheet.create({
+    scrollView: {
+      flex: 1,
+    },
+    scrollContent: {
+      paddingBottom: ms(100),
+    },
+    photoSection: {
+      alignItems: 'center',
+      gap: responsive.spacing[4],
+      paddingVertical: responsive.spacing[6],
+    },
+    avatar: {
+      width: ms(112),
+      height: ms(112),
+      borderRadius: ms(56),
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
+    avatarText: {
+      fontSize: settingsTypography.hero,
+      fontWeight: settingsFontWeights.bold,
+      color: colors.neutralWhite,
+    },
+    changePhotoButton: {
+      height: ms(36),
+      paddingHorizontal: responsive.spacing[4],
+      borderRadius: theme.borderRadius.lg,
+      backgroundColor: `${colors.primary}15`,
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
+    changePhotoButtonPressed: {
+      opacity: 0.7,
+    },
+    changePhotoButtonText: {
+      fontSize: settingsTypography.button,
+      fontWeight: settingsFontWeights.bold,
+      color: colors.primary,
+      letterSpacing: 0.2,
+    },
+    formSection: {
+      gap: responsive.spacing[4],
+      paddingHorizontal: responsive.spacing[4],
+    },
+    inputGroup: {
+      gap: responsive.spacing[2],
+    },
+    label: {
+      fontSize: settingsTypography.inputLabel,
+      fontWeight: settingsFontWeights.medium,
+      color: colors.neutralDarkest,
+    },
+    input: {
+      height: ms(48),
+      borderRadius: theme.borderRadius.lg,
+      borderWidth: 1,
+      borderColor: theme.colors.border.light,
+      backgroundColor: colors.neutralWhite,
+      paddingHorizontal: responsive.spacing[4],
+      fontSize: settingsTypography.input,
+      color: colors.neutralDarkest,
+    },
+    helperRow: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: responsive.spacing[1.5],
+    },
+    helperText: {
+      fontSize: settingsTypography.inputHint,
+      color: colors.neutralDark,
+    },
+    verifyText: {
+      fontSize: settingsTypography.link,
+      fontWeight: settingsFontWeights.bold,
+      color: colors.primary,
+      letterSpacing: 0.2,
+    },
+    footer: {
+      position: 'absolute',
+      bottom: 0,
+      left: 0,
+      right: 0,
+      backgroundColor: colors.neutralWhite,
+      borderTopWidth: 1,
+      borderTopColor: theme.colors.border.light,
+      paddingHorizontal: responsive.spacing[4],
+      paddingTop: responsive.spacing[4],
+      paddingBottom: responsive.spacing[4],
+    },
+    saveButton: {
+      height: ms(48),
+      borderRadius: theme.borderRadius.lg,
+      backgroundColor: colors.primary,
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
+    saveButtonDisabled: {
+      backgroundColor: `${colors.primary}80`,
+    },
+    saveButtonPressed: {
+      opacity: 0.9,
+    },
+    saveButtonText: {
+      fontSize: settingsTypography.button,
+      fontWeight: settingsFontWeights.bold,
+      color: colors.neutralWhite,
+      letterSpacing: 0.2,
+    },
+    // Color Picker Modal Styles
+    modalOverlay: {
+      flex: 1,
+      backgroundColor: 'rgba(0, 0, 0, 0.5)',
+      justifyContent: 'flex-end',
+    },
+    colorPickerSheet: {
+      backgroundColor: colors.neutralWhite,
+      borderTopLeftRadius: theme.borderRadius.xl * 2,
+      borderTopRightRadius: theme.borderRadius.xl * 2,
+      paddingBottom: responsive.spacing[6],
+      ...theme.shadows.lg,
+    },
+    colorPickerHeader: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'space-between',
+      paddingHorizontal: responsive.spacing[6],
+      paddingVertical: responsive.spacing[5],
+      borderBottomWidth: 1,
+      borderBottomColor: theme.colors.border.light,
+    },
+    colorPickerTitle: {
+      fontSize: settingsTypography.modalTitle,
+      fontWeight: settingsFontWeights.bold,
+      color: colors.neutralDarkest,
+    },
+    closeButton: {
+      width: ms(48),
+      height: ms(48),
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
+    colorOptionsContainer: {
+      paddingHorizontal: responsive.spacing[6],
+      paddingVertical: responsive.spacing[5],
+      gap: responsive.spacing[4],
+    },
+    colorOptionWrapper: {
+      alignItems: 'center',
+      gap: responsive.spacing[2],
+    },
+    colorOption: {
+      width: ms(80),
+      height: ms(80),
+      borderRadius: ms(40),
+      alignItems: 'center',
+      justifyContent: 'center',
+      borderWidth: 3,
+      borderColor: 'transparent',
+      position: 'relative',
+    },
+    colorOptionSelected: {
+      borderColor: colors.neutralDarkest,
+      transform: [{ scale: 1.05 }],
+    },
+    colorInitials: {
+      fontSize: settingsTypography.pageHeading,
+      fontWeight: settingsFontWeights.bold,
+      color: colors.neutralWhite,
+    },
+    selectedBadge: {
+      position: 'absolute',
+      bottom: -2,
+      right: -2,
+      width: ms(24),
+      height: ms(24),
+      borderRadius: ms(12),
+      backgroundColor: colors.functionalSuccess,
+      alignItems: 'center',
+      justifyContent: 'center',
+      borderWidth: 2,
+      borderColor: colors.neutralWhite,
+    },
+    colorName: {
+      fontSize: settingsTypography.tertiary,
+      color: colors.neutralDark,
+      textAlign: 'center',
+      fontWeight: settingsFontWeights.medium,
+    },
+  });
 
   return (
     <Screen scrollable={false} noPadding backgroundColor={colors.neutralBg} edges={['top', 'bottom']}>
@@ -327,194 +512,3 @@ export default function EditProfileScreen() {
     </Screen>
   );
 }
-
-const styles = StyleSheet.create({
-  scrollView: {
-    flex: 1,
-  },
-  scrollContent: {
-    paddingBottom: ms(100),
-  },
-  photoSection: {
-    alignItems: 'center',
-    gap: responsive.spacing[4],
-    paddingVertical: responsive.spacing[6],
-  },
-  avatar: {
-    width: ms(112),
-    height: ms(112),
-    borderRadius: ms(56),
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  avatarText: {
-    fontSize: settingsTypography.hero,
-    fontWeight: settingsFontWeights.bold,
-    color: colors.neutralWhite,
-  },
-  changePhotoButton: {
-    height: ms(36),
-    paddingHorizontal: responsive.spacing[4],
-    borderRadius: theme.borderRadius.lg,
-    backgroundColor: `${colors.primary}15`,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  changePhotoButtonPressed: {
-    opacity: 0.7,
-  },
-  changePhotoButtonText: {
-    fontSize: settingsTypography.button,
-    fontWeight: settingsFontWeights.bold,
-    color: colors.primary,
-    letterSpacing: 0.2,
-  },
-  formSection: {
-    gap: responsive.spacing[4],
-    paddingHorizontal: responsive.spacing[4],
-  },
-  inputGroup: {
-    gap: responsive.spacing[2],
-  },
-  label: {
-    fontSize: settingsTypography.inputLabel,
-    fontWeight: settingsFontWeights.medium,
-    color: colors.neutralDarkest,
-  },
-  input: {
-    height: ms(48),
-    borderRadius: theme.borderRadius.lg,
-    borderWidth: 1,
-    borderColor: colors.border,
-    backgroundColor: colors.neutralWhite,
-    paddingHorizontal: responsive.spacing[4],
-    fontSize: settingsTypography.input,
-    color: colors.neutralDarkest,
-  },
-  helperRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: responsive.spacing[1.5],
-  },
-  helperText: {
-    fontSize: settingsTypography.inputHint,
-    color: colors.neutralDark,
-  },
-  verifyText: {
-    fontSize: settingsTypography.link,
-    fontWeight: settingsFontWeights.bold,
-    color: colors.primary,
-    letterSpacing: 0.2,
-  },
-  footer: {
-    position: 'absolute',
-    bottom: 0,
-    left: 0,
-    right: 0,
-    backgroundColor: colors.neutralWhite,
-    borderTopWidth: 1,
-    borderTopColor: colors.border,
-    paddingHorizontal: responsive.spacing[4],
-    paddingTop: responsive.spacing[4],
-    paddingBottom: responsive.spacing[4],
-  },
-  saveButton: {
-    height: ms(48),
-    borderRadius: theme.borderRadius.lg,
-    backgroundColor: colors.primary,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  saveButtonDisabled: {
-    backgroundColor: `${colors.primary}80`,
-  },
-  saveButtonPressed: {
-    opacity: 0.9,
-  },
-  saveButtonText: {
-    fontSize: settingsTypography.button,
-    fontWeight: settingsFontWeights.bold,
-    color: colors.neutralWhite,
-    letterSpacing: 0.2,
-  },
-  // Color Picker Modal Styles
-  modalOverlay: {
-    flex: 1,
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
-    justifyContent: 'flex-end',
-  },
-  colorPickerSheet: {
-    backgroundColor: colors.neutralWhite,
-    borderTopLeftRadius: theme.borderRadius.xl * 2,
-    borderTopRightRadius: theme.borderRadius.xl * 2,
-    paddingBottom: responsive.spacing[6],
-    ...theme.shadows.lg,
-  },
-  colorPickerHeader: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    paddingHorizontal: responsive.spacing[6],
-    paddingVertical: responsive.spacing[5],
-    borderBottomWidth: 1,
-    borderBottomColor: colors.border,
-  },
-  colorPickerTitle: {
-    fontSize: settingsTypography.modalTitle,
-    fontWeight: settingsFontWeights.bold,
-    color: colors.neutralDarkest,
-  },
-  closeButton: {
-    width: ms(48),
-    height: ms(48),
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  colorOptionsContainer: {
-    paddingHorizontal: responsive.spacing[6],
-    paddingVertical: responsive.spacing[5],
-    gap: responsive.spacing[4],
-  },
-  colorOptionWrapper: {
-    alignItems: 'center',
-    gap: responsive.spacing[2],
-  },
-  colorOption: {
-    width: ms(80),
-    height: ms(80),
-    borderRadius: ms(40),
-    alignItems: 'center',
-    justifyContent: 'center',
-    borderWidth: 3,
-    borderColor: 'transparent',
-    position: 'relative',
-  },
-  colorOptionSelected: {
-    borderColor: colors.neutralDarkest,
-    transform: [{ scale: 1.05 }],
-  },
-  colorInitials: {
-    fontSize: settingsTypography.pageHeading,
-    fontWeight: settingsFontWeights.bold,
-    color: colors.neutralWhite,
-  },
-  selectedBadge: {
-    position: 'absolute',
-    bottom: -2,
-    right: -2,
-    width: ms(24),
-    height: ms(24),
-    borderRadius: ms(12),
-    backgroundColor: colors.functionalSuccess,
-    alignItems: 'center',
-    justifyContent: 'center',
-    borderWidth: 2,
-    borderColor: colors.neutralWhite,
-  },
-  colorName: {
-    fontSize: settingsTypography.tertiary,
-    color: colors.neutralDark,
-    textAlign: 'center',
-    fontWeight: settingsFontWeights.medium,
-  },
-});

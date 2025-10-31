@@ -10,32 +10,10 @@ import {
 } from 'react-native';
 import { useRouter } from 'expo-router';
 import { Screen } from '@/components/layout/Screen';
-import { theme } from '@/constants/theme';
+import { getTheme } from '@/constants/theme';
+import { useTheme } from '@/contexts/ThemeContext';
 import { responsive, ms } from '@/constants/responsive';
 import { Ionicons } from '@expo/vector-icons';
-
-// Color Palette - Using theme colors
-const colors = {
-  // Primary Palette
-  primaryDark: theme.colors.info.dark,
-  primary: theme.colors.info.main,
-  primaryLight: theme.colors.info.light,
-
-  // Neutral Palette
-  neutralBg: theme.colors.background.secondary,
-  neutralWhite: theme.colors.background.primary,
-  neutralDarkest: theme.colors.text.primary,
-  neutralDark: theme.colors.text.secondary,
-  neutralMedium: theme.colors.text.tertiary,
-
-  // Functional Palette
-  functionalSuccess: theme.colors.success.main,
-  functionalWarning: theme.colors.warning.main,
-  functionalError: theme.colors.danger.main,
-
-  // Border
-  border: theme.colors.border.light,
-};
 
 // Available icons for categories
 const availableIcons: Array<keyof typeof Ionicons.glyphMap> = [
@@ -76,26 +54,51 @@ const availableIcons: Array<keyof typeof Ionicons.glyphMap> = [
   'leaf-outline',
 ];
 
-// Available colors for categories
-const availableColors = [
-  { name: 'Green', value: theme.colors.success.main },
-  { name: 'Blue', value: theme.colors.info.main },
-  { name: 'Orange', value: theme.colors.warning.main },
-  { name: 'Red', value: theme.colors.danger.main },
-  { name: 'Purple', value: theme.colors.secondary.main },
-  { name: 'Teal', value: '#0D9488' },
-  { name: 'Pink', value: '#DB2777' },
-  { name: 'Indigo', value: '#4F46E5' },
-  { name: 'Yellow', value: '#EAB308' },
-  { name: 'Cyan', value: '#06B6D4' },
-];
-
 export default function AddCategoryScreen() {
   const router = useRouter();
+  const { theme: themeMode } = useTheme();
+  const theme = getTheme(themeMode);
+
+  // Available colors for categories
+  const availableColors = [
+    { name: 'Green', value: theme.colors.success.main },
+    { name: 'Blue', value: theme.colors.info.main },
+    { name: 'Orange', value: theme.colors.warning.main },
+    { name: 'Red', value: theme.colors.danger.main },
+    { name: 'Purple', value: theme.colors.secondary.main },
+    { name: 'Teal', value: '#0D9488' },
+    { name: 'Pink', value: '#DB2777' },
+    { name: 'Indigo', value: '#4F46E5' },
+    { name: 'Yellow', value: '#EAB308' },
+    { name: 'Cyan', value: '#06B6D4' },
+  ];
 
   const [categoryName, setCategoryName] = useState('');
   const [selectedIcon, setSelectedIcon] = useState<keyof typeof Ionicons.glyphMap>('star-outline');
   const [selectedColor, setSelectedColor] = useState(availableColors[0].value);
+
+  // Color Palette - Using dynamic theme colors
+  const colors = {
+    // Primary Palette
+    primaryDark: theme.colors.info.dark,
+    primary: theme.colors.info.main,
+    primaryLight: theme.colors.info.light,
+
+    // Neutral Palette
+    neutralBg: theme.colors.background.secondary,
+    neutralWhite: theme.colors.background.primary,
+    neutralDarkest: theme.colors.text.primary,
+    neutralDark: theme.colors.text.secondary,
+    neutralMedium: theme.colors.text.tertiary,
+
+    // Functional Palette
+    functionalSuccess: theme.colors.success.main,
+    functionalWarning: theme.colors.warning.main,
+    functionalError: theme.colors.danger.main,
+
+    // Border
+    border: theme.colors.border.light,
+  };
 
   const handleSave = () => {
     if (!categoryName.trim()) {
@@ -120,7 +123,7 @@ export default function AddCategoryScreen() {
 
   return (
     <Screen scrollable={false} noPadding backgroundColor={colors.neutralBg} edges={['top']}>
-      <StatusBar barStyle="dark-content" backgroundColor={colors.neutralBg} />
+      <StatusBar barStyle={themeMode === 'dark' ? 'light-content' : 'dark-content'} />
 
       {/* Header */}
       <View

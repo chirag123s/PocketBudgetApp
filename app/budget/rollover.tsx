@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, ScrollView } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, ScrollView, StatusBar } from 'react-native';
 import { useRouter } from 'expo-router';
 import { Screen } from '@/components/layout/Screen';
 import { Button } from '@/components/ui/Button';
-import { theme } from '@/constants/theme';
+import { getTheme } from '@/constants/theme';
+import { useTheme } from '@/contexts/ThemeContext';
 import { responsive, ms } from '@/constants/responsive';
 import { Ionicons } from '@expo/vector-icons';
 
@@ -50,6 +51,13 @@ const currentBudgetSummary = {
 
 export default function RollOverBudget() {
   const router = useRouter();
+  const { theme: themeMode } = useTheme();
+  const theme = getTheme(themeMode);
+
+  const colors = {
+    neutralBg: theme.colors.background.secondary,
+  };
+
   const [selectedOption, setSelectedOption] = useState<RolloverOption>('copy');
 
   const handleCreateBudget = () => {
@@ -66,8 +74,200 @@ export default function RollOverBudget() {
     }
   };
 
+  const styles = StyleSheet.create({
+    header: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'space-between',
+      paddingHorizontal: responsive.spacing[4],
+      paddingVertical: responsive.spacing[2],
+      backgroundColor: theme.colors.background.primary,
+      borderBottomWidth: 1,
+      borderBottomColor: theme.colors.border.light,
+    },
+    headerButton: {
+      padding: responsive.spacing[2],
+    },
+    headerTitle: {
+      ...theme.typography.styles.h3,
+      fontSize: responsive.fontSize.lg,
+      lineHeight: responsive.fontSize.lg * 1.5,
+    },
+    placeholder: {
+      width: 40,
+    },
+    alertBanner: {
+      backgroundColor: theme.colors.warning.light,
+      borderBottomWidth: 1,
+      borderBottomColor: theme.colors.warning.main,
+      paddingVertical: responsive.spacing[2],
+      paddingHorizontal: responsive.spacing[6],
+    },
+    alertContent: {
+      flexDirection: 'row',
+      alignItems: 'center',
+    },
+    alertText: {
+      ...theme.typography.styles.bodySmall,
+      color: theme.colors.warning.dark,
+      fontWeight: '600',
+      marginLeft: responsive.spacing[2],
+    },
+    content: {
+      padding: responsive.spacing[6],
+      paddingBottom: responsive.spacing[8],
+    },
+    summaryCard: {
+      backgroundColor: theme.colors.background.primary,
+      borderRadius: theme.borderRadius.xl,
+      padding: responsive.spacing[4],
+      marginBottom: responsive.spacing[6],
+      ...theme.shadows.sm,
+    },
+    summaryLabel: {
+      ...theme.typography.styles.label,
+      fontSize: responsive.fontSize.xs,
+      lineHeight: responsive.fontSize.xs * 1.5,
+      color: theme.colors.text.tertiary,
+      fontWeight: '600',
+      marginBottom: responsive.spacing[2],
+    },
+    periodText: {
+      ...theme.typography.styles.body,
+      fontWeight: '600',
+      marginBottom: responsive.spacing[4],
+    },
+    summaryStats: {
+      flexDirection: 'row',
+      justifyContent: 'space-around',
+      alignItems: 'center',
+    },
+    summaryStatItem: {
+      flex: 1,
+      alignItems: 'center',
+    },
+    summaryStatLabel: {
+      ...theme.typography.styles.caption,
+      color: theme.colors.text.tertiary,
+      marginBottom: responsive.spacing[1],
+    },
+    summaryStatValue: {
+      ...theme.typography.styles.body,
+      fontWeight: '600',
+    },
+    divider: {
+      width: 1,
+      height: 40,
+      backgroundColor: theme.colors.border.light,
+    },
+    questionText: {
+      ...theme.typography.styles.h3,
+      fontSize: responsive.fontSize.lg,
+      lineHeight: responsive.fontSize.lg * 1.5,
+      marginBottom: responsive.spacing[4],
+    },
+    optionsContainer: {
+      gap: responsive.spacing[2],
+      marginBottom: responsive.spacing[6],
+    },
+    optionCard: {
+      backgroundColor: theme.colors.background.primary,
+      borderRadius: theme.borderRadius.xl,
+      padding: responsive.spacing[4],
+      borderWidth: 2,
+      borderColor: theme.colors.border.light,
+      flexDirection: 'row',
+      alignItems: 'flex-start',
+      ...theme.shadows.sm,
+    },
+    optionCardSelected: {
+      backgroundColor: theme.colors.primary[50],
+      borderColor: theme.colors.primary[500],
+    },
+    radioCircle: {
+      width: 20,
+      height: 20,
+      borderRadius: 10,
+      borderWidth: 2,
+      borderColor: theme.colors.border.main,
+      alignItems: 'center',
+      justifyContent: 'center',
+      marginRight: responsive.spacing[2],
+      marginTop: 2,
+    },
+    radioCircleInner: {
+      width: 10,
+      height: 10,
+      borderRadius: 5,
+      backgroundColor: theme.colors.primary[600],
+    },
+    optionContent: {
+      flex: 1,
+    },
+    optionHeader: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      marginBottom: responsive.spacing[1],
+    },
+    optionIcon: {
+      fontSize: responsive.fontSize.xl,
+      lineHeight: responsive.fontSize.xl * 1.5,
+      marginRight: responsive.spacing[2],
+    },
+    optionTitle: {
+      ...theme.typography.styles.body,
+      fontWeight: '600',
+    },
+    optionSubtitle: {
+      ...theme.typography.styles.bodySmall,
+      color: theme.colors.text.secondary,
+      marginBottom: responsive.spacing[2],
+    },
+    previewBox: {
+      backgroundColor: theme.colors.background.tertiary,
+      borderRadius: theme.borderRadius.lg,
+      padding: responsive.spacing[2],
+      marginTop: responsive.spacing[2],
+    },
+    previewText: {
+      ...theme.typography.styles.caption,
+      color: theme.colors.text.secondary,
+    },
+    infoBox: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      backgroundColor: theme.colors.info.light,
+      borderWidth: 1,
+      borderColor: theme.colors.info.main,
+      borderRadius: theme.borderRadius.xl,
+      padding: responsive.spacing[2],
+      marginBottom: responsive.spacing[6],
+    },
+    infoText: {
+      ...theme.typography.styles.bodySmall,
+      color: theme.colors.info.dark,
+      marginLeft: responsive.spacing[2],
+      flex: 1,
+    },
+    createButton: {
+      marginBottom: responsive.spacing[2],
+    },
+    remindButton: {
+      borderWidth: 2,
+      borderColor: theme.colors.border.main,
+      borderRadius: theme.borderRadius.xl,
+      padding: responsive.spacing[4],
+      alignItems: 'center',
+    },
+    remindButtonText: {
+      ...theme.typography.styles.button,
+      color: theme.colors.text.secondary,
+    },
+  });
+
   return (
-    <Screen noPadding backgroundColor={theme.colors.background.secondary}>
+    <Screen noPadding backgroundColor={colors.neutralBg}>
+      <StatusBar barStyle={themeMode === 'dark' ? 'light-content' : 'dark-content'} backgroundColor={colors.neutralBg} />
       {/* Header */}
       <View style={styles.header}>
         <TouchableOpacity
@@ -178,194 +378,3 @@ export default function RollOverBudget() {
     </Screen>
   );
 }
-
-const styles = StyleSheet.create({
-  header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    paddingHorizontal: responsive.spacing[4],
-    paddingVertical: responsive.spacing[2],
-    backgroundColor: theme.colors.background.primary,
-    borderBottomWidth: 1,
-    borderBottomColor: theme.colors.border.light,
-  },
-  headerButton: {
-    padding: responsive.spacing[2],
-  },
-  headerTitle: {
-    ...theme.typography.styles.h3,
-    fontSize: responsive.fontSize.lg,
-    lineHeight: responsive.fontSize.lg * 1.5,
-  },
-  placeholder: {
-    width: 40,
-  },
-  alertBanner: {
-    backgroundColor: theme.colors.warning.light,
-    borderBottomWidth: 1,
-    borderBottomColor: theme.colors.warning.main,
-    paddingVertical: responsive.spacing[2],
-    paddingHorizontal: responsive.spacing[6],
-  },
-  alertContent: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  alertText: {
-    ...theme.typography.styles.bodySmall,
-    color: theme.colors.warning.dark,
-    fontWeight: '600',
-    marginLeft: responsive.spacing[2],
-  },
-  content: {
-    padding: responsive.spacing[6],
-    paddingBottom: responsive.spacing[8],
-  },
-  summaryCard: {
-    backgroundColor: theme.colors.background.primary,
-    borderRadius: theme.borderRadius.xl,
-    padding: responsive.spacing[4],
-    marginBottom: responsive.spacing[6],
-    ...theme.shadows.sm,
-  },
-  summaryLabel: {
-    ...theme.typography.styles.label,
-    fontSize: responsive.fontSize.xs,
-    lineHeight: responsive.fontSize.xs * 1.5,
-    color: theme.colors.text.tertiary,
-    fontWeight: '600',
-    marginBottom: responsive.spacing[2],
-  },
-  periodText: {
-    ...theme.typography.styles.body,
-    fontWeight: '600',
-    marginBottom: responsive.spacing[4],
-  },
-  summaryStats: {
-    flexDirection: 'row',
-    justifyContent: 'space-around',
-    alignItems: 'center',
-  },
-  summaryStatItem: {
-    flex: 1,
-    alignItems: 'center',
-  },
-  summaryStatLabel: {
-    ...theme.typography.styles.caption,
-    color: theme.colors.text.tertiary,
-    marginBottom: responsive.spacing[1],
-  },
-  summaryStatValue: {
-    ...theme.typography.styles.body,
-    fontWeight: '600',
-  },
-  divider: {
-    width: 1,
-    height: 40,
-    backgroundColor: theme.colors.border.light,
-  },
-  questionText: {
-    ...theme.typography.styles.h3,
-    fontSize: responsive.fontSize.lg,
-    lineHeight: responsive.fontSize.lg * 1.5,
-    marginBottom: responsive.spacing[4],
-  },
-  optionsContainer: {
-    gap: responsive.spacing[2],
-    marginBottom: responsive.spacing[6],
-  },
-  optionCard: {
-    backgroundColor: theme.colors.background.primary,
-    borderRadius: theme.borderRadius.xl,
-    padding: responsive.spacing[4],
-    borderWidth: 2,
-    borderColor: theme.colors.border.light,
-    flexDirection: 'row',
-    alignItems: 'flex-start',
-    ...theme.shadows.sm,
-  },
-  optionCardSelected: {
-    backgroundColor: theme.colors.primary[50],
-    borderColor: theme.colors.primary[500],
-  },
-  radioCircle: {
-    width: 20,
-    height: 20,
-    borderRadius: 10,
-    borderWidth: 2,
-    borderColor: theme.colors.border.main,
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginRight: responsive.spacing[2],
-    marginTop: 2,
-  },
-  radioCircleInner: {
-    width: 10,
-    height: 10,
-    borderRadius: 5,
-    backgroundColor: theme.colors.primary[600],
-  },
-  optionContent: {
-    flex: 1,
-  },
-  optionHeader: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: responsive.spacing[1],
-  },
-  optionIcon: {
-    fontSize: responsive.fontSize.xl,
-    lineHeight: responsive.fontSize.xl * 1.5,
-    marginRight: responsive.spacing[2],
-  },
-  optionTitle: {
-    ...theme.typography.styles.body,
-    fontWeight: '600',
-  },
-  optionSubtitle: {
-    ...theme.typography.styles.bodySmall,
-    color: theme.colors.text.secondary,
-    marginBottom: responsive.spacing[2],
-  },
-  previewBox: {
-    backgroundColor: theme.colors.background.tertiary,
-    borderRadius: theme.borderRadius.lg,
-    padding: responsive.spacing[2],
-    marginTop: responsive.spacing[2],
-  },
-  previewText: {
-    ...theme.typography.styles.caption,
-    color: theme.colors.text.secondary,
-  },
-  infoBox: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: theme.colors.info.light,
-    borderWidth: 1,
-    borderColor: theme.colors.info.main,
-    borderRadius: theme.borderRadius.xl,
-    padding: responsive.spacing[2],
-    marginBottom: responsive.spacing[6],
-  },
-  infoText: {
-    ...theme.typography.styles.bodySmall,
-    color: theme.colors.info.dark,
-    marginLeft: responsive.spacing[2],
-    flex: 1,
-  },
-  createButton: {
-    marginBottom: responsive.spacing[2],
-  },
-  remindButton: {
-    borderWidth: 2,
-    borderColor: theme.colors.border.main,
-    borderRadius: theme.borderRadius.xl,
-    padding: responsive.spacing[4],
-    alignItems: 'center',
-  },
-  remindButtonText: {
-    ...theme.typography.styles.button,
-    color: theme.colors.text.secondary,
-  },
-});

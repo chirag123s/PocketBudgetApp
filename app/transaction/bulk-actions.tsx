@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, ScrollView } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, ScrollView, StatusBar } from 'react-native';
 import { useRouter } from 'expo-router';
 import { Screen } from '@/components/layout/Screen';
-import { theme } from '@/constants/theme';
+import { getTheme } from '@/constants/theme';
+import { useTheme } from '@/contexts/ThemeContext';
 import { responsive, ms } from '@/constants/responsive';
 import { Ionicons } from '@expo/vector-icons';
 
@@ -76,6 +77,9 @@ const sampleTransactions: Transaction[] = [
 
 export default function BulkActions() {
   const router = useRouter();
+  const { theme: themeMode } = useTheme();
+  const theme = getTheme(themeMode);
+
   const [transactions, setTransactions] = useState<Transaction[]>(sampleTransactions);
 
   const selectedCount = transactions.filter((t) => t.selected).length;
@@ -104,8 +108,165 @@ export default function BulkActions() {
     return groups;
   }, {} as Record<string, Transaction[]>);
 
+  const colors = {
+    neutralBg: theme.colors.background.secondary,
+    cardBg: theme.colors.background.primary,
+    primaryText: theme.colors.text.primary,
+    secondaryText: theme.colors.text.secondary,
+    borderColor: theme.colors.border.light,
+    borderMain: theme.colors.border.main,
+    inputBg: theme.colors.background.tertiary,
+    dangerMain: theme.colors.danger.main,
+    primaryColor: theme.colors.primary[600],
+    primary50: theme.colors.primary[50],
+    dangerLight: '#FEF2F2',
+  };
+
+  const styles = StyleSheet.create({
+    header: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'space-between',
+      paddingHorizontal: responsive.spacing[4],
+      paddingVertical: responsive.spacing[2],
+      backgroundColor: colors.primaryColor,
+    },
+    headerButton: {
+      padding: responsive.spacing[2],
+    },
+    headerTitle: {
+      fontSize: responsive.fontSize.lg,
+      lineHeight: responsive.fontSize.lg * 1.5,
+      fontWeight: '700',
+      color: '#FFFFFF',
+    },
+    doneText: {
+      fontSize: responsive.fontSize.md,
+      lineHeight: responsive.fontSize.md * 1.5,
+      fontWeight: '700',
+      color: '#FFFFFF',
+    },
+    content: {
+      padding: responsive.spacing[4],
+      paddingBottom: 180,
+    },
+    dateGroup: {
+      marginBottom: responsive.spacing[4],
+    },
+    dateHeader: {
+      ...theme.typography.styles.bodySmall,
+      fontWeight: '700',
+      color: colors.secondaryText,
+      marginBottom: responsive.spacing[2],
+      paddingHorizontal: responsive.spacing[2],
+    },
+    transactionCard: {
+      backgroundColor: colors.cardBg,
+      borderRadius: theme.borderRadius.xl,
+      padding: responsive.spacing[4],
+      marginBottom: responsive.spacing[2],
+      borderWidth: 2,
+      borderColor: 'transparent',
+      ...theme.shadows.sm,
+    },
+    transactionCardSelected: {
+      backgroundColor: colors.primary50,
+      borderColor: colors.primaryColor,
+    },
+    transactionContent: {
+      flexDirection: 'row',
+      alignItems: 'center',
+    },
+    checkbox: {
+      width: 24,
+      height: 24,
+      borderRadius: 6,
+      borderWidth: 2,
+      borderColor: colors.borderMain,
+      backgroundColor: colors.cardBg,
+      marginRight: responsive.spacing[4],
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
+    checkboxSelected: {
+      backgroundColor: colors.primaryColor,
+      borderColor: colors.primaryColor,
+    },
+    transactionInfo: {
+      flex: 1,
+    },
+    transactionName: {
+      ...theme.typography.styles.body,
+      fontWeight: '700',
+      marginBottom: 4,
+    },
+    transactionCategory: {
+      ...theme.typography.styles.bodySmall,
+      color: colors.secondaryText,
+    },
+    transactionAmount: {
+      fontSize: responsive.fontSize.lg,
+      lineHeight: responsive.fontSize.lg * 1.5,
+      fontWeight: '700',
+      color: colors.dangerMain,
+    },
+    actionBar: {
+      position: 'absolute',
+      bottom: 0,
+      left: 0,
+      right: 0,
+      backgroundColor: colors.cardBg,
+      borderTopWidth: 1,
+      borderTopColor: colors.borderColor,
+      padding: responsive.spacing[6],
+      gap: responsive.spacing[2],
+    },
+    actionRow: {
+      flexDirection: 'row',
+      gap: responsive.spacing[2],
+    },
+    actionButtonPrimary: {
+      flex: 1,
+      paddingVertical: responsive.spacing[4],
+      backgroundColor: colors.primaryColor,
+      borderRadius: theme.borderRadius.xl,
+      alignItems: 'center',
+      ...theme.shadows.lg,
+    },
+    actionButtonPrimaryText: {
+      ...theme.typography.styles.button,
+      fontWeight: '700',
+      color: '#FFFFFF',
+    },
+    actionButtonSecondary: {
+      flex: 1,
+      paddingVertical: responsive.spacing[4],
+      backgroundColor: colors.inputBg,
+      borderRadius: theme.borderRadius.xl,
+      alignItems: 'center',
+    },
+    actionButtonSecondaryText: {
+      ...theme.typography.styles.button,
+      fontWeight: '700',
+      color: colors.secondaryText,
+    },
+    actionButtonDanger: {
+      flex: 1,
+      paddingVertical: responsive.spacing[4],
+      backgroundColor: colors.dangerLight,
+      borderRadius: theme.borderRadius.xl,
+      alignItems: 'center',
+    },
+    actionButtonDangerText: {
+      ...theme.typography.styles.button,
+      fontWeight: '700',
+      color: colors.dangerMain,
+    },
+  });
+
   return (
-    <Screen noPadding backgroundColor={theme.colors.background.secondary}>
+    <Screen noPadding backgroundColor={colors.neutralBg}>
+      <StatusBar barStyle="light-content" backgroundColor={colors.primaryColor} />
       {/* Header - Multi-Select Mode */}
       <View style={styles.header}>
         <TouchableOpacity style={styles.headerButton} onPress={handleClose}>
@@ -182,145 +343,3 @@ export default function BulkActions() {
     </Screen>
   );
 }
-
-const styles = StyleSheet.create({
-  header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    paddingHorizontal: responsive.spacing[4],
-    paddingVertical: responsive.spacing[2],
-    backgroundColor: theme.colors.primary[600],
-  },
-  headerButton: {
-    padding: responsive.spacing[2],
-  },
-  headerTitle: {
-    fontSize: responsive.fontSize.lg,
-    lineHeight: responsive.fontSize.lg * 1.5,
-    fontWeight: '700',
-    color: '#FFFFFF',
-  },
-  doneText: {
-    fontSize: responsive.fontSize.md,
-    lineHeight: responsive.fontSize.md * 1.5,
-    fontWeight: '700',
-    color: '#FFFFFF',
-  },
-  content: {
-    padding: responsive.spacing[4],
-    paddingBottom: 180, // Space for action bar
-  },
-  dateGroup: {
-    marginBottom: responsive.spacing[4],
-  },
-  dateHeader: {
-    ...theme.typography.styles.bodySmall,
-    fontWeight: '700',
-    color: theme.colors.text.secondary,
-    marginBottom: responsive.spacing[2],
-    paddingHorizontal: responsive.spacing[2],
-  },
-  transactionCard: {
-    backgroundColor: theme.colors.background.primary,
-    borderRadius: theme.borderRadius.xl,
-    padding: responsive.spacing[4],
-    marginBottom: responsive.spacing[2],
-    borderWidth: 2,
-    borderColor: 'transparent',
-    ...theme.shadows.sm,
-  },
-  transactionCardSelected: {
-    backgroundColor: theme.colors.primary[50],
-    borderColor: theme.colors.primary[600],
-  },
-  transactionContent: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  checkbox: {
-    width: 24,
-    height: 24,
-    borderRadius: 6,
-    borderWidth: 2,
-    borderColor: theme.colors.border.main,
-    backgroundColor: theme.colors.background.primary,
-    marginRight: responsive.spacing[4],
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  checkboxSelected: {
-    backgroundColor: theme.colors.primary[600],
-    borderColor: theme.colors.primary[600],
-  },
-  transactionInfo: {
-    flex: 1,
-  },
-  transactionName: {
-    ...theme.typography.styles.body,
-    fontWeight: '700',
-    marginBottom: 4,
-  },
-  transactionCategory: {
-    ...theme.typography.styles.bodySmall,
-    color: theme.colors.text.secondary,
-  },
-  transactionAmount: {
-    fontSize: responsive.fontSize.lg,
-    lineHeight: responsive.fontSize.lg * 1.5,
-    fontWeight: '700',
-    color: theme.colors.danger.main,
-  },
-  actionBar: {
-    position: 'absolute',
-    bottom: 0,
-    left: 0,
-    right: 0,
-    backgroundColor: theme.colors.background.primary,
-    borderTopWidth: 1,
-    borderTopColor: theme.colors.border.light,
-    padding: responsive.spacing[6],
-    gap: responsive.spacing[2],
-  },
-  actionRow: {
-    flexDirection: 'row',
-    gap: responsive.spacing[2],
-  },
-  actionButtonPrimary: {
-    flex: 1,
-    paddingVertical: responsive.spacing[4],
-    backgroundColor: theme.colors.primary[600],
-    borderRadius: theme.borderRadius.xl,
-    alignItems: 'center',
-    ...theme.shadows.lg,
-  },
-  actionButtonPrimaryText: {
-    ...theme.typography.styles.button,
-    fontWeight: '700',
-    color: '#FFFFFF',
-  },
-  actionButtonSecondary: {
-    flex: 1,
-    paddingVertical: responsive.spacing[4],
-    backgroundColor: theme.colors.background.tertiary,
-    borderRadius: theme.borderRadius.xl,
-    alignItems: 'center',
-  },
-  actionButtonSecondaryText: {
-    ...theme.typography.styles.button,
-    fontWeight: '700',
-    color: theme.colors.text.secondary,
-  },
-  actionButtonDanger: {
-    flex: 1,
-    paddingVertical: responsive.spacing[4],
-    backgroundColor: '#FEF2F2',
-    borderRadius: theme.borderRadius.xl,
-    alignItems: 'center',
-  },
-  actionButtonDangerText: {
-    ...theme.typography.styles.button,
-    fontWeight: '700',
-    color: theme.colors.danger.main,
-  },
-});

@@ -10,30 +10,10 @@ import {
 } from 'react-native';
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import { Screen } from '@/components/layout/Screen';
-import { theme } from '@/constants/theme';
+import { getTheme, useTheme } from '@/constants/theme';
 import { responsive, ms } from '@/constants/responsive';
 import { Ionicons } from '@expo/vector-icons';
 import { LineChart, LineChartDataPoint } from '@/components/charts';
-
-// Color Palette - Using theme colors
-const colors = {
-  // Primary Palette
-  primaryDark: theme.colors.info.dark,
-  primary: theme.colors.info.main,
-  primaryLight: theme.colors.info.light,
-
-  // Neutral Palette
-  neutralBg: theme.colors.background.secondary,
-  neutralWhite: theme.colors.background.primary,
-  neutralDarkest: theme.colors.text.primary,
-  neutralDark: theme.colors.text.secondary,
-  neutralMedium: theme.colors.text.tertiary,
-
-  // Functional Palette
-  functionalSuccess: theme.colors.success.main,
-  functionalWarning: theme.colors.warning.main,
-  functionalError: theme.colors.danger.main,
-};
 
 type TabType = 'Overview' | 'Trends' | 'Settings';
 
@@ -50,8 +30,30 @@ interface Transaction {
 export default function CategoryDetailsScreen() {
   const router = useRouter();
   const params = useLocalSearchParams();
+  const { currentTheme, isDark } = useTheme();
+  const theme = getTheme(currentTheme);
 
   const [activeTab, setActiveTab] = useState<TabType>('Overview');
+
+  // Color Palette - Using dynamic theme colors
+  const colors = {
+    // Primary Palette
+    primaryDark: theme.colors.info.dark,
+    primary: theme.colors.info.main,
+    primaryLight: theme.colors.info.light,
+
+    // Neutral Palette
+    neutralBg: theme.colors.background.secondary,
+    neutralWhite: theme.colors.background.primary,
+    neutralDarkest: theme.colors.text.primary,
+    neutralDark: theme.colors.text.secondary,
+    neutralMedium: theme.colors.text.tertiary,
+
+    // Functional Palette
+    functionalSuccess: theme.colors.success.main,
+    functionalWarning: theme.colors.warning.main,
+    functionalError: theme.colors.danger.main,
+  };
 
   // Get category data from params or use defaults
   const categoryName = (params.category as string) || 'Groceries';
@@ -125,6 +127,471 @@ export default function CategoryDetailsScreen() {
       ]
     );
   };
+
+  const styles = StyleSheet.create({
+    header: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'space-between',
+      paddingHorizontal: responsive.spacing[4],
+      paddingVertical: responsive.spacing[3],
+      backgroundColor: colors.neutralBg,
+      borderBottomWidth: 1,
+      borderBottomColor: `${colors.neutralMedium}30`,
+    },
+    headerButton: {
+      width: ms(40),
+      height: ms(40),
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
+    headerTitle: {
+      fontSize: responsive.fontSize.xl,
+      fontWeight: '700',
+      color: colors.neutralDarkest,
+      flex: 1,
+      textAlign: 'center',
+    },
+    categorySummary: {
+      paddingHorizontal: responsive.spacing[4],
+      paddingTop: responsive.spacing[2],
+      backgroundColor: colors.neutralBg,
+      borderBottomWidth: 1,
+      borderBottomColor: `${colors.neutralMedium}30`,
+    },
+    categoryHeader: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: responsive.spacing[3],
+      marginBottom: responsive.spacing[2],
+    },
+    categoryIconLarge: {
+      width: ms(48),
+      height: ms(48),
+      borderRadius: theme.borderRadius.lg,
+      alignItems: 'center',
+      justifyContent: 'center',
+      backgroundColor: `${colors.primary}20`,
+    },
+    categoryInfo: {
+      flex: 1,
+      gap: responsive.spacing[0],
+      justifyContent: 'center',
+    },
+    categoryName: {
+      fontSize: responsive.fontSize.lg,
+      fontWeight: '700',
+      color: colors.neutralDarkest,
+    },
+    categoryStats: {
+      fontSize: responsive.fontSize.xs,
+      fontWeight: '500',
+      color: colors.neutralDark,
+      marginTop: responsive.spacing[0],
+    },
+    progressBarContainer: {
+      width: '100%',
+      height: ms(6),
+      borderRadius: ms(3),
+      marginBottom: responsive.spacing[2],
+      overflow: 'hidden',
+      backgroundColor: colors.neutralBg,
+    },
+    progressBar: {
+      height: '100%',
+      borderRadius: ms(3),
+    },
+    tabsScroll: {
+      marginHorizontal: -responsive.spacing[4],
+      paddingHorizontal: responsive.spacing[4],
+    },
+    tabs: {
+      flexDirection: 'row',
+      gap: responsive.spacing[4],
+    },
+    tab: {
+      paddingHorizontal: responsive.spacing[4],
+      paddingVertical: responsive.spacing[3],
+      borderBottomWidth: 2,
+      borderBottomColor: 'transparent',
+    },
+    tabActive: {
+      borderBottomColor: colors.primary,
+    },
+    tabText: {
+      fontSize: responsive.fontSize.sm,
+      fontWeight: '600',
+      color: colors.neutralDark,
+    },
+    tabTextActive: {
+      fontWeight: '700',
+      color: colors.primary,
+    },
+    scrollView: {
+      flex: 1,
+    },
+    tabContent: {
+      padding: responsive.spacing[4],
+      gap: responsive.spacing[4],
+    },
+    trendCard: {
+      padding: responsive.spacing[4],
+      borderRadius: theme.borderRadius.xl,
+      backgroundColor: colors.neutralWhite,
+      gap: responsive.spacing[3],
+      ...theme.shadows.sm,
+    },
+    largeTrendCard: {
+      gap: responsive.spacing[4],
+    },
+    trendHeader: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'space-between',
+    },
+    trendTitle: {
+      fontSize: responsive.fontSize.md,
+      fontWeight: '700',
+      color: colors.neutralDarkest,
+    },
+    trendBadge: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: responsive.spacing[1],
+      backgroundColor: `${colors.functionalSuccess}20`,
+      paddingHorizontal: responsive.spacing[2],
+      paddingVertical: responsive.spacing[1],
+      borderRadius: theme.borderRadius.full,
+    },
+    trendBadgeText: {
+      fontSize: responsive.fontSize.xs,
+      fontWeight: '700',
+      color: colors.functionalSuccess,
+    },
+    viewReportText: {
+      fontSize: responsive.fontSize.sm,
+      fontWeight: '600',
+      color: colors.primary,
+    },
+    trendAmount: {
+      fontSize: responsive.fontSize.h2,
+      fontWeight: '700',
+      color: colors.neutralDarkest,
+    },
+    trendAmountLarge: {
+      fontSize: responsive.fontSize.h1,
+      fontWeight: '700',
+      color: colors.neutralDarkest,
+    },
+    trendStats: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: responsive.spacing[1],
+    },
+    trendLabel: {
+      fontSize: responsive.fontSize.sm,
+      fontWeight: '400',
+      color: colors.neutralDark,
+    },
+    trendChange: {
+      fontSize: responsive.fontSize.sm,
+      fontWeight: '500',
+    },
+    activitySection: {
+      gap: responsive.spacing[3],
+    },
+    sectionTitle: {
+      fontSize: responsive.fontSize.md,
+      fontWeight: '700',
+      color: colors.neutralDarkest,
+    },
+    activityList: {
+      backgroundColor: colors.neutralWhite,
+      borderRadius: theme.borderRadius.xl,
+      overflow: 'hidden',
+      ...theme.shadows.sm,
+    },
+    activityItem: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'space-between',
+      padding: responsive.spacing[3],
+    },
+    activityItemBorder: {
+      borderBottomWidth: 1,
+      borderBottomColor: colors.neutralBg,
+    },
+    activityLeft: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: responsive.spacing[2],
+      flex: 1,
+    },
+    activityIcon: {
+      width: ms(32),
+      height: ms(32),
+      borderRadius: theme.borderRadius.md,
+      alignItems: 'center',
+      justifyContent: 'center',
+      backgroundColor: `${colors.primary}15`,
+    },
+    activityInfo: {
+      flex: 1,
+    },
+    activityMerchant: {
+      fontSize: responsive.fontSize.sm,
+      fontWeight: '600',
+      color: colors.neutralDarkest,
+      marginBottom: responsive.spacing[0],
+    },
+    activityDate: {
+      fontSize: responsive.fontSize.xs,
+      fontWeight: '400',
+      color: colors.neutralDark,
+    },
+    activityAmount: {
+      fontSize: responsive.fontSize.sm,
+      fontWeight: '700',
+      color: colors.neutralDarkest,
+    },
+    viewAllButton: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'center',
+      gap: responsive.spacing[2],
+      padding: responsive.spacing[3],
+      borderRadius: theme.borderRadius.lg,
+      borderWidth: 1,
+      borderColor: colors.primary,
+      backgroundColor: colors.neutralWhite,
+    },
+    viewAllText: {
+      fontSize: responsive.fontSize.sm,
+      fontWeight: '600',
+      color: colors.primary,
+    },
+    centerContent: {
+      flex: 1,
+      alignItems: 'center',
+      justifyContent: 'center',
+      gap: responsive.spacing[4],
+      paddingVertical: responsive.spacing[16],
+    },
+    emptyText: {
+      fontSize: responsive.fontSize.h3,
+      fontWeight: '700',
+      color: colors.neutralDarkest,
+    },
+    emptySubtext: {
+      fontSize: responsive.fontSize.sm,
+      fontWeight: '400',
+      color: colors.neutralDark,
+      textAlign: 'center',
+    },
+    amountCard: {
+      backgroundColor: colors.neutralWhite,
+      borderRadius: theme.borderRadius.xl,
+      padding: responsive.spacing[5],
+      ...theme.shadows.sm,
+    },
+    amountHeader: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: responsive.spacing[4],
+    },
+    amountIconContainer: {
+      width: ms(64),
+      height: ms(64),
+      borderRadius: ms(32),
+      alignItems: 'center',
+      justifyContent: 'center',
+      backgroundColor: `${colors.functionalSuccess}15`,
+    },
+    amountContent: {
+      flex: 1,
+      gap: responsive.spacing[1],
+    },
+    amountLabel: {
+      fontSize: responsive.fontSize.sm,
+      fontWeight: '600',
+      color: colors.neutralDark,
+    },
+    amountValue: {
+      fontSize: responsive.fontSize.h1,
+      fontWeight: '700',
+    },
+    statsRow: {
+      flexDirection: 'row',
+      gap: responsive.spacing[3],
+    },
+    statBox: {
+      flex: 1,
+      backgroundColor: colors.neutralWhite,
+      borderRadius: theme.borderRadius.lg,
+      padding: responsive.spacing[4],
+      alignItems: 'center',
+      gap: responsive.spacing[2],
+      ...theme.shadows.sm,
+    },
+    statIconContainer: {
+      width: ms(48),
+      height: ms(48),
+      borderRadius: ms(24),
+      backgroundColor: `${colors.primary}15`,
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
+    statBoxValue: {
+      fontSize: responsive.fontSize.h3,
+      fontWeight: '700',
+      color: colors.neutralDarkest,
+    },
+    statBoxLabel: {
+      fontSize: responsive.fontSize.xs,
+      fontWeight: '500',
+      color: colors.neutralDark,
+      textAlign: 'center',
+    },
+    breakdownCard: {
+      backgroundColor: colors.neutralWhite,
+      borderRadius: theme.borderRadius.xl,
+      padding: responsive.spacing[4],
+      gap: responsive.spacing[3],
+      ...theme.shadows.sm,
+    },
+    breakdownItem: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+      paddingVertical: responsive.spacing[2],
+    },
+    breakdownLeft: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: responsive.spacing[2],
+      flex: 1,
+    },
+    breakdownLabel: {
+      fontSize: responsive.fontSize.sm,
+      fontWeight: '500',
+      color: colors.neutralDark,
+    },
+    breakdownValue: {
+      fontSize: responsive.fontSize.sm,
+      fontWeight: '700',
+      color: colors.neutralDarkest,
+    },
+    performanceCard: {
+      backgroundColor: colors.neutralWhite,
+      borderRadius: theme.borderRadius.xl,
+      padding: responsive.spacing[5],
+      gap: responsive.spacing[4],
+      ...theme.shadows.sm,
+    },
+    performanceStats: {
+      flexDirection: 'row',
+      justifyContent: 'space-around',
+      alignItems: 'center',
+    },
+    performanceItem: {
+      flex: 1,
+      alignItems: 'center',
+      gap: responsive.spacing[2],
+    },
+    performanceValue: {
+      fontSize: responsive.fontSize.h2,
+      fontWeight: '700',
+      color: colors.neutralDarkest,
+    },
+    performanceLabel: {
+      fontSize: responsive.fontSize.xs,
+      fontWeight: '500',
+      color: colors.neutralDark,
+      textAlign: 'center',
+    },
+    performanceDivider: {
+      width: 1,
+      height: ms(60),
+      backgroundColor: `${colors.neutralMedium}30`,
+    },
+    insightsCard: {
+      backgroundColor: colors.neutralWhite,
+      borderRadius: theme.borderRadius.xl,
+      padding: responsive.spacing[5],
+      gap: responsive.spacing[3],
+      ...theme.shadows.sm,
+    },
+    insightsList: {
+      gap: responsive.spacing[3],
+    },
+    insightItem: {
+      flexDirection: 'row',
+      alignItems: 'flex-start',
+      gap: responsive.spacing[3],
+    },
+    insightIconContainer: {
+      width: ms(40),
+      height: ms(40),
+      borderRadius: theme.borderRadius.lg,
+      backgroundColor: `${colors.primary}20`,
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
+    insightContent: {
+      flex: 1,
+      gap: responsive.spacing[1],
+    },
+    insightTitle: {
+      fontSize: responsive.fontSize.sm,
+      fontWeight: '700',
+      color: colors.neutralDarkest,
+    },
+    insightDescription: {
+      fontSize: responsive.fontSize.sm,
+      fontWeight: '400',
+      color: colors.neutralDark,
+    },
+    settingsSection: {
+      gap: responsive.spacing[3],
+    },
+    settingsList: {
+      backgroundColor: colors.neutralWhite,
+      borderRadius: theme.borderRadius.xl,
+      overflow: 'hidden',
+      ...theme.shadows.sm,
+    },
+    settingItem: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'space-between',
+      padding: responsive.spacing[4],
+      borderBottomWidth: 1,
+      borderBottomColor: colors.neutralBg,
+    },
+    settingLeft: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: responsive.spacing[3],
+      flex: 1,
+    },
+    settingInfo: {
+      flex: 1,
+      gap: responsive.spacing[1],
+    },
+    settingLabel: {
+      fontSize: responsive.fontSize.md,
+      fontWeight: '600',
+      color: colors.neutralDarkest,
+    },
+    settingValue: {
+      fontSize: responsive.fontSize.sm,
+      fontWeight: '400',
+      color: colors.neutralDark,
+    },
+    dangerItem: {
+      borderBottomWidth: 0,
+    },
+  });
 
   const renderOverviewTab = () => (
     <View style={styles.tabContent}>
@@ -433,7 +900,7 @@ export default function CategoryDetailsScreen() {
 
   return (
     <Screen scrollable={false} noPadding backgroundColor={colors.neutralBg} edges={['top']}>
-      <StatusBar barStyle="dark-content" backgroundColor={colors.neutralBg} />
+      <StatusBar barStyle={isDark ? 'light-content' : 'dark-content'} />
 
       {/* Header */}
       <View style={styles.header}>
@@ -525,475 +992,3 @@ export default function CategoryDetailsScreen() {
     </Screen>
   );
 }
-
-const styles = StyleSheet.create({
-  header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    paddingHorizontal: responsive.spacing[4],
-    paddingVertical: responsive.spacing[3],
-    backgroundColor: colors.neutralBg,
-    borderBottomWidth: 1,
-    borderBottomColor: `${colors.neutralMedium}30`,
-  },
-  headerButton: {
-    width: ms(40),
-    height: ms(40),
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  headerTitle: {
-    fontSize: responsive.fontSize.xl,
-    fontWeight: '700',
-    color: colors.neutralDarkest,
-    flex: 1,
-    textAlign: 'center',
-  },
-  categorySummary: {
-    paddingHorizontal: responsive.spacing[4],
-    paddingTop: responsive.spacing[2],
-    backgroundColor: colors.neutralBg,
-    borderBottomWidth: 1,
-    borderBottomColor: `${colors.neutralMedium}30`,
-  },
-  categoryHeader: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: responsive.spacing[3],
-    marginBottom: responsive.spacing[2],
-  },
-  categoryIconLarge: {
-    width: ms(48),
-    height: ms(48),
-    borderRadius: theme.borderRadius.lg,
-    alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: `${colors.primary}20`,
-  },
-  categoryInfo: {
-    flex: 1,
-    gap: responsive.spacing[0],
-    justifyContent: 'center',
-  },
-  categoryName: {
-    fontSize: responsive.fontSize.lg,
-    fontWeight: '700',
-    color: colors.neutralDarkest,
-  },
-  categoryStats: {
-    fontSize: responsive.fontSize.xs,
-    fontWeight: '500',
-    color: colors.neutralDark,
-    marginTop: responsive.spacing[0],
-  },
-  progressBarContainer: {
-    width: '100%',
-    height: ms(6),
-    borderRadius: ms(3),
-    marginBottom: responsive.spacing[2],
-    overflow: 'hidden',
-    backgroundColor: colors.neutralBg,
-  },
-  progressBar: {
-    height: '100%',
-    borderRadius: ms(3),
-  },
-  tabsScroll: {
-    marginHorizontal: -responsive.spacing[4],
-    paddingHorizontal: responsive.spacing[4],
-  },
-  tabs: {
-    flexDirection: 'row',
-    gap: responsive.spacing[4],
-  },
-  tab: {
-    paddingHorizontal: responsive.spacing[4],
-    paddingVertical: responsive.spacing[3],
-    borderBottomWidth: 2,
-    borderBottomColor: 'transparent',
-  },
-  tabActive: {
-    borderBottomColor: colors.primary,
-  },
-  tabText: {
-    fontSize: responsive.fontSize.sm,
-    fontWeight: '600',
-    color: colors.neutralDark,
-  },
-  tabTextActive: {
-    fontWeight: '700',
-    color: colors.primary,
-  },
-  scrollView: {
-    flex: 1,
-  },
-  tabContent: {
-    padding: responsive.spacing[4],
-    gap: responsive.spacing[4],
-  },
-  trendCard: {
-    padding: responsive.spacing[4],
-    borderRadius: theme.borderRadius.xl,
-    backgroundColor: colors.neutralWhite,
-    gap: responsive.spacing[3],
-    ...theme.shadows.sm,
-  },
-  largeTrendCard: {
-    gap: responsive.spacing[4],
-  },
-  trendHeader: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-  },
-  trendTitle: {
-    fontSize: responsive.fontSize.md,
-    fontWeight: '700',
-    color: colors.neutralDarkest,
-  },
-  trendBadge: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: responsive.spacing[1],
-    backgroundColor: `${colors.functionalSuccess}20`,
-    paddingHorizontal: responsive.spacing[2],
-    paddingVertical: responsive.spacing[1],
-    borderRadius: theme.borderRadius.full,
-  },
-  trendBadgeText: {
-    fontSize: responsive.fontSize.xs,
-    fontWeight: '700',
-    color: colors.functionalSuccess,
-  },
-  viewReportText: {
-    fontSize: responsive.fontSize.sm,
-    fontWeight: '600',
-    color: colors.primary,
-  },
-  trendAmount: {
-    fontSize: responsive.fontSize.h2,
-    fontWeight: '700',
-    color: colors.neutralDarkest,
-  },
-  trendAmountLarge: {
-    fontSize: responsive.fontSize.h1,
-    fontWeight: '700',
-    color: colors.neutralDarkest,
-  },
-  trendStats: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: responsive.spacing[1],
-  },
-  trendLabel: {
-    fontSize: responsive.fontSize.sm,
-    fontWeight: '400',
-    color: colors.neutralDark,
-  },
-  trendChange: {
-    fontSize: responsive.fontSize.sm,
-    fontWeight: '500',
-  },
-  // Activity Section
-  activitySection: {
-    gap: responsive.spacing[3],
-  },
-  sectionTitle: {
-    fontSize: responsive.fontSize.md,
-    fontWeight: '700',
-    color: colors.neutralDarkest,
-  },
-  activityList: {
-    backgroundColor: colors.neutralWhite,
-    borderRadius: theme.borderRadius.xl,
-    overflow: 'hidden',
-    ...theme.shadows.sm,
-  },
-  activityItem: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    padding: responsive.spacing[3],
-  },
-  activityItemBorder: {
-    borderBottomWidth: 1,
-    borderBottomColor: colors.neutralBg,
-  },
-  activityLeft: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: responsive.spacing[2],
-    flex: 1,
-  },
-  activityIcon: {
-    width: ms(32),
-    height: ms(32),
-    borderRadius: theme.borderRadius.md,
-    alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: `${colors.primary}15`,
-  },
-  activityInfo: {
-    flex: 1,
-  },
-  activityMerchant: {
-    fontSize: responsive.fontSize.sm,
-    fontWeight: '600',
-    color: colors.neutralDarkest,
-    marginBottom: responsive.spacing[0],
-  },
-  activityDate: {
-    fontSize: responsive.fontSize.xs,
-    fontWeight: '400',
-    color: colors.neutralDark,
-  },
-  activityAmount: {
-    fontSize: responsive.fontSize.sm,
-    fontWeight: '700',
-    color: colors.neutralDarkest,
-  },
-  viewAllButton: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    gap: responsive.spacing[2],
-    padding: responsive.spacing[3],
-    borderRadius: theme.borderRadius.lg,
-    borderWidth: 1,
-    borderColor: colors.primary,
-    backgroundColor: colors.neutralWhite,
-  },
-  viewAllText: {
-    fontSize: responsive.fontSize.sm,
-    fontWeight: '600',
-    color: colors.primary,
-  },
-  centerContent: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-    gap: responsive.spacing[4],
-    paddingVertical: responsive.spacing[16],
-  },
-  emptyText: {
-    fontSize: responsive.fontSize.h3,
-    fontWeight: '700',
-    color: colors.neutralDarkest,
-  },
-  emptySubtext: {
-    fontSize: responsive.fontSize.sm,
-    fontWeight: '400',
-    color: colors.neutralDark,
-    textAlign: 'center',
-  },
-  // Amount Card
-  amountCard: {
-    backgroundColor: colors.neutralWhite,
-    borderRadius: theme.borderRadius.xl,
-    padding: responsive.spacing[5],
-    ...theme.shadows.sm,
-  },
-  amountHeader: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: responsive.spacing[4],
-  },
-  amountIconContainer: {
-    width: ms(64),
-    height: ms(64),
-    borderRadius: ms(32),
-    alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: `${colors.functionalSuccess}15`,
-  },
-  amountContent: {
-    flex: 1,
-    gap: responsive.spacing[1],
-  },
-  amountLabel: {
-    fontSize: responsive.fontSize.sm,
-    fontWeight: '600',
-    color: colors.neutralDark,
-  },
-  amountValue: {
-    fontSize: responsive.fontSize.h1,
-    fontWeight: '700',
-  },
-  // Stats Row
-  statsRow: {
-    flexDirection: 'row',
-    gap: responsive.spacing[3],
-  },
-  statBox: {
-    flex: 1,
-    backgroundColor: colors.neutralWhite,
-    borderRadius: theme.borderRadius.lg,
-    padding: responsive.spacing[4],
-    alignItems: 'center',
-    gap: responsive.spacing[2],
-    ...theme.shadows.sm,
-  },
-  statIconContainer: {
-    width: ms(48),
-    height: ms(48),
-    borderRadius: ms(24),
-    backgroundColor: `${colors.primary}15`,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  statBoxValue: {
-    fontSize: responsive.fontSize.h3,
-    fontWeight: '700',
-    color: colors.neutralDarkest,
-  },
-  statBoxLabel: {
-    fontSize: responsive.fontSize.xs,
-    fontWeight: '500',
-    color: colors.neutralDark,
-    textAlign: 'center',
-  },
-  // Breakdown Card
-  breakdownCard: {
-    backgroundColor: colors.neutralWhite,
-    borderRadius: theme.borderRadius.xl,
-    padding: responsive.spacing[4],
-    gap: responsive.spacing[3],
-    ...theme.shadows.sm,
-  },
-  breakdownItem: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    paddingVertical: responsive.spacing[2],
-  },
-  breakdownLeft: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: responsive.spacing[2],
-    flex: 1,
-  },
-  breakdownLabel: {
-    fontSize: responsive.fontSize.sm,
-    fontWeight: '500',
-    color: colors.neutralDark,
-  },
-  breakdownValue: {
-    fontSize: responsive.fontSize.sm,
-    fontWeight: '700',
-    color: colors.neutralDarkest,
-  },
-  // Performance Card
-  performanceCard: {
-    backgroundColor: colors.neutralWhite,
-    borderRadius: theme.borderRadius.xl,
-    padding: responsive.spacing[5],
-    gap: responsive.spacing[4],
-    ...theme.shadows.sm,
-  },
-  performanceStats: {
-    flexDirection: 'row',
-    justifyContent: 'space-around',
-    alignItems: 'center',
-  },
-  performanceItem: {
-    flex: 1,
-    alignItems: 'center',
-    gap: responsive.spacing[2],
-  },
-  performanceValue: {
-    fontSize: responsive.fontSize.h2,
-    fontWeight: '700',
-    color: colors.neutralDarkest,
-  },
-  performanceLabel: {
-    fontSize: responsive.fontSize.xs,
-    fontWeight: '500',
-    color: colors.neutralDark,
-    textAlign: 'center',
-  },
-  performanceDivider: {
-    width: 1,
-    height: ms(60),
-    backgroundColor: `${colors.neutralMedium}30`,
-  },
-  // Insights Card
-  insightsCard: {
-    backgroundColor: colors.neutralWhite,
-    borderRadius: theme.borderRadius.xl,
-    padding: responsive.spacing[5],
-    gap: responsive.spacing[3],
-    ...theme.shadows.sm,
-  },
-  insightsList: {
-    gap: responsive.spacing[3],
-  },
-  insightItem: {
-    flexDirection: 'row',
-    alignItems: 'flex-start',
-    gap: responsive.spacing[3],
-  },
-  insightIconContainer: {
-    width: ms(40),
-    height: ms(40),
-    borderRadius: theme.borderRadius.lg,
-    backgroundColor: `${colors.primary}20`,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  insightContent: {
-    flex: 1,
-    gap: responsive.spacing[1],
-  },
-  insightTitle: {
-    fontSize: responsive.fontSize.sm,
-    fontWeight: '700',
-    color: colors.neutralDarkest,
-  },
-  insightDescription: {
-    fontSize: responsive.fontSize.sm,
-    fontWeight: '400',
-    color: colors.neutralDark,
-  },
-  // Settings Section
-  settingsSection: {
-    gap: responsive.spacing[3],
-  },
-  settingsList: {
-    backgroundColor: colors.neutralWhite,
-    borderRadius: theme.borderRadius.xl,
-    overflow: 'hidden',
-    ...theme.shadows.sm,
-  },
-  settingItem: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    padding: responsive.spacing[4],
-    borderBottomWidth: 1,
-    borderBottomColor: colors.neutralBg,
-  },
-  settingLeft: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: responsive.spacing[3],
-    flex: 1,
-  },
-  settingInfo: {
-    flex: 1,
-    gap: responsive.spacing[1],
-  },
-  settingLabel: {
-    fontSize: responsive.fontSize.md,
-    fontWeight: '600',
-    color: colors.neutralDarkest,
-  },
-  settingValue: {
-    fontSize: responsive.fontSize.sm,
-    fontWeight: '400',
-    color: colors.neutralDark,
-  },
-  dangerItem: {
-    borderBottomWidth: 0,
-  },
-});

@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, ScrollView } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, ScrollView, StatusBar } from 'react-native';
 import { useRouter } from 'expo-router';
 import { Screen } from '@/components/layout/Screen';
 import { Button } from '@/components/ui/Button';
-import { theme } from '@/constants/theme';
+import { getTheme } from '@/constants/theme';
+import { useTheme } from '@/contexts/ThemeContext';
 import { responsive, ms } from '@/constants/responsive';
 import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
@@ -27,12 +28,236 @@ const recurringItems: RecurringItem[] = [
 
 export default function RecurringTransactions() {
   const router = useRouter();
+  const { theme: themeMode } = useTheme();
+  const theme = getTheme(themeMode);
 
   const monthlyItems = recurringItems.filter(item => item.frequency === 'Monthly');
   const quarterlyItems = recurringItems.filter(item => item.frequency === 'Quarterly');
 
   const monthlyTotal = monthlyItems.reduce((sum, item) => sum + item.amount, 0);
   const yearlyTotal = monthlyTotal * 12;
+
+  const colors = {
+    neutralBg: theme.colors.background.secondary,
+    cardBg: theme.colors.background.primary,
+    primaryText: theme.colors.text.primary,
+    secondaryText: theme.colors.text.secondary,
+    tertiaryText: theme.colors.text.tertiary,
+    borderColor: theme.colors.border.light,
+    inputBg: theme.colors.background.tertiary,
+    dangerLight: theme.colors.danger.light,
+    dangerMain: theme.colors.danger.main,
+    primaryColor: theme.colors.primary[600],
+    primary700: theme.colors.primary[700],
+    warningLight: theme.colors.warning.light,
+    warningDark: theme.colors.warning.dark,
+  };
+
+  const styles = StyleSheet.create({
+    header: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'space-between',
+      paddingHorizontal: responsive.spacing[6],
+      paddingVertical: responsive.spacing[2],
+      backgroundColor: colors.cardBg,
+      borderBottomWidth: 1,
+      borderBottomColor: colors.borderColor,
+    },
+    backButton: {
+      padding: responsive.spacing[2],
+    },
+    headerTitle: {
+      ...theme.typography.styles.h3,
+      fontSize: responsive.fontSize.lg,
+      lineHeight: responsive.fontSize.lg * 1.5,
+    },
+    placeholder: {
+      width: 40,
+    },
+    content: {
+      padding: responsive.spacing[6],
+      paddingBottom: responsive.spacing[8],
+    },
+    summaryCard: {
+      borderRadius: 20,
+      padding: responsive.spacing[6],
+      marginBottom: responsive.spacing[6],
+      ...theme.shadows.lg,
+    },
+    summaryLabel: {
+      ...theme.typography.styles.bodySmall,
+      color: 'rgba(255, 255, 255, 0.9)',
+      marginBottom: responsive.spacing[2],
+    },
+    summaryAmount: {
+      fontSize: responsive.fontSize.h2,
+      lineHeight: responsive.fontSize.h2 * 1.5,
+      fontWeight: '700',
+      color: '#FFFFFF',
+      marginBottom: responsive.spacing[1],
+    },
+    summaryYearly: {
+      ...theme.typography.styles.bodySmall,
+      color: 'rgba(255, 255, 255, 0.75)',
+    },
+    section: {
+      marginBottom: responsive.spacing[6],
+    },
+    sectionTitle: {
+      ...theme.typography.styles.label,
+      fontSize: responsive.fontSize.xs,
+      lineHeight: responsive.fontSize.xs * 1.5,
+      color: colors.secondaryText,
+      fontWeight: '600',
+      marginBottom: responsive.spacing[2],
+    },
+    itemCard: {
+      backgroundColor: colors.cardBg,
+      borderRadius: 20,
+      padding: responsive.spacing[4],
+      marginBottom: responsive.spacing[2],
+      ...theme.shadows.sm,
+    },
+    itemHeader: {
+      flexDirection: 'row',
+      alignItems: 'flex-start',
+      justifyContent: 'space-between',
+      marginBottom: responsive.spacing[2],
+    },
+    itemInfo: {
+      flex: 1,
+    },
+    itemName: {
+      ...theme.typography.styles.h4,
+      marginBottom: responsive.spacing[1],
+    },
+    itemFrequency: {
+      ...theme.typography.styles.bodySmall,
+      color: colors.secondaryText,
+    },
+    itemAmount: {
+      fontSize: responsive.fontSize.xl,
+      lineHeight: responsive.fontSize.xl * 1.5,
+      fontWeight: '700',
+      color: colors.primaryText,
+    },
+    itemFooter: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'space-between',
+    },
+    itemNextDate: {
+      ...theme.typography.styles.bodySmall,
+      color: colors.secondaryText,
+    },
+    itemNextDateValue: {
+      fontWeight: '500',
+    },
+    itemActions: {
+      flexDirection: 'row',
+      gap: responsive.spacing[2],
+    },
+    editButton: {
+      paddingHorizontal: responsive.spacing[4],
+      paddingVertical: responsive.spacing[2],
+      backgroundColor: colors.inputBg,
+      borderRadius: theme.borderRadius.lg,
+    },
+    editButtonText: {
+      ...theme.typography.styles.button,
+      color: colors.secondaryText,
+      fontSize: responsive.fontSize.sm,
+      lineHeight: responsive.fontSize.sm * 1.5,
+    },
+    stopButton: {
+      paddingHorizontal: responsive.spacing[4],
+      paddingVertical: responsive.spacing[2],
+      backgroundColor: colors.dangerLight,
+      borderRadius: theme.borderRadius.lg,
+    },
+    stopButtonText: {
+      ...theme.typography.styles.button,
+      color: colors.dangerMain,
+      fontSize: responsive.fontSize.sm,
+      lineHeight: responsive.fontSize.sm * 1.5,
+    },
+    addButton: {
+      backgroundColor: colors.inputBg,
+      paddingVertical: responsive.spacing[2],
+      borderRadius: 20,
+      alignItems: 'center',
+      marginBottom: responsive.spacing[6],
+    },
+    addButtonText: {
+      ...theme.typography.styles.button,
+      color: colors.secondaryText,
+      fontSize: responsive.fontSize.sm,
+      lineHeight: responsive.fontSize.sm * 1.5,
+    },
+    insightsCard: {
+      backgroundColor: colors.cardBg,
+      borderRadius: 20,
+      padding: responsive.spacing[6],
+      borderWidth: 2,
+      borderColor: colors.warningLight,
+      ...theme.shadows.sm,
+    },
+    insightsHeader: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'space-between',
+      marginBottom: responsive.spacing[4],
+    },
+    insightsTitle: {
+      ...theme.typography.styles.h4,
+    },
+    premiumBadge: {
+      backgroundColor: colors.warningLight,
+      paddingHorizontal: responsive.spacing[2],
+      paddingVertical: 4,
+      borderRadius: theme.borderRadius.full,
+    },
+    premiumBadgeText: {
+      ...theme.typography.styles.caption,
+      color: colors.warningDark,
+      fontWeight: '600',
+      fontSize: responsive.fontSize.xs,
+      lineHeight: responsive.fontSize.xs * 1.5,
+    },
+    insightsTotals: {
+      backgroundColor: colors.neutralBg,
+      borderRadius: 20,
+      padding: responsive.spacing[4],
+      marginBottom: responsive.spacing[4],
+    },
+    insightRow: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'space-between',
+      marginBottom: responsive.spacing[2],
+    },
+    insightLabel: {
+      ...theme.typography.styles.bodySmall,
+      color: colors.secondaryText,
+    },
+    insightValue: {
+      ...theme.typography.styles.h4,
+    },
+    tipBox: {
+      backgroundColor: colors.warningLight,
+      borderRadius: 20,
+      padding: responsive.spacing[4],
+      marginBottom: responsive.spacing[4],
+    },
+    tipText: {
+      ...theme.typography.styles.bodySmall,
+      color: colors.warningDark,
+    },
+    tipIcon: {
+      marginRight: responsive.spacing[2],
+    },
+  });
 
   const renderRecurringItem = (item: RecurringItem) => (
     <View key={item.id} style={styles.itemCard}>
@@ -65,14 +290,15 @@ export default function RecurringTransactions() {
   );
 
   return (
-    <Screen noPadding backgroundColor={theme.colors.background.secondary}>
+    <Screen noPadding backgroundColor={colors.neutralBg}>
+      <StatusBar barStyle={themeMode === 'dark' ? 'light-content' : 'dark-content'} backgroundColor={colors.neutralBg} />
       {/* Header */}
       <View style={styles.header}>
         <TouchableOpacity
           style={styles.backButton}
           onPress={() => router.back()}
         >
-          <Ionicons name="chevron-back" size={24} color={theme.colors.text.primary} />
+          <Ionicons name="chevron-back" size={24} color={colors.primaryText} />
         </TouchableOpacity>
         <Text style={styles.headerTitle}>Recurring Transactions</Text>
         <View style={styles.placeholder} />
@@ -153,209 +379,3 @@ export default function RecurringTransactions() {
     </Screen>
   );
 }
-
-const styles = StyleSheet.create({
-  header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    paddingHorizontal: responsive.spacing[6],
-    paddingVertical: responsive.spacing[2],
-    backgroundColor: theme.colors.background.primary,
-    borderBottomWidth: 1,
-    borderBottomColor: theme.colors.border.light,
-  },
-  backButton: {
-    padding: responsive.spacing[2],
-  },
-  headerTitle: {
-    ...theme.typography.styles.h3,
-    fontSize: responsive.fontSize.lg,
-    lineHeight: responsive.fontSize.lg * 1.5,
-  },
-  placeholder: {
-    width: 40,
-  },
-  content: {
-    padding: responsive.spacing[6],
-    paddingBottom: responsive.spacing[8],
-  },
-  summaryCard: {
-    borderRadius: 20,
-    padding: responsive.spacing[6],
-    marginBottom: responsive.spacing[6],
-    ...theme.shadows.lg,
-  },
-  summaryLabel: {
-    ...theme.typography.styles.bodySmall,
-    color: 'rgba(255, 255, 255, 0.9)',
-    marginBottom: responsive.spacing[2],
-  },
-  summaryAmount: {
-    fontSize: responsive.fontSize.h2,
-    lineHeight: responsive.fontSize.h2 * 1.5,
-    fontWeight: '700',
-    color: '#FFFFFF',
-    marginBottom: responsive.spacing[1],
-  },
-  summaryYearly: {
-    ...theme.typography.styles.bodySmall,
-    color: 'rgba(255, 255, 255, 0.75)',
-  },
-  section: {
-    marginBottom: responsive.spacing[6],
-  },
-  sectionTitle: {
-    ...theme.typography.styles.label,
-    fontSize: responsive.fontSize.xs,
-    lineHeight: responsive.fontSize.xs * 1.5,
-    color: theme.colors.text.secondary,
-    fontWeight: '600',
-    marginBottom: responsive.spacing[2],
-  },
-  itemCard: {
-    backgroundColor: theme.colors.background.primary,
-    borderRadius: 20,
-    padding: responsive.spacing[4],
-    marginBottom: responsive.spacing[2],
-    ...theme.shadows.sm,
-  },
-  itemHeader: {
-    flexDirection: 'row',
-    alignItems: 'flex-start',
-    justifyContent: 'space-between',
-    marginBottom: responsive.spacing[2],
-  },
-  itemInfo: {
-    flex: 1,
-  },
-  itemName: {
-    ...theme.typography.styles.h4,
-    marginBottom: responsive.spacing[1],
-  },
-  itemFrequency: {
-    ...theme.typography.styles.bodySmall,
-    color: theme.colors.text.secondary,
-  },
-  itemAmount: {
-    fontSize: responsive.fontSize.xl,
-    lineHeight: responsive.fontSize.xl * 1.5,
-    fontWeight: '700',
-    color: theme.colors.text.primary,
-  },
-  itemFooter: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-  },
-  itemNextDate: {
-    ...theme.typography.styles.bodySmall,
-    color: theme.colors.text.secondary,
-  },
-  itemNextDateValue: {
-    fontWeight: '500',
-  },
-  itemActions: {
-    flexDirection: 'row',
-    gap: responsive.spacing[2],
-  },
-  editButton: {
-    paddingHorizontal: responsive.spacing[4],
-    paddingVertical: responsive.spacing[2],
-    backgroundColor: theme.colors.background.tertiary,
-    borderRadius: theme.borderRadius.lg,
-  },
-  editButtonText: {
-    ...theme.typography.styles.button,
-    color: theme.colors.text.secondary,
-    fontSize: responsive.fontSize.sm,
-    lineHeight: responsive.fontSize.sm * 1.5,
-  },
-  stopButton: {
-    paddingHorizontal: responsive.spacing[4],
-    paddingVertical: responsive.spacing[2],
-    backgroundColor: theme.colors.danger.light,
-    borderRadius: theme.borderRadius.lg,
-  },
-  stopButtonText: {
-    ...theme.typography.styles.button,
-    color: theme.colors.danger.main,
-    fontSize: responsive.fontSize.sm,
-    lineHeight: responsive.fontSize.sm * 1.5,
-  },
-  addButton: {
-    backgroundColor: theme.colors.background.tertiary,
-    paddingVertical: responsive.spacing[2],
-    borderRadius: 20,
-    alignItems: 'center',
-    marginBottom: responsive.spacing[6],
-  },
-  addButtonText: {
-    ...theme.typography.styles.button,
-    color: theme.colors.text.secondary,
-    fontSize: responsive.fontSize.sm,
-    lineHeight: responsive.fontSize.sm * 1.5,
-  },
-  insightsCard: {
-    backgroundColor: theme.colors.background.primary,
-    borderRadius: 20,
-    padding: responsive.spacing[6],
-    borderWidth: 2,
-    borderColor: theme.colors.warning.light,
-    ...theme.shadows.sm,
-  },
-  insightsHeader: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    marginBottom: responsive.spacing[4],
-  },
-  insightsTitle: {
-    ...theme.typography.styles.h4,
-  },
-  premiumBadge: {
-    backgroundColor: theme.colors.warning.light,
-    paddingHorizontal: responsive.spacing[2],
-    paddingVertical: 4,
-    borderRadius: theme.borderRadius.full,
-  },
-  premiumBadgeText: {
-    ...theme.typography.styles.caption,
-    color: theme.colors.warning.dark,
-    fontWeight: '600',
-    fontSize: responsive.fontSize.xs,
-    lineHeight: responsive.fontSize.xs * 1.5,
-  },
-  insightsTotals: {
-    backgroundColor: theme.colors.background.secondary,
-    borderRadius: 20,
-    padding: responsive.spacing[4],
-    marginBottom: responsive.spacing[4],
-  },
-  insightRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    marginBottom: responsive.spacing[2],
-  },
-  insightLabel: {
-    ...theme.typography.styles.bodySmall,
-    color: theme.colors.text.secondary,
-  },
-  insightValue: {
-    ...theme.typography.styles.h4,
-  },
-  tipBox: {
-    backgroundColor: theme.colors.warning.light,
-    borderRadius: 20,
-    padding: responsive.spacing[4],
-    marginBottom: responsive.spacing[4],
-  },
-  tipText: {
-    ...theme.typography.styles.bodySmall,
-    color: theme.colors.warning.dark,
-  },
-  tipIcon: {
-    marginRight: responsive.spacing[2],
-  },
-});

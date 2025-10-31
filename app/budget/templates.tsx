@@ -1,8 +1,8 @@
 import React from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, ScrollView } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, ScrollView, StatusBar } from 'react-native';
 import { Screen } from '@/components/layout/Screen';
 import { ScreenHeader } from '@/components/layout/ScreenHeader';
-import { theme } from '@/constants/theme';
+import { getTheme, useTheme } from '@/constants/theme';
 import { responsive, ms } from '@/constants/responsive';
 import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
@@ -20,8 +20,244 @@ const suggestedTemplates = [
 ];
 
 export default function BudgetTemplates() {
+  const { currentTheme, isDark } = useTheme();
+  const theme = getTheme(currentTheme);
+
+  const colors = {
+    background: theme.colors.background.primary,
+    backgroundSecondary: theme.colors.background.secondary,
+    backgroundTertiary: theme.colors.background.tertiary,
+    text: theme.colors.text.primary,
+    textSecondary: theme.colors.text.secondary,
+    textTertiary: theme.colors.text.tertiary,
+    primary: theme.colors.primary[600],
+    primaryBg: theme.colors.primary[100],
+    primaryBorder: theme.colors.primary[700],
+    border: theme.colors.border.light,
+    borderMain: theme.colors.border.main,
+    warning: theme.colors.warning.main,
+    warningLight: theme.colors.warning.light,
+    warningDark: theme.colors.warning.dark,
+  };
+
+  const styles = StyleSheet.create({
+    content: {
+      padding: responsive.spacing[6],
+      paddingBottom: responsive.spacing[8],
+    },
+    premiumCard: {
+      borderRadius: theme.borderRadius.xl,
+      padding: responsive.spacing[4],
+      marginBottom: responsive.spacing[6],
+      borderWidth: 1,
+      borderColor: colors.warning,
+    },
+    premiumHeader: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      marginBottom: responsive.spacing[2],
+    },
+    premiumIcon: {
+      fontSize: responsive.fontSize.h4,
+      lineHeight: responsive.fontSize.h4 * 1.5,
+      marginRight: responsive.spacing[2],
+    },
+    premiumTitle: {
+      ...theme.typography.styles.body,
+      fontWeight: '600',
+      color: colors.warningDark,
+    },
+    premiumText: {
+      ...theme.typography.styles.bodySmall,
+      color: colors.warningDark,
+      marginBottom: responsive.spacing[2],
+    },
+    upgradeButton: {
+      backgroundColor: colors.warning,
+      borderRadius: theme.borderRadius.lg,
+      paddingVertical: responsive.spacing[2],
+      alignItems: 'center',
+    },
+    upgradeButtonText: {
+      ...theme.typography.styles.button,
+      color: '#FFFFFF',
+      fontSize: responsive.fontSize.sm,
+      lineHeight: responsive.fontSize.sm * 1.5,
+    },
+    section: {
+      marginBottom: responsive.spacing[6],
+    },
+    sectionTitle: {
+      ...theme.typography.styles.label,
+      fontSize: responsive.fontSize.xs,
+      lineHeight: responsive.fontSize.xs * 1.5,
+      color: colors.textTertiary,
+      fontWeight: '600',
+      marginBottom: responsive.spacing[2],
+    },
+    templatesContainer: {
+      gap: responsive.spacing[2],
+    },
+    templateCard: {
+      backgroundColor: colors.background,
+      borderRadius: theme.borderRadius.xl,
+      padding: responsive.spacing[4],
+      ...theme.shadows.sm,
+    },
+    templateHeader: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'space-between',
+      marginBottom: responsive.spacing[2],
+    },
+    templateLeft: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      flex: 1,
+    },
+    templateIcon: {
+      fontSize: responsive.fontSize.xl,
+      lineHeight: responsive.fontSize.xl * 1.5,
+      marginRight: responsive.spacing[2],
+    },
+    templateName: {
+      ...theme.typography.styles.body,
+      color: colors.text,
+      fontWeight: '600',
+    },
+    templateNote: {
+      ...theme.typography.styles.bodySmall,
+      color: colors.textSecondary,
+      marginBottom: responsive.spacing[2],
+    },
+    templateFooter: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'space-between',
+    },
+    templateMeta: {
+      ...theme.typography.styles.caption,
+      color: colors.textTertiary,
+    },
+    templateActions: {
+      flexDirection: 'row',
+      gap: responsive.spacing[2],
+    },
+    useButton: {
+      backgroundColor: colors.primaryBg,
+      borderRadius: theme.borderRadius.lg,
+      paddingHorizontal: responsive.spacing[2],
+      paddingVertical: 4,
+    },
+    useButtonText: {
+      ...theme.typography.styles.caption,
+      color: colors.primaryBorder,
+      fontSize: responsive.fontSize.xs,
+      lineHeight: responsive.fontSize.xs * 1.5,
+      fontWeight: '500',
+    },
+    editButton: {
+      backgroundColor: colors.backgroundTertiary,
+      borderRadius: theme.borderRadius.lg,
+      paddingHorizontal: responsive.spacing[2],
+      paddingVertical: 4,
+    },
+    editButtonText: {
+      ...theme.typography.styles.caption,
+      color: colors.textSecondary,
+      fontSize: responsive.fontSize.xs,
+      lineHeight: responsive.fontSize.xs * 1.5,
+      fontWeight: '500',
+    },
+    createButton: {
+      borderWidth: 2,
+      borderStyle: 'dashed',
+      borderColor: colors.borderMain,
+      borderRadius: theme.borderRadius.xl,
+      padding: responsive.spacing[4],
+      alignItems: 'center',
+      marginTop: responsive.spacing[2],
+    },
+    createButtonText: {
+      ...theme.typography.styles.button,
+      color: colors.textSecondary,
+      fontSize: responsive.fontSize.sm,
+      lineHeight: responsive.fontSize.sm * 1.5,
+    },
+    suggestedCard: {
+      backgroundColor: colors.background,
+      borderRadius: theme.borderRadius.xl,
+      padding: responsive.spacing[4],
+      borderWidth: 2,
+      borderColor: colors.border,
+      ...theme.shadows.sm,
+    },
+    suggestedHeader: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'space-between',
+      marginBottom: responsive.spacing[2],
+    },
+    useArrow: {
+      ...theme.typography.styles.body,
+      color: colors.primary,
+      fontWeight: '500',
+    },
+    suggestedStats: {
+      flexDirection: 'row',
+      gap: responsive.spacing[2],
+    },
+    statBox: {
+      flex: 1,
+      backgroundColor: colors.backgroundTertiary,
+      borderRadius: theme.borderRadius.lg,
+      padding: responsive.spacing[2],
+    },
+    statLabel: {
+      ...theme.typography.styles.caption,
+      color: colors.textSecondary,
+      marginBottom: 4,
+    },
+    statValue: {
+      ...theme.typography.styles.body,
+      color: colors.text,
+      fontWeight: '600',
+    },
+    infoBox: {
+      backgroundColor: theme.colors.info.light,
+      borderWidth: 1,
+      borderColor: theme.colors.info.main,
+      borderRadius: theme.borderRadius.xl,
+      padding: responsive.spacing[4],
+    },
+    infoContent: {
+      flexDirection: 'row',
+      alignItems: 'flex-start',
+    },
+    infoIcon: {
+      fontSize: responsive.fontSize.h4,
+      lineHeight: responsive.fontSize.h4 * 1.5,
+      marginRight: responsive.spacing[2],
+    },
+    infoTextContainer: {
+      flex: 1,
+    },
+    infoTitle: {
+      ...theme.typography.styles.body,
+      fontWeight: '600',
+      color: theme.colors.info.dark,
+      marginBottom: responsive.spacing[1],
+    },
+    infoDescription: {
+      ...theme.typography.styles.bodySmall,
+      color: theme.colors.info.dark,
+      lineHeight: 20,
+    },
+  });
+
   return (
-    <Screen noPadding backgroundColor={theme.colors.background.secondary}>
+    <Screen noPadding backgroundColor={colors.backgroundSecondary}>
+      <StatusBar barStyle={isDark ? 'light-content' : 'dark-content'} />
       <ScreenHeader title="Budget Templates" />
 
       <ScrollView contentContainerStyle={styles.content}>
@@ -131,216 +367,3 @@ export default function BudgetTemplates() {
     </Screen>
   );
 }
-
-const styles = StyleSheet.create({
-  content: {
-    padding: responsive.spacing[6],
-    paddingBottom: responsive.spacing[8],
-  },
-  premiumCard: {
-    borderRadius: theme.borderRadius.xl,
-    padding: responsive.spacing[4],
-    marginBottom: responsive.spacing[6],
-    borderWidth: 1,
-    borderColor: theme.colors.warning.main,
-  },
-  premiumHeader: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: responsive.spacing[2],
-  },
-  premiumIcon: {
-    fontSize: responsive.fontSize.h4,
-    lineHeight: responsive.fontSize.h4 * 1.5,
-    marginRight: responsive.spacing[2],
-  },
-  premiumTitle: {
-    ...theme.typography.styles.body,
-    fontWeight: '600',
-    color: theme.colors.warning.dark,
-  },
-  premiumText: {
-    ...theme.typography.styles.bodySmall,
-    color: theme.colors.warning.dark,
-    marginBottom: responsive.spacing[2],
-  },
-  upgradeButton: {
-    backgroundColor: theme.colors.warning.main,
-    borderRadius: theme.borderRadius.lg,
-    paddingVertical: responsive.spacing[2],
-    alignItems: 'center',
-  },
-  upgradeButtonText: {
-    ...theme.typography.styles.button,
-    color: '#FFFFFF',
-    fontSize: responsive.fontSize.sm,
-    lineHeight: responsive.fontSize.sm * 1.5,
-  },
-  section: {
-    marginBottom: responsive.spacing[6],
-  },
-  sectionTitle: {
-    ...theme.typography.styles.label,
-    fontSize: responsive.fontSize.xs,
-    lineHeight: responsive.fontSize.xs * 1.5,
-    color: theme.colors.text.tertiary,
-    fontWeight: '600',
-    marginBottom: responsive.spacing[2],
-  },
-  templatesContainer: {
-    gap: responsive.spacing[2],
-  },
-  templateCard: {
-    backgroundColor: theme.colors.background.primary,
-    borderRadius: theme.borderRadius.xl,
-    padding: responsive.spacing[4],
-    ...theme.shadows.sm,
-  },
-  templateHeader: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    marginBottom: responsive.spacing[2],
-  },
-  templateLeft: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    flex: 1,
-  },
-  templateIcon: {
-    fontSize: responsive.fontSize.xl,
-    lineHeight: responsive.fontSize.xl * 1.5,
-    marginRight: responsive.spacing[2],
-  },
-  templateName: {
-    ...theme.typography.styles.body,
-    fontWeight: '600',
-  },
-  templateNote: {
-    ...theme.typography.styles.bodySmall,
-    color: theme.colors.text.secondary,
-    marginBottom: responsive.spacing[2],
-  },
-  templateFooter: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-  },
-  templateMeta: {
-    ...theme.typography.styles.caption,
-    color: theme.colors.text.tertiary,
-  },
-  templateActions: {
-    flexDirection: 'row',
-    gap: responsive.spacing[2],
-  },
-  useButton: {
-    backgroundColor: theme.colors.primary[100],
-    borderRadius: theme.borderRadius.lg,
-    paddingHorizontal: responsive.spacing[2],
-    paddingVertical: 4,
-  },
-  useButtonText: {
-    ...theme.typography.styles.caption,
-    color: theme.colors.primary[700],
-    fontSize: responsive.fontSize.xs,
-    lineHeight: responsive.fontSize.xs * 1.5,
-    fontWeight: '500',
-  },
-  editButton: {
-    backgroundColor: theme.colors.background.tertiary,
-    borderRadius: theme.borderRadius.lg,
-    paddingHorizontal: responsive.spacing[2],
-    paddingVertical: 4,
-  },
-  editButtonText: {
-    ...theme.typography.styles.caption,
-    color: theme.colors.text.secondary,
-    fontSize: responsive.fontSize.xs,
-    lineHeight: responsive.fontSize.xs * 1.5,
-    fontWeight: '500',
-  },
-  createButton: {
-    borderWidth: 2,
-    borderStyle: 'dashed',
-    borderColor: theme.colors.border.main,
-    borderRadius: theme.borderRadius.xl,
-    padding: responsive.spacing[4],
-    alignItems: 'center',
-    marginTop: responsive.spacing[2],
-  },
-  createButtonText: {
-    ...theme.typography.styles.button,
-    color: theme.colors.text.secondary,
-    fontSize: responsive.fontSize.sm,
-    lineHeight: responsive.fontSize.sm * 1.5,
-  },
-  suggestedCard: {
-    backgroundColor: theme.colors.background.primary,
-    borderRadius: theme.borderRadius.xl,
-    padding: responsive.spacing[4],
-    borderWidth: 2,
-    borderColor: theme.colors.border.light,
-    ...theme.shadows.sm,
-  },
-  suggestedHeader: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    marginBottom: responsive.spacing[2],
-  },
-  useArrow: {
-    ...theme.typography.styles.body,
-    color: theme.colors.primary[600],
-    fontWeight: '500',
-  },
-  suggestedStats: {
-    flexDirection: 'row',
-    gap: responsive.spacing[2],
-  },
-  statBox: {
-    flex: 1,
-    backgroundColor: theme.colors.background.tertiary,
-    borderRadius: theme.borderRadius.lg,
-    padding: responsive.spacing[2],
-  },
-  statLabel: {
-    ...theme.typography.styles.caption,
-    color: theme.colors.text.secondary,
-    marginBottom: 4,
-  },
-  statValue: {
-    ...theme.typography.styles.body,
-    fontWeight: '600',
-  },
-  infoBox: {
-    backgroundColor: theme.colors.info.light,
-    borderWidth: 1,
-    borderColor: theme.colors.info.main,
-    borderRadius: theme.borderRadius.xl,
-    padding: responsive.spacing[4],
-  },
-  infoContent: {
-    flexDirection: 'row',
-    alignItems: 'flex-start',
-  },
-  infoIcon: {
-    fontSize: responsive.fontSize.h4,
-    lineHeight: responsive.fontSize.h4 * 1.5,
-    marginRight: responsive.spacing[2],
-  },
-  infoTextContainer: {
-    flex: 1,
-  },
-  infoTitle: {
-    ...theme.typography.styles.body,
-    fontWeight: '600',
-    color: theme.colors.info.dark,
-    marginBottom: responsive.spacing[1],
-  },
-  infoDescription: {
-    ...theme.typography.styles.bodySmall,
-    color: theme.colors.info.dark,
-    lineHeight: 20,
-  },
-});

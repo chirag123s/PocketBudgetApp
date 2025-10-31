@@ -3,9 +3,10 @@ import { View, Text, StyleSheet, TouchableOpacity, Dimensions, FlatList, ViewTok
 import { useRouter } from 'expo-router';
 import { Screen } from '@/components/layout/Screen';
 import { Button } from '@/components/ui/Button';
-import { theme } from '@/constants/theme';
+import { getTheme } from '@/constants/theme';
 import { responsive, wp, hp, ms } from '@/constants/responsive';
 import { useAuth } from '@/contexts/AuthContext';
+import { useTheme } from '@/contexts/ThemeContext';
 
 const features = [
   {
@@ -28,6 +29,8 @@ const features = [
 export default function WelcomeScreen() {
   const router = useRouter();
   const { enableGuestMode } = useAuth();
+  const { theme: themeMode } = useTheme();
+  const theme = getTheme(themeMode);
   const [currentSlide, setCurrentSlide] = useState(0);
   const flatListRef = useRef<FlatList>(null);
   const { width } = Dimensions.get('window');
@@ -62,6 +65,170 @@ export default function WelcomeScreen() {
   const viewabilityConfig = useRef({
     itemVisiblePercentThreshold: 50,
   }).current;
+
+  const styles = StyleSheet.create({
+    container: {
+      flex: 1,
+      justifyContent: 'space-between',
+    },
+    content: {
+      flex: 1,
+      alignItems: 'center',
+      justifyContent: 'center',
+      paddingTop: responsive.device.isShortDevice ? hp(16) : hp(32),
+    },
+    heroContainer: {
+      alignItems: 'center',
+      marginBottom: responsive.device.isShortDevice ? hp(20) : hp(32),
+    },
+    mainIllustration: {
+      position: 'relative',
+    },
+    illustrationBackground: {
+      width: responsive.device.isSmallDevice ? wp(140) : wp(160),
+      height: responsive.device.isSmallDevice ? wp(140) : wp(160),
+      borderRadius: ms(24),
+      backgroundColor: theme.colors.primary[500],
+      alignItems: 'center',
+      justifyContent: 'center',
+      ...theme.shadows.lg,
+    },
+    illustrationIcon: {
+      fontSize: responsive.device.isSmallDevice ? ms(64) : ms(80),
+      color: theme.colors.text.inverse,
+      fontWeight: '700' as any,
+    },
+    floatingBadge: {
+      position: 'absolute',
+      bottom: ms(-12),
+      right: ms(-12),
+      width: ms(64),
+      height: ms(64),
+      borderRadius: ms(16),
+      backgroundColor: theme.colors.primary[100],
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
+    badgeIcon: {
+      fontSize: ms(32),
+    },
+    headline: {
+      fontSize: responsive.fontSize.h2,
+      fontWeight: '700',
+      color: theme.colors.text.primary,
+      textAlign: 'center',
+      marginBottom: responsive.spacing[2],
+      paddingHorizontal: responsive.spacing[6],
+      lineHeight: responsive.fontSize.h2 * 1.4,
+      width: '100%',
+    },
+    subheadline: {
+      ...theme.typography.styles.body,
+      fontSize: responsive.fontSize.md,
+      color: theme.colors.text.secondary,
+      textAlign: 'center',
+      marginBottom: responsive.device.isShortDevice ? hp(20) : hp(40),
+      paddingHorizontal: responsive.spacing[6],
+      lineHeight: responsive.fontSize.md * 1.5,
+    },
+    carouselContainer: {
+      width: "100%",
+      maxWidth: responsive.layout.maxContentWidth,
+      marginBottom: responsive.spacing[8],
+      alignItems: 'center',
+    },
+    flatList: {
+      flexGrow: 0,
+    },
+    flatListContent: {
+      paddingHorizontal: responsive.spacing[4],
+    },
+    featureCardWrapper: {
+      // Width set dynamically
+    },
+    featureCard: {
+      backgroundColor: theme.colors.background.tertiary,
+      borderRadius: responsive.layout.cardRadius,
+      padding: responsive.spacing[6],
+      alignItems: 'center',
+      minHeight: responsive.device.isShortDevice ? hp(140) : hp(160),
+      justifyContent: 'center',
+      width: '100%',
+    },
+    featureIconContainer: {
+      width: responsive.layout.iconXl,
+      height: responsive.layout.iconXl,
+      borderRadius: ms(12),
+      backgroundColor: theme.colors.primary[100],
+      alignItems: 'center',
+      justifyContent: 'center',
+      marginBottom: responsive.spacing[4],
+    },
+    featureIcon: {
+      fontSize: ms(28),
+    },
+    featureTitle: {
+      fontSize: responsive.fontSize.h4,
+      fontWeight: '600',
+      color: theme.colors.text.primary,
+      marginBottom: responsive.spacing[2],
+      textAlign: 'center',
+      lineHeight: responsive.fontSize.h4 * 1.3,
+      width: '100%',
+    },
+    featureDescription: {
+      fontSize: responsive.fontSize.sm,
+      fontWeight: '400',
+      color: theme.colors.text.secondary,
+      textAlign: 'center',
+      lineHeight: responsive.fontSize.sm * 1.6,
+      width: '100%',
+    },
+    dotsContainer: {
+      flexDirection: 'row',
+      justifyContent: 'center',
+      alignItems: 'center',
+      marginTop: responsive.spacing[4],
+      gap: responsive.spacing[1],
+    },
+    dotTouchable: {
+      padding: responsive.spacing[1],
+    },
+    dot: {
+      width: ms(8),
+      height: ms(8),
+      borderRadius: ms(4),
+      backgroundColor: theme.colors.neutral[300],
+    },
+    activeDot: {
+      width: ms(32),
+      backgroundColor: theme.colors.primary[600],
+    },
+    ctaContainer: {
+      paddingHorizontal: responsive.spacing[6],
+      paddingBottom: responsive.spacing[8],
+      maxWidth: responsive.layout.maxContentWidth,
+      width: '100%',
+      alignSelf: 'center',
+    },
+    secondaryButton: {
+      marginTop: responsive.spacing[4],
+    },
+    tertiaryButtonContainer: {
+      marginTop: responsive.spacing[2],
+      paddingVertical: responsive.spacing[3],
+      paddingHorizontal: responsive.spacing[4],
+      width: '100%',
+    },
+    tertiaryButton: {
+      ...theme.typography.styles.button,
+      fontSize: ms(12, 0.2), // Less aggressive scaling than fs() to prevent cutoff
+      color: theme.colors.text.secondary,
+      textAlign: 'center',
+      width: '100%',
+      lineHeight: ms(12, 0.2) * 1.4,
+    },
+  });
 
   const renderItem = ({ item, index }: { item: typeof features[0]; index: number }) => (
     <View
@@ -199,167 +366,3 @@ export default function WelcomeScreen() {
     </Screen>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: 'space-between',
-  },
-  content: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-    paddingTop: responsive.device.isShortDevice ? hp(16) : hp(32),
-  },
-  heroContainer: {
-    alignItems: 'center',
-    marginBottom: responsive.device.isShortDevice ? hp(20) : hp(32),
-  },
-  mainIllustration: {
-    position: 'relative',
-  },
-  illustrationBackground: {
-    width: responsive.device.isSmallDevice ? wp(140) : wp(160),
-    height: responsive.device.isSmallDevice ? wp(140) : wp(160),
-    borderRadius: ms(24),
-    backgroundColor: theme.colors.primary[500],
-    alignItems: 'center',
-    justifyContent: 'center',
-    ...theme.shadows.lg,
-  },
-  illustrationIcon: {
-    fontSize: responsive.device.isSmallDevice ? ms(64) : ms(80),
-    color: theme.colors.text.inverse,
-    fontWeight: '700' as any,
-  },
-  floatingBadge: {
-    position: 'absolute',
-    bottom: ms(-12),
-    right: ms(-12),
-    width: ms(64),
-    height: ms(64),
-    borderRadius: ms(16),
-    backgroundColor: theme.colors.primary[100],
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  badgeIcon: {
-    fontSize: ms(32),
-  },
-  headline: {
-    fontSize: responsive.fontSize.h2,
-    fontWeight: '700',
-    color: theme.colors.text.primary,
-    textAlign: 'center',
-    marginBottom: responsive.spacing[2],
-    paddingHorizontal: responsive.spacing[6],
-    lineHeight: responsive.fontSize.h2 * 1.4,
-    width: '100%',
-  },
-  subheadline: {
-    ...theme.typography.styles.body,
-    fontSize: responsive.fontSize.md,
-    color: theme.colors.text.secondary,
-    textAlign: 'center',
-    marginBottom: responsive.device.isShortDevice ? hp(20) : hp(40),
-    paddingHorizontal: responsive.spacing[6],
-    lineHeight: responsive.fontSize.md * 1.5,
-  },
-  carouselContainer: {
-    width: "100%",
-    maxWidth: responsive.layout.maxContentWidth,
-    marginBottom: responsive.spacing[8],
-    alignItems: 'center',
-  },
-  flatList: {
-    flexGrow: 0,
-  },
-  flatListContent: {
-    paddingHorizontal: responsive.spacing[4],
-  },
-  featureCardWrapper: {
-    // Width set dynamically
-  },
-  featureCard: {
-    backgroundColor: theme.colors.background.tertiary,
-    borderRadius: responsive.layout.cardRadius,
-    padding: responsive.spacing[6],
-    alignItems: 'center',
-    minHeight: responsive.device.isShortDevice ? hp(140) : hp(160),
-    justifyContent: 'center',
-    width: '100%',
-  },
-  featureIconContainer: {
-    width: responsive.layout.iconXl,
-    height: responsive.layout.iconXl,
-    borderRadius: ms(12),
-    backgroundColor: theme.colors.primary[100],
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginBottom: responsive.spacing[4],
-  },
-  featureIcon: {
-    fontSize: ms(28),
-  },
-  featureTitle: {
-    fontSize: responsive.fontSize.h4,
-    fontWeight: '600',
-    color: theme.colors.text.primary,
-    marginBottom: responsive.spacing[2],
-    textAlign: 'center',
-    lineHeight: responsive.fontSize.h4 * 1.3,
-    width: '100%',
-  },
-  featureDescription: {
-    fontSize: responsive.fontSize.sm,
-    fontWeight: '400',
-    color: theme.colors.text.secondary,
-    textAlign: 'center',
-    lineHeight: responsive.fontSize.sm * 1.6,
-    width: '100%',
-  },
-  dotsContainer: {
-    flexDirection: 'row',
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginTop: responsive.spacing[4],
-    gap: responsive.spacing[1],
-  },
-  dotTouchable: {
-    padding: responsive.spacing[1],
-  },
-  dot: {
-    width: ms(8),
-    height: ms(8),
-    borderRadius: ms(4),
-    backgroundColor: theme.colors.neutral[300],
-  },
-  activeDot: {
-    width: ms(32),
-    backgroundColor: theme.colors.primary[600],
-  },
-  ctaContainer: {
-    paddingHorizontal: responsive.spacing[6],
-    paddingBottom: responsive.spacing[8],
-    maxWidth: responsive.layout.maxContentWidth,
-    width: '100%',
-    alignSelf: 'center',
-  },
-  secondaryButton: {
-    marginTop: responsive.spacing[4],
-  },
-  tertiaryButtonContainer: {
-    marginTop: responsive.spacing[2],
-    paddingVertical: responsive.spacing[3],
-    paddingHorizontal: responsive.spacing[4],
-    width: '100%',
-  },
-  tertiaryButton: {
-    ...theme.typography.styles.button,
-    fontSize: ms(12, 0.2), // Less aggressive scaling than fs() to prevent cutoff
-    color: theme.colors.text.secondary,
-    textAlign: 'center',
-    width: '100%',
-    lineHeight: ms(12, 0.2) * 1.4,
-  },
-});

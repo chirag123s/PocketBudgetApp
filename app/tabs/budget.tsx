@@ -2,32 +2,13 @@ import React, { useState } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, ScrollView, StatusBar } from 'react-native';
 import { useRouter } from 'expo-router';
 import { Screen } from '@/components/layout/Screen';
-import { theme } from '@/constants/theme';
+import { getTheme } from '@/constants/theme';
 import { responsive, ms } from '@/constants/responsive';
 import { Ionicons } from '@expo/vector-icons';
 import { Button } from '@/components/ui/Button';
 import { AdjustBudgetsModal } from '@/components/budget';
 import { CircularProgress } from '@/components/charts';
-
-// Color Palette - Using theme colors
-const colors = {
-  // Primary Palette
-  primaryDark: theme.colors.info.dark,
-  primary: theme.colors.info.main,
-  primaryLight: theme.colors.info.light,
-
-  // Neutral Palette
-  neutralBg: theme.colors.background.secondary,
-  neutralWhite: theme.colors.background.primary,
-  neutralDarkest: theme.colors.text.primary,
-  neutralDark: theme.colors.text.secondary,
-  neutralMedium: theme.colors.text.tertiary,
-
-  // Functional Palette
-  functionalSuccess: theme.colors.success.main,
-  functionalWarning: theme.colors.warning.main,
-  functionalError: theme.colors.danger.main,
-};
+import { useTheme } from '@/contexts/ThemeContext';
 
 interface BudgetCategory {
   id: string;
@@ -40,8 +21,30 @@ interface BudgetCategory {
 
 export default function BudgetTab() {
   const router = useRouter();
+  const { theme: themeMode } = useTheme();
+  const theme = getTheme(themeMode);
   const [selectedPeriod, setSelectedPeriod] = useState<'weekly' | 'monthly' | 'custom'>('monthly');
   const [showAdjustModal, setShowAdjustModal] = useState(false);
+
+  // Color Palette - Using theme colors
+  const colors = {
+    // Primary Palette
+    primaryDark: theme.colors.info.dark,
+    primary: theme.colors.info.main,
+    primaryLight: theme.colors.info.light,
+
+    // Neutral Palette
+    neutralBg: theme.colors.background.secondary,
+    neutralWhite: theme.colors.background.primary,
+    neutralDarkest: theme.colors.text.primary,
+    neutralDark: theme.colors.text.secondary,
+    neutralMedium: theme.colors.text.tertiary,
+
+    // Functional Palette
+    functionalSuccess: theme.colors.success.main,
+    functionalWarning: theme.colors.warning.main,
+    functionalError: theme.colors.danger.main,
+  };
 
   // Sample budget data
   const [categories, setCategories] = useState<BudgetCategory[]>([
@@ -68,9 +71,239 @@ export default function BudgetTab() {
     // TODO: Save to backend/database
   };
 
+  const styles = StyleSheet.create({
+    scrollView: {
+      flex: 1,
+    },
+    header: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+      paddingHorizontal: responsive.spacing[4],
+      paddingVertical: responsive.spacing[3],
+      backgroundColor: colors.neutralBg,
+    },
+    headerTitle: {
+      fontSize: responsive.fontSize.xl,
+      fontWeight: '700',
+      color: colors.neutralDarkest,
+    },
+    headerButton: {
+      width: ms(40),
+      height: ms(40),
+      justifyContent: 'center',
+      alignItems: 'center',
+    },
+    content: {
+      padding: responsive.spacing[4],
+      gap: responsive.spacing[4],
+    },
+    // Period Selector
+    periodSelector: {
+      flexDirection: 'row',
+      backgroundColor: colors.neutralWhite,
+      borderRadius: theme.borderRadius.xl,
+      padding: responsive.spacing[1],
+      gap: responsive.spacing[1],
+      ...theme.shadows.sm,
+    },
+    periodButton: {
+      flex: 1,
+      paddingVertical: responsive.spacing[2],
+      paddingHorizontal: responsive.spacing[3],
+      borderRadius: theme.borderRadius.lg,
+      alignItems: 'center',
+    },
+    periodButtonActive: {
+      backgroundColor: colors.primary,
+    },
+    periodText: {
+      fontSize: responsive.fontSize.sm,
+      fontWeight: '600',
+      color: colors.neutralDark,
+    },
+    periodTextActive: {
+      color: colors.neutralWhite,
+    },
+    // Total Budget Card
+    totalCard: {
+      backgroundColor: colors.neutralWhite,
+      borderRadius: theme.borderRadius.xl,
+      padding: responsive.spacing[5],
+      gap: responsive.spacing[4],
+      ...theme.shadows.sm,
+    },
+    cardHeader: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+    },
+    cardLabel: {
+      fontSize: responsive.fontSize.sm,
+      fontWeight: '600',
+      color: colors.neutralDark,
+      marginBottom: responsive.spacing[1],
+    },
+    cardPeriod: {
+      fontSize: responsive.fontSize.xs,
+      color: colors.neutralMedium,
+    },
+    circularProgress: {
+      position: 'relative',
+      justifyContent: 'center',
+      alignItems: 'center',
+    },
+    budgetStats: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      paddingTop: responsive.spacing[3],
+      borderTopWidth: 1,
+      borderTopColor: `${colors.neutralMedium}20`,
+    },
+    budgetStat: {
+      flex: 1,
+      alignItems: 'center',
+    },
+    budgetStatLabel: {
+      fontSize: responsive.fontSize.xs,
+      color: colors.neutralMedium,
+      marginBottom: responsive.spacing[1],
+    },
+    budgetStatValue: {
+      fontSize: responsive.fontSize.md,
+      fontWeight: '700',
+      color: colors.neutralDarkest,
+    },
+    progressBar: {
+      height: ms(8),
+      backgroundColor: colors.neutralBg,
+      borderRadius: ms(4),
+      overflow: 'hidden',
+    },
+    progressBarFill: {
+      height: '100%',
+      borderRadius: ms(4),
+    },
+    // Alerts Card
+    alertsCard: {
+      backgroundColor: colors.neutralWhite,
+      borderRadius: theme.borderRadius.xl,
+      padding: responsive.spacing[4],
+      gap: responsive.spacing[3],
+      ...theme.shadows.sm,
+    },
+    alertItem: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: responsive.spacing[2],
+    },
+    alertText: {
+      fontSize: responsive.fontSize.sm,
+      color: colors.neutralDark,
+      flex: 1,
+    },
+    alertBold: {
+      fontWeight: '700',
+      color: colors.neutralDarkest,
+    },
+    // Action Buttons
+    actionButtonsRow: {
+      flexDirection: 'row',
+      gap: responsive.spacing[3],
+    },
+    actionBtn: {
+      flex: 1,
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'center',
+      backgroundColor: colors.neutralWhite,
+      borderRadius: theme.borderRadius.xl,
+      paddingVertical: responsive.spacing[3],
+      paddingHorizontal: responsive.spacing[3],
+      gap: responsive.spacing[2],
+      ...theme.shadows.sm,
+    },
+    actionBtnText: {
+      fontSize: responsive.fontSize.sm,
+      fontWeight: '600',
+      color: colors.primary,
+    },
+    // Category Breakdown
+    categoryBreakdown: {
+      gap: responsive.spacing[3],
+    },
+    sectionTitle: {
+      fontSize: responsive.fontSize.lg,
+      fontWeight: '700',
+      color: colors.neutralDarkest,
+      marginBottom: responsive.spacing[2],
+    },
+    categoryCard: {
+      backgroundColor: colors.neutralWhite,
+      borderRadius: theme.borderRadius.xl,
+      padding: responsive.spacing[4],
+      gap: responsive.spacing[3],
+      ...theme.shadows.sm,
+    },
+    categoryTop: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+    },
+    categoryLeft: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: responsive.spacing[3],
+      flex: 1,
+    },
+    categoryIconContainer: {
+      width: ms(48),
+      height: ms(48),
+      borderRadius: ms(24),
+      justifyContent: 'center',
+      alignItems: 'center',
+    },
+    categoryInfo: {
+      flex: 1,
+    },
+    categoryName: {
+      fontSize: responsive.fontSize.md,
+      fontWeight: '600',
+      color: colors.neutralDarkest,
+      marginBottom: responsive.spacing[1],
+    },
+    categoryAmount: {
+      fontSize: responsive.fontSize.sm,
+      fontWeight: '700',
+      color: colors.neutralDarkest,
+    },
+    categoryTotal: {
+      fontSize: responsive.fontSize.sm,
+      fontWeight: '400',
+      color: colors.neutralDark,
+    },
+    categoryRight: {
+      alignItems: 'flex-end',
+    },
+    categoryPercentage: {
+      fontSize: responsive.fontSize.lg,
+      fontWeight: '700',
+    },
+    categoryProgress: {
+      height: ms(8),
+      backgroundColor: colors.neutralBg,
+      borderRadius: ms(4),
+      overflow: 'hidden',
+    },
+    categoryProgressFill: {
+      height: '100%',
+      borderRadius: ms(4),
+    },
+  });
+
   return (
     <Screen scrollable={false} noPadding backgroundColor={colors.neutralBg} edges={['top']}>
-      <StatusBar barStyle="dark-content" backgroundColor={colors.neutralBg} />
+      <StatusBar barStyle={themeMode === 'dark' ? 'light-content' : 'dark-content'} backgroundColor={colors.neutralBg} />
 
       {/* Header */}
       <View style={styles.header}>
@@ -256,233 +489,3 @@ export default function BudgetTab() {
     </Screen>
   );
 }
-
-const styles = StyleSheet.create({
-  scrollView: {
-    flex: 1,
-  },
-  header: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    paddingHorizontal: responsive.spacing[4],
-    paddingVertical: responsive.spacing[3],
-    backgroundColor: colors.neutralBg,
-  },
-  headerTitle: {
-    fontSize: responsive.fontSize.xl,
-    fontWeight: '700',
-    color: colors.neutralDarkest,
-  },
-  headerButton: {
-    width: ms(40),
-    height: ms(40),
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  content: {
-    padding: responsive.spacing[4],
-    gap: responsive.spacing[4],
-  },
-  // Period Selector
-  periodSelector: {
-    flexDirection: 'row',
-    backgroundColor: colors.neutralWhite,
-    borderRadius: theme.borderRadius.xl,
-    padding: responsive.spacing[1],
-    gap: responsive.spacing[1],
-    ...theme.shadows.sm,
-  },
-  periodButton: {
-    flex: 1,
-    paddingVertical: responsive.spacing[2],
-    paddingHorizontal: responsive.spacing[3],
-    borderRadius: theme.borderRadius.lg,
-    alignItems: 'center',
-  },
-  periodButtonActive: {
-    backgroundColor: colors.primary,
-  },
-  periodText: {
-    fontSize: responsive.fontSize.sm,
-    fontWeight: '600',
-    color: colors.neutralDark,
-  },
-  periodTextActive: {
-    color: colors.neutralWhite,
-  },
-  // Total Budget Card
-  totalCard: {
-    backgroundColor: colors.neutralWhite,
-    borderRadius: theme.borderRadius.xl,
-    padding: responsive.spacing[5],
-    gap: responsive.spacing[4],
-    ...theme.shadows.sm,
-  },
-  cardHeader: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-  },
-  cardLabel: {
-    fontSize: responsive.fontSize.sm,
-    fontWeight: '600',
-    color: colors.neutralDark,
-    marginBottom: responsive.spacing[1],
-  },
-  cardPeriod: {
-    fontSize: responsive.fontSize.xs,
-    color: colors.neutralMedium,
-  },
-  circularProgress: {
-    position: 'relative',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  budgetStats: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    paddingTop: responsive.spacing[3],
-    borderTopWidth: 1,
-    borderTopColor: `${colors.neutralMedium}20`,
-  },
-  budgetStat: {
-    flex: 1,
-    alignItems: 'center',
-  },
-  budgetStatLabel: {
-    fontSize: responsive.fontSize.xs,
-    color: colors.neutralMedium,
-    marginBottom: responsive.spacing[1],
-  },
-  budgetStatValue: {
-    fontSize: responsive.fontSize.md,
-    fontWeight: '700',
-    color: colors.neutralDarkest,
-  },
-  progressBar: {
-    height: ms(8),
-    backgroundColor: colors.neutralBg,
-    borderRadius: ms(4),
-    overflow: 'hidden',
-  },
-  progressBarFill: {
-    height: '100%',
-    borderRadius: ms(4),
-  },
-  // Alerts Card
-  alertsCard: {
-    backgroundColor: colors.neutralWhite,
-    borderRadius: theme.borderRadius.xl,
-    padding: responsive.spacing[4],
-    gap: responsive.spacing[3],
-    ...theme.shadows.sm,
-  },
-  alertItem: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: responsive.spacing[2],
-  },
-  alertText: {
-    fontSize: responsive.fontSize.sm,
-    color: colors.neutralDark,
-    flex: 1,
-  },
-  alertBold: {
-    fontWeight: '700',
-    color: colors.neutralDarkest,
-  },
-  // Action Buttons
-  actionButtonsRow: {
-    flexDirection: 'row',
-    gap: responsive.spacing[3],
-  },
-  actionBtn: {
-    flex: 1,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: colors.neutralWhite,
-    borderRadius: theme.borderRadius.xl,
-    paddingVertical: responsive.spacing[3],
-    paddingHorizontal: responsive.spacing[3],
-    gap: responsive.spacing[2],
-    ...theme.shadows.sm,
-  },
-  actionBtnText: {
-    fontSize: responsive.fontSize.sm,
-    fontWeight: '600',
-    color: colors.primary,
-  },
-  // Category Breakdown
-  categoryBreakdown: {
-    gap: responsive.spacing[3],
-  },
-  sectionTitle: {
-    fontSize: responsive.fontSize.lg,
-    fontWeight: '700',
-    color: colors.neutralDarkest,
-    marginBottom: responsive.spacing[2],
-  },
-  categoryCard: {
-    backgroundColor: colors.neutralWhite,
-    borderRadius: theme.borderRadius.xl,
-    padding: responsive.spacing[4],
-    gap: responsive.spacing[3],
-    ...theme.shadows.sm,
-  },
-  categoryTop: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-  },
-  categoryLeft: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: responsive.spacing[3],
-    flex: 1,
-  },
-  categoryIconContainer: {
-    width: ms(48),
-    height: ms(48),
-    borderRadius: ms(24),
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  categoryInfo: {
-    flex: 1,
-  },
-  categoryName: {
-    fontSize: responsive.fontSize.md,
-    fontWeight: '600',
-    color: colors.neutralDarkest,
-    marginBottom: responsive.spacing[1],
-  },
-  categoryAmount: {
-    fontSize: responsive.fontSize.sm,
-    fontWeight: '700',
-    color: colors.neutralDarkest,
-  },
-  categoryTotal: {
-    fontSize: responsive.fontSize.sm,
-    fontWeight: '400',
-    color: colors.neutralDark,
-  },
-  categoryRight: {
-    alignItems: 'flex-end',
-  },
-  categoryPercentage: {
-    fontSize: responsive.fontSize.lg,
-    fontWeight: '700',
-  },
-  categoryProgress: {
-    height: ms(8),
-    backgroundColor: colors.neutralBg,
-    borderRadius: ms(4),
-    overflow: 'hidden',
-  },
-  categoryProgressFill: {
-    height: '100%',
-    borderRadius: ms(4),
-  },
-});

@@ -2,30 +2,11 @@ import React, { useState } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, ScrollView, StatusBar } from 'react-native';
 import { useRouter } from 'expo-router';
 import { Screen } from '@/components/layout/Screen';
-import { theme } from '@/constants/theme';
+import { getTheme } from '@/constants/theme';
 import { responsive, ms } from '@/constants/responsive';
 import { Ionicons } from '@expo/vector-icons';
 import { CategorizeModal, AddReceiptModal } from '@/components/transaction';
-
-// Color Palette - Using theme colors
-const colors = {
-  // Primary Palette
-  primaryDark: theme.colors.info.dark,
-  primary: theme.colors.info.main,
-  primaryLight: theme.colors.info.light,
-
-  // Neutral Palette
-  neutralBg: theme.colors.background.secondary,
-  neutralWhite: theme.colors.background.primary,
-  neutralDarkest: theme.colors.text.primary,
-  neutralDark: theme.colors.text.secondary,
-  neutralMedium: theme.colors.text.tertiary,
-
-  // Functional Palette
-  functionalSuccess: theme.colors.success.main,
-  functionalWarning: theme.colors.warning.main,
-  functionalError: theme.colors.danger.main,
-};
+import { useTheme } from '@/contexts/ThemeContext';
 
 interface Transaction {
   id: string;
@@ -125,8 +106,30 @@ const filterOptions = [
 
 export default function TransactionsTab() {
   const router = useRouter();
+  const { theme: themeMode } = useTheme();
+  const theme = getTheme(themeMode);
   const [expandedTransaction, setExpandedTransaction] = useState<string | null>(null);
   const [activeFilter, setActiveFilter] = useState('All');
+
+  // Color Palette - Using theme colors
+  const colors = {
+    // Primary Palette
+    primaryDark: theme.colors.info.dark,
+    primary: theme.colors.info.main,
+    primaryLight: theme.colors.info.light,
+
+    // Neutral Palette
+    neutralBg: theme.colors.background.secondary,
+    neutralWhite: theme.colors.background.primary,
+    neutralDarkest: theme.colors.text.primary,
+    neutralDark: theme.colors.text.secondary,
+    neutralMedium: theme.colors.text.tertiary,
+
+    // Functional Palette
+    functionalSuccess: theme.colors.success.main,
+    functionalWarning: theme.colors.warning.main,
+    functionalError: theme.colors.danger.main,
+  };
 
   // Modal states
   const [showCategorizeModal, setShowCategorizeModal] = useState(false);
@@ -186,9 +189,203 @@ export default function TransactionsTab() {
     });
   };
 
+  const styles = StyleSheet.create({
+    header: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+      paddingHorizontal: responsive.spacing[4],
+      paddingVertical: responsive.spacing[3],
+      backgroundColor: colors.neutralBg,
+    },
+    headerTitle: {
+      fontSize: responsive.fontSize.xl,
+      fontWeight: '700',
+      color: colors.neutralDarkest,
+    },
+    headerActions: {
+      flexDirection: 'row',
+      gap: responsive.spacing[2],
+    },
+    headerButton: {
+      width: ms(40),
+      height: ms(40),
+      justifyContent: 'center',
+      alignItems: 'center',
+    },
+    scrollView: {
+      flex: 1,
+    },
+    filterScrollView: {
+      flexGrow: 0,
+      paddingVertical: responsive.spacing[4],
+    },
+    filterScrollContent: {
+      paddingLeft: responsive.spacing[4],
+      paddingRight: responsive.spacing[4],
+    },
+    filterChip: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      height: ms(36),
+      paddingHorizontal: responsive.spacing[4],
+      borderRadius: ms(18),
+      borderWidth: 1,
+      borderColor: `${colors.neutralMedium}66`,
+      backgroundColor: colors.neutralWhite,
+      gap: responsive.spacing[2],
+      marginRight: responsive.spacing[2],
+    },
+    filterChipActive: {
+      backgroundColor: colors.primary,
+      borderColor: colors.primary,
+    },
+    filterChipText: {
+      fontSize: responsive.fontSize.sm,
+      fontWeight: '500',
+      color: colors.neutralDark,
+    },
+    filterChipTextActive: {
+      color: colors.neutralWhite,
+    },
+    transactionsContainer: {
+      paddingHorizontal: responsive.spacing[4],
+      paddingTop: responsive.spacing[4],
+    },
+    transactionGroup: {
+      marginBottom: responsive.spacing[4],
+    },
+    dateHeader: {
+      fontSize: responsive.fontSize.xs,
+      fontWeight: '700',
+      letterSpacing: 0.5,
+      color: colors.neutralMedium,
+      marginBottom: responsive.spacing[4],
+    },
+    transactionCard: {
+      backgroundColor: colors.neutralWhite,
+      borderRadius: theme.borderRadius.lg,
+      marginBottom: responsive.spacing[3],
+      borderWidth: 1,
+      borderColor: `${colors.neutralMedium}33`,
+      ...theme.shadows.sm,
+      overflow: 'hidden',
+    },
+    transactionCardExpanded: {
+      // Additional styling if needed
+    },
+    transactionMain: {
+      flexDirection: 'row',
+      alignItems: 'flex-start',
+      padding: responsive.spacing[4],
+      gap: responsive.spacing[4],
+    },
+    transactionLogo: {
+      width: ms(40),
+      height: ms(40),
+      borderRadius: ms(20),
+      overflow: 'hidden',
+    },
+    logoPlaceholder: {
+      width: ms(40),
+      height: ms(40),
+      borderRadius: ms(20),
+      backgroundColor: colors.functionalSuccess,
+      justifyContent: 'center',
+      alignItems: 'center',
+    },
+    logoText: {
+      fontSize: responsive.fontSize.lg,
+      fontWeight: '700',
+      color: colors.neutralWhite,
+    },
+    transactionIcon: {
+      width: ms(40),
+      height: ms(40),
+      borderRadius: ms(20),
+      backgroundColor: colors.neutralBg,
+      justifyContent: 'center',
+      alignItems: 'center',
+    },
+    transactionDetails: {
+      flex: 1,
+      gap: responsive.spacing[1],
+    },
+    transactionMerchant: {
+      fontSize: responsive.fontSize.md,
+      fontWeight: '700',
+      color: colors.neutralDarkest,
+    },
+    categoryRow: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: responsive.spacing[2],
+    },
+    transactionCategory: {
+      fontSize: responsive.fontSize.sm,
+      fontWeight: '500',
+      color: colors.neutralDark,
+    },
+    transactionAmount: {
+      alignItems: 'flex-end',
+    },
+    amount: {
+      fontSize: responsive.fontSize.md,
+      fontWeight: '700',
+    },
+    amountIncome: {
+      color: colors.functionalSuccess,
+    },
+    amountExpense: {
+      color: colors.functionalError,
+    },
+    transactionTime: {
+      fontSize: responsive.fontSize.xs,
+      fontWeight: '500',
+      color: colors.neutralMedium,
+      marginTop: responsive.spacing[1],
+    },
+    actionsContainer: {
+      flexDirection: 'row',
+      justifyContent: 'space-around',
+      borderTopWidth: 1,
+      borderTopColor: `${colors.neutralMedium}33`,
+      paddingVertical: responsive.spacing[2],
+    },
+    actionButton: {
+      flex: 1,
+      alignItems: 'center',
+      paddingVertical: responsive.spacing[1],
+      gap: responsive.spacing[1],
+    },
+    actionText: {
+      fontSize: responsive.fontSize.xs,
+      fontWeight: '500',
+      color: colors.neutralDark,
+    },
+    fabContainer: {
+      position: 'absolute',
+      bottom: responsive.spacing[6],
+      right: responsive.spacing[6],
+    },
+    fab: {
+      width: ms(64),
+      height: ms(64),
+      borderRadius: ms(32),
+      backgroundColor: colors.primary,
+      justifyContent: 'center',
+      alignItems: 'center',
+      shadowColor: '#000',
+      shadowOffset: { width: 0, height: 4 },
+      shadowOpacity: 0.3,
+      shadowRadius: 8,
+      elevation: 8,
+    },
+  });
+
   return (
     <Screen scrollable={false} noPadding backgroundColor={colors.neutralBg} edges={['top']}>
-      <StatusBar barStyle="dark-content" backgroundColor={colors.neutralBg} />
+      <StatusBar barStyle={themeMode === 'dark' ? 'light-content' : 'dark-content'} backgroundColor={colors.neutralBg} />
 
       {/* Header */}
       <View style={styles.header}>
@@ -235,7 +432,7 @@ export default function TransactionsTab() {
                 <Ionicons
                   name="chevron-down"
                   size={16}
-                  color={activeFilter === filter.label ? theme.colors.text.inverse : theme.colors.text.secondary}
+                  color={activeFilter === filter.label ? colors.neutralWhite : colors.neutralDark}
                 />
               )}
             </TouchableOpacity>
@@ -274,7 +471,7 @@ export default function TransactionsTab() {
                           <Ionicons
                             name={transaction.icon as any}
                             size={20}
-                            color={transaction.isIncome ? theme.colors.success.main : theme.colors.primary[500]}
+                            color={transaction.isIncome ? colors.functionalSuccess : colors.primary}
                           />
                         </View>
                       )}
@@ -289,7 +486,7 @@ export default function TransactionsTab() {
                             <Ionicons
                               name="pricetag-outline"
                               size={14}
-                              color={theme.colors.primary[500]}
+                              color={colors.primary}
                             />
                           )}
                           <Text style={styles.transactionCategory}>
@@ -324,7 +521,7 @@ export default function TransactionsTab() {
                           <Ionicons
                             name="receipt-outline"
                             size={24}
-                            color={theme.colors.text.secondary}
+                            color={colors.neutralDark}
                           />
                           <Text style={styles.actionText}>Attach</Text>
                         </TouchableOpacity>
@@ -335,7 +532,7 @@ export default function TransactionsTab() {
                           <Ionicons
                             name="pricetag-outline"
                             size={24}
-                            color={theme.colors.text.secondary}
+                            color={colors.neutralDark}
                           />
                           <Text style={styles.actionText}>Categorize</Text>
                         </TouchableOpacity>
@@ -346,7 +543,7 @@ export default function TransactionsTab() {
                           <Ionicons
                             name="git-branch-outline"
                             size={24}
-                            color={theme.colors.text.secondary}
+                            color={colors.neutralDark}
                           />
                           <Text style={styles.actionText}>Split</Text>
                         </TouchableOpacity>
@@ -386,197 +583,3 @@ export default function TransactionsTab() {
     </Screen>
   );
 }
-
-const styles = StyleSheet.create({
-  header: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    paddingHorizontal: responsive.spacing[4],
-    paddingVertical: responsive.spacing[3],
-    backgroundColor: colors.neutralBg,
-  },
-  headerTitle: {
-    fontSize: responsive.fontSize.xl,
-    fontWeight: '700',
-    color: colors.neutralDarkest,
-  },
-  headerActions: {
-    flexDirection: 'row',
-    gap: responsive.spacing[2],
-  },
-  headerButton: {
-    width: ms(40),
-    height: ms(40),
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  scrollView: {
-    flex: 1,
-  },
-  filterScrollView: {
-    flexGrow: 0,
-    paddingVertical: responsive.spacing[4],
-  },
-  filterScrollContent: {
-    paddingLeft: responsive.spacing[4],
-    paddingRight: responsive.spacing[4],
-  },
-  filterChip: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    height: ms(36),
-    paddingHorizontal: responsive.spacing[4],
-    borderRadius: ms(18),
-    borderWidth: 1,
-    borderColor: `${theme.colors.text.tertiary}66`,
-    backgroundColor: theme.colors.background.primary,
-    gap: responsive.spacing[2],
-    marginRight: responsive.spacing[2],
-  },
-  filterChipActive: {
-    backgroundColor: theme.colors.primary[500],
-    borderColor: theme.colors.primary[500],
-  },
-  filterChipText: {
-    fontSize: responsive.fontSize.sm,
-    fontWeight: '500',
-    color: theme.colors.text.secondary,
-  },
-  filterChipTextActive: {
-    color: theme.colors.text.inverse,
-  },
-  transactionsContainer: {
-    paddingHorizontal: responsive.spacing[4],
-    paddingTop: responsive.spacing[4],
-  },
-  transactionGroup: {
-    marginBottom: responsive.spacing[4],
-  },
-  dateHeader: {
-    fontSize: responsive.fontSize.xs,
-    fontWeight: '700',
-    letterSpacing: 0.5,
-    color: theme.colors.text.tertiary,
-    marginBottom: responsive.spacing[4],
-  },
-  transactionCard: {
-    backgroundColor: theme.colors.background.primary,
-    borderRadius: theme.borderRadius.lg,
-    marginBottom: responsive.spacing[3],
-    borderWidth: 1,
-    borderColor: `${theme.colors.text.tertiary}33`,
-    ...theme.shadows.sm,
-    overflow: 'hidden',
-  },
-  transactionCardExpanded: {
-    // Additional styling if needed
-  },
-  transactionMain: {
-    flexDirection: 'row',
-    alignItems: 'flex-start',
-    padding: responsive.spacing[4],
-    gap: responsive.spacing[4],
-  },
-  transactionLogo: {
-    width: ms(40),
-    height: ms(40),
-    borderRadius: ms(20),
-    overflow: 'hidden',
-  },
-  logoPlaceholder: {
-    width: ms(40),
-    height: ms(40),
-    borderRadius: ms(20),
-    backgroundColor: theme.colors.success.main,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  logoText: {
-    fontSize: responsive.fontSize.lg,
-    fontWeight: '700',
-    color: theme.colors.text.inverse,
-  },
-  transactionIcon: {
-    width: ms(40),
-    height: ms(40),
-    borderRadius: ms(20),
-    backgroundColor: theme.colors.background.secondary,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  transactionDetails: {
-    flex: 1,
-    gap: responsive.spacing[1],
-  },
-  transactionMerchant: {
-    fontSize: responsive.fontSize.md,
-    fontWeight: '700',
-    color: theme.colors.text.primary,
-  },
-  categoryRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: responsive.spacing[2],
-  },
-  transactionCategory: {
-    fontSize: responsive.fontSize.sm,
-    fontWeight: '500',
-    color: theme.colors.text.secondary,
-  },
-  transactionAmount: {
-    alignItems: 'flex-end',
-  },
-  amount: {
-    fontSize: responsive.fontSize.md,
-    fontWeight: '700',
-  },
-  amountIncome: {
-    color: theme.colors.success.main,
-  },
-  amountExpense: {
-    color: theme.colors.danger.main,
-  },
-  transactionTime: {
-    fontSize: responsive.fontSize.xs,
-    fontWeight: '500',
-    color: theme.colors.text.tertiary,
-    marginTop: responsive.spacing[1],
-  },
-  actionsContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-around',
-    borderTopWidth: 1,
-    borderTopColor: `${theme.colors.text.tertiary}33`,
-    paddingVertical: responsive.spacing[2],
-  },
-  actionButton: {
-    flex: 1,
-    alignItems: 'center',
-    paddingVertical: responsive.spacing[1],
-    gap: responsive.spacing[1],
-  },
-  actionText: {
-    fontSize: responsive.fontSize.xs,
-    fontWeight: '500',
-    color: theme.colors.text.secondary,
-  },
-  fabContainer: {
-    position: 'absolute',
-    bottom: responsive.spacing[6],
-    right: responsive.spacing[6],
-  },
-  fab: {
-    width: ms(64),
-    height: ms(64),
-    borderRadius: ms(32),
-    backgroundColor: theme.colors.primary[500],
-    justifyContent: 'center',
-    alignItems: 'center',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.3,
-    shadowRadius: 8,
-    elevation: 8,
-  },
-});

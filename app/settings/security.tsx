@@ -7,38 +7,16 @@ import {
   ScrollView,
   Switch,
   Alert,
+  StatusBar,
 } from 'react-native';
 import { Screen } from '@/components/layout/Screen';
 import { ScreenHeader } from '@/components/layout/ScreenHeader';
-import { theme } from '@/constants/theme';
+import { getTheme } from '@/constants/theme';
+import { useTheme } from '@/contexts/ThemeContext';
 import { responsive, ms } from '@/constants/responsive';
 import { Ionicons } from '@expo/vector-icons';
 import { Picker } from '@react-native-picker/picker';
 import { settingsTypography, settingsFontWeights, settingsTextStyles } from './typography';
-
-// Color Palette - Using theme colors
-const colors = {
-  // Primary Palette
-  primaryDark: theme.colors.info.dark,
-  primary: theme.colors.info.main,
-  primaryLight: theme.colors.info.light,
-
-  // Neutral Palette
-  neutralBg: theme.colors.background.secondary,
-  neutralWhite: theme.colors.background.primary,
-  neutralDarkest: theme.colors.text.primary,
-  neutralDark: theme.colors.text.secondary,
-  neutralMedium: theme.colors.text.tertiary,
-
-  // Functional Palette
-  functionalSuccess: theme.colors.success.main,
-  functionalWarning: theme.colors.warning.main,
-  functionalError: theme.colors.danger.main,
-
-  // Border
-  border: theme.colors.border.light,
-  iconBg: theme.colors.background.tertiary,
-};
 
 interface SettingRowProps {
   icon: string;
@@ -53,6 +31,9 @@ interface SettingRowProps {
 }
 
 export default function SecurityPrivacy() {
+  const { theme: themeMode } = useTheme();
+  const theme = getTheme(themeMode);
+
   // Authentication states
   const [biometricEnabled, setBiometricEnabled] = useState(true);
   const [twoFactorEnabled, setTwoFactorEnabled] = useState(true);
@@ -66,6 +47,22 @@ export default function SecurityPrivacy() {
 
   // Data Privacy states
   const [shareAnalytics, setShareAnalytics] = useState(true);
+
+  const colors = {
+    primaryDark: theme.colors.info.dark,
+    primary: theme.colors.info.main,
+    primaryLight: theme.colors.info.light,
+    neutralBg: theme.colors.background.secondary,
+    neutralWhite: theme.colors.background.primary,
+    neutralDarkest: theme.colors.text.primary,
+    neutralDark: theme.colors.text.secondary,
+    neutralMedium: theme.colors.text.tertiary,
+    functionalSuccess: theme.colors.success.main,
+    functionalWarning: theme.colors.warning.main,
+    functionalError: theme.colors.danger.main,
+    border: theme.colors.border.light,
+    iconBg: theme.colors.background.tertiary,
+  };
 
   const SettingRow: React.FC<SettingRowProps> = ({
     icon,
@@ -198,8 +195,172 @@ export default function SecurityPrivacy() {
     );
   };
 
+  const styles = StyleSheet.create({
+    content: {
+      paddingHorizontal: responsive.spacing[4],
+      paddingTop: responsive.spacing[2],
+      paddingBottom: responsive.spacing[8],
+    },
+    section: {
+      marginBottom: responsive.spacing[4],
+    },
+    sectionHeader: {
+      fontSize: settingsTypography.tertiary,
+      lineHeight: settingsTypography.tertiary * 1.5,
+      fontWeight: settingsFontWeights.bold,
+      letterSpacing: 1,
+      textTransform: 'uppercase',
+      color: colors.neutralMedium,
+      marginBottom: responsive.spacing[3],
+    },
+    dangerHeader: {
+      color: colors.functionalError,
+    },
+    card: {
+      backgroundColor: colors.neutralWhite,
+      borderRadius: theme.borderRadius.xl,
+      overflow: 'hidden',
+      ...theme.shadows.sm,
+    },
+    cardContent: {
+      padding: responsive.spacing[4],
+      gap: responsive.spacing[4],
+    },
+    settingRow: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'space-between',
+      paddingVertical: responsive.spacing[3],
+      paddingHorizontal: responsive.spacing[4],
+      minHeight: ms(64),
+    },
+    settingLeft: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: responsive.spacing[3],
+      flex: 1,
+    },
+    iconContainer: {
+      width: ms(48),
+      height: ms(48),
+      borderRadius: ms(24),
+      alignItems: 'center',
+      justifyContent: 'center',
+      backgroundColor: colors.iconBg,
+    },
+    settingTitle: {
+      fontSize: settingsTypography.primary,
+      lineHeight: settingsTypography.primary * 1.5,
+      fontWeight: settingsFontWeights.medium,
+      color: colors.neutralDarkest,
+    },
+    settingSubtitle: {
+      fontSize: settingsTypography.secondary,
+      lineHeight: settingsTypography.secondary * 1.5,
+      color: colors.neutralDark,
+      marginTop: 2,
+    },
+    buttonText: {
+      fontSize: settingsTypography.primary,
+      lineHeight: settingsTypography.primary * 1.5,
+      fontWeight: settingsFontWeights.semibold,
+      color: colors.primary,
+    },
+    switchContainer: {
+      transform: [{ scaleX: 1.1 }, { scaleY: 1.1 }],
+    },
+    inlineSettingRow: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'space-between',
+    },
+    inlineLabel: {
+      fontSize: settingsTypography.primary,
+      lineHeight: settingsTypography.primary * 1.5,
+      fontWeight: settingsFontWeights.medium,
+      color: colors.neutralDarkest,
+    },
+    pickerContainer: {
+      backgroundColor: colors.iconBg,
+      borderRadius: theme.borderRadius.lg,
+      overflow: 'hidden',
+      minWidth: ms(140),
+    },
+    picker: {
+      height: ms(40),
+      color: colors.neutralDarkest,
+    },
+    checkboxSection: {
+      paddingTop: responsive.spacing[2],
+    },
+    checkboxSectionTitle: {
+      fontSize: settingsTypography.primary,
+      lineHeight: settingsTypography.primary * 1.5,
+      fontWeight: settingsFontWeights.medium,
+      color: colors.neutralDarkest,
+      marginBottom: responsive.spacing[3],
+    },
+    checkboxList: {
+      gap: responsive.spacing[3],
+    },
+    checkboxRow: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: responsive.spacing[3],
+    },
+    checkbox: {
+      width: ms(20),
+      height: ms(20),
+      borderRadius: theme.borderRadius.sm,
+      borderWidth: 2,
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
+    checkboxLabel: {
+      fontSize: settingsTypography.primary,
+      lineHeight: settingsTypography.primary * 1.5,
+      fontWeight: settingsFontWeights.regular,
+      color: colors.neutralDarkest,
+    },
+    dangerCard: {
+      backgroundColor: colors.neutralWhite,
+      borderRadius: theme.borderRadius.xl,
+      borderWidth: 1,
+      borderColor: `${colors.functionalError}80`,
+      ...theme.shadows.sm,
+    },
+    dangerButton: {
+      height: ms(48),
+      borderRadius: theme.borderRadius.lg,
+      alignItems: 'center',
+      justifyContent: 'center',
+      backgroundColor: `${colors.functionalError}15`,
+    },
+    dangerButtonText: {
+      fontSize: settingsTypography.primary,
+      lineHeight: settingsTypography.primary * 1.5,
+      fontWeight: settingsFontWeights.bold,
+      color: colors.functionalError,
+    },
+    deleteButton: {
+      height: ms(48),
+      borderRadius: theme.borderRadius.lg,
+      alignItems: 'center',
+      justifyContent: 'center',
+      backgroundColor: colors.functionalError,
+      marginTop: responsive.spacing[2],
+    },
+    deleteButtonText: {
+      color: '#FFFFFF',
+      fontSize: settingsTypography.primary,
+      lineHeight: settingsTypography.primary * 1.5,
+      fontWeight: settingsFontWeights.bold,
+    },
+  });
+
   return (
     <Screen noPadding backgroundColor={colors.neutralBg} edges={['top', 'bottom']}>
+      <StatusBar barStyle={themeMode === 'dark' ? 'light-content' : 'dark-content'} backgroundColor={colors.neutralBg} />
       <ScreenHeader title="Security & Privacy" />
 
       <ScrollView
@@ -378,166 +539,3 @@ export default function SecurityPrivacy() {
     </Screen>
   );
 }
-
-const styles = StyleSheet.create({
-  content: {
-    paddingHorizontal: responsive.spacing[4],
-    paddingTop: responsive.spacing[2],
-    paddingBottom: responsive.spacing[8],
-  },
-  section: {
-    marginBottom: responsive.spacing[4],
-  },
-  sectionHeader: {
-    fontSize: settingsTypography.tertiary,
-    lineHeight: settingsTypography.tertiary * 1.5,
-    fontWeight: settingsFontWeights.bold,
-    letterSpacing: 1,
-    textTransform: 'uppercase',
-    color: colors.neutralMedium,
-    marginBottom: responsive.spacing[3],
-  },
-  dangerHeader: {
-    color: colors.functionalError,
-  },
-  card: {
-    backgroundColor: colors.neutralWhite,
-    borderRadius: theme.borderRadius.xl,
-    overflow: 'hidden',
-    ...theme.shadows.sm,
-  },
-  cardContent: {
-    padding: responsive.spacing[4],
-    gap: responsive.spacing[4],
-  },
-  settingRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    paddingVertical: responsive.spacing[3],
-    paddingHorizontal: responsive.spacing[4],
-    minHeight: ms(64),
-  },
-  settingLeft: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: responsive.spacing[3],
-    flex: 1,
-  },
-  iconContainer: {
-    width: ms(48),
-    height: ms(48),
-    borderRadius: ms(24),
-    alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: colors.iconBg,
-  },
-  settingTitle: {
-    fontSize: settingsTypography.primary,
-    lineHeight: settingsTypography.primary * 1.5,
-    fontWeight: settingsFontWeights.medium,
-    color: colors.neutralDarkest,
-  },
-  settingSubtitle: {
-    fontSize: settingsTypography.secondary,
-    lineHeight: settingsTypography.secondary * 1.5,
-    color: colors.neutralDark,
-    marginTop: 2,
-  },
-  buttonText: {
-    fontSize: settingsTypography.primary,
-    lineHeight: settingsTypography.primary * 1.5,
-    fontWeight: settingsFontWeights.semibold,
-    color: colors.primary,
-  },
-  switchContainer: {
-    transform: [{ scaleX: 1.1 }, { scaleY: 1.1 }],
-  },
-  inlineSettingRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-  },
-  inlineLabel: {
-    fontSize: settingsTypography.primary,
-    lineHeight: settingsTypography.primary * 1.5,
-    fontWeight: settingsFontWeights.medium,
-    color: colors.neutralDarkest,
-  },
-  pickerContainer: {
-    backgroundColor: colors.iconBg,
-    borderRadius: theme.borderRadius.lg,
-    overflow: 'hidden',
-    minWidth: ms(140),
-  },
-  picker: {
-    height: ms(40),
-    color: colors.neutralDarkest,
-  },
-  checkboxSection: {
-    paddingTop: responsive.spacing[2],
-  },
-  checkboxSectionTitle: {
-    fontSize: settingsTypography.primary,
-    lineHeight: settingsTypography.primary * 1.5,
-    fontWeight: settingsFontWeights.medium,
-    color: colors.neutralDarkest,
-    marginBottom: responsive.spacing[3],
-  },
-  checkboxList: {
-    gap: responsive.spacing[3],
-  },
-  checkboxRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: responsive.spacing[3],
-  },
-  checkbox: {
-    width: ms(20),
-    height: ms(20),
-    borderRadius: theme.borderRadius.sm,
-    borderWidth: 2,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  checkboxLabel: {
-    fontSize: settingsTypography.primary,
-    lineHeight: settingsTypography.primary * 1.5,
-    fontWeight: settingsFontWeights.regular,
-    color: colors.neutralDarkest,
-  },
-  dangerCard: {
-    backgroundColor: colors.neutralWhite,
-    borderRadius: theme.borderRadius.xl,
-    borderWidth: 1,
-    borderColor: `${colors.functionalError}80`,
-    ...theme.shadows.sm,
-  },
-  dangerButton: {
-    height: ms(48),
-    borderRadius: theme.borderRadius.lg,
-    alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: `${colors.functionalError}15`,
-  },
-  dangerButtonText: {
-    fontSize: settingsTypography.primary,
-    lineHeight: settingsTypography.primary * 1.5,
-    fontWeight: settingsFontWeights.bold,
-    color: colors.functionalError,
-  },
-  deleteButton: {
-    height: ms(48),
-    borderRadius: theme.borderRadius.lg,
-    alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: colors.functionalError,
-    marginTop: responsive.spacing[2],
-  },
-  deleteButtonText: {
-    color: '#FFFFFF',
-    fontSize: settingsTypography.primary,
-    lineHeight: settingsTypography.primary * 1.5,
-    fontWeight: settingsFontWeights.bold,
-  },
-});

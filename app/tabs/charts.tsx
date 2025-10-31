@@ -11,31 +11,12 @@ import {
 } from 'react-native';
 import { useRouter } from 'expo-router';
 import { Screen } from '@/components/layout/Screen';
-import { theme } from '@/constants/theme';
+import { getTheme } from '@/constants/theme';
 import { responsive, ms } from '@/constants/responsive';
 import { Ionicons } from '@expo/vector-icons';
 import Svg, { Circle, Path, Defs, LinearGradient, Stop } from 'react-native-svg';
 import { DonutChart, DonutChartSegment, GaugeChart, GaugeChartSegment } from '@/components/charts';
-
-// Color Palette - Using theme colors
-const colors = {
-  // Primary Palette
-  primaryDark: theme.colors.info.dark,
-  primary: theme.colors.info.main,
-  primaryLight: theme.colors.info.light,
-
-  // Neutral Palette
-  neutralBg: theme.colors.background.secondary,
-  neutralWhite: theme.colors.background.primary,
-  neutralDarkest: theme.colors.text.primary,
-  neutralDark: theme.colors.text.secondary,
-  neutralMedium: theme.colors.text.tertiary,
-
-  // Functional Palette
-  functionalSuccess: theme.colors.success.main,
-  functionalWarning: theme.colors.warning.main,
-  functionalError: theme.colors.danger.main,
-};
+import { useTheme } from '@/contexts/ThemeContext';
 
 interface Category {
   id: string;
@@ -92,7 +73,29 @@ type GraphType = 'donut' | 'bar' | 'line' | 'area';
 
 export default function ChartsTab() {
   const router = useRouter();
+  const { theme: themeMode } = useTheme();
+  const theme = getTheme(themeMode);
   const [selectedView, setSelectedView] = useState<'spending' | 'income' | 'networth'>('spending');
+
+  // Color Palette - Using theme colors
+  const colors = {
+    // Primary Palette
+    primaryDark: theme.colors.info.dark,
+    primary: theme.colors.info.main,
+    primaryLight: theme.colors.info.light,
+
+    // Neutral Palette
+    neutralBg: theme.colors.background.secondary,
+    neutralWhite: theme.colors.background.primary,
+    neutralDarkest: theme.colors.text.primary,
+    neutralDark: theme.colors.text.secondary,
+    neutralMedium: theme.colors.text.tertiary,
+
+    // Functional Palette
+    functionalSuccess: theme.colors.success.main,
+    functionalWarning: theme.colors.warning.main,
+    functionalError: theme.colors.danger.main,
+  };
 
   // Graph type states for each tab
   const [spendingGraphType, setSpendingGraphType] = useState<GraphType>('donut');
@@ -252,9 +255,625 @@ export default function ChartsTab() {
     return networthGraphType;
   };
 
+  const styles = StyleSheet.create({
+    scrollView: {
+      flex: 1,
+    },
+    header: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+      paddingHorizontal: responsive.spacing[4],
+      paddingVertical: responsive.spacing[3],
+      backgroundColor: colors.neutralBg,
+    },
+    headerLeft: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: responsive.spacing[2],
+      flex: 1,
+    },
+    headerTitle: {
+      fontSize: responsive.fontSize.xl,
+      fontWeight: '700',
+      color: colors.neutralDarkest,
+    },
+    headerButton: {
+      width: ms(40),
+      height: ms(40),
+      justifyContent: 'center',
+      alignItems: 'center',
+    },
+    segmentedContainer: {
+      paddingHorizontal: responsive.spacing[4],
+      paddingVertical: responsive.spacing[3],
+    },
+    segmentedControl: {
+      flexDirection: 'row',
+      backgroundColor: colors.neutralWhite,
+      borderRadius: theme.borderRadius.xl * 1.5,
+      padding: responsive.spacing[1],
+      height: ms(48),
+      ...theme.shadows.sm,
+    },
+    segment: {
+      flex: 1,
+      justifyContent: 'center',
+      alignItems: 'center',
+      borderRadius: theme.borderRadius.lg,
+    },
+    segmentActive: {
+      backgroundColor: colors.primary,
+    },
+    segmentText: {
+      fontSize: responsive.fontSize.sm,
+      fontWeight: '600',
+      color: colors.neutralDark,
+    },
+    segmentTextActive: {
+      color: colors.neutralWhite,
+    },
+    content: {
+      paddingHorizontal: responsive.spacing[4],
+    },
+    chartCard: {
+      backgroundColor: colors.neutralWhite,
+      borderRadius: theme.borderRadius.xl,
+      padding: responsive.spacing[4],
+      marginBottom: responsive.spacing[6],
+      ...theme.shadows.sm,
+    },
+    chartHeader: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+      marginBottom: responsive.spacing[4],
+    },
+    sectionTitle: {
+      fontSize: responsive.fontSize.md,
+      fontWeight: '700',
+      color: colors.neutralDarkest,
+    },
+    chartPeriod: {
+      fontSize: responsive.fontSize.sm,
+      fontWeight: '500',
+      color: colors.neutralDark,
+    },
+    chartHint: {
+      fontSize: responsive.fontSize.xs,
+      color: colors.neutralMedium,
+      marginTop: responsive.spacing[1],
+    },
+    chartContainer: {
+      height: ms(192),
+      justifyContent: 'center',
+      alignItems: 'center',
+      position: 'relative',
+    },
+    chartCenter: {
+      position: 'absolute',
+      alignItems: 'center',
+    },
+    chartLabel: {
+      fontSize: responsive.fontSize.xs,
+      color: colors.neutralDark,
+    },
+    chartValue: {
+      fontSize: responsive.fontSize.h3,
+      fontWeight: '700',
+      color: colors.neutralDarkest,
+    },
+    section: {
+      marginBottom: responsive.spacing[6],
+    },
+    sectionHeading: {
+      fontSize: responsive.fontSize.lg,
+      fontWeight: '700',
+      color: colors.neutralDarkest,
+      marginBottom: responsive.spacing[2],
+    },
+    categoriesList: {
+      gap: responsive.spacing[2],
+    },
+    categoryCard: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      minHeight: ms(72),
+      backgroundColor: colors.neutralWhite,
+      borderRadius: theme.borderRadius.xl,
+      padding: responsive.spacing[3],
+      gap: responsive.spacing[4],
+      ...theme.shadows.sm,
+    },
+    categoryIcon: {
+      width: ms(48),
+      height: ms(48),
+      borderRadius: theme.borderRadius.md,
+      justifyContent: 'center',
+      alignItems: 'center',
+    },
+    categoryInfo: {
+      flex: 1,
+      gap: responsive.spacing[1],
+    },
+    categoryName: {
+      fontSize: responsive.fontSize.md,
+      fontWeight: '600',
+      color: colors.neutralDarkest,
+    },
+    categoryPercentage: {
+      fontSize: responsive.fontSize.sm,
+      color: colors.neutralDark,
+    },
+    categoryAmount: {
+      fontSize: responsive.fontSize.md,
+      fontWeight: '500',
+      color: colors.neutralDarkest,
+    },
+    insightsScroll: {
+      marginTop: responsive.spacing[2],
+    },
+    insightCard: {
+      width: ms(280),
+      backgroundColor: colors.neutralWhite,
+      borderRadius: theme.borderRadius.xl,
+      padding: responsive.spacing[4],
+      marginRight: responsive.spacing[4],
+      ...theme.shadows.sm,
+    },
+    insightIcon: {
+      width: ms(40),
+      height: ms(40),
+      borderRadius: ms(20),
+      justifyContent: 'center',
+      alignItems: 'center',
+      marginBottom: responsive.spacing[2],
+    },
+    insightTitle: {
+      fontSize: responsive.fontSize.md,
+      fontWeight: '700',
+      color: colors.neutralDarkest,
+      marginBottom: responsive.spacing[1],
+    },
+    insightDescription: {
+      fontSize: responsive.fontSize.sm,
+      color: colors.neutralDark,
+      lineHeight: responsive.fontSize.sm * 1.5,
+    },
+    // Income View Styles
+    totalCard: {
+      backgroundColor: colors.neutralWhite,
+      borderRadius: theme.borderRadius.xl,
+      padding: responsive.spacing[6],
+      marginBottom: responsive.spacing[4],
+      ...theme.shadows.sm,
+    },
+    totalLabel: {
+      fontSize: responsive.fontSize.md,
+      fontWeight: '500',
+      color: colors.neutralDark,
+      marginBottom: responsive.spacing[2],
+    },
+    totalAmount: {
+      fontSize: responsive.fontSize.h1,
+      fontWeight: '700',
+      color: colors.neutralDarkest,
+      marginBottom: responsive.spacing[2],
+    },
+    changeRow: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: responsive.spacing[1],
+    },
+    changeText: {
+      fontSize: responsive.fontSize.md,
+      fontWeight: '500',
+      color: colors.functionalSuccess,
+    },
+    sourcesTitle: {
+      fontSize: responsive.fontSize.lg,
+      fontWeight: '700',
+      color: colors.neutralDarkest,
+      marginBottom: responsive.spacing[2],
+    },
+    sourcesList: {
+      gap: responsive.spacing[3],
+    },
+    sourceCard: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      backgroundColor: colors.neutralWhite,
+      borderRadius: theme.borderRadius.xl,
+      padding: responsive.spacing[4],
+      gap: responsive.spacing[4],
+      ...theme.shadows.sm,
+    },
+    sourceIcon: {
+      width: ms(48),
+      height: ms(48),
+      borderRadius: ms(24),
+      backgroundColor: `${colors.primary}1A`,
+      justifyContent: 'center',
+      alignItems: 'center',
+    },
+    sourceInfo: {
+      flex: 1,
+      gap: responsive.spacing[1],
+    },
+    sourceName: {
+      fontSize: responsive.fontSize.md,
+      fontWeight: '700',
+      color: colors.neutralDarkest,
+    },
+    sourceDate: {
+      fontSize: responsive.fontSize.sm,
+      color: colors.neutralDark,
+    },
+    sourceAmount: {
+      alignItems: 'flex-end',
+      gap: responsive.spacing[1],
+    },
+    sourceValue: {
+      fontSize: responsive.fontSize.md,
+      fontWeight: '700',
+      color: colors.functionalSuccess,
+    },
+    sourcePercentage: {
+      fontSize: responsive.fontSize.xs,
+      color: colors.neutralMedium,
+    },
+    // Placeholder Styles
+    placeholderCard: {
+      backgroundColor: colors.neutralWhite,
+      borderRadius: theme.borderRadius.xl,
+      padding: responsive.spacing[10],
+      alignItems: 'center',
+      gap: responsive.spacing[3],
+      ...theme.shadows.sm,
+    },
+    placeholderTitle: {
+      fontSize: responsive.fontSize.lg,
+      fontWeight: '700',
+      color: colors.neutralDarkest,
+    },
+    placeholderText: {
+      fontSize: responsive.fontSize.md,
+      color: colors.neutralDark,
+      textAlign: 'center',
+    },
+    // Income Legend Styles
+    incomeLegend: {
+      gap: responsive.spacing[3],
+      marginTop: responsive.spacing[2],
+    },
+    incomeLegendItem: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+      backgroundColor: colors.neutralBg,
+      borderRadius: theme.borderRadius.lg,
+      padding: responsive.spacing[3],
+    },
+    incomeLegendLeft: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: responsive.spacing[3],
+      flex: 1,
+    },
+    incomeLegendDot: {
+      width: ms(16),
+      height: ms(16),
+      borderRadius: ms(8),
+    },
+    incomeLegendInfo: {
+      gap: responsive.spacing[1],
+      flex: 1,
+    },
+    incomeLegendName: {
+      fontSize: responsive.fontSize.sm,
+      fontWeight: '600',
+      color: colors.neutralDarkest,
+    },
+    incomeLegendAmount: {
+      fontSize: responsive.fontSize.sm,
+      color: colors.neutralDark,
+    },
+    incomeLegendPercentage: {
+      fontSize: responsive.fontSize.lg,
+      fontWeight: '700',
+      color: colors.neutralDarkest,
+    },
+    // Net Worth View Styles
+    netWorthCard: {
+      backgroundColor: colors.neutralWhite,
+      borderRadius: theme.borderRadius.xl,
+      padding: responsive.spacing[6],
+      marginBottom: responsive.spacing[4],
+      ...theme.shadows.sm,
+    },
+    netWorthLabel: {
+      fontSize: responsive.fontSize.md,
+      fontWeight: '500',
+      color: colors.neutralDark,
+      marginBottom: responsive.spacing[2],
+    },
+    netWorthValue: {
+      fontSize: responsive.fontSize.h1,
+      fontWeight: '700',
+      color: colors.neutralDarkest,
+      marginBottom: responsive.spacing[2],
+    },
+    timeframeContainer: {
+      flexDirection: 'row',
+      gap: responsive.spacing[2],
+      marginBottom: responsive.spacing[4],
+    },
+    timeframeButton: {
+      flex: 1,
+      paddingVertical: responsive.spacing[2],
+      paddingHorizontal: responsive.spacing[3],
+      backgroundColor: colors.neutralWhite,
+      borderRadius: theme.borderRadius.lg,
+      alignItems: 'center',
+      ...theme.shadows.sm,
+    },
+    timeframeButtonActive: {
+      backgroundColor: colors.primary,
+    },
+    timeframeText: {
+      fontSize: responsive.fontSize.sm,
+      fontWeight: '600',
+      color: colors.neutralDark,
+    },
+    timeframeTextActive: {
+      color: colors.neutralWhite,
+    },
+    lineChartContainer: {
+      paddingVertical: responsive.spacing[4],
+      alignItems: 'center',
+    },
+    summaryRow: {
+      flexDirection: 'row',
+      marginBottom: responsive.spacing[4],
+    },
+    summaryCard: {
+      backgroundColor: colors.neutralWhite,
+      borderRadius: theme.borderRadius.xl,
+      padding: responsive.spacing[4],
+      ...theme.shadows.sm,
+    },
+    summaryHeader: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: responsive.spacing[2],
+      marginBottom: responsive.spacing[3],
+    },
+    summaryIcon: {
+      width: ms(32),
+      height: ms(32),
+      borderRadius: ms(16),
+      justifyContent: 'center',
+      alignItems: 'center',
+    },
+    summaryLabel: {
+      fontSize: responsive.fontSize.sm,
+      fontWeight: '600',
+      color: colors.neutralDark,
+    },
+    summaryValue: {
+      fontSize: responsive.fontSize.h3,
+      fontWeight: '700',
+      color: colors.neutralDarkest,
+    },
+    breakdownCard: {
+      backgroundColor: colors.neutralWhite,
+      borderRadius: theme.borderRadius.xl,
+      padding: responsive.spacing[4],
+      marginBottom: responsive.spacing[4],
+      ...theme.shadows.sm,
+    },
+    breakdownHeader: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+    },
+    breakdownTitle: {
+      fontSize: responsive.fontSize.md,
+      fontWeight: '700',
+      color: colors.neutralDarkest,
+    },
+    breakdownList: {
+      marginTop: responsive.spacing[4],
+      gap: responsive.spacing[4],
+    },
+    breakdownItem: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: responsive.spacing[3],
+    },
+    breakdownInfo: {
+      flex: 1,
+      gap: responsive.spacing[2],
+    },
+    breakdownName: {
+      fontSize: responsive.fontSize.sm,
+      fontWeight: '600',
+      color: colors.neutralDarkest,
+    },
+    progressBar: {
+      height: ms(8),
+      backgroundColor: colors.neutralBg,
+      borderRadius: ms(4),
+      overflow: 'hidden',
+    },
+    progressFill: {
+      height: '100%',
+      borderRadius: ms(4),
+    },
+    breakdownRight: {
+      alignItems: 'flex-end',
+      gap: responsive.spacing[1],
+    },
+    breakdownAmount: {
+      fontSize: responsive.fontSize.md,
+      fontWeight: '700',
+      color: colors.neutralDarkest,
+    },
+    breakdownPercentage: {
+      fontSize: responsive.fontSize.xs,
+      fontWeight: '500',
+      color: colors.neutralMedium,
+    },
+    portfolioLegend: {
+      gap: responsive.spacing[2],
+      marginTop: responsive.spacing[4],
+    },
+    portfolioLegendItem: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: responsive.spacing[2],
+    },
+    portfolioLegendDot: {
+      width: ms(12),
+      height: ms(12),
+      borderRadius: ms(6),
+    },
+    portfolioLegendName: {
+      flex: 1,
+      fontSize: responsive.fontSize.sm,
+      fontWeight: '600',
+      color: colors.neutralDarkest,
+    },
+    portfolioLegendPercentage: {
+      fontSize: responsive.fontSize.sm,
+      fontWeight: '700',
+      color: colors.neutralDark,
+    },
+    // Graph Menu Modal Styles
+    modalOverlay: {
+      flex: 1,
+      backgroundColor: 'rgba(0, 0, 0, 0.5)',
+      justifyContent: 'center',
+      alignItems: 'center',
+      padding: responsive.spacing[4],
+    },
+    graphMenuContainer: {
+      backgroundColor: colors.neutralWhite,
+      borderRadius: theme.borderRadius.xl,
+      padding: responsive.spacing[4],
+      width: '100%',
+      maxWidth: ms(320),
+      ...theme.shadows.lg,
+    },
+    graphMenuTitle: {
+      fontSize: responsive.fontSize.lg,
+      fontWeight: '700',
+      color: colors.neutralDarkest,
+      marginBottom: responsive.spacing[4],
+      textAlign: 'center',
+    },
+    graphMenuItem: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'space-between',
+      paddingVertical: responsive.spacing[3],
+      paddingHorizontal: responsive.spacing[4],
+      borderRadius: theme.borderRadius.lg,
+      marginBottom: responsive.spacing[2],
+    },
+    graphMenuItemActive: {
+      backgroundColor: `${colors.primary}10`,
+    },
+    graphMenuItemLeft: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: responsive.spacing[3],
+    },
+    graphMenuItemText: {
+      fontSize: responsive.fontSize.md,
+      fontWeight: '500',
+      color: colors.neutralDarkest,
+    },
+    graphMenuItemTextActive: {
+      fontWeight: '700',
+      color: colors.primary,
+    },
+    // Bar Chart Styles
+    barChartContainer: {
+      paddingVertical: responsive.spacing[4],
+      gap: responsive.spacing[4],
+    },
+    barChartItem: {
+      gap: responsive.spacing[2],
+    },
+    barChartLabel: {
+      fontSize: responsive.fontSize.sm,
+      fontWeight: '600',
+      color: colors.neutralDarkest,
+      marginBottom: responsive.spacing[1],
+    },
+    barChartRow: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: responsive.spacing[3],
+    },
+    barChartBarContainer: {
+      flex: 1,
+      height: ms(24),
+      backgroundColor: colors.neutralBg,
+      borderRadius: theme.borderRadius.base,
+      overflow: 'hidden',
+    },
+    barChartBar: {
+      height: '100%',
+      borderRadius: theme.borderRadius.base,
+      minWidth: ms(40),
+    },
+    barChartValue: {
+      fontSize: responsive.fontSize.md,
+      fontWeight: '700',
+      color: colors.neutralDarkest,
+      minWidth: ms(70),
+      textAlign: 'right',
+    },
+    // Line Chart Legend Styles
+    lineChartLegend: {
+      marginTop: responsive.spacing[4],
+      gap: responsive.spacing[2],
+    },
+    lineChartLegendItem: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: responsive.spacing[2],
+    },
+    lineChartLegendLine: {
+      width: ms(20),
+      height: ms(3),
+      borderRadius: ms(1.5),
+    },
+    lineChartLegendText: {
+      flex: 1,
+      fontSize: responsive.fontSize.sm,
+      fontWeight: '500',
+      color: colors.neutralDarkest,
+    },
+    lineChartLegendAmount: {
+      fontSize: responsive.fontSize.sm,
+      fontWeight: '700',
+      color: colors.neutralDarkest,
+    },
+    lineChartNote: {
+      fontSize: responsive.fontSize.xs,
+      color: colors.neutralMedium,
+      fontStyle: 'italic',
+      marginTop: responsive.spacing[2],
+      textAlign: 'center',
+    },
+  });
+
   return (
     <Screen scrollable={false} noPadding backgroundColor={colors.neutralBg} edges={['top']}>
-      <StatusBar barStyle="dark-content" backgroundColor={colors.neutralBg} />
+      <StatusBar barStyle={themeMode === 'dark' ? 'light-content' : 'dark-content'} backgroundColor={colors.neutralBg} />
 
       {/* Header */}
       <View style={styles.header}>
@@ -997,619 +1616,3 @@ export default function ChartsTab() {
     </Screen>
   );
 }
-
-const styles = StyleSheet.create({
-  scrollView: {
-    flex: 1,
-  },
-  header: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    paddingHorizontal: responsive.spacing[4],
-    paddingVertical: responsive.spacing[3],
-    backgroundColor: colors.neutralBg,
-  },
-  headerLeft: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: responsive.spacing[2],
-    flex: 1,
-  },
-  headerTitle: {
-    fontSize: responsive.fontSize.xl,
-    fontWeight: '700',
-    color: colors.neutralDarkest,
-  },
-  headerButton: {
-    width: ms(40),
-    height: ms(40),
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  segmentedContainer: {
-    paddingHorizontal: responsive.spacing[4],
-    paddingVertical: responsive.spacing[3],
-  },
-  segmentedControl: {
-    flexDirection: 'row',
-    backgroundColor: colors.neutralWhite,
-    borderRadius: theme.borderRadius.xl * 1.5,
-    padding: responsive.spacing[1],
-    height: ms(48),
-    ...theme.shadows.sm,
-  },
-  segment: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    borderRadius: theme.borderRadius.lg,
-  },
-  segmentActive: {
-    backgroundColor: colors.primary,
-  },
-  segmentText: {
-    fontSize: responsive.fontSize.sm,
-    fontWeight: '600',
-    color: colors.neutralDark,
-  },
-  segmentTextActive: {
-    color: colors.neutralWhite,
-  },
-  content: {
-    paddingHorizontal: responsive.spacing[4],
-  },
-  chartCard: {
-    backgroundColor: colors.neutralWhite,
-    borderRadius: theme.borderRadius.xl,
-    padding: responsive.spacing[4],
-    marginBottom: responsive.spacing[6],
-    ...theme.shadows.sm,
-  },
-  chartHeader: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: responsive.spacing[4],
-  },
-  sectionTitle: {
-    fontSize: responsive.fontSize.md,
-    fontWeight: '700',
-    color: colors.neutralDarkest,
-  },
-  chartPeriod: {
-    fontSize: responsive.fontSize.sm,
-    fontWeight: '500',
-    color: colors.neutralDark,
-  },
-  chartHint: {
-    fontSize: responsive.fontSize.xs,
-    color: colors.neutralMedium,
-    marginTop: responsive.spacing[1],
-  },
-  chartContainer: {
-    height: ms(192),
-    justifyContent: 'center',
-    alignItems: 'center',
-    position: 'relative',
-  },
-  chartCenter: {
-    position: 'absolute',
-    alignItems: 'center',
-  },
-  chartLabel: {
-    fontSize: responsive.fontSize.xs,
-    color: colors.neutralDark,
-  },
-  chartValue: {
-    fontSize: responsive.fontSize.h3,
-    fontWeight: '700',
-    color: colors.neutralDarkest,
-  },
-  section: {
-    marginBottom: responsive.spacing[6],
-  },
-  sectionHeading: {
-    fontSize: responsive.fontSize.lg,
-    fontWeight: '700',
-    color: colors.neutralDarkest,
-    marginBottom: responsive.spacing[2],
-  },
-  categoriesList: {
-    gap: responsive.spacing[2],
-  },
-  categoryCard: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    minHeight: ms(72),
-    backgroundColor: colors.neutralWhite,
-    borderRadius: theme.borderRadius.xl,
-    padding: responsive.spacing[3],
-    gap: responsive.spacing[4],
-    ...theme.shadows.sm,
-  },
-  categoryIcon: {
-    width: ms(48),
-    height: ms(48),
-    borderRadius: theme.borderRadius.md,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  categoryInfo: {
-    flex: 1,
-    gap: responsive.spacing[1],
-  },
-  categoryName: {
-    fontSize: responsive.fontSize.md,
-    fontWeight: '600',
-    color: colors.neutralDarkest,
-  },
-  categoryPercentage: {
-    fontSize: responsive.fontSize.sm,
-    color: colors.neutralDark,
-  },
-  categoryAmount: {
-    fontSize: responsive.fontSize.md,
-    fontWeight: '500',
-    color: colors.neutralDarkest,
-  },
-  insightsScroll: {
-    marginTop: responsive.spacing[2],
-  },
-  insightCard: {
-    width: ms(280),
-    backgroundColor: colors.neutralWhite,
-    borderRadius: theme.borderRadius.xl,
-    padding: responsive.spacing[4],
-    marginRight: responsive.spacing[4],
-    ...theme.shadows.sm,
-  },
-  insightIcon: {
-    width: ms(40),
-    height: ms(40),
-    borderRadius: ms(20),
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginBottom: responsive.spacing[2],
-  },
-  insightTitle: {
-    fontSize: responsive.fontSize.md,
-    fontWeight: '700',
-    color: colors.neutralDarkest,
-    marginBottom: responsive.spacing[1],
-  },
-  insightDescription: {
-    fontSize: responsive.fontSize.sm,
-    color: colors.neutralDark,
-    lineHeight: responsive.fontSize.sm * 1.5,
-  },
-  // Income View Styles
-  totalCard: {
-    backgroundColor: colors.neutralWhite,
-    borderRadius: theme.borderRadius.xl,
-    padding: responsive.spacing[6],
-    marginBottom: responsive.spacing[4],
-    ...theme.shadows.sm,
-  },
-  totalLabel: {
-    fontSize: responsive.fontSize.md,
-    fontWeight: '500',
-    color: colors.neutralDark,
-    marginBottom: responsive.spacing[2],
-  },
-  totalAmount: {
-    fontSize: responsive.fontSize.h1,
-    fontWeight: '700',
-    color: colors.neutralDarkest,
-    marginBottom: responsive.spacing[2],
-  },
-  changeRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: responsive.spacing[1],
-  },
-  changeText: {
-    fontSize: responsive.fontSize.md,
-    fontWeight: '500',
-    color: colors.functionalSuccess,
-  },
-  sourcesTitle: {
-    fontSize: responsive.fontSize.lg,
-    fontWeight: '700',
-    color: colors.neutralDarkest,
-    marginBottom: responsive.spacing[2],
-  },
-  sourcesList: {
-    gap: responsive.spacing[3],
-  },
-  sourceCard: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: colors.neutralWhite,
-    borderRadius: theme.borderRadius.xl,
-    padding: responsive.spacing[4],
-    gap: responsive.spacing[4],
-    ...theme.shadows.sm,
-  },
-  sourceIcon: {
-    width: ms(48),
-    height: ms(48),
-    borderRadius: ms(24),
-    backgroundColor: `${colors.primary}1A`,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  sourceInfo: {
-    flex: 1,
-    gap: responsive.spacing[1],
-  },
-  sourceName: {
-    fontSize: responsive.fontSize.md,
-    fontWeight: '700',
-    color: colors.neutralDarkest,
-  },
-  sourceDate: {
-    fontSize: responsive.fontSize.sm,
-    color: colors.neutralDark,
-  },
-  sourceAmount: {
-    alignItems: 'flex-end',
-    gap: responsive.spacing[1],
-  },
-  sourceValue: {
-    fontSize: responsive.fontSize.md,
-    fontWeight: '700',
-    color: colors.functionalSuccess,
-  },
-  sourcePercentage: {
-    fontSize: responsive.fontSize.xs,
-    color: colors.neutralMedium,
-  },
-  // Placeholder Styles
-  placeholderCard: {
-    backgroundColor: colors.neutralWhite,
-    borderRadius: theme.borderRadius.xl,
-    padding: responsive.spacing[10],
-    alignItems: 'center',
-    gap: responsive.spacing[3],
-    ...theme.shadows.sm,
-  },
-  placeholderTitle: {
-    fontSize: responsive.fontSize.lg,
-    fontWeight: '700',
-    color: colors.neutralDarkest,
-  },
-  placeholderText: {
-    fontSize: responsive.fontSize.md,
-    color: colors.neutralDark,
-    textAlign: 'center',
-  },
-  // Income Legend Styles
-  incomeLegend: {
-    gap: responsive.spacing[3],
-    marginTop: responsive.spacing[2],
-  },
-  incomeLegendItem: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    backgroundColor: colors.neutralBg,
-    borderRadius: theme.borderRadius.lg,
-    padding: responsive.spacing[3],
-  },
-  incomeLegendLeft: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: responsive.spacing[3],
-    flex: 1,
-  },
-  incomeLegendDot: {
-    width: ms(16),
-    height: ms(16),
-    borderRadius: ms(8),
-  },
-  incomeLegendInfo: {
-    gap: responsive.spacing[1],
-    flex: 1,
-  },
-  incomeLegendName: {
-    fontSize: responsive.fontSize.sm,
-    fontWeight: '600',
-    color: colors.neutralDarkest,
-  },
-  incomeLegendAmount: {
-    fontSize: responsive.fontSize.sm,
-    color: colors.neutralDark,
-  },
-  incomeLegendPercentage: {
-    fontSize: responsive.fontSize.lg,
-    fontWeight: '700',
-    color: colors.neutralDarkest,
-  },
-  // Net Worth View Styles
-  netWorthCard: {
-    backgroundColor: colors.neutralWhite,
-    borderRadius: theme.borderRadius.xl,
-    padding: responsive.spacing[6],
-    marginBottom: responsive.spacing[4],
-    ...theme.shadows.sm,
-  },
-  netWorthLabel: {
-    fontSize: responsive.fontSize.md,
-    fontWeight: '500',
-    color: colors.neutralDark,
-    marginBottom: responsive.spacing[2],
-  },
-  netWorthValue: {
-    fontSize: responsive.fontSize.h1,
-    fontWeight: '700',
-    color: colors.neutralDarkest,
-    marginBottom: responsive.spacing[2],
-  },
-  timeframeContainer: {
-    flexDirection: 'row',
-    gap: responsive.spacing[2],
-    marginBottom: responsive.spacing[4],
-  },
-  timeframeButton: {
-    flex: 1,
-    paddingVertical: responsive.spacing[2],
-    paddingHorizontal: responsive.spacing[3],
-    backgroundColor: colors.neutralWhite,
-    borderRadius: theme.borderRadius.lg,
-    alignItems: 'center',
-    ...theme.shadows.sm,
-  },
-  timeframeButtonActive: {
-    backgroundColor: colors.primary,
-  },
-  timeframeText: {
-    fontSize: responsive.fontSize.sm,
-    fontWeight: '600',
-    color: colors.neutralDark,
-  },
-  timeframeTextActive: {
-    color: colors.neutralWhite,
-  },
-  lineChartContainer: {
-    paddingVertical: responsive.spacing[4],
-    alignItems: 'center',
-  },
-  summaryRow: {
-    flexDirection: 'row',
-    marginBottom: responsive.spacing[4],
-  },
-  summaryCard: {
-    backgroundColor: colors.neutralWhite,
-    borderRadius: theme.borderRadius.xl,
-    padding: responsive.spacing[4],
-    ...theme.shadows.sm,
-  },
-  summaryHeader: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: responsive.spacing[2],
-    marginBottom: responsive.spacing[3],
-  },
-  summaryIcon: {
-    width: ms(32),
-    height: ms(32),
-    borderRadius: ms(16),
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  summaryLabel: {
-    fontSize: responsive.fontSize.sm,
-    fontWeight: '600',
-    color: colors.neutralDark,
-  },
-  summaryValue: {
-    fontSize: responsive.fontSize.h3,
-    fontWeight: '700',
-    color: colors.neutralDarkest,
-  },
-  breakdownCard: {
-    backgroundColor: colors.neutralWhite,
-    borderRadius: theme.borderRadius.xl,
-    padding: responsive.spacing[4],
-    marginBottom: responsive.spacing[4],
-    ...theme.shadows.sm,
-  },
-  breakdownHeader: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-  },
-  breakdownTitle: {
-    fontSize: responsive.fontSize.md,
-    fontWeight: '700',
-    color: colors.neutralDarkest,
-  },
-  breakdownList: {
-    marginTop: responsive.spacing[4],
-    gap: responsive.spacing[4],
-  },
-  breakdownItem: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: responsive.spacing[3],
-  },
-  breakdownInfo: {
-    flex: 1,
-    gap: responsive.spacing[2],
-  },
-  breakdownName: {
-    fontSize: responsive.fontSize.sm,
-    fontWeight: '600',
-    color: colors.neutralDarkest,
-  },
-  progressBar: {
-    height: ms(8),
-    backgroundColor: colors.neutralBg,
-    borderRadius: ms(4),
-    overflow: 'hidden',
-  },
-  progressFill: {
-    height: '100%',
-    borderRadius: ms(4),
-  },
-  breakdownRight: {
-    alignItems: 'flex-end',
-    gap: responsive.spacing[1],
-  },
-  breakdownAmount: {
-    fontSize: responsive.fontSize.md,
-    fontWeight: '700',
-    color: colors.neutralDarkest,
-  },
-  breakdownPercentage: {
-    fontSize: responsive.fontSize.xs,
-    fontWeight: '500',
-    color: colors.neutralMedium,
-  },
-  portfolioLegend: {
-    gap: responsive.spacing[2],
-    marginTop: responsive.spacing[4],
-  },
-  portfolioLegendItem: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: responsive.spacing[2],
-  },
-  portfolioLegendDot: {
-    width: ms(12),
-    height: ms(12),
-    borderRadius: ms(6),
-  },
-  portfolioLegendName: {
-    flex: 1,
-    fontSize: responsive.fontSize.sm,
-    fontWeight: '600',
-    color: colors.neutralDarkest,
-  },
-  portfolioLegendPercentage: {
-    fontSize: responsive.fontSize.sm,
-    fontWeight: '700',
-    color: colors.neutralDark,
-  },
-  // Graph Menu Modal Styles
-  modalOverlay: {
-    flex: 1,
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
-    justifyContent: 'center',
-    alignItems: 'center',
-    padding: responsive.spacing[4],
-  },
-  graphMenuContainer: {
-    backgroundColor: colors.neutralWhite,
-    borderRadius: theme.borderRadius.xl,
-    padding: responsive.spacing[4],
-    width: '100%',
-    maxWidth: ms(320),
-    ...theme.shadows.lg,
-  },
-  graphMenuTitle: {
-    fontSize: responsive.fontSize.lg,
-    fontWeight: '700',
-    color: colors.neutralDarkest,
-    marginBottom: responsive.spacing[4],
-    textAlign: 'center',
-  },
-  graphMenuItem: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    paddingVertical: responsive.spacing[3],
-    paddingHorizontal: responsive.spacing[4],
-    borderRadius: theme.borderRadius.lg,
-    marginBottom: responsive.spacing[2],
-  },
-  graphMenuItemActive: {
-    backgroundColor: `${colors.primary}10`,
-  },
-  graphMenuItemLeft: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: responsive.spacing[3],
-  },
-  graphMenuItemText: {
-    fontSize: responsive.fontSize.md,
-    fontWeight: '500',
-    color: colors.neutralDarkest,
-  },
-  graphMenuItemTextActive: {
-    fontWeight: '700',
-    color: colors.primary,
-  },
-  // Bar Chart Styles
-  barChartContainer: {
-    paddingVertical: responsive.spacing[4],
-    gap: responsive.spacing[4],
-  },
-  barChartItem: {
-    gap: responsive.spacing[2],
-  },
-  barChartLabel: {
-    fontSize: responsive.fontSize.sm,
-    fontWeight: '600',
-    color: colors.neutralDarkest,
-    marginBottom: responsive.spacing[1],
-  },
-  barChartRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: responsive.spacing[3],
-  },
-  barChartBarContainer: {
-    flex: 1,
-    height: ms(24),
-    backgroundColor: colors.neutralBg,
-    borderRadius: theme.borderRadius.base,
-    overflow: 'hidden',
-  },
-  barChartBar: {
-    height: '100%',
-    borderRadius: theme.borderRadius.base,
-    minWidth: ms(40),
-  },
-  barChartValue: {
-    fontSize: responsive.fontSize.md,
-    fontWeight: '700',
-    color: colors.neutralDarkest,
-    minWidth: ms(70),
-    textAlign: 'right',
-  },
-  // Line Chart Legend Styles
-  lineChartLegend: {
-    marginTop: responsive.spacing[4],
-    gap: responsive.spacing[2],
-  },
-  lineChartLegendItem: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: responsive.spacing[2],
-  },
-  lineChartLegendLine: {
-    width: ms(20),
-    height: ms(3),
-    borderRadius: ms(1.5),
-  },
-  lineChartLegendText: {
-    flex: 1,
-    fontSize: responsive.fontSize.sm,
-    fontWeight: '500',
-    color: colors.neutralDarkest,
-  },
-  lineChartLegendAmount: {
-    fontSize: responsive.fontSize.sm,
-    fontWeight: '700',
-    color: colors.neutralDarkest,
-  },
-  lineChartNote: {
-    fontSize: responsive.fontSize.xs,
-    color: colors.neutralMedium,
-    fontStyle: 'italic',
-    marginTop: responsive.spacing[2],
-    textAlign: 'center',
-  },
-});

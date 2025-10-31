@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useRef, useEffect } from 'react';
 import {
   View,
   Text,
@@ -8,6 +8,7 @@ import {
   StatusBar,
   Modal,
   ListRenderItem,
+  Animated,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
@@ -20,13 +21,14 @@ import DraggableFlatList, {
 } from 'react-native-draggable-flatlist';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { Screen } from '@/components/layout/Screen';
-import { theme } from '@/constants/theme';
+import { getTheme } from '@/constants/theme';
 import { responsive, ms } from '@/constants/responsive';
 import { loadAvatarColor, getAvatarGradientSync } from '@/utils/avatar';
 import { getInitials } from '@/utils/helpers';
 import { formatCurrencyCompact } from '@/utils/currency';
 import { GaugeChart, GaugeChartSegment } from '@/components/charts';
 import { useWidgets } from '@/contexts/WidgetContext';
+import { useTheme } from '@/contexts/ThemeContext';
 import {
   WIDGET_REGISTRY,
   WidgetContainer,
@@ -44,31 +46,6 @@ import {
   CardCycle,
 } from '@/components/widgets';
 import { Transaction as TransactionType } from '@/types/models';
-
-// Color Palette - Using theme colors
-const colors = {
-  // Primary Palette
-  primaryDark: theme.colors.info.dark,
-  primary: theme.colors.info.main,
-  primaryLight: theme.colors.info.light,
-
-  // Secondary Palette
-  secondaryGreen: theme.colors.success.main,
-  secondaryRed: '#FF6B6B',
-  secondaryYellow: theme.colors.warning.main,
-
-  // Neutral Palette
-  neutralBg: theme.colors.background.secondary,
-  neutralWhite: theme.colors.background.primary,
-  neutralDarkest: theme.colors.text.primary,
-  neutralDark: theme.colors.text.secondary,
-  neutralMedium: theme.colors.text.tertiary,
-
-  // Functional Palette
-  functionalSuccess: theme.colors.success.main,
-  functionalWarning: theme.colors.warning.main,
-  functionalError: theme.colors.danger.main,
-};
 
 interface Transaction {
   id: string;
@@ -95,6 +72,39 @@ const DashboardScreen: React.FC = () => {
   const [unreadNotifications, setUnreadNotifications] = useState(2); // TODO: Get from context/state
   const [isEditMode, setIsEditMode] = useState(false);
 
+  // Theme
+  const { theme: themeMode } = useTheme();
+  const theme = getTheme(themeMode);
+
+  // Color Palette - Using theme colors
+  const colors = {
+    // Primary Palette
+    primaryDark: theme.colors.info.dark,
+    primary: theme.colors.info.main,
+    primaryLight: theme.colors.info.light,
+
+    // Secondary Palette
+    secondaryGreen: theme.colors.success.main,
+    secondaryRed: '#FF6B6B',
+    secondaryYellow: theme.colors.warning.main,
+
+    // Neutral Palette
+    neutralBg: theme.colors.background.secondary,
+    neutralWhite: theme.colors.background.primary,
+    neutralDarkest: theme.colors.text.primary,
+    neutralDark: theme.colors.text.secondary,
+    neutralMedium: theme.colors.text.tertiary,
+
+    // Functional Palette
+    functionalSuccess: theme.colors.success.main,
+    functionalWarning: theme.colors.warning.main,
+    functionalError: theme.colors.danger.main,
+  };
+
+  // Animation values
+  const fadeAnim = useRef(new Animated.Value(1)).current;
+  const scaleAnim = useRef(new Animated.Value(1)).current;
+
   // Widget system
   const { enabledWidgets, widgetOrder, widgetConfig, updateWidgetOrder } = useWidgets();
 
@@ -114,6 +124,32 @@ const DashboardScreen: React.FC = () => {
     const colorId = await loadAvatarColor();
     setAvatarColorId(colorId);
   };
+
+  // Animate when edit mode changes
+  useEffect(() => {
+    // Fade animation
+    Animated.timing(fadeAnim, {
+      toValue: isEditMode ? 0.95 : 1,
+      duration: 200,
+      useNativeDriver: true,
+    }).start();
+
+    // Scale animation for edit button
+    if (isEditMode) {
+      Animated.sequence([
+        Animated.timing(scaleAnim, {
+          toValue: 1.1,
+          duration: 100,
+          useNativeDriver: true,
+        }),
+        Animated.timing(scaleAnim, {
+          toValue: 1,
+          duration: 100,
+          useNativeDriver: true,
+        }),
+      ]).start();
+    }
+  }, [isEditMode]);
 
   // Handler functions
   const handleNotificationPress = () => {
@@ -517,14 +553,16 @@ const DashboardScreen: React.FC = () => {
       {enabledWidgets.length > 0 && (
         <View style={styles.widgetsHeader}>
           <Text style={styles.widgetsHeaderTitle}>Your Widgets</Text>
-          <TouchableOpacity
-            style={styles.editButton}
-            onPress={() => setIsEditMode(!isEditMode)}
-          >
-            <Text style={[styles.editButtonText, isEditMode && styles.editButtonTextActive]}>
-              {isEditMode ? 'Done' : 'Edit'}
-            </Text>
-          </TouchableOpacity>
+          <Animated.View style={{ transform: [{ scale: scaleAnim }] }}>
+            <TouchableOpacity
+              style={styles.editButton}
+              onPress={() => setIsEditMode(!isEditMode)}
+            >
+              <Text style={[styles.editButtonText, isEditMode && styles.editButtonTextActive]}>
+                {isEditMode ? 'Done' : 'Edit'}
+              </Text>
+            </TouchableOpacity>
+          </Animated.View>
         </View>
       )}
     </>
@@ -532,9 +570,11 @@ const DashboardScreen: React.FC = () => {
 
   // Render normal widget item
   const renderWidgetItem: ListRenderItem<string> = ({ item: widgetId }) => (
-    <WidgetContainer>
-      {renderWidget(widgetId)}
-    </WidgetContainer>
+    <View style={{ marginBottom: responsive.spacing[4] }}>
+      <WidgetContainer>
+        {renderWidget(widgetId)}
+      </WidgetContainer>
+    </View>
   );
 
   // Render draggable widget item
@@ -593,132 +633,9 @@ const DashboardScreen: React.FC = () => {
 
   const widgetData = widgetOrder.filter((widgetId) => enabledWidgets.includes(widgetId));
 
-  return (
-    <GestureHandlerRootView style={{ flex: 1 }}>
-      <Screen
-        scrollable={false}
-        noPadding
-        backgroundColor={colors.neutralBg}
-        edges={['top']}
-      >
-        <StatusBar barStyle="dark-content" backgroundColor={colors.neutralBg} />
+  const AnimatedFlatList = Animated.createAnimatedComponent(FlatList);
 
-        {enabledWidgets.length === 0 ? (
-          <FlatList
-            data={[]}
-            ListHeaderComponent={renderHeader}
-            ListEmptyComponent={renderEmptyState}
-            ListFooterComponent={renderFooter}
-            showsVerticalScrollIndicator={false}
-            contentContainerStyle={{ paddingHorizontal: responsive.spacing[4] }}
-          />
-        ) : isEditMode ? (
-          <DraggableFlatList
-            data={widgetData}
-            ListHeaderComponent={renderHeader}
-            ListFooterComponent={renderFooter}
-            onDragEnd={({ data }) => {
-              const disabledWidgets = widgetOrder.filter(id => !enabledWidgets.includes(id));
-              const newOrder = [...data, ...disabledWidgets];
-              updateWidgetOrder(newOrder);
-            }}
-            keyExtractor={(item) => item}
-            renderItem={renderDraggableWidgetItem}
-            showsVerticalScrollIndicator={false}
-            contentContainerStyle={{ paddingHorizontal: responsive.spacing[4] }}
-          />
-        ) : (
-          <FlatList
-            data={widgetData}
-            ListHeaderComponent={renderHeader}
-            ListFooterComponent={renderFooter}
-            renderItem={renderWidgetItem}
-            keyExtractor={(item) => item}
-            showsVerticalScrollIndicator={false}
-            contentContainerStyle={{ paddingHorizontal: responsive.spacing[4] }}
-          />
-        )}
-
-      {/* Period Selector Modal */}
-      <Modal
-        visible={showPeriodSelector}
-        transparent
-        animationType="fade"
-        onRequestClose={() => setShowPeriodSelector(false)}
-      >
-        <TouchableOpacity
-          style={styles.modalOverlay}
-          activeOpacity={1}
-          onPress={() => setShowPeriodSelector(false)}
-        >
-          <View style={styles.periodModal}>
-            <Text style={styles.modalTitle}>Select Period</Text>
-            <TouchableOpacity
-              style={[
-                styles.periodOption,
-                selectedPeriod === 'week' && styles.periodOptionActive,
-              ]}
-              onPress={() => handlePeriodSelect('week')}
-            >
-              <Text
-                style={[
-                  styles.periodOptionText,
-                  selectedPeriod === 'week' && styles.periodOptionTextActive,
-                ]}
-              >
-                This Week
-              </Text>
-              {selectedPeriod === 'week' && (
-                <Ionicons name="checkmark" size={20} color={colors.primary} />
-              )}
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={[
-                styles.periodOption,
-                selectedPeriod === 'month' && styles.periodOptionActive,
-              ]}
-              onPress={() => handlePeriodSelect('month')}
-            >
-              <Text
-                style={[
-                  styles.periodOptionText,
-                  selectedPeriod === 'month' && styles.periodOptionTextActive,
-                ]}
-              >
-                This Month
-              </Text>
-              {selectedPeriod === 'month' && (
-                <Ionicons name="checkmark" size={20} color={colors.primary} />
-              )}
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={[
-                styles.periodOption,
-                selectedPeriod === 'year' && styles.periodOptionActive,
-              ]}
-              onPress={() => handlePeriodSelect('year')}
-            >
-              <Text
-                style={[
-                  styles.periodOptionText,
-                  selectedPeriod === 'year' && styles.periodOptionTextActive,
-                ]}
-              >
-                This Year
-              </Text>
-              {selectedPeriod === 'year' && (
-                <Ionicons name="checkmark" size={20} color={colors.primary} />
-              )}
-            </TouchableOpacity>
-          </View>
-        </TouchableOpacity>
-      </Modal>
-      </Screen>
-    </GestureHandlerRootView>
-  );
-};
-
-const styles = StyleSheet.create({
+  const styles = StyleSheet.create({
   header: {
     flexDirection: 'row',
     justifyContent: 'space-between',
@@ -775,6 +692,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     gap: responsive.spacing[4],
     marginTop: responsive.spacing[1],
+    marginBottom: responsive.spacing[5],
   },
   statCard: {
     flex: 1,
@@ -805,8 +723,8 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    paddingTop: responsive.spacing[4],
-    paddingBottom: responsive.spacing[2],
+    paddingTop: responsive.spacing[2],
+    paddingBottom: responsive.spacing[4],
   },
   widgetsHeaderTitle: {
     fontSize: responsive.fontSize.lg,
@@ -828,8 +746,7 @@ const styles = StyleSheet.create({
     color: colors.functionalSuccess,
   },
   widgetsSection: {
-    paddingHorizontal: responsive.spacing[4],
-    marginTop: responsive.spacing[2],
+    gap: responsive.spacing[4],
   },
   draggableWidget: {
     flexDirection: 'row',
@@ -1125,5 +1042,140 @@ const styles = StyleSheet.create({
     color: colors.neutralWhite,
   },
 });
+
+  return (
+    <GestureHandlerRootView style={{ flex: 1 }}>
+      <Screen
+        scrollable={false}
+        noPadding
+        backgroundColor={colors.neutralBg}
+        edges={['top']}
+      >
+        <StatusBar barStyle="dark-content" backgroundColor={colors.neutralBg} />
+
+        {enabledWidgets.length === 0 ? (
+          <FlatList
+            data={[]}
+            ListHeaderComponent={renderHeader}
+            ListEmptyComponent={renderEmptyState}
+            ListFooterComponent={renderFooter}
+            showsVerticalScrollIndicator={false}
+            contentContainerStyle={{ paddingHorizontal: responsive.spacing[4] }}
+          />
+        ) : isEditMode ? (
+          <Animated.View style={{ flex: 1, opacity: fadeAnim }}>
+            <DraggableFlatList
+              data={widgetData}
+              ListHeaderComponent={renderHeader}
+              ListFooterComponent={renderFooter}
+              onDragEnd={({ data }) => {
+                const disabledWidgets = widgetOrder.filter(id => !enabledWidgets.includes(id));
+                const newOrder = [...data, ...disabledWidgets];
+                updateWidgetOrder(newOrder);
+              }}
+              keyExtractor={(item) => item}
+              renderItem={renderDraggableWidgetItem}
+              showsVerticalScrollIndicator={false}
+              contentContainerStyle={{ paddingHorizontal: responsive.spacing[4] }}
+              animationConfig={{
+                damping: 20,
+                mass: 1,
+                stiffness: 150,
+                restSpeedThreshold: 0.001,
+                restDisplacementThreshold: 0.001,
+              }}
+            />
+          </Animated.View>
+        ) : (
+          <AnimatedFlatList
+            data={widgetData}
+            ListHeaderComponent={renderHeader}
+            ListFooterComponent={renderFooter}
+            renderItem={renderWidgetItem}
+            keyExtractor={(item) => item}
+            showsVerticalScrollIndicator={false}
+            contentContainerStyle={{ paddingHorizontal: responsive.spacing[4] }}
+            style={{ opacity: fadeAnim }}
+          />
+        )}
+
+      {/* Period Selector Modal */}
+      <Modal
+        visible={showPeriodSelector}
+        transparent
+        animationType="fade"
+        onRequestClose={() => setShowPeriodSelector(false)}
+      >
+        <TouchableOpacity
+          style={styles.modalOverlay}
+          activeOpacity={1}
+          onPress={() => setShowPeriodSelector(false)}
+        >
+          <View style={styles.periodModal}>
+            <Text style={styles.modalTitle}>Select Period</Text>
+            <TouchableOpacity
+              style={[
+                styles.periodOption,
+                selectedPeriod === 'week' && styles.periodOptionActive,
+              ]}
+              onPress={() => handlePeriodSelect('week')}
+            >
+              <Text
+                style={[
+                  styles.periodOptionText,
+                  selectedPeriod === 'week' && styles.periodOptionTextActive,
+                ]}
+              >
+                This Week
+              </Text>
+              {selectedPeriod === 'week' && (
+                <Ionicons name="checkmark" size={20} color={colors.primary} />
+              )}
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={[
+                styles.periodOption,
+                selectedPeriod === 'month' && styles.periodOptionActive,
+              ]}
+              onPress={() => handlePeriodSelect('month')}
+            >
+              <Text
+                style={[
+                  styles.periodOptionText,
+                  selectedPeriod === 'month' && styles.periodOptionTextActive,
+                ]}
+              >
+                This Month
+              </Text>
+              {selectedPeriod === 'month' && (
+                <Ionicons name="checkmark" size={20} color={colors.primary} />
+              )}
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={[
+                styles.periodOption,
+                selectedPeriod === 'year' && styles.periodOptionActive,
+              ]}
+              onPress={() => handlePeriodSelect('year')}
+            >
+              <Text
+                style={[
+                  styles.periodOptionText,
+                  selectedPeriod === 'year' && styles.periodOptionTextActive,
+                ]}
+              >
+                This Year
+              </Text>
+              {selectedPeriod === 'year' && (
+                <Ionicons name="checkmark" size={20} color={colors.primary} />
+              )}
+            </TouchableOpacity>
+          </View>
+        </TouchableOpacity>
+      </Modal>
+      </Screen>
+    </GestureHandlerRootView>
+  );
+};
 
 export default DashboardScreen;

@@ -10,30 +10,11 @@ import {
 } from 'react-native';
 import { useRouter } from 'expo-router';
 import { Screen } from '@/components/layout/Screen';
-import { theme } from '@/constants/theme';
+import { getTheme } from '@/constants/theme';
+import { useTheme } from '@/contexts/ThemeContext';
 import { responsive, ms } from '@/constants/responsive';
 import { Ionicons } from '@expo/vector-icons';
 import { BottomButton } from '@/components/ui/BottomButton';
-
-// Color Palette - Using theme colors
-const colors = {
-  // Primary Palette
-  primaryDark: theme.colors.info.dark,
-  primary: theme.colors.info.main,
-  primaryLight: theme.colors.info.light,
-
-  // Neutral Palette
-  neutralBg: theme.colors.background.secondary,
-  neutralWhite: theme.colors.background.primary,
-  neutralDarkest: theme.colors.text.primary,
-  neutralDark: theme.colors.text.secondary,
-  neutralMedium: theme.colors.text.tertiary,
-
-  // Functional Palette
-  functionalSuccess: theme.colors.success.main,
-  functionalWarning: theme.colors.warning.main,
-  functionalError: theme.colors.danger.main,
-};
 
 interface BankAccount {
   id: string;
@@ -48,6 +29,140 @@ interface BankAccount {
 
 const ConnectedAccountsScreen: React.FC = () => {
   const router = useRouter();
+  const { theme: themeMode } = useTheme();
+  const theme = getTheme(themeMode);
+
+  const colors = {
+    primaryDark: theme.colors.info.dark,
+    primary: theme.colors.info.main,
+    primaryLight: theme.colors.info.light,
+    neutralBg: theme.colors.background.secondary,
+    neutralWhite: theme.colors.background.primary,
+    neutralDarkest: theme.colors.text.primary,
+    neutralDark: theme.colors.text.secondary,
+    neutralMedium: theme.colors.text.tertiary,
+    functionalSuccess: theme.colors.success.main,
+    functionalWarning: theme.colors.warning.main,
+    functionalError: theme.colors.danger.main,
+  };
+
+  const styles = StyleSheet.create({
+    scrollView: {
+      flex: 1,
+    },
+    header: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+      paddingHorizontal: responsive.spacing[4],
+      paddingVertical: responsive.spacing[3],
+      backgroundColor: colors.neutralBg,
+    },
+    headerLeft: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: responsive.spacing[2],
+      flex: 1,
+    },
+    headerButton: {
+      width: ms(40),
+      height: ms(40),
+      justifyContent: 'center',
+      alignItems: 'center',
+    },
+    headerTitle: {
+      fontSize: responsive.fontSize.xl,
+      fontWeight: '700',
+      color: colors.neutralDarkest,
+    },
+    accountsList: {
+      padding: responsive.spacing[4],
+      gap: responsive.spacing[4],
+    },
+    accountCard: {
+      backgroundColor: colors.neutralWhite,
+      borderRadius: theme.borderRadius.xl,
+      padding: responsive.spacing[4],
+      gap: responsive.spacing[3],
+      ...theme.shadows.sm,
+    },
+    accountHeader: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+    },
+    accountLeft: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: responsive.spacing[3],
+      flex: 1,
+    },
+    accountLogo: {
+      width: ms(48),
+      height: ms(48),
+      borderRadius: ms(24),
+    },
+    accountInfo: {
+      gap: responsive.spacing[1],
+      flex: 1,
+    },
+    accountName: {
+      fontSize: responsive.fontSize.md,
+      fontWeight: '700',
+      color: colors.neutralDarkest,
+    },
+    bankName: {
+      fontSize: responsive.fontSize.sm,
+      fontWeight: '500',
+      color: colors.neutralDark,
+      marginBottom: responsive.spacing[1],
+    },
+    statusContainer: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: responsive.spacing[2],
+    },
+    statusDot: {
+      width: ms(8),
+      height: ms(8),
+      borderRadius: ms(4),
+    },
+    statusText: {
+      fontSize: responsive.fontSize.sm,
+      fontWeight: '400',
+    },
+    moreButton: {
+      width: ms(32),
+      height: ms(32),
+      justifyContent: 'center',
+      alignItems: 'center',
+      borderRadius: ms(16),
+    },
+    accountFooter: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+      paddingTop: responsive.spacing[3],
+      borderTopWidth: 1,
+      borderTopColor: `${colors.neutralDarkest}1A`,
+    },
+    updateText: {
+      fontSize: responsive.fontSize.xs,
+      fontWeight: '500',
+      color: colors.neutralDark,
+    },
+    actionButton: {
+      paddingHorizontal: responsive.spacing[3],
+      paddingVertical: responsive.spacing[1],
+      borderRadius: theme.borderRadius.xl,
+      backgroundColor: `${colors.primary}1A`,
+    },
+    actionButtonText: {
+      fontSize: responsive.fontSize.sm,
+      fontWeight: '700',
+      color: colors.primaryDark,
+    },
+  });
 
   const accounts: BankAccount[] = [
     {
@@ -100,7 +215,7 @@ const ConnectedAccountsScreen: React.FC = () => {
 
   return (
     <Screen scrollable={false} noPadding backgroundColor={colors.neutralBg} edges={['top']}>
-      <StatusBar barStyle="dark-content" backgroundColor={colors.neutralBg} />
+      <StatusBar barStyle={themeMode === 'dark' ? 'light-content' : 'dark-content'} backgroundColor={colors.neutralBg} />
 
       {/* Header */}
       <View style={styles.header}>
@@ -179,123 +294,5 @@ const ConnectedAccountsScreen: React.FC = () => {
     </Screen>
   );
 };
-
-const styles = StyleSheet.create({
-  scrollView: {
-    flex: 1,
-  },
-  header: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    paddingHorizontal: responsive.spacing[4],
-    paddingVertical: responsive.spacing[3],
-    backgroundColor: colors.neutralBg,
-  },
-  headerLeft: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: responsive.spacing[2],
-    flex: 1,
-  },
-  headerButton: {
-    width: ms(40),
-    height: ms(40),
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  headerTitle: {
-    fontSize: responsive.fontSize.xl,
-    fontWeight: '700',
-    color: colors.neutralDarkest,
-  },
-  accountsList: {
-    padding: responsive.spacing[4],
-    gap: responsive.spacing[4],
-  },
-  accountCard: {
-    backgroundColor: colors.neutralWhite,
-    borderRadius: theme.borderRadius.xl,
-    padding: responsive.spacing[4],
-    gap: responsive.spacing[3],
-    ...theme.shadows.sm,
-  },
-  accountHeader: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-  },
-  accountLeft: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: responsive.spacing[3],
-    flex: 1,
-  },
-  accountLogo: {
-    width: ms(48),
-    height: ms(48),
-    borderRadius: ms(24),
-  },
-  accountInfo: {
-    gap: responsive.spacing[1],
-    flex: 1,
-  },
-  accountName: {
-    fontSize: responsive.fontSize.md,
-    fontWeight: '700',
-    color: colors.neutralDarkest,
-  },
-  bankName: {
-    fontSize: responsive.fontSize.sm,
-    fontWeight: '500',
-    color: colors.neutralDark,
-    marginBottom: responsive.spacing[1],
-  },
-  statusContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: responsive.spacing[2],
-  },
-  statusDot: {
-    width: ms(8),
-    height: ms(8),
-    borderRadius: ms(4),
-  },
-  statusText: {
-    fontSize: responsive.fontSize.sm,
-    fontWeight: '400',
-  },
-  moreButton: {
-    width: ms(32),
-    height: ms(32),
-    justifyContent: 'center',
-    alignItems: 'center',
-    borderRadius: ms(16),
-  },
-  accountFooter: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    paddingTop: responsive.spacing[3],
-    borderTopWidth: 1,
-    borderTopColor: `${colors.neutralDarkest}1A`,
-  },
-  updateText: {
-    fontSize: responsive.fontSize.xs,
-    fontWeight: '500',
-    color: colors.neutralDark,
-  },
-  actionButton: {
-    paddingHorizontal: responsive.spacing[3],
-    paddingVertical: responsive.spacing[1],
-    borderRadius: theme.borderRadius.xl,
-    backgroundColor: `${colors.primary}1A`,
-  },
-  actionButtonText: {
-    fontSize: responsive.fontSize.sm,
-    fontWeight: '700',
-    color: colors.primaryDark,
-  },
-});
 
 export default ConnectedAccountsScreen;

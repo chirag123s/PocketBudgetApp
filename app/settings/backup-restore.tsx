@@ -7,40 +7,44 @@ import {
   StyleSheet,
   Switch,
   Alert,
+  StatusBar,
 } from 'react-native';
 import { Screen } from '@/components/layout/Screen';
 import { ScreenHeader } from '@/components/layout/ScreenHeader';
-import { theme } from '@/constants/theme';
+import { getTheme } from '@/constants/theme';
+import { useTheme } from '@/contexts/ThemeContext';
 import { responsive, ms } from '@/constants/responsive';
 import { Ionicons } from '@expo/vector-icons';
 import { settingsTypography, settingsFontWeights, settingsTextStyles } from './typography';
 
-// Color Palette - Using theme colors
-const colors = {
-  // Primary Palette
-  primaryDark: theme.colors.info.dark,
-  primary: theme.colors.info.main,
-  primaryLight: theme.colors.info.light,
-
-  // Neutral Palette
-  neutralBg: theme.colors.background.secondary,
-  neutralWhite: theme.colors.background.primary,
-  neutralDarkest: theme.colors.text.primary,
-  neutralDark: theme.colors.text.secondary,
-  neutralMedium: theme.colors.text.tertiary,
-
-  // Functional Palette
-  functionalSuccess: theme.colors.success.main,
-  functionalWarning: theme.colors.warning.main,
-  functionalError: theme.colors.danger.main,
-
-  // Border
-  border: theme.colors.border.light,
-  iconBg: theme.colors.background.tertiary,
-};
-
 export default function BackupRestoreScreen() {
+  const { theme: themeMode } = useTheme();
+  const theme = getTheme(themeMode);
   const [cloudBackupEnabled, setCloudBackupEnabled] = useState(true);
+
+  // Color Palette - Using theme colors
+  const colors = {
+    // Primary Palette
+    primaryDark: theme.colors.info.dark,
+    primary: theme.colors.info.main,
+    primaryLight: theme.colors.info.light,
+
+    // Neutral Palette
+    neutralBg: theme.colors.background.secondary,
+    neutralWhite: theme.colors.background.primary,
+    neutralDarkest: theme.colors.text.primary,
+    neutralDark: theme.colors.text.secondary,
+    neutralMedium: theme.colors.text.tertiary,
+
+    // Functional Palette
+    functionalSuccess: theme.colors.success.main,
+    functionalWarning: theme.colors.warning.main,
+    functionalError: theme.colors.danger.main,
+
+    // Border
+    border: theme.colors.border.light,
+    iconBg: theme.colors.background.tertiary,
+  };
 
   const handleBackupToggle = (value: boolean) => {
     setCloudBackupEnabled(value);
@@ -84,8 +88,172 @@ export default function BackupRestoreScreen() {
     );
   };
 
+  const styles = StyleSheet.create({
+    scrollView: {
+      flex: 1,
+    },
+    content: {
+      padding: responsive.spacing[6],
+      gap: responsive.spacing[6],
+    },
+    card: {
+      backgroundColor: colors.neutralWhite,
+      borderRadius: theme.borderRadius.xl,
+      padding: responsive.spacing[6],
+      ...theme.shadows.sm,
+    },
+    cardTitle: {
+      fontSize: settingsTypography.sectionHeading,
+      lineHeight: settingsTypography.sectionHeading * 1.5,
+      fontWeight: settingsFontWeights.bold,
+      color: colors.neutralDarkest,
+      marginBottom: responsive.spacing[4],
+    },
+    row: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'space-between',
+      minHeight: ms(56),
+      paddingVertical: responsive.spacing[2],
+    },
+    rowLeft: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: responsive.spacing[3],
+      flex: 1,
+    },
+    iconContainer: {
+      width: ms(48),
+      height: ms(48),
+      borderRadius: ms(24),
+      backgroundColor: colors.iconBg,
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
+    rowContent: {
+      flex: 1,
+      gap: 2,
+    },
+    rowTitle: {
+      fontSize: settingsTypography.primary,
+      lineHeight: settingsTypography.primary * 1.5,
+      fontWeight: settingsFontWeights.medium,
+      color: colors.neutralDarkest,
+    },
+    rowSubtitle: {
+      fontSize: settingsTypography.secondary,
+      lineHeight: settingsTypography.secondary * 1.5,
+      fontWeight: settingsFontWeights.regular,
+      color: colors.neutralDark,
+      marginTop: 2,
+    },
+    rowValue: {
+      fontSize: settingsTypography.primary,
+      lineHeight: settingsTypography.primary * 1.5,
+      fontWeight: settingsFontWeights.regular,
+      color: colors.neutralDarkest,
+    },
+    linkText: {
+      fontSize: settingsTypography.primary,
+      lineHeight: settingsTypography.primary * 1.5,
+      fontWeight: settingsFontWeights.semibold,
+      color: colors.primary,
+    },
+    switchContainer: {
+      transform: [{ scaleX: 1.1 }, { scaleY: 1.1 }],
+    },
+    divider: {
+      height: 1,
+      backgroundColor: colors.border,
+      marginVertical: responsive.spacing[2],
+    },
+    buttonRow: {
+      flexDirection: 'row',
+      gap: responsive.spacing[3],
+      marginTop: responsive.spacing[2],
+    },
+    actionButton: {
+      flex: 1,
+      borderRadius: theme.borderRadius.lg,
+      paddingVertical: responsive.spacing[3],
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
+    actionButtonPrimary: {
+      backgroundColor: `${colors.primary}20`,
+    },
+    actionButtonDanger: {
+      backgroundColor: `${colors.functionalError}20`,
+    },
+    actionButtonTextPrimary: {
+      fontSize: settingsTypography.secondary,
+      lineHeight: settingsTypography.secondary * 1.5,
+      fontWeight: settingsFontWeights.bold,
+      color: colors.primary,
+    },
+    actionButtonTextDanger: {
+      fontSize: settingsTypography.secondary,
+      lineHeight: settingsTypography.secondary * 1.5,
+      fontWeight: settingsFontWeights.bold,
+      color: colors.functionalError,
+    },
+    historyItem: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'space-between',
+      minHeight: ms(56),
+      paddingVertical: responsive.spacing[2],
+    },
+    historyLeft: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: responsive.spacing[3],
+      flex: 1,
+    },
+    historyContent: {
+      flex: 1,
+      gap: 2,
+    },
+    historyTitle: {
+      fontSize: settingsTypography.primary,
+      lineHeight: settingsTypography.primary * 1.5,
+      fontWeight: settingsFontWeights.medium,
+      color: colors.neutralDarkest,
+    },
+    historySubtitle: {
+      fontSize: settingsTypography.secondary,
+      lineHeight: settingsTypography.secondary * 1.5,
+      fontWeight: settingsFontWeights.regular,
+      color: colors.neutralDark,
+      marginTop: 2,
+    },
+    historySize: {
+      fontSize: settingsTypography.secondary,
+      lineHeight: settingsTypography.secondary * 1.5,
+      fontWeight: settingsFontWeights.semibold,
+      color: colors.neutralMedium,
+    },
+    infoBox: {
+      flexDirection: 'row',
+      alignItems: 'flex-start',
+      gap: responsive.spacing[3],
+      padding: responsive.spacing[4],
+      borderRadius: theme.borderRadius.xl,
+      backgroundColor: colors.primaryLight,
+      borderWidth: 1,
+      borderColor: colors.primary,
+    },
+    infoText: {
+      flex: 1,
+      fontSize: settingsTypography.tertiary,
+      lineHeight: settingsTypography.tertiary * 1.6,
+      color: colors.primaryDark,
+    },
+  });
+
   return (
     <Screen scrollable={false} noPadding backgroundColor={colors.neutralBg} edges={['top', 'bottom']}>
+      <StatusBar barStyle={themeMode === 'dark' ? 'light-content' : 'dark-content'} backgroundColor={colors.neutralBg} />
       <ScreenHeader title="Backup & Restore" backgroundColor={colors.neutralBg} />
 
       <ScrollView
@@ -272,166 +440,3 @@ export default function BackupRestoreScreen() {
     </Screen>
   );
 }
-
-const styles = StyleSheet.create({
-  scrollView: {
-    flex: 1,
-  },
-  content: {
-    padding: responsive.spacing[6],
-    gap: responsive.spacing[6],
-  },
-  card: {
-    backgroundColor: colors.neutralWhite,
-    borderRadius: theme.borderRadius.xl,
-    padding: responsive.spacing[6],
-    ...theme.shadows.sm,
-  },
-  cardTitle: {
-    fontSize: settingsTypography.sectionHeading,
-    lineHeight: settingsTypography.sectionHeading * 1.5,
-    fontWeight: settingsFontWeights.bold,
-    color: colors.neutralDarkest,
-    marginBottom: responsive.spacing[4],
-  },
-  row: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    minHeight: ms(56),
-    paddingVertical: responsive.spacing[2],
-  },
-  rowLeft: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: responsive.spacing[3],
-    flex: 1,
-  },
-  iconContainer: {
-    width: ms(48),
-    height: ms(48),
-    borderRadius: ms(24),
-    backgroundColor: colors.iconBg,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  rowContent: {
-    flex: 1,
-    gap: 2,
-  },
-  rowTitle: {
-    fontSize: settingsTypography.primary,
-    lineHeight: settingsTypography.primary * 1.5,
-    fontWeight: settingsFontWeights.medium,
-    color: colors.neutralDarkest,
-  },
-  rowSubtitle: {
-    fontSize: settingsTypography.secondary,
-    lineHeight: settingsTypography.secondary * 1.5,
-    fontWeight: settingsFontWeights.regular,
-    color: colors.neutralDark,
-    marginTop: 2,
-  },
-  rowValue: {
-    fontSize: settingsTypography.primary,
-    lineHeight: settingsTypography.primary * 1.5,
-    fontWeight: settingsFontWeights.regular,
-    color: colors.neutralDarkest,
-  },
-  linkText: {
-    fontSize: settingsTypography.primary,
-    lineHeight: settingsTypography.primary * 1.5,
-    fontWeight: settingsFontWeights.semibold,
-    color: colors.primary,
-  },
-  switchContainer: {
-    transform: [{ scaleX: 1.1 }, { scaleY: 1.1 }],
-  },
-  divider: {
-    height: 1,
-    backgroundColor: colors.border,
-    marginVertical: responsive.spacing[2],
-  },
-  buttonRow: {
-    flexDirection: 'row',
-    gap: responsive.spacing[3],
-    marginTop: responsive.spacing[2],
-  },
-  actionButton: {
-    flex: 1,
-    borderRadius: theme.borderRadius.lg,
-    paddingVertical: responsive.spacing[3],
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  actionButtonPrimary: {
-    backgroundColor: `${colors.primary}20`,
-  },
-  actionButtonDanger: {
-    backgroundColor: `${colors.functionalError}20`,
-  },
-  actionButtonTextPrimary: {
-    fontSize: settingsTypography.secondary,
-    lineHeight: settingsTypography.secondary * 1.5,
-    fontWeight: settingsFontWeights.bold,
-    color: colors.primary,
-  },
-  actionButtonTextDanger: {
-    fontSize: settingsTypography.secondary,
-    lineHeight: settingsTypography.secondary * 1.5,
-    fontWeight: settingsFontWeights.bold,
-    color: colors.functionalError,
-  },
-  historyItem: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    minHeight: ms(56),
-    paddingVertical: responsive.spacing[2],
-  },
-  historyLeft: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: responsive.spacing[3],
-    flex: 1,
-  },
-  historyContent: {
-    flex: 1,
-    gap: 2,
-  },
-  historyTitle: {
-    fontSize: settingsTypography.primary,
-    lineHeight: settingsTypography.primary * 1.5,
-    fontWeight: settingsFontWeights.medium,
-    color: colors.neutralDarkest,
-  },
-  historySubtitle: {
-    fontSize: settingsTypography.secondary,
-    lineHeight: settingsTypography.secondary * 1.5,
-    fontWeight: settingsFontWeights.regular,
-    color: colors.neutralDark,
-    marginTop: 2,
-  },
-  historySize: {
-    fontSize: settingsTypography.secondary,
-    lineHeight: settingsTypography.secondary * 1.5,
-    fontWeight: settingsFontWeights.semibold,
-    color: colors.neutralMedium,
-  },
-  infoBox: {
-    flexDirection: 'row',
-    alignItems: 'flex-start',
-    gap: responsive.spacing[3],
-    padding: responsive.spacing[4],
-    borderRadius: theme.borderRadius.xl,
-    backgroundColor: colors.primaryLight,
-    borderWidth: 1,
-    borderColor: colors.primary,
-  },
-  infoText: {
-    flex: 1,
-    fontSize: settingsTypography.tertiary,
-    lineHeight: settingsTypography.tertiary * 1.6,
-    color: colors.primaryDark,
-  },
-});

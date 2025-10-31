@@ -1,21 +1,10 @@
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Modal } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { theme } from '@/constants/theme';
+import { getTheme } from '@/constants/theme';
 import { responsive, ms } from '@/constants/responsive';
 import { formatCurrencyCompact } from '@/utils/currency';
-
-const colors = {
-  primary: theme.colors.info.main,
-  neutralBg: theme.colors.background.secondary,
-  neutralWhite: theme.colors.background.primary,
-  neutralDarkest: theme.colors.text.primary,
-  neutralDark: theme.colors.text.secondary,
-  neutralMedium: theme.colors.text.tertiary,
-  functionalSuccess: theme.colors.success.main,
-  functionalWarning: theme.colors.warning.main,
-  functionalError: theme.colors.danger.main,
-};
+import { useTheme } from '@/contexts/ThemeContext';
 
 export interface CategoryData {
   id?: string;
@@ -37,6 +26,21 @@ export const CategoryBreakdownWidget: React.FC<CategoryBreakdownWidgetProps> = (
   onCategoryPress,
   onPeriodSelect,
 }) => {
+  const { theme: themeMode } = useTheme();
+  const theme = getTheme(themeMode);
+
+  const colors = {
+    primary: theme.colors.info.main,
+    neutralBg: theme.colors.background.secondary,
+    neutralWhite: theme.colors.background.primary,
+    neutralDarkest: theme.colors.text.primary,
+    neutralDark: theme.colors.text.secondary,
+    neutralMedium: theme.colors.text.tertiary,
+    functionalSuccess: theme.colors.success.main,
+    functionalWarning: theme.colors.warning.main,
+    functionalError: theme.colors.danger.main,
+  };
+
   const [showPeriodSelector, setShowPeriodSelector] = useState(false);
   const [selectedPeriod, setSelectedPeriod] = useState<'week' | 'month' | 'year'>('month');
 
@@ -76,6 +80,133 @@ export const CategoryBreakdownWidget: React.FC<CategoryBreakdownWidgetProps> = (
   const topCategories = [...categories]
     .sort((a, b) => b.spent - a.spent)
     .slice(0, 3);
+
+  const styles = StyleSheet.create({
+    card: {
+      backgroundColor: colors.neutralWhite,
+      borderRadius: theme.borderRadius.xl,
+      padding: responsive.spacing[5],
+      gap: responsive.spacing[4],
+      ...theme.shadows.sm,
+    },
+
+    // Header
+    header: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+    },
+    title: {
+      fontSize: responsive.fontSize.lg,
+      fontWeight: '700',
+      color: colors.neutralDarkest,
+    },
+    periodButton: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: responsive.spacing[1],
+    },
+    periodText: {
+      fontSize: responsive.fontSize.sm,
+      fontWeight: '500',
+      color: colors.primary,
+    },
+
+    // Categories List
+    categoriesList: {
+      gap: responsive.spacing[4],
+      marginTop: responsive.spacing[2],
+    },
+    categoryItem: {
+      gap: responsive.spacing[2],
+    },
+    categoryRow: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+    },
+    categoryLeft: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: responsive.spacing[2],
+    },
+    iconContainer: {
+      width: ms(24),
+      height: ms(24),
+      borderRadius: ms(6),
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
+    categoryName: {
+      fontSize: responsive.fontSize.sm,
+      fontWeight: '500',
+      color: colors.neutralDarkest,
+    },
+    categoryAmount: {
+      fontSize: responsive.fontSize.sm,
+      fontWeight: '600',
+      color: colors.neutralDarkest,
+    },
+
+    // Progress Bar
+    progressBar: {
+      width: '100%',
+      height: ms(8),
+      backgroundColor: colors.neutralBg,
+      borderRadius: ms(4),
+      overflow: 'hidden',
+    },
+    progressFill: {
+      height: '100%',
+      borderRadius: ms(4),
+    },
+
+    // Modal
+    modalOverlay: {
+      flex: 1,
+      backgroundColor: 'rgba(0, 0, 0, 0.5)',
+      justifyContent: 'center',
+      alignItems: 'center',
+      padding: responsive.spacing[4],
+    },
+    periodModal: {
+      backgroundColor: colors.neutralWhite,
+      borderRadius: theme.borderRadius.xl,
+      padding: responsive.spacing[6],
+      width: '100%',
+      maxWidth: 320,
+      ...theme.shadows.md,
+    },
+    modalTitle: {
+      fontSize: responsive.fontSize.xl,
+      fontWeight: '700',
+      color: colors.neutralDarkest,
+      marginBottom: responsive.spacing[4],
+      textAlign: 'center',
+    },
+    periodOption: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'space-between',
+      paddingVertical: responsive.spacing[4],
+      paddingHorizontal: responsive.spacing[4],
+      borderRadius: theme.borderRadius.lg,
+      marginBottom: responsive.spacing[2],
+      backgroundColor: colors.neutralBg,
+    },
+    periodOptionActive: {
+      backgroundColor: `${colors.primary}15`,
+    },
+    periodOptionText: {
+      fontSize: responsive.fontSize.md,
+      fontWeight: '500',
+      color: colors.neutralDark,
+    },
+    periodOptionTextActive: {
+      color: colors.primary,
+      fontWeight: '600',
+    },
+  });
 
   return (
     <>
@@ -222,130 +353,3 @@ export const CategoryBreakdownWidget: React.FC<CategoryBreakdownWidgetProps> = (
     </>
   );
 };
-
-const styles = StyleSheet.create({
-  card: {
-    backgroundColor: colors.neutralWhite,
-    borderRadius: theme.borderRadius.xl,
-    padding: responsive.spacing[5],
-    gap: responsive.spacing[4],
-    ...theme.shadows.sm,
-  },
-
-  // Header
-  header: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-  },
-  title: {
-    fontSize: responsive.fontSize.lg,
-    fontWeight: '700',
-    color: colors.neutralDarkest,
-  },
-  periodButton: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: responsive.spacing[1],
-  },
-  periodText: {
-    fontSize: responsive.fontSize.sm,
-    fontWeight: '500',
-    color: colors.primary,
-  },
-
-  // Categories List
-  categoriesList: {
-    gap: responsive.spacing[4],
-    marginTop: responsive.spacing[2],
-  },
-  categoryItem: {
-    gap: responsive.spacing[2],
-  },
-  categoryRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-  },
-  categoryLeft: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: responsive.spacing[2],
-  },
-  iconContainer: {
-    width: ms(24),
-    height: ms(24),
-    borderRadius: ms(6),
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  categoryName: {
-    fontSize: responsive.fontSize.sm,
-    fontWeight: '500',
-    color: colors.neutralDarkest,
-  },
-  categoryAmount: {
-    fontSize: responsive.fontSize.sm,
-    fontWeight: '600',
-    color: colors.neutralDarkest,
-  },
-
-  // Progress Bar
-  progressBar: {
-    width: '100%',
-    height: ms(8),
-    backgroundColor: colors.neutralBg,
-    borderRadius: ms(4),
-    overflow: 'hidden',
-  },
-  progressFill: {
-    height: '100%',
-    borderRadius: ms(4),
-  },
-
-  // Modal
-  modalOverlay: {
-    flex: 1,
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
-    justifyContent: 'center',
-    alignItems: 'center',
-    padding: responsive.spacing[4],
-  },
-  periodModal: {
-    backgroundColor: colors.neutralWhite,
-    borderRadius: theme.borderRadius.xl,
-    padding: responsive.spacing[6],
-    width: '100%',
-    maxWidth: 320,
-    ...theme.shadows.md,
-  },
-  modalTitle: {
-    fontSize: responsive.fontSize.xl,
-    fontWeight: '700',
-    color: colors.neutralDarkest,
-    marginBottom: responsive.spacing[4],
-    textAlign: 'center',
-  },
-  periodOption: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    paddingVertical: responsive.spacing[4],
-    paddingHorizontal: responsive.spacing[4],
-    borderRadius: theme.borderRadius.lg,
-    marginBottom: responsive.spacing[2],
-    backgroundColor: colors.neutralBg,
-  },
-  periodOptionActive: {
-    backgroundColor: `${colors.primary}15`,
-  },
-  periodOptionText: {
-    fontSize: responsive.fontSize.md,
-    fontWeight: '500',
-    color: colors.neutralDark,
-  },
-  periodOptionTextActive: {
-    color: colors.primary,
-    fontWeight: '600',
-  },
-});

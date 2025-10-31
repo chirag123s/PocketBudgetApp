@@ -6,36 +6,15 @@ import {
   Pressable,
   StyleSheet,
   TextInput,
+  StatusBar,
 } from 'react-native';
 import { Screen } from '@/components/layout/Screen';
 import { ScreenHeader } from '@/components/layout/ScreenHeader';
-import { theme } from '@/constants/theme';
+import { getTheme } from '@/constants/theme';
+import { useTheme } from '@/contexts/ThemeContext';
 import { responsive, ms } from '@/constants/responsive';
 import { Ionicons } from '@expo/vector-icons';
 import { settingsTypography, settingsFontWeights, settingsTextStyles } from './typography';
-
-// Color Palette - Using theme colors
-const colors = {
-  // Primary Palette
-  primaryDark: theme.colors.info.dark,
-  primary: theme.colors.info.main,
-  primaryLight: theme.colors.info.light,
-
-  // Neutral Palette
-  neutralBg: theme.colors.background.secondary,
-  neutralWhite: theme.colors.background.primary,
-  neutralDarkest: theme.colors.text.primary,
-  neutralDark: theme.colors.text.secondary,
-  neutralMedium: theme.colors.text.tertiary,
-
-  // Functional Palette
-  functionalSuccess: theme.colors.success.main,
-  functionalWarning: theme.colors.warning.main,
-  functionalError: theme.colors.danger.main,
-
-  // Border
-  border: theme.colors.border.light,
-};
 
 interface FAQItem {
   id: string;
@@ -52,8 +31,33 @@ interface ContactOption {
 }
 
 export default function HelpSupportScreen() {
+  const { theme: themeMode } = useTheme();
+  const theme = getTheme(themeMode);
   const [searchQuery, setSearchQuery] = useState('');
   const [expandedFAQ, setExpandedFAQ] = useState<string | null>(null);
+
+  // Color Palette - Using theme colors
+  const colors = {
+    // Primary Palette
+    primaryDark: theme.colors.info.dark,
+    primary: theme.colors.info.main,
+    primaryLight: theme.colors.info.light,
+
+    // Neutral Palette
+    neutralBg: theme.colors.background.secondary,
+    neutralWhite: theme.colors.background.primary,
+    neutralDarkest: theme.colors.text.primary,
+    neutralDark: theme.colors.text.secondary,
+    neutralMedium: theme.colors.text.tertiary,
+
+    // Functional Palette
+    functionalSuccess: theme.colors.success.main,
+    functionalWarning: theme.colors.warning.main,
+    functionalError: theme.colors.danger.main,
+
+    // Border
+    border: theme.colors.border.light,
+  };
 
   const faqs: FAQItem[] = [
     {
@@ -106,8 +110,151 @@ export default function HelpSupportScreen() {
     setExpandedFAQ(expandedFAQ === id ? null : id);
   };
 
+  const styles = StyleSheet.create({
+    scrollView: {
+      flex: 1,
+    },
+    scrollContent: {
+      paddingBottom: responsive.spacing[8],
+    },
+    searchContainer: {
+      backgroundColor: colors.primary,
+      paddingHorizontal: responsive.spacing[4],
+      paddingBottom: responsive.spacing[3],
+    },
+    searchBar: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      backgroundColor: colors.neutralWhite,
+      borderRadius: theme.borderRadius.lg,
+      height: ms(48),
+      paddingHorizontal: responsive.spacing[4],
+      gap: responsive.spacing[2],
+    },
+    searchInput: {
+      flex: 1,
+      fontSize: settingsTypography.primary,
+      color: colors.neutralDarkest,
+    },
+    sectionTitle: {
+      fontSize: settingsTypography.sectionHeading,
+      fontWeight: settingsFontWeights.bold,
+      color: colors.neutralDarkest,
+      paddingHorizontal: responsive.spacing[4],
+      paddingTop: responsive.spacing[6],
+      paddingBottom: responsive.spacing[2],
+      letterSpacing: -0.3,
+    },
+    faqContainer: {
+      paddingHorizontal: responsive.spacing[4],
+    },
+    faqItem: {
+      borderTopWidth: 1,
+      borderTopColor: colors.border,
+      paddingVertical: responsive.spacing[2],
+    },
+    faqItemBorder: {
+      borderBottomWidth: 0,
+    },
+    faqQuestion: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'space-between',
+      paddingVertical: responsive.spacing[2],
+    },
+    faqQuestionText: {
+      flex: 1,
+      fontSize: settingsTypography.secondary,
+      fontWeight: settingsFontWeights.medium,
+      color: colors.neutralDarkest,
+      marginRight: responsive.spacing[4],
+      lineHeight: settingsTypography.secondary * 1.4,
+    },
+    faqAnswer: {
+      paddingTop: responsive.spacing[1],
+      paddingBottom: responsive.spacing[2],
+      paddingRight: responsive.spacing[8],
+    },
+    faqAnswerText: {
+      fontSize: settingsTypography.secondary,
+      color: colors.neutralDark,
+      lineHeight: settingsTypography.secondary * 1.4,
+    },
+    knowledgeBaseButton: {
+      marginHorizontal: responsive.spacing[4],
+      marginVertical: responsive.spacing[6],
+      height: ms(48),
+      borderRadius: theme.borderRadius.lg,
+      backgroundColor: `${colors.primary}33`,
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'center',
+      gap: responsive.spacing[2],
+    },
+    knowledgeBaseButtonPressed: {
+      opacity: 0.7,
+    },
+    knowledgeBaseButtonText: {
+      fontSize: settingsTypography.secondary,
+      fontWeight: settingsFontWeights.bold,
+      color: colors.primary,
+      letterSpacing: 0.2,
+    },
+    contactOptionsContainer: {
+      paddingHorizontal: responsive.spacing[4],
+      gap: responsive.spacing[3],
+    },
+    contactOption: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      backgroundColor: colors.neutralWhite,
+      borderRadius: theme.borderRadius.lg,
+      borderWidth: 1,
+      borderColor: colors.border,
+      padding: responsive.spacing[4],
+      gap: responsive.spacing[4],
+      ...theme.shadows.sm,
+    },
+    contactOptionPressed: {
+      opacity: 0.7,
+    },
+    contactOptionIcon: {
+      width: ms(48),
+      height: ms(48),
+      borderRadius: ms(24),
+      backgroundColor: `${colors.functionalSuccess}20`,
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
+    contactOptionContent: {
+      flex: 1,
+    },
+    contactOptionTitle: {
+      fontSize: settingsTypography.primary,
+      fontWeight: settingsFontWeights.semibold,
+      color: colors.neutralDarkest,
+      marginBottom: responsive.spacing[0.5],
+    },
+    contactOptionSubtitleRow: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: responsive.spacing[1.5],
+    },
+    liveIndicator: {
+      width: ms(8),
+      height: ms(8),
+      borderRadius: ms(4),
+      backgroundColor: colors.functionalSuccess,
+    },
+    contactOptionSubtitle: {
+      fontSize: settingsTypography.secondary,
+      color: colors.neutralDark,
+    },
+  });
+
   return (
     <Screen scrollable={false} noPadding backgroundColor={colors.neutralBg} edges={['top', 'bottom']}>
+      <StatusBar barStyle="light-content" backgroundColor={colors.primary} />
       <ScreenHeader
         title="Help & Support"
         backgroundColor={colors.primary}
@@ -237,145 +384,3 @@ export default function HelpSupportScreen() {
     </Screen>
   );
 }
-
-const styles = StyleSheet.create({
-  scrollView: {
-    flex: 1,
-  },
-  scrollContent: {
-    paddingBottom: responsive.spacing[8],
-  },
-  searchContainer: {
-    backgroundColor: colors.primary,
-    paddingHorizontal: responsive.spacing[4],
-    paddingBottom: responsive.spacing[3],
-  },
-  searchBar: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: colors.neutralWhite,
-    borderRadius: theme.borderRadius.lg,
-    height: ms(48),
-    paddingHorizontal: responsive.spacing[4],
-    gap: responsive.spacing[2],
-  },
-  searchInput: {
-    flex: 1,
-    fontSize: settingsTypography.primary,
-    color: colors.neutralDarkest,
-  },
-  sectionTitle: {
-    fontSize: settingsTypography.sectionHeading,
-    fontWeight: settingsFontWeights.bold,
-    color: colors.neutralDarkest,
-    paddingHorizontal: responsive.spacing[4],
-    paddingTop: responsive.spacing[6],
-    paddingBottom: responsive.spacing[2],
-    letterSpacing: -0.3,
-  },
-  faqContainer: {
-    paddingHorizontal: responsive.spacing[4],
-  },
-  faqItem: {
-    borderTopWidth: 1,
-    borderTopColor: colors.border,
-    paddingVertical: responsive.spacing[2],
-  },
-  faqItemBorder: {
-    borderBottomWidth: 0,
-  },
-  faqQuestion: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    paddingVertical: responsive.spacing[2],
-  },
-  faqQuestionText: {
-    flex: 1,
-    fontSize: settingsTypography.secondary,
-    fontWeight: settingsFontWeights.medium,
-    color: colors.neutralDarkest,
-    marginRight: responsive.spacing[4],
-    lineHeight: settingsTypography.secondary * 1.4,
-  },
-  faqAnswer: {
-    paddingTop: responsive.spacing[1],
-    paddingBottom: responsive.spacing[2],
-    paddingRight: responsive.spacing[8],
-  },
-  faqAnswerText: {
-    fontSize: settingsTypography.secondary,
-    color: colors.neutralDark,
-    lineHeight: settingsTypography.secondary * 1.4,
-  },
-  knowledgeBaseButton: {
-    marginHorizontal: responsive.spacing[4],
-    marginVertical: responsive.spacing[6],
-    height: ms(48),
-    borderRadius: theme.borderRadius.lg,
-    backgroundColor: `${colors.primary}33`,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    gap: responsive.spacing[2],
-  },
-  knowledgeBaseButtonPressed: {
-    opacity: 0.7,
-  },
-  knowledgeBaseButtonText: {
-    fontSize: settingsTypography.secondary,
-    fontWeight: settingsFontWeights.bold,
-    color: colors.primary,
-    letterSpacing: 0.2,
-  },
-  contactOptionsContainer: {
-    paddingHorizontal: responsive.spacing[4],
-    gap: responsive.spacing[3],
-  },
-  contactOption: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: colors.neutralWhite,
-    borderRadius: theme.borderRadius.lg,
-    borderWidth: 1,
-    borderColor: colors.border,
-    padding: responsive.spacing[4],
-    gap: responsive.spacing[4],
-    ...theme.shadows.sm,
-  },
-  contactOptionPressed: {
-    opacity: 0.7,
-  },
-  contactOptionIcon: {
-    width: ms(48),
-    height: ms(48),
-    borderRadius: ms(24),
-    backgroundColor: `${colors.functionalSuccess}20`,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  contactOptionContent: {
-    flex: 1,
-  },
-  contactOptionTitle: {
-    fontSize: settingsTypography.primary,
-    fontWeight: settingsFontWeights.semibold,
-    color: colors.neutralDarkest,
-    marginBottom: responsive.spacing[0.5],
-  },
-  contactOptionSubtitleRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: responsive.spacing[1.5],
-  },
-  liveIndicator: {
-    width: ms(8),
-    height: ms(8),
-    borderRadius: ms(4),
-    backgroundColor: colors.functionalSuccess,
-  },
-  contactOptionSubtitle: {
-    fontSize: settingsTypography.secondary,
-    color: colors.neutralDark,
-  },
-});

@@ -4,10 +4,11 @@ import { useRouter } from 'expo-router';
 import { Screen } from '@/components/layout/Screen';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
-import { theme } from '@/constants/theme';
+import { getTheme } from '@/constants/theme';
 import { Ionicons } from '@expo/vector-icons';
 import { useScreenTracker } from '@/utils/screenTracker';
 import { responsive, wp, hp, ms } from '@/constants/responsive';
+import { useTheme } from '@/contexts/ThemeContext';
 
 interface PasswordStrength {
   length: boolean;
@@ -18,6 +19,8 @@ interface PasswordStrength {
 export default function SignUpScreen() {
   useScreenTracker('SignUpScreen');
   const router = useRouter();
+  const { theme: themeMode } = useTheme();
+  const theme = getTheme(themeMode);
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [formData, setFormData] = useState({
@@ -48,6 +51,159 @@ export default function SignUpScreen() {
   const passwordsMatch = formData.password === formData.confirmPassword;
   const canSubmit =
     formData.email && isPasswordStrong && passwordsMatch && formData.agreeToTerms;
+
+  const styles = StyleSheet.create({
+    header: {
+      padding: responsive.spacing[4],
+    },
+    backButton: {
+      width: ms(40),
+      height: ms(40),
+      borderRadius: ms(20),
+      backgroundColor: theme.colors.background.tertiary,
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
+    content: {
+      padding: responsive.spacing[6],
+      maxWidth: responsive.layout.maxContentWidth,
+      width: '100%',
+      alignSelf: 'center',
+    },
+    title: {
+      ...theme.typography.styles.h1,
+      fontSize: responsive.fontSize.h2,
+      lineHeight: responsive.fontSize.h2 * 1.3,
+      marginBottom: responsive.spacing[2],
+    },
+    subtitle: {
+      ...theme.typography.styles.body,
+      fontSize: responsive.fontSize.base,
+      lineHeight: responsive.fontSize.base * 1.5,
+      color: theme.colors.text.secondary,
+      marginBottom: responsive.device.isShortDevice ? responsive.spacing[6] : responsive.spacing[8],
+    },
+    strengthContainer: {
+      marginTop: -responsive.spacing[2],
+      marginBottom: responsive.spacing[4],
+      gap: responsive.spacing[2],
+    },
+    strengthItem: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: responsive.spacing[2],
+    },
+    strengthIcon: {
+      width: ms(16),
+      height: ms(16),
+      borderRadius: ms(8),
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
+    strengthIconValid: {
+      backgroundColor: theme.colors.success.light,
+    },
+    strengthIconInvalid: {
+      backgroundColor: theme.colors.background.tertiary,
+    },
+    strengthLabel: {
+      ...theme.typography.styles.bodySmall,
+      fontSize: responsive.fontSize.sm,
+      lineHeight: responsive.fontSize.sm * 1.5,
+    },
+    strengthLabelValid: {
+      color: theme.colors.success.main,
+    },
+    strengthLabelInvalid: {
+      color: theme.colors.text.secondary,
+    },
+    checkboxContainer: {
+      flexDirection: 'row',
+      alignItems: 'flex-start',
+      marginBottom: responsive.spacing[6],
+      gap: responsive.spacing[4],
+    },
+    checkbox: {
+      width: ms(20),
+      height: ms(20),
+      borderRadius: ms(4),
+      borderWidth: 2,
+      borderColor: theme.colors.border.main,
+      alignItems: 'center',
+      justifyContent: 'center',
+      marginTop: 2,
+    },
+    checkboxChecked: {
+      backgroundColor: theme.colors.primary[500],
+      borderColor: theme.colors.primary[500],
+    },
+    checkboxLabel: {
+      ...theme.typography.styles.bodySmall,
+      fontSize: responsive.fontSize.sm,
+      lineHeight: responsive.fontSize.sm * 1.5,
+      color: theme.colors.text.secondary,
+      flex: 1,
+    },
+    link: {
+      color: theme.colors.primary[500],
+      fontWeight: '600',
+    },
+    divider: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      marginVertical: responsive.spacing[6],
+      gap: responsive.spacing[4],
+    },
+    dividerLine: {
+      flex: 1,
+      height: 1,
+      backgroundColor: theme.colors.border.light,
+    },
+    dividerText: {
+      ...theme.typography.styles.caption,
+      fontSize: responsive.fontSize.xs,
+      lineHeight: responsive.fontSize.xs * 1.4,
+      color: theme.colors.text.tertiary,
+    },
+    socialButton: {
+      marginBottom: responsive.spacing[4],
+    },
+    socialContent: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: responsive.spacing[4],
+    },
+    socialIcon: {
+      fontSize: responsive.fontSize.md,
+      fontWeight: 'bold',
+    },
+    socialText: {
+      ...theme.typography.styles.button,
+      fontSize: responsive.fontSize.base,
+      lineHeight: responsive.fontSize.base * 1.5,
+      color: theme.colors.text.primary,
+    },
+    loginContainer: {
+      flexDirection: 'row',
+      justifyContent: 'center',
+      alignItems: 'center',
+      marginTop: responsive.spacing[4],
+      paddingBottom: responsive.spacing[8],
+    },
+    loginText: {
+      ...theme.typography.styles.body,
+      fontSize: responsive.fontSize.base,
+      lineHeight: responsive.fontSize.base * 1.5,
+      color: theme.colors.text.secondary,
+    },
+    loginLink: {
+      ...theme.typography.styles.body,
+      fontSize: responsive.fontSize.base,
+      lineHeight: responsive.fontSize.base * 1.5,
+      color: theme.colors.primary[500],
+      fontWeight: '600',
+    },
+  });
 
   return (
     <Screen scrollable={false} backgroundColor={theme.colors.background.primary}>
@@ -215,6 +371,41 @@ export default function SignUpScreen() {
 
 // Password Strength Item Component
 function StrengthItem({ label, valid }: { label: string; valid: boolean }) {
+  const { theme: themeMode } = useTheme();
+  const theme = getTheme(themeMode);
+
+  const styles = StyleSheet.create({
+    strengthItem: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: responsive.spacing[2],
+    },
+    strengthIcon: {
+      width: ms(16),
+      height: ms(16),
+      borderRadius: ms(8),
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
+    strengthIconValid: {
+      backgroundColor: theme.colors.success.light,
+    },
+    strengthIconInvalid: {
+      backgroundColor: theme.colors.background.tertiary,
+    },
+    strengthLabel: {
+      ...theme.typography.styles.bodySmall,
+      fontSize: responsive.fontSize.sm,
+      lineHeight: responsive.fontSize.sm * 1.5,
+    },
+    strengthLabelValid: {
+      color: theme.colors.success.main,
+    },
+    strengthLabelInvalid: {
+      color: theme.colors.text.secondary,
+    },
+  });
+
   return (
     <View style={styles.strengthItem}>
       <View
@@ -240,156 +431,3 @@ function StrengthItem({ label, valid }: { label: string; valid: boolean }) {
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  header: {
-    padding: responsive.spacing[4],
-  },
-  backButton: {
-    width: ms(40),
-    height: ms(40),
-    borderRadius: ms(20),
-    backgroundColor: theme.colors.background.tertiary,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  content: {
-    padding: responsive.spacing[6],
-    maxWidth: responsive.layout.maxContentWidth,
-    width: '100%',
-    alignSelf: 'center',
-  },
-  title: {
-    ...theme.typography.styles.h1,
-    fontSize: responsive.fontSize.h2,
-    lineHeight: responsive.fontSize.h2 * 1.3,
-    marginBottom: responsive.spacing[2],
-  },
-  subtitle: {
-    ...theme.typography.styles.body,
-    fontSize: responsive.fontSize.base,
-    lineHeight: responsive.fontSize.base * 1.5,
-    color: theme.colors.text.secondary,
-    marginBottom: responsive.device.isShortDevice ? responsive.spacing[6] : responsive.spacing[8],
-  },
-  strengthContainer: {
-    marginTop: -responsive.spacing[2],
-    marginBottom: responsive.spacing[4],
-    gap: responsive.spacing[2],
-  },
-  strengthItem: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: responsive.spacing[2],
-  },
-  strengthIcon: {
-    width: ms(16),
-    height: ms(16),
-    borderRadius: ms(8),
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  strengthIconValid: {
-    backgroundColor: theme.colors.success.light,
-  },
-  strengthIconInvalid: {
-    backgroundColor: theme.colors.background.tertiary,
-  },
-  strengthLabel: {
-    ...theme.typography.styles.bodySmall,
-    fontSize: responsive.fontSize.sm,
-    lineHeight: responsive.fontSize.sm * 1.5,
-  },
-  strengthLabelValid: {
-    color: theme.colors.success.main,
-  },
-  strengthLabelInvalid: {
-    color: theme.colors.text.secondary,
-  },
-  checkboxContainer: {
-    flexDirection: 'row',
-    alignItems: 'flex-start',
-    marginBottom: responsive.spacing[6],
-    gap: responsive.spacing[4],
-  },
-  checkbox: {
-    width: ms(20),
-    height: ms(20),
-    borderRadius: ms(4),
-    borderWidth: 2,
-    borderColor: theme.colors.border.main,
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginTop: 2,
-  },
-  checkboxChecked: {
-    backgroundColor: theme.colors.primary[500],
-    borderColor: theme.colors.primary[500],
-  },
-  checkboxLabel: {
-    ...theme.typography.styles.bodySmall,
-    fontSize: responsive.fontSize.sm,
-    lineHeight: responsive.fontSize.sm * 1.5,
-    color: theme.colors.text.secondary,
-    flex: 1,
-  },
-  link: {
-    color: theme.colors.primary[500],
-    fontWeight: '600',
-  },
-  divider: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginVertical: responsive.spacing[6],
-    gap: responsive.spacing[4],
-  },
-  dividerLine: {
-    flex: 1,
-    height: 1,
-    backgroundColor: theme.colors.border.light,
-  },
-  dividerText: {
-    ...theme.typography.styles.caption,
-    fontSize: responsive.fontSize.xs,
-    lineHeight: responsive.fontSize.xs * 1.4,
-    color: theme.colors.text.tertiary,
-  },
-  socialButton: {
-    marginBottom: responsive.spacing[4],
-  },
-  socialContent: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: responsive.spacing[4],
-  },
-  socialIcon: {
-    fontSize: responsive.fontSize.md,
-    fontWeight: 'bold',
-  },
-  socialText: {
-    ...theme.typography.styles.button,
-    fontSize: responsive.fontSize.base,
-    lineHeight: responsive.fontSize.base * 1.5,
-    color: theme.colors.text.primary,
-  },
-  loginContainer: {
-    flexDirection: 'row',
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginTop: responsive.spacing[4],
-    paddingBottom: responsive.spacing[8],
-  },
-  loginText: {
-    ...theme.typography.styles.body,
-    fontSize: responsive.fontSize.base,
-    lineHeight: responsive.fontSize.base * 1.5,
-    color: theme.colors.text.secondary,
-  },
-  loginLink: {
-    ...theme.typography.styles.body,
-    fontSize: responsive.fontSize.base,
-    lineHeight: responsive.fontSize.base * 1.5,
-    color: theme.colors.primary[500],
-    fontWeight: '600',
-  },
-});

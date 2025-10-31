@@ -1,36 +1,13 @@
 import React from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, ScrollView, Linking } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, ScrollView, Linking, StatusBar } from 'react-native';
 import { Screen } from '@/components/layout/Screen';
 import { ScreenHeader } from '@/components/layout/ScreenHeader';
-import { theme } from '@/constants/theme';
+import { getTheme } from '@/constants/theme';
+import { useTheme } from '@/contexts/ThemeContext';
 import { responsive, ms } from '@/constants/responsive';
 import { Ionicons } from '@expo/vector-icons';
 import { BudgetMateLogo } from '@/app/auth/BudgetMateLogo';
 import { settingsTypography, settingsFontWeights, settingsTextStyles } from './typography';
-
-// Color Palette - Using theme colors
-const colors = {
-  // Primary Palette
-  primaryDark: theme.colors.info.dark,
-  primary: theme.colors.info.main,
-  primaryLight: theme.colors.info.light,
-
-  // Neutral Palette
-  neutralBg: theme.colors.background.secondary,
-  neutralWhite: theme.colors.background.primary,
-  neutralDarkest: theme.colors.text.primary,
-  neutralDark: theme.colors.text.secondary,
-  neutralMedium: theme.colors.text.tertiary,
-
-  // Functional Palette
-  functionalSuccess: theme.colors.success.main,
-  functionalWarning: theme.colors.warning.main,
-  functionalError: theme.colors.danger.main,
-
-  // Border
-  border: theme.colors.border.light,
-  iconBg: theme.colors.background.tertiary,
-};
 
 interface SettingRowProps {
   icon: string;
@@ -42,6 +19,33 @@ interface SettingRowProps {
 }
 
 export default function AboutApp() {
+  const { theme: themeMode } = useTheme();
+  const theme = getTheme(themeMode);
+
+  // Color Palette - Using theme colors
+  const colors = {
+    // Primary Palette
+    primaryDark: theme.colors.info.dark,
+    primary: theme.colors.info.main,
+    primaryLight: theme.colors.info.light,
+
+    // Neutral Palette
+    neutralBg: theme.colors.background.secondary,
+    neutralWhite: theme.colors.background.primary,
+    neutralDarkest: theme.colors.text.primary,
+    neutralDark: theme.colors.text.secondary,
+    neutralMedium: theme.colors.text.tertiary,
+
+    // Functional Palette
+    functionalSuccess: theme.colors.success.main,
+    functionalWarning: theme.colors.warning.main,
+    functionalError: theme.colors.danger.main,
+
+    // Border
+    border: theme.colors.border.light,
+    iconBg: theme.colors.background.tertiary,
+  };
+
   const SettingRow: React.FC<SettingRowProps> = ({
     icon,
     title,
@@ -87,8 +91,179 @@ export default function AboutApp() {
     Linking.openURL(url).catch(err => console.error('Failed to open URL:', err));
   };
 
+  const styles = StyleSheet.create({
+    content: {
+      paddingHorizontal: responsive.spacing[6],
+    },
+    // App Info Card
+    appInfoCard: {
+      backgroundColor: colors.neutralWhite,
+      borderRadius: theme.borderRadius.xl,
+      padding: responsive.spacing[8],
+      marginTop: responsive.spacing[6],
+      marginBottom: responsive.spacing[4],
+      alignItems: 'center',
+      ...theme.shadows.sm,
+    },
+    appIcon: {
+      width: ms(96),
+      height: ms(96),
+      borderRadius: ms(48),
+      backgroundColor: colors.neutralWhite,
+      alignItems: 'center',
+      justifyContent: 'center',
+      marginBottom: responsive.spacing[4],
+      ...theme.shadows.md,
+    },
+    appName: {
+      fontSize: settingsTypography.pageHeading,
+      lineHeight: settingsTypography.pageHeading * 1.5,
+      fontWeight: settingsFontWeights.bold,
+      color: colors.neutralDarkest,
+      marginBottom: responsive.spacing[1],
+    },
+    appVersion: {
+      fontSize: settingsTypography.secondary,
+      lineHeight: settingsTypography.secondary * 1.5,
+      color: colors.neutralMedium,
+      marginBottom: responsive.spacing[3],
+    },
+    appTagline: {
+      fontSize: settingsTypography.secondary,
+      lineHeight: settingsTypography.secondary * 1.6,
+      color: colors.neutralDark,
+      fontStyle: 'italic',
+      textAlign: 'center',
+    },
+    // Section
+    section: {
+      marginTop: responsive.spacing[4],
+    },
+    sectionHeader: {
+      fontSize: settingsTypography.tertiary,
+      lineHeight: settingsTypography.tertiary * 1.5,
+      fontWeight: settingsFontWeights.bold,
+      letterSpacing: 1,
+      textTransform: 'uppercase',
+      color: colors.neutralMedium,
+      paddingBottom: responsive.spacing[2],
+      paddingTop: responsive.spacing[4],
+    },
+    card: {
+      backgroundColor: colors.neutralWhite,
+      borderRadius: theme.borderRadius.xl,
+      overflow: 'hidden',
+      ...theme.shadows.sm,
+    },
+    // Setting Row
+    settingRow: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'space-between',
+      paddingVertical: responsive.spacing[3],
+      paddingHorizontal: responsive.spacing[4],
+      minHeight: ms(64),
+    },
+    settingLeft: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: responsive.spacing[4],
+      flex: 1,
+    },
+    iconContainer: {
+      width: ms(48),
+      height: ms(48),
+      borderRadius: ms(24),
+      alignItems: 'center',
+      justifyContent: 'center',
+      backgroundColor: colors.iconBg,
+    },
+    settingTitle: {
+      fontSize: settingsTypography.primary,
+      lineHeight: settingsTypography.primary * 1.5,
+      fontWeight: settingsFontWeights.medium,
+      color: colors.neutralDarkest,
+    },
+    settingSubtitle: {
+      fontSize: settingsTypography.secondary,
+      lineHeight: settingsTypography.secondary * 1.5,
+      color: colors.neutralDark,
+      marginTop: 2,
+    },
+    // Social Grid
+    socialGrid: {
+      flexDirection: 'row',
+      backgroundColor: colors.neutralWhite,
+      borderRadius: theme.borderRadius.xl,
+      padding: responsive.spacing[4],
+      gap: responsive.spacing[3],
+      ...theme.shadows.sm,
+    },
+    socialItem: {
+      flex: 1,
+      alignItems: 'center',
+      gap: responsive.spacing[2],
+      padding: responsive.spacing[2],
+      borderRadius: theme.borderRadius.lg,
+    },
+    socialIconContainer: {
+      width: ms(48),
+      height: ms(48),
+      borderRadius: ms(24),
+      backgroundColor: colors.iconBg,
+      alignItems: 'center',
+      justifyContent: 'center',
+      marginBottom: responsive.spacing[1],
+    },
+    socialLabel: {
+      fontSize: settingsTypography.tertiary,
+      lineHeight: settingsTypography.tertiary * 1.5,
+      fontWeight: settingsFontWeights.medium,
+      color: colors.neutralDark,
+      textAlign: 'center',
+    },
+    // Footer
+    footerCard: {
+      backgroundColor: colors.neutralWhite,
+      borderRadius: theme.borderRadius.xl,
+      padding: responsive.spacing[6],
+      marginTop: responsive.spacing[6],
+      alignItems: 'center',
+      ...theme.shadows.sm,
+    },
+    footerCopyright: {
+      fontSize: settingsTypography.primary,
+      lineHeight: settingsTypography.primary * 1.5,
+      fontWeight: settingsFontWeights.semibold,
+      color: colors.neutralDarkest,
+      marginBottom: responsive.spacing[2],
+    },
+    footerMadeWith: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      marginBottom: responsive.spacing[2],
+    },
+    footerText: {
+      fontSize: settingsTypography.secondary,
+      lineHeight: settingsTypography.secondary * 1.5,
+      color: colors.neutralDark,
+    },
+    footerHeart: {
+      fontSize: settingsTypography.primary,
+      lineHeight: settingsTypography.primary * 1.5,
+      marginHorizontal: responsive.spacing[1],
+    },
+    footerLegal: {
+      fontSize: settingsTypography.tertiary,
+      lineHeight: settingsTypography.tertiary * 1.5,
+      color: colors.neutralMedium,
+      textAlign: 'center',
+    },
+  });
+
   return (
     <Screen noPadding backgroundColor={colors.neutralBg} edges={['top', 'bottom']}>
+      <StatusBar barStyle={themeMode === 'dark' ? 'light-content' : 'dark-content'} backgroundColor={colors.neutralBg} />
       <ScreenHeader title="About" />
 
       <ScrollView
@@ -224,173 +399,3 @@ export default function AboutApp() {
     </Screen>
   );
 }
-
-const styles = StyleSheet.create({
-  content: {
-    paddingHorizontal: responsive.spacing[6],
-  },
-  // App Info Card
-  appInfoCard: {
-    backgroundColor: colors.neutralWhite,
-    borderRadius: theme.borderRadius.xl,
-    padding: responsive.spacing[8],
-    marginTop: responsive.spacing[6],
-    marginBottom: responsive.spacing[4],
-    alignItems: 'center',
-    ...theme.shadows.sm,
-  },
-  appIcon: {
-    width: ms(96),
-    height: ms(96),
-    borderRadius: ms(48),
-    backgroundColor: colors.neutralWhite,
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginBottom: responsive.spacing[4],
-    ...theme.shadows.md,
-  },
-  appName: {
-    fontSize: settingsTypography.pageHeading,
-    lineHeight: settingsTypography.pageHeading * 1.5,
-    fontWeight: settingsFontWeights.bold,
-    color: colors.neutralDarkest,
-    marginBottom: responsive.spacing[1],
-  },
-  appVersion: {
-    fontSize: settingsTypography.secondary,
-    lineHeight: settingsTypography.secondary * 1.5,
-    color: colors.neutralMedium,
-    marginBottom: responsive.spacing[3],
-  },
-  appTagline: {
-    fontSize: settingsTypography.secondary,
-    lineHeight: settingsTypography.secondary * 1.6,
-    color: colors.neutralDark,
-    fontStyle: 'italic',
-    textAlign: 'center',
-  },
-  // Section
-  section: {
-    marginTop: responsive.spacing[4],
-  },
-  sectionHeader: {
-    fontSize: settingsTypography.tertiary,
-    lineHeight: settingsTypography.tertiary * 1.5,
-    fontWeight: settingsFontWeights.bold,
-    letterSpacing: 1,
-    textTransform: 'uppercase',
-    color: colors.neutralMedium,
-    paddingBottom: responsive.spacing[2],
-    paddingTop: responsive.spacing[4],
-  },
-  card: {
-    backgroundColor: colors.neutralWhite,
-    borderRadius: theme.borderRadius.xl,
-    overflow: 'hidden',
-    ...theme.shadows.sm,
-  },
-  // Setting Row
-  settingRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    paddingVertical: responsive.spacing[3],
-    paddingHorizontal: responsive.spacing[4],
-    minHeight: ms(64),
-  },
-  settingLeft: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: responsive.spacing[4],
-    flex: 1,
-  },
-  iconContainer: {
-    width: ms(48),
-    height: ms(48),
-    borderRadius: ms(24),
-    alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: colors.iconBg,
-  },
-  settingTitle: {
-    fontSize: settingsTypography.primary,
-    lineHeight: settingsTypography.primary * 1.5,
-    fontWeight: settingsFontWeights.medium,
-    color: colors.neutralDarkest,
-  },
-  settingSubtitle: {
-    fontSize: settingsTypography.secondary,
-    lineHeight: settingsTypography.secondary * 1.5,
-    color: colors.neutralDark,
-    marginTop: 2,
-  },
-  // Social Grid
-  socialGrid: {
-    flexDirection: 'row',
-    backgroundColor: colors.neutralWhite,
-    borderRadius: theme.borderRadius.xl,
-    padding: responsive.spacing[4],
-    gap: responsive.spacing[3],
-    ...theme.shadows.sm,
-  },
-  socialItem: {
-    flex: 1,
-    alignItems: 'center',
-    gap: responsive.spacing[2],
-    padding: responsive.spacing[2],
-    borderRadius: theme.borderRadius.lg,
-  },
-  socialIconContainer: {
-    width: ms(48),
-    height: ms(48),
-    borderRadius: ms(24),
-    backgroundColor: colors.iconBg,
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginBottom: responsive.spacing[1],
-  },
-  socialLabel: {
-    fontSize: settingsTypography.tertiary,
-    lineHeight: settingsTypography.tertiary * 1.5,
-    fontWeight: settingsFontWeights.medium,
-    color: colors.neutralDark,
-    textAlign: 'center',
-  },
-  // Footer
-  footerCard: {
-    backgroundColor: colors.neutralWhite,
-    borderRadius: theme.borderRadius.xl,
-    padding: responsive.spacing[6],
-    marginTop: responsive.spacing[6],
-    alignItems: 'center',
-    ...theme.shadows.sm,
-  },
-  footerCopyright: {
-    fontSize: settingsTypography.primary,
-    lineHeight: settingsTypography.primary * 1.5,
-    fontWeight: settingsFontWeights.semibold,
-    color: colors.neutralDarkest,
-    marginBottom: responsive.spacing[2],
-  },
-  footerMadeWith: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: responsive.spacing[2],
-  },
-  footerText: {
-    fontSize: settingsTypography.secondary,
-    lineHeight: settingsTypography.secondary * 1.5,
-    color: colors.neutralDark,
-  },
-  footerHeart: {
-    fontSize: settingsTypography.primary,
-    lineHeight: settingsTypography.primary * 1.5,
-    marginHorizontal: responsive.spacing[1],
-  },
-  footerLegal: {
-    fontSize: settingsTypography.tertiary,
-    lineHeight: settingsTypography.tertiary * 1.5,
-    color: colors.neutralMedium,
-    textAlign: 'center',
-  },
-});

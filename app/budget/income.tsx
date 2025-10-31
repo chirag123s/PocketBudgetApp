@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, ScrollView, TextInput } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, ScrollView, TextInput, StatusBar } from 'react-native';
 import { useRouter } from 'expo-router';
 import { Screen } from '@/components/layout/Screen';
 import { Button } from '@/components/ui/Button';
-import { theme } from '@/constants/theme';
+import { getTheme } from '@/constants/theme';
+import { useTheme } from '@/contexts/ThemeContext';
 import { responsive, ms } from '@/constants/responsive';
 import { Ionicons } from '@expo/vector-icons';
 
@@ -18,10 +19,17 @@ const commonIncomeSources = ['Salary', 'Side Hustle', 'Centrelink', 'Investment'
 
 export default function IncomeEntry() {
   const router = useRouter();
+  const { theme: themeMode } = useTheme();
+  const theme = getTheme(themeMode);
+
   const [incomeSources, setIncomeSources] = useState<IncomeSource[]>([
     { id: 1, name: 'Salary', amount: '', icon: '💰' },
   ]);
   const [showSmartDetection, setShowSmartDetection] = useState(true);
+
+  const colors = {
+    neutralBg: theme.colors.background.secondary,
+  };
 
   const addIncomeSource = () => {
     setIncomeSources([
@@ -51,8 +59,223 @@ export default function IncomeEntry() {
     setShowSmartDetection(false);
   };
 
+  const styles = StyleSheet.create({
+    header: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'space-between',
+      paddingHorizontal: responsive.spacing[4],
+      paddingVertical: responsive.spacing[2],
+      backgroundColor: theme.colors.background.primary,
+      borderBottomWidth: 1,
+      borderBottomColor: theme.colors.border.light,
+    },
+    backButton: {
+      padding: responsive.spacing[2],
+    },
+    headerCenter: {
+      flex: 1,
+      alignItems: 'center',
+    },
+    headerTitle: {
+      ...theme.typography.styles.h3,
+      fontSize: responsive.fontSize.lg,
+      lineHeight: responsive.fontSize.lg * 1.5,
+    },
+    headerSubtitle: {
+      ...theme.typography.styles.caption,
+      color: theme.colors.text.tertiary,
+      marginTop: responsive.spacing[1],
+    },
+    placeholder: {
+      width: 40,
+    },
+    content: {
+      padding: responsive.spacing[6],
+      paddingBottom: responsive.spacing[8],
+    },
+    question: {
+      ...theme.typography.styles.h2,
+      fontSize: responsive.fontSize.xl,
+      lineHeight: responsive.fontSize.xl * 1.5,
+      textAlign: 'center',
+      marginBottom: responsive.spacing[6],
+    },
+    smartDetectionCard: {
+      backgroundColor: theme.colors.info.light,
+      borderWidth: 1,
+      borderColor: theme.colors.info.main,
+      borderRadius: theme.borderRadius.xl,
+      padding: responsive.spacing[4],
+      marginBottom: responsive.spacing[6],
+    },
+    smartDetectionHeader: {
+      flexDirection: 'row',
+      alignItems: 'flex-start',
+      justifyContent: 'space-between',
+      marginBottom: responsive.spacing[2],
+    },
+    smartDetectionInfo: {
+      flex: 1,
+    },
+    smartDetectionTitle: {
+      ...theme.typography.styles.body,
+      fontWeight: '600',
+      color: theme.colors.info.dark,
+      marginBottom: responsive.spacing[1],
+    },
+    smartDetectionAmount: {
+      ...theme.typography.styles.bodySmall,
+      color: theme.colors.info.dark,
+    },
+    smartDetectionDate: {
+      ...theme.typography.styles.caption,
+      color: theme.colors.info.main,
+      marginTop: responsive.spacing[1],
+    },
+    smartDetectionActions: {
+      flexDirection: 'row',
+      gap: responsive.spacing[2],
+    },
+    useAmountButton: {
+      flex: 1,
+      backgroundColor: theme.colors.info.main,
+      borderRadius: theme.borderRadius.lg,
+      paddingVertical: responsive.spacing[2],
+      alignItems: 'center',
+    },
+    useAmountButtonText: {
+      ...theme.typography.styles.button,
+      color: '#FFFFFF',
+      fontSize: responsive.fontSize.sm,
+      lineHeight: responsive.fontSize.sm * 1.5,
+    },
+    enterDifferentButton: {
+      flex: 1,
+      borderWidth: 1,
+      borderColor: theme.colors.info.main,
+      borderRadius: theme.borderRadius.lg,
+      paddingVertical: responsive.spacing[2],
+      alignItems: 'center',
+    },
+    enterDifferentButtonText: {
+      ...theme.typography.styles.button,
+      color: theme.colors.info.main,
+      fontSize: responsive.fontSize.sm,
+      lineHeight: responsive.fontSize.sm * 1.5,
+    },
+    sourcesContainer: {
+      gap: responsive.spacing[2],
+      marginBottom: responsive.spacing[6],
+    },
+    sourceCard: {
+      backgroundColor: theme.colors.background.primary,
+      borderRadius: theme.borderRadius.xl,
+      padding: responsive.spacing[4],
+      ...theme.shadows.sm,
+    },
+    sourceHeader: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      marginBottom: responsive.spacing[2],
+    },
+    sourceIcon: {
+      fontSize: responsive.fontSize.h4,
+      lineHeight: responsive.fontSize.h4 * 1.5,
+      marginRight: responsive.spacing[2],
+    },
+    sourceNameInput: {
+      flex: 1,
+      ...theme.typography.styles.body,
+      fontWeight: '500',
+      color: theme.colors.text.primary,
+    },
+    removeButton: {
+      padding: responsive.spacing[1],
+    },
+    sourceAmountContainer: {
+      flexDirection: 'row',
+      alignItems: 'center',
+    },
+    currencySymbol: {
+      fontSize: responsive.fontSize.h4,
+      lineHeight: responsive.fontSize.h4 * 1.5,
+      color: theme.colors.text.tertiary,
+      marginRight: responsive.spacing[2],
+    },
+    sourceAmountInput: {
+      flex: 1,
+      fontSize: responsive.fontSize.h4,
+      lineHeight: responsive.fontSize.h4 * 1.5,
+      fontWeight: '600',
+      color: theme.colors.text.primary,
+    },
+    addSourceButton: {
+      borderWidth: 2,
+      borderStyle: 'dashed',
+      borderColor: theme.colors.border.main,
+      borderRadius: theme.borderRadius.xl,
+      padding: responsive.spacing[4],
+      alignItems: 'center',
+      marginBottom: responsive.spacing[6],
+    },
+    addSourceText: {
+      ...theme.typography.styles.button,
+      color: theme.colors.text.secondary,
+      fontSize: responsive.fontSize.sm,
+      lineHeight: responsive.fontSize.sm * 1.5,
+    },
+    totalCard: {
+      backgroundColor: theme.colors.primary[50],
+      borderRadius: theme.borderRadius.xl,
+      padding: responsive.spacing[4],
+      marginBottom: responsive.spacing[6],
+    },
+    totalLabel: {
+      ...theme.typography.styles.bodySmall,
+      color: theme.colors.text.secondary,
+      marginBottom: responsive.spacing[1],
+    },
+    totalAmount: {
+      fontSize: responsive.fontSize.h2,
+      lineHeight: responsive.fontSize.h2 * 1.5,
+      fontWeight: '700',
+      color: theme.colors.primary[700],
+    },
+    commonTypesCard: {
+      backgroundColor: theme.colors.background.tertiary,
+      borderRadius: theme.borderRadius.xl,
+      padding: responsive.spacing[4],
+      marginBottom: responsive.spacing[6],
+    },
+    commonTypesLabel: {
+      ...theme.typography.styles.label,
+      fontSize: responsive.fontSize.xs,
+      lineHeight: responsive.fontSize.xs * 1.5,
+      color: theme.colors.text.secondary,
+      fontWeight: '600',
+      marginBottom: responsive.spacing[2],
+    },
+    commonTypesGrid: {
+      flexDirection: 'row',
+      flexWrap: 'wrap',
+      gap: responsive.spacing[2],
+    },
+    commonTypeChip: {
+      backgroundColor: theme.colors.background.primary,
+      borderRadius: theme.borderRadius.lg,
+      paddingHorizontal: responsive.spacing[2],
+      paddingVertical: 6,
+    },
+    commonTypeText: {
+      ...theme.typography.styles.caption,
+      color: theme.colors.text.secondary,
+    },
+  });
+
   return (
-    <Screen noPadding backgroundColor={theme.colors.background.secondary}>
+    <Screen noPadding backgroundColor={colors.neutralBg}>
+      <StatusBar barStyle={themeMode === 'dark' ? 'light-content' : 'dark-content'} backgroundColor={colors.neutralBg} />
       {/* Header */}
       <View style={styles.header}>
         <TouchableOpacity
@@ -182,217 +405,3 @@ export default function IncomeEntry() {
     </Screen>
   );
 }
-
-const styles = StyleSheet.create({
-  header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    paddingHorizontal: responsive.spacing[4],
-    paddingVertical: responsive.spacing[2],
-    backgroundColor: theme.colors.background.primary,
-    borderBottomWidth: 1,
-    borderBottomColor: theme.colors.border.light,
-  },
-  backButton: {
-    padding: responsive.spacing[2],
-  },
-  headerCenter: {
-    flex: 1,
-    alignItems: 'center',
-  },
-  headerTitle: {
-    ...theme.typography.styles.h3,
-    fontSize: responsive.fontSize.lg,
-    lineHeight: responsive.fontSize.lg * 1.5,
-  },
-  headerSubtitle: {
-    ...theme.typography.styles.caption,
-    color: theme.colors.text.tertiary,
-    marginTop: responsive.spacing[1],
-  },
-  placeholder: {
-    width: 40,
-  },
-  content: {
-    padding: responsive.spacing[6],
-    paddingBottom: responsive.spacing[8],
-  },
-  question: {
-    ...theme.typography.styles.h2,
-    fontSize: responsive.fontSize.xl,
-    lineHeight: responsive.fontSize.xl * 1.5,
-    textAlign: 'center',
-    marginBottom: responsive.spacing[6],
-  },
-  smartDetectionCard: {
-    backgroundColor: theme.colors.info.light,
-    borderWidth: 1,
-    borderColor: theme.colors.info.main,
-    borderRadius: theme.borderRadius.xl,
-    padding: responsive.spacing[4],
-    marginBottom: responsive.spacing[6],
-  },
-  smartDetectionHeader: {
-    flexDirection: 'row',
-    alignItems: 'flex-start',
-    justifyContent: 'space-between',
-    marginBottom: responsive.spacing[2],
-  },
-  smartDetectionInfo: {
-    flex: 1,
-  },
-  smartDetectionTitle: {
-    ...theme.typography.styles.body,
-    fontWeight: '600',
-    color: theme.colors.info.dark,
-    marginBottom: responsive.spacing[1],
-  },
-  smartDetectionAmount: {
-    ...theme.typography.styles.bodySmall,
-    color: theme.colors.info.dark,
-  },
-  smartDetectionDate: {
-    ...theme.typography.styles.caption,
-    color: theme.colors.info.main,
-    marginTop: responsive.spacing[1],
-  },
-  smartDetectionActions: {
-    flexDirection: 'row',
-    gap: responsive.spacing[2],
-  },
-  useAmountButton: {
-    flex: 1,
-    backgroundColor: theme.colors.info.main,
-    borderRadius: theme.borderRadius.lg,
-    paddingVertical: responsive.spacing[2],
-    alignItems: 'center',
-  },
-  useAmountButtonText: {
-    ...theme.typography.styles.button,
-    color: '#FFFFFF',
-    fontSize: responsive.fontSize.sm,
-    lineHeight: responsive.fontSize.sm * 1.5,
-  },
-  enterDifferentButton: {
-    flex: 1,
-    borderWidth: 1,
-    borderColor: theme.colors.info.main,
-    borderRadius: theme.borderRadius.lg,
-    paddingVertical: responsive.spacing[2],
-    alignItems: 'center',
-  },
-  enterDifferentButtonText: {
-    ...theme.typography.styles.button,
-    color: theme.colors.info.main,
-    fontSize: responsive.fontSize.sm,
-    lineHeight: responsive.fontSize.sm * 1.5,
-  },
-  sourcesContainer: {
-    gap: responsive.spacing[2],
-    marginBottom: responsive.spacing[6],
-  },
-  sourceCard: {
-    backgroundColor: theme.colors.background.primary,
-    borderRadius: theme.borderRadius.xl,
-    padding: responsive.spacing[4],
-    ...theme.shadows.sm,
-  },
-  sourceHeader: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: responsive.spacing[2],
-  },
-  sourceIcon: {
-    fontSize: responsive.fontSize.h4,
-    lineHeight: responsive.fontSize.h4 * 1.5,
-    marginRight: responsive.spacing[2],
-  },
-  sourceNameInput: {
-    flex: 1,
-    ...theme.typography.styles.body,
-    fontWeight: '500',
-    color: theme.colors.text.primary,
-  },
-  removeButton: {
-    padding: responsive.spacing[1],
-  },
-  sourceAmountContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  currencySymbol: {
-    fontSize: responsive.fontSize.h4,
-    lineHeight: responsive.fontSize.h4 * 1.5,
-    color: theme.colors.text.tertiary,
-    marginRight: responsive.spacing[2],
-  },
-  sourceAmountInput: {
-    flex: 1,
-    fontSize: responsive.fontSize.h4,
-    lineHeight: responsive.fontSize.h4 * 1.5,
-    fontWeight: '600',
-    color: theme.colors.text.primary,
-  },
-  addSourceButton: {
-    borderWidth: 2,
-    borderStyle: 'dashed',
-    borderColor: theme.colors.border.main,
-    borderRadius: theme.borderRadius.xl,
-    padding: responsive.spacing[4],
-    alignItems: 'center',
-    marginBottom: responsive.spacing[6],
-  },
-  addSourceText: {
-    ...theme.typography.styles.button,
-    color: theme.colors.text.secondary,
-    fontSize: responsive.fontSize.sm,
-    lineHeight: responsive.fontSize.sm * 1.5,
-  },
-  totalCard: {
-    backgroundColor: theme.colors.primary[50],
-    borderRadius: theme.borderRadius.xl,
-    padding: responsive.spacing[4],
-    marginBottom: responsive.spacing[6],
-  },
-  totalLabel: {
-    ...theme.typography.styles.bodySmall,
-    color: theme.colors.text.secondary,
-    marginBottom: responsive.spacing[1],
-  },
-  totalAmount: {
-    fontSize: responsive.fontSize.h2,
-    lineHeight: responsive.fontSize.h2 * 1.5,
-    fontWeight: '700',
-    color: theme.colors.primary[700],
-  },
-  commonTypesCard: {
-    backgroundColor: theme.colors.background.tertiary,
-    borderRadius: theme.borderRadius.xl,
-    padding: responsive.spacing[4],
-    marginBottom: responsive.spacing[6],
-  },
-  commonTypesLabel: {
-    ...theme.typography.styles.label,
-    fontSize: responsive.fontSize.xs,
-    lineHeight: responsive.fontSize.xs * 1.5,
-    color: theme.colors.text.secondary,
-    fontWeight: '600',
-    marginBottom: responsive.spacing[2],
-  },
-  commonTypesGrid: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: responsive.spacing[2],
-  },
-  commonTypeChip: {
-    backgroundColor: theme.colors.background.primary,
-    borderRadius: theme.borderRadius.lg,
-    paddingHorizontal: responsive.spacing[2],
-    paddingVertical: 6,
-  },
-  commonTypeText: {
-    ...theme.typography.styles.caption,
-    color: theme.colors.text.secondary,
-  },
-});

@@ -4,13 +4,16 @@ import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { Screen } from '@/components/layout/Screen';
 import { Button } from '@/components/ui/Button';
-import { theme } from '@/constants/theme';
+import { getTheme } from '@/constants/theme';
 import { responsive, wp, hp, ms } from '@/constants/responsive';
+import { useTheme } from '@/contexts/ThemeContext';
 
 type Step = 1 | 2 | 3; // 1: Email Entry, 2: Check Email, 3: New Password
 
 export default function ForgotPasswordScreen() {
   const router = useRouter();
+  const { theme: themeMode } = useTheme();
+  const theme = getTheme(themeMode);
   const [step, setStep] = useState<Step>(1);
   const [email, setEmail] = useState('');
   const [showPassword, setShowPassword] = useState(false);
@@ -35,6 +38,167 @@ export default function ForgotPasswordScreen() {
 
   const isPasswordStrong = passwordStrength.length && passwordStrength.number && passwordStrength.special;
   const passwordsMatch = newPassword === confirmPassword;
+
+  const styles = StyleSheet.create({
+    container: {
+      flex: 1,
+      padding: responsive.spacing[6],
+      maxWidth: responsive.layout.maxContentWidth,
+      width: '100%',
+      alignSelf: 'center',
+    },
+    centerContainer: {
+      flex: 1,
+      alignItems: 'center',
+      justifyContent: 'center',
+      padding: responsive.spacing[6],
+      maxWidth: responsive.layout.maxContentWidth,
+      width: '100%',
+      alignSelf: 'center',
+    },
+    content: {
+      flex: 1,
+      justifyContent: 'center',
+    },
+    backButton: {
+      width: ms(40),
+      height: ms(40),
+      borderRadius: ms(20),
+      backgroundColor: theme.colors.background.tertiary,
+      alignItems: 'center',
+      justifyContent: 'center',
+      marginBottom: responsive.spacing[4],
+    },
+    title: {
+      ...theme.typography.styles.h1,
+      fontSize: responsive.fontSize.h2,
+      lineHeight: responsive.fontSize.h2 * 1.3,
+      marginBottom: responsive.spacing[2],
+    },
+    subtitle: {
+      ...theme.typography.styles.body,
+      fontSize: responsive.fontSize.base,
+      lineHeight: responsive.fontSize.base * 1.5,
+      color: theme.colors.text.secondary,
+      marginBottom: responsive.device.isShortDevice ? responsive.spacing[6] : responsive.spacing[8],
+    },
+    inputContainer: {
+      marginBottom: responsive.spacing[6],
+    },
+    label: {
+      ...theme.typography.styles.label,
+      fontSize: responsive.fontSize.sm,
+      lineHeight: responsive.fontSize.sm * 1.5,
+      marginBottom: responsive.spacing[2],
+    },
+    input: {
+      ...theme.typography.styles.body,
+      fontSize: responsive.fontSize.base,
+      lineHeight: responsive.fontSize.base * 1.5,
+      padding: responsive.spacing[4],
+      borderWidth: 1,
+      borderColor: theme.colors.border.light,
+      borderRadius: responsive.layout.cardRadius,
+      backgroundColor: theme.colors.background.primary,
+    },
+    passwordInputContainer: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      borderWidth: 1,
+      borderColor: theme.colors.border.light,
+      borderRadius: responsive.layout.cardRadius,
+      backgroundColor: theme.colors.background.primary,
+    },
+    passwordInput: {
+      ...theme.typography.styles.body,
+      fontSize: responsive.fontSize.base,
+      lineHeight: responsive.fontSize.base * 1.5,
+      flex: 1,
+      padding: responsive.spacing[4],
+    },
+    eyeButton: {
+      padding: responsive.spacing[4],
+    },
+    button: {
+      marginBottom: responsive.spacing[4],
+    },
+    secondaryButton: {
+      padding: responsive.spacing[2],
+      alignItems: 'center',
+    },
+    secondaryButtonText: {
+      ...theme.typography.styles.body,
+      fontSize: responsive.fontSize.base,
+      lineHeight: responsive.fontSize.base * 1.5,
+      color: theme.colors.text.secondary,
+    },
+    iconCircle: {
+      width: ms(96),
+      height: ms(96),
+      borderRadius: ms(48),
+      backgroundColor: theme.colors.primary[100],
+      alignItems: 'center',
+      justifyContent: 'center',
+      marginBottom: responsive.spacing[6],
+    },
+    emailText: {
+      ...theme.typography.styles.body,
+      fontSize: responsive.fontSize.base,
+      lineHeight: responsive.fontSize.base * 1.5,
+      fontWeight: '600',
+      color: theme.colors.text.primary,
+      marginBottom: responsive.device.isShortDevice ? responsive.spacing[6] : responsive.spacing[8],
+    },
+    resendButton: {
+      marginTop: responsive.spacing[4],
+    },
+    resendText: {
+      ...theme.typography.styles.body,
+      fontSize: responsive.fontSize.base,
+      lineHeight: responsive.fontSize.base * 1.5,
+      color: theme.colors.text.secondary,
+    },
+    resendLink: {
+      color: theme.colors.primary[600],
+      fontWeight: '600',
+    },
+    strengthContainer: {
+      marginTop: responsive.spacing[2],
+      gap: responsive.spacing[2],
+    },
+    strengthRow: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: responsive.spacing[2],
+    },
+    checkCircle: {
+      width: ms(16),
+      height: ms(16),
+      borderRadius: ms(8),
+      backgroundColor: theme.colors.background.tertiary,
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
+    checkCircleActive: {
+      backgroundColor: theme.colors.success.light,
+    },
+    strengthText: {
+      ...theme.typography.styles.bodySmall,
+      fontSize: responsive.fontSize.sm,
+      lineHeight: responsive.fontSize.sm * 1.5,
+      color: theme.colors.text.secondary,
+    },
+    strengthTextActive: {
+      color: theme.colors.success.main,
+    },
+    errorText: {
+      ...theme.typography.styles.bodySmall,
+      fontSize: responsive.fontSize.sm,
+      lineHeight: responsive.fontSize.sm * 1.5,
+      color: theme.colors.danger.main,
+      marginTop: responsive.spacing[2],
+    },
+  });
 
   // Step 1: Email Entry
   if (step === 1) {
@@ -301,164 +465,3 @@ export default function ForgotPasswordScreen() {
     </Screen>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    padding: responsive.spacing[6],
-    maxWidth: responsive.layout.maxContentWidth,
-    width: '100%',
-    alignSelf: 'center',
-  },
-  centerContainer: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-    padding: responsive.spacing[6],
-    maxWidth: responsive.layout.maxContentWidth,
-    width: '100%',
-    alignSelf: 'center',
-  },
-  content: {
-    flex: 1,
-    justifyContent: 'center',
-  },
-  backButton: {
-    width: ms(40),
-    height: ms(40),
-    borderRadius: ms(20),
-    backgroundColor: theme.colors.background.tertiary,
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginBottom: responsive.spacing[4],
-  },
-  title: {
-    ...theme.typography.styles.h1,
-    fontSize: responsive.fontSize.h2,
-    lineHeight: responsive.fontSize.h2 * 1.3,
-    marginBottom: responsive.spacing[2],
-  },
-  subtitle: {
-    ...theme.typography.styles.body,
-    fontSize: responsive.fontSize.base,
-    lineHeight: responsive.fontSize.base * 1.5,
-    color: theme.colors.text.secondary,
-    marginBottom: responsive.device.isShortDevice ? responsive.spacing[6] : responsive.spacing[8],
-  },
-  inputContainer: {
-    marginBottom: responsive.spacing[6],
-  },
-  label: {
-    ...theme.typography.styles.label,
-    fontSize: responsive.fontSize.sm,
-    lineHeight: responsive.fontSize.sm * 1.5,
-    marginBottom: responsive.spacing[2],
-  },
-  input: {
-    ...theme.typography.styles.body,
-    fontSize: responsive.fontSize.base,
-    lineHeight: responsive.fontSize.base * 1.5,
-    padding: responsive.spacing[4],
-    borderWidth: 1,
-    borderColor: theme.colors.border.light,
-    borderRadius: responsive.layout.cardRadius,
-    backgroundColor: theme.colors.background.primary,
-  },
-  passwordInputContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    borderWidth: 1,
-    borderColor: theme.colors.border.light,
-    borderRadius: responsive.layout.cardRadius,
-    backgroundColor: theme.colors.background.primary,
-  },
-  passwordInput: {
-    ...theme.typography.styles.body,
-    fontSize: responsive.fontSize.base,
-    lineHeight: responsive.fontSize.base * 1.5,
-    flex: 1,
-    padding: responsive.spacing[4],
-  },
-  eyeButton: {
-    padding: responsive.spacing[4],
-  },
-  button: {
-    marginBottom: responsive.spacing[4],
-  },
-  secondaryButton: {
-    padding: responsive.spacing[2],
-    alignItems: 'center',
-  },
-  secondaryButtonText: {
-    ...theme.typography.styles.body,
-    fontSize: responsive.fontSize.base,
-    lineHeight: responsive.fontSize.base * 1.5,
-    color: theme.colors.text.secondary,
-  },
-  iconCircle: {
-    width: ms(96),
-    height: ms(96),
-    borderRadius: ms(48),
-    backgroundColor: theme.colors.primary[100],
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginBottom: responsive.spacing[6],
-  },
-  emailText: {
-    ...theme.typography.styles.body,
-    fontSize: responsive.fontSize.base,
-    lineHeight: responsive.fontSize.base * 1.5,
-    fontWeight: '600',
-    color: theme.colors.text.primary,
-    marginBottom: responsive.device.isShortDevice ? responsive.spacing[6] : responsive.spacing[8],
-  },
-  resendButton: {
-    marginTop: responsive.spacing[4],
-  },
-  resendText: {
-    ...theme.typography.styles.body,
-    fontSize: responsive.fontSize.base,
-    lineHeight: responsive.fontSize.base * 1.5,
-    color: theme.colors.text.secondary,
-  },
-  resendLink: {
-    color: theme.colors.primary[600],
-    fontWeight: '600',
-  },
-  strengthContainer: {
-    marginTop: responsive.spacing[2],
-    gap: responsive.spacing[2],
-  },
-  strengthRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: responsive.spacing[2],
-  },
-  checkCircle: {
-    width: ms(16),
-    height: ms(16),
-    borderRadius: ms(8),
-    backgroundColor: theme.colors.background.tertiary,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  checkCircleActive: {
-    backgroundColor: theme.colors.success.light,
-  },
-  strengthText: {
-    ...theme.typography.styles.bodySmall,
-    fontSize: responsive.fontSize.sm,
-    lineHeight: responsive.fontSize.sm * 1.5,
-    color: theme.colors.text.secondary,
-  },
-  strengthTextActive: {
-    color: theme.colors.success.main,
-  },
-  errorText: {
-    ...theme.typography.styles.bodySmall,
-    fontSize: responsive.fontSize.sm,
-    lineHeight: responsive.fontSize.sm * 1.5,
-    color: theme.colors.danger.main,
-    marginTop: responsive.spacing[2],
-  },
-});

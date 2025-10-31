@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, ScrollView, TextInput } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, ScrollView, TextInput, StatusBar } from 'react-native';
 import { useRouter } from 'expo-router';
 import { Screen } from '@/components/layout/Screen';
 import { Button } from '@/components/ui/Button';
-import { theme } from '@/constants/theme';
+import { getTheme } from '@/constants/theme';
+import { useTheme } from '@/contexts/ThemeContext';
 import { responsive, ms } from '@/constants/responsive';
 import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
@@ -80,6 +81,9 @@ const filterOptions = ['All Results', 'Groceries Only', 'Over $50', 'This Year']
 
 export default function TransactionSearchResults() {
   const router = useRouter();
+  const { theme: themeMode } = useTheme();
+  const theme = getTheme(themeMode);
+
   const [searchQuery, setSearchQuery] = useState('coles');
   const [selectedFilter, setSelectedFilter] = useState('All Results');
 
@@ -87,21 +91,254 @@ export default function TransactionSearchResults() {
   const thisMonthResults = sampleSearchResults.filter((r) => r.date.includes('Oct'));
   const lastMonthResults = sampleSearchResults.filter((r) => r.date.includes('Sep'));
 
+  const colors = {
+    neutralBg: theme.colors.background.secondary,
+    cardBg: theme.colors.background.primary,
+    primaryText: theme.colors.text.primary,
+    secondaryText: theme.colors.text.secondary,
+    tertiaryText: theme.colors.text.tertiary,
+    borderColor: theme.colors.border.light,
+    inputBg: theme.colors.background.tertiary,
+    dangerMain: theme.colors.danger.main,
+    primaryColor: theme.colors.primary[600],
+    primary400: theme.colors.primary[400],
+    warningLight: '#FEF3C7',
+  };
+
+  const styles = StyleSheet.create({
+    header: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      paddingHorizontal: responsive.spacing[4],
+      paddingTop: responsive.spacing[4],
+      paddingBottom: responsive.spacing[2],
+      backgroundColor: colors.cardBg,
+      gap: responsive.spacing[2],
+    },
+    backButton: {
+      padding: responsive.spacing[2],
+    },
+    searchBar: {
+      flex: 1,
+      flexDirection: 'row',
+      alignItems: 'center',
+      backgroundColor: colors.inputBg,
+      borderRadius: theme.borderRadius.xl,
+      paddingHorizontal: responsive.spacing[4],
+      paddingVertical: responsive.spacing[2],
+      gap: responsive.spacing[2],
+    },
+    searchInput: {
+      flex: 1,
+      ...theme.typography.styles.body,
+      color: colors.primaryText,
+    },
+    clearButtonContainer: {
+      paddingHorizontal: responsive.spacing[6],
+      paddingBottom: responsive.spacing[2],
+      backgroundColor: colors.cardBg,
+      borderBottomWidth: 1,
+      borderBottomColor: colors.borderColor,
+    },
+    clearButton: {
+      ...theme.typography.styles.bodySmall,
+      fontWeight: '700',
+      color: colors.primaryColor,
+    },
+    content: {
+      padding: responsive.spacing[6],
+      paddingBottom: 100,
+    },
+    summaryCard: {
+      borderRadius: theme.borderRadius.xl,
+      padding: responsive.spacing[4],
+      marginBottom: responsive.spacing[6],
+      ...theme.shadows.lg,
+    },
+    summaryNumber: {
+      fontSize: responsive.fontSize.h2,
+      lineHeight: responsive.fontSize.h2 * 1.5,
+      fontWeight: '700',
+      color: '#FFFFFF',
+      marginBottom: responsive.spacing[2],
+    },
+    summaryText: {
+      fontSize: responsive.fontSize.sm,
+      lineHeight: responsive.fontSize.sm * 1.5,
+      color: '#FFFFFF',
+      opacity: 0.9,
+    },
+    section: {
+      marginBottom: responsive.spacing[6],
+    },
+    sectionHeader: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+      marginBottom: responsive.spacing[4],
+    },
+    sectionTitle: {
+      ...theme.typography.styles.h3,
+      fontSize: responsive.fontSize.lg,
+      lineHeight: responsive.fontSize.lg * 1.5,
+    },
+    countBadge: {
+      paddingHorizontal: responsive.spacing[2],
+      paddingVertical: 4,
+      backgroundColor: colors.inputBg,
+      borderRadius: theme.borderRadius.full,
+    },
+    countBadgeText: {
+      ...theme.typography.styles.bodySmall,
+      fontWeight: '700',
+      color: colors.secondaryText,
+    },
+    resultCard: {
+      backgroundColor: colors.cardBg,
+      borderRadius: theme.borderRadius.xl,
+      padding: responsive.spacing[4],
+      marginBottom: responsive.spacing[2],
+      ...theme.shadows.sm,
+    },
+    resultContent: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      alignItems: 'flex-start',
+    },
+    resultLeft: {
+      flex: 1,
+      marginRight: responsive.spacing[4],
+    },
+    resultName: {
+      ...theme.typography.styles.h3,
+      fontSize: responsive.fontSize.lg,
+      lineHeight: responsive.fontSize.lg * 1.5,
+      marginBottom: responsive.spacing[1],
+    },
+    resultMeta: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: responsive.spacing[2],
+    },
+    categoryBadge: {
+      paddingHorizontal: responsive.spacing[2],
+      paddingVertical: 4,
+      backgroundColor: colors.inputBg,
+      borderRadius: theme.borderRadius.full,
+    },
+    categoryBadgeText: {
+      fontSize: responsive.fontSize.xs,
+      lineHeight: responsive.fontSize.xs * 1.5,
+      fontWeight: '600',
+      color: colors.secondaryText,
+    },
+    metaDot: {
+      ...theme.typography.styles.bodySmall,
+      color: colors.tertiaryText,
+    },
+    resultLocation: {
+      ...theme.typography.styles.bodySmall,
+      color: colors.tertiaryText,
+    },
+    resultRight: {
+      alignItems: 'flex-end',
+    },
+    resultAmount: {
+      fontSize: responsive.fontSize.xl,
+      lineHeight: responsive.fontSize.xl * 1.5,
+      fontWeight: '700',
+      color: colors.dangerMain,
+      marginBottom: responsive.spacing[1],
+    },
+    resultDate: {
+      ...theme.typography.styles.bodySmall,
+      color: colors.tertiaryText,
+    },
+    premiumCard: {
+      backgroundColor: colors.cardBg,
+      borderRadius: theme.borderRadius.xl,
+      padding: responsive.spacing[6],
+      borderWidth: 2,
+      borderColor: colors.warningLight,
+      ...theme.shadows.sm,
+    },
+    premiumHeader: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+      marginBottom: responsive.spacing[2],
+    },
+    premiumTitle: {
+      ...theme.typography.styles.h3,
+      fontSize: responsive.fontSize.lg,
+      lineHeight: responsive.fontSize.lg * 1.5,
+    },
+    premiumBadge: {
+      paddingHorizontal: responsive.spacing[2],
+      paddingVertical: 4,
+      backgroundColor: theme.colors.warning.light,
+      borderRadius: theme.borderRadius.full,
+    },
+    premiumBadgeText: {
+      fontSize: responsive.fontSize.xs,
+      lineHeight: responsive.fontSize.xs * 1.5,
+      fontWeight: '700',
+      color: theme.colors.warning.dark,
+    },
+    premiumDescription: {
+      ...theme.typography.styles.body,
+      color: colors.secondaryText,
+      marginBottom: responsive.spacing[4],
+    },
+    filterBar: {
+      position: 'absolute',
+      bottom: 0,
+      left: 0,
+      right: 0,
+      backgroundColor: colors.cardBg,
+      borderTopWidth: 1,
+      borderTopColor: colors.borderColor,
+      paddingVertical: responsive.spacing[4],
+    },
+    filterScrollContent: {
+      paddingHorizontal: responsive.spacing[6],
+      gap: responsive.spacing[2],
+    },
+    filterChip: {
+      paddingHorizontal: responsive.spacing[4],
+      paddingVertical: responsive.spacing[2],
+      backgroundColor: colors.inputBg,
+      borderRadius: theme.borderRadius.full,
+    },
+    filterChipActive: {
+      backgroundColor: colors.primaryColor,
+    },
+    filterChipText: {
+      ...theme.typography.styles.bodySmall,
+      fontWeight: '700',
+      color: colors.secondaryText,
+    },
+    filterChipTextActive: {
+      color: '#FFFFFF',
+    },
+  });
+
   return (
-    <Screen noPadding backgroundColor={theme.colors.background.secondary}>
+    <Screen noPadding backgroundColor={colors.neutralBg}>
+      <StatusBar barStyle={themeMode === 'dark' ? 'light-content' : 'dark-content'} backgroundColor={colors.neutralBg} />
       {/* Header with Search */}
       <View style={styles.header}>
         <TouchableOpacity style={styles.backButton} onPress={() => router.back()}>
-          <Ionicons name="chevron-back" size={24} color={theme.colors.primary[600]} />
+          <Ionicons name="chevron-back" size={24} color={colors.primaryColor} />
         </TouchableOpacity>
         <View style={styles.searchBar}>
-          <Ionicons name="search" size={20} color={theme.colors.text.tertiary} />
+          <Ionicons name="search" size={20} color={colors.tertiaryText} />
           <TextInput
             style={styles.searchInput}
             value={searchQuery}
             onChangeText={setSearchQuery}
             placeholder="Search transactions..."
-            placeholderTextColor={theme.colors.text.tertiary}
+            placeholderTextColor={colors.tertiaryText}
           />
         </View>
       </View>
@@ -115,7 +352,7 @@ export default function TransactionSearchResults() {
       <ScrollView contentContainerStyle={styles.content}>
         {/* Results Summary */}
         <LinearGradient
-          colors={[theme.colors.primary[400], theme.colors.primary[600]]}
+          colors={[colors.primary400, colors.primaryColor]}
           style={styles.summaryCard}
         >
           <Text style={styles.summaryNumber}>{totalResults} results</Text>
@@ -242,221 +479,3 @@ export default function TransactionSearchResults() {
     </Screen>
   );
 }
-
-const styles = StyleSheet.create({
-  header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingHorizontal: responsive.spacing[4],
-    paddingTop: responsive.spacing[4],
-    paddingBottom: responsive.spacing[2],
-    backgroundColor: theme.colors.background.primary,
-    gap: responsive.spacing[2],
-  },
-  backButton: {
-    padding: responsive.spacing[2],
-  },
-  searchBar: {
-    flex: 1,
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: theme.colors.background.tertiary,
-    borderRadius: theme.borderRadius.xl,
-    paddingHorizontal: responsive.spacing[4],
-    paddingVertical: responsive.spacing[2],
-    gap: responsive.spacing[2],
-  },
-  searchInput: {
-    flex: 1,
-    ...theme.typography.styles.body,
-    color: theme.colors.text.primary,
-  },
-  clearButtonContainer: {
-    paddingHorizontal: responsive.spacing[6],
-    paddingBottom: responsive.spacing[2],
-    backgroundColor: theme.colors.background.primary,
-    borderBottomWidth: 1,
-    borderBottomColor: theme.colors.border.light,
-  },
-  clearButton: {
-    ...theme.typography.styles.bodySmall,
-    fontWeight: '700',
-    color: theme.colors.primary[600],
-  },
-  content: {
-    padding: responsive.spacing[6],
-    paddingBottom: 100, // Space for filter bar
-  },
-  summaryCard: {
-    borderRadius: theme.borderRadius.xl,
-    padding: responsive.spacing[4],
-    marginBottom: responsive.spacing[6],
-    ...theme.shadows.lg,
-  },
-  summaryNumber: {
-    fontSize: responsive.fontSize.h2,
-    lineHeight: responsive.fontSize.h2 * 1.5,
-    fontWeight: '700',
-    color: '#FFFFFF',
-    marginBottom: responsive.spacing[2],
-  },
-  summaryText: {
-    fontSize: responsive.fontSize.sm,
-    lineHeight: responsive.fontSize.sm * 1.5,
-    color: '#FFFFFF',
-    opacity: 0.9,
-  },
-  section: {
-    marginBottom: responsive.spacing[6],
-  },
-  sectionHeader: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: responsive.spacing[4],
-  },
-  sectionTitle: {
-    ...theme.typography.styles.h3,
-    fontSize: responsive.fontSize.lg,
-    lineHeight: responsive.fontSize.lg * 1.5,
-  },
-  countBadge: {
-    paddingHorizontal: responsive.spacing[2],
-    paddingVertical: 4,
-    backgroundColor: theme.colors.background.tertiary,
-    borderRadius: theme.borderRadius.full,
-  },
-  countBadgeText: {
-    ...theme.typography.styles.bodySmall,
-    fontWeight: '700',
-    color: theme.colors.text.secondary,
-  },
-  resultCard: {
-    backgroundColor: theme.colors.background.primary,
-    borderRadius: theme.borderRadius.xl,
-    padding: responsive.spacing[4],
-    marginBottom: responsive.spacing[2],
-    ...theme.shadows.sm,
-  },
-  resultContent: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'flex-start',
-  },
-  resultLeft: {
-    flex: 1,
-    marginRight: responsive.spacing[4],
-  },
-  resultName: {
-    ...theme.typography.styles.h3,
-    fontSize: responsive.fontSize.lg,
-    lineHeight: responsive.fontSize.lg * 1.5,
-    marginBottom: responsive.spacing[1],
-  },
-  resultMeta: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: responsive.spacing[2],
-  },
-  categoryBadge: {
-    paddingHorizontal: responsive.spacing[2],
-    paddingVertical: 4,
-    backgroundColor: theme.colors.background.tertiary,
-    borderRadius: theme.borderRadius.full,
-  },
-  categoryBadgeText: {
-    fontSize: responsive.fontSize.xs,
-    lineHeight: responsive.fontSize.xs * 1.5,
-    fontWeight: '600',
-    color: theme.colors.text.secondary,
-  },
-  metaDot: {
-    ...theme.typography.styles.bodySmall,
-    color: theme.colors.text.tertiary,
-  },
-  resultLocation: {
-    ...theme.typography.styles.bodySmall,
-    color: theme.colors.text.tertiary,
-  },
-  resultRight: {
-    alignItems: 'flex-end',
-  },
-  resultAmount: {
-    fontSize: responsive.fontSize.xl,
-    lineHeight: responsive.fontSize.xl * 1.5,
-    fontWeight: '700',
-    color: theme.colors.danger.main,
-    marginBottom: responsive.spacing[1],
-  },
-  resultDate: {
-    ...theme.typography.styles.bodySmall,
-    color: theme.colors.text.tertiary,
-  },
-  premiumCard: {
-    backgroundColor: theme.colors.background.primary,
-    borderRadius: theme.borderRadius.xl,
-    padding: responsive.spacing[6],
-    borderWidth: 2,
-    borderColor: '#FEF3C7',
-    ...theme.shadows.sm,
-  },
-  premiumHeader: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: responsive.spacing[2],
-  },
-  premiumTitle: {
-    ...theme.typography.styles.h3,
-    fontSize: responsive.fontSize.lg,
-    lineHeight: responsive.fontSize.lg * 1.5,
-  },
-  premiumBadge: {
-    paddingHorizontal: responsive.spacing[2],
-    paddingVertical: 4,
-    backgroundColor: theme.colors.warning.light,
-    borderRadius: theme.borderRadius.full,
-  },
-  premiumBadgeText: {
-    fontSize: responsive.fontSize.xs,
-    lineHeight: responsive.fontSize.xs * 1.5,
-    fontWeight: '700',
-    color: theme.colors.warning.dark,
-  },
-  premiumDescription: {
-    ...theme.typography.styles.body,
-    color: theme.colors.text.secondary,
-    marginBottom: responsive.spacing[4],
-  },
-  filterBar: {
-    position: 'absolute',
-    bottom: 0,
-    left: 0,
-    right: 0,
-    backgroundColor: theme.colors.background.primary,
-    borderTopWidth: 1,
-    borderTopColor: theme.colors.border.light,
-    paddingVertical: responsive.spacing[4],
-  },
-  filterScrollContent: {
-    paddingHorizontal: responsive.spacing[6],
-    gap: responsive.spacing[2],
-  },
-  filterChip: {
-    paddingHorizontal: responsive.spacing[4],
-    paddingVertical: responsive.spacing[2],
-    backgroundColor: theme.colors.background.tertiary,
-    borderRadius: theme.borderRadius.full,
-  },
-  filterChipActive: {
-    backgroundColor: theme.colors.primary[600],
-  },
-  filterChipText: {
-    ...theme.typography.styles.bodySmall,
-    fontWeight: '700',
-    color: theme.colors.text.secondary,
-  },
-  filterChipTextActive: {
-    color: '#FFFFFF',
-  },
-});

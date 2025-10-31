@@ -1,9 +1,9 @@
 import React from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, ScrollView } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, ScrollView, StatusBar } from 'react-native';
 import { useRouter } from 'expo-router';
 import { Screen } from '@/components/layout/Screen';
 import { Button } from '@/components/ui/Button';
-import { theme } from '@/constants/theme';
+import { getTheme, useTheme } from '@/constants/theme';
 import { responsive, ms } from '@/constants/responsive';
 import { Ionicons } from '@expo/vector-icons';
 
@@ -25,17 +25,180 @@ const budgetData = {
 
 export default function BudgetSummary() {
   const router = useRouter();
+  const { currentTheme, isDark } = useTheme();
+  const theme = getTheme(currentTheme);
   const savingsPercentage = Math.round((budgetData.savings / budgetData.income) * 100);
 
+  const colors = {
+    background: theme.colors.background.primary,
+    backgroundSecondary: theme.colors.background.secondary,
+    backgroundTertiary: theme.colors.background.tertiary,
+    text: theme.colors.text.primary,
+    textSecondary: theme.colors.text.secondary,
+    textTertiary: theme.colors.text.tertiary,
+    primary: theme.colors.primary[600],
+    primaryBg: theme.colors.primary[50],
+    primaryBorder: theme.colors.primary[700],
+    border: theme.colors.border.light,
+    success: theme.colors.success.main,
+  };
+
+  const styles = StyleSheet.create({
+    header: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'space-between',
+      paddingHorizontal: responsive.spacing[4],
+      paddingVertical: responsive.spacing[2],
+      backgroundColor: colors.background,
+      borderBottomWidth: 1,
+      borderBottomColor: colors.border,
+    },
+    backButton: {
+      padding: responsive.spacing[2],
+    },
+    headerTitle: {
+      ...theme.typography.styles.h3,
+      fontSize: responsive.fontSize.lg,
+      lineHeight: responsive.fontSize.lg * 1.5,
+      color: colors.text,
+    },
+    placeholder: {
+      width: 40,
+    },
+    content: {
+      padding: responsive.spacing[6],
+      paddingBottom: responsive.spacing[8],
+    },
+    card: {
+      backgroundColor: colors.background,
+      borderRadius: theme.borderRadius.xl,
+      padding: responsive.spacing[4],
+      marginBottom: responsive.spacing[4],
+      ...theme.shadows.sm,
+    },
+    cardLabel: {
+      ...theme.typography.styles.label,
+      fontSize: responsive.fontSize.xs,
+      lineHeight: responsive.fontSize.xs * 1.5,
+      color: colors.textTertiary,
+      fontWeight: '600',
+      marginBottom: responsive.spacing[2],
+    },
+    periodText: {
+      ...theme.typography.styles.h4,
+      color: colors.text,
+      marginBottom: responsive.spacing[2],
+    },
+    badge: {
+      backgroundColor: theme.colors.primary[100],
+      borderRadius: theme.borderRadius.lg,
+      paddingHorizontal: responsive.spacing[2],
+      paddingVertical: 4,
+      alignSelf: 'flex-start',
+    },
+    badgeText: {
+      ...theme.typography.styles.caption,
+      color: colors.primaryBorder,
+      fontSize: responsive.fontSize.xs,
+      lineHeight: responsive.fontSize.xs * 1.5,
+      fontWeight: '500',
+    },
+    summaryRow: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      paddingVertical: responsive.spacing[2],
+      borderBottomWidth: 1,
+      borderBottomColor: colors.border,
+    },
+    lastRow: {
+      borderBottomWidth: 0,
+    },
+    summaryLabel: {
+      ...theme.typography.styles.body,
+      color: colors.textSecondary,
+    },
+    summaryValue: {
+      ...theme.typography.styles.body,
+      color: colors.text,
+      fontWeight: '600',
+    },
+    savingsLabel: {
+      ...theme.typography.styles.body,
+      color: colors.success,
+      fontWeight: '500',
+    },
+    savingsValue: {
+      ...theme.typography.styles.body,
+      color: colors.success,
+      fontWeight: '600',
+    },
+    categoriesContainer: {
+      gap: responsive.spacing[2],
+    },
+    categoryRow: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'space-between',
+    },
+    categoryLeft: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      flex: 1,
+    },
+    categoryIcon: {
+      fontSize: responsive.fontSize.xl,
+      lineHeight: responsive.fontSize.xl * 1.5,
+      marginRight: responsive.spacing[2],
+    },
+    categoryName: {
+      ...theme.typography.styles.body,
+      color: colors.text,
+      fontWeight: '500',
+    },
+    categoryAmount: {
+      ...theme.typography.styles.body,
+      color: colors.text,
+      fontWeight: '600',
+    },
+    savingsCard: {
+      backgroundColor: colors.primaryBg,
+      borderRadius: theme.borderRadius.xl,
+      padding: responsive.spacing[6],
+      marginBottom: responsive.spacing[6],
+      alignItems: 'center',
+    },
+    savingsIcon: {
+      fontSize: responsive.fontSize.display,
+      lineHeight: responsive.fontSize.display * 1.5,
+      marginBottom: responsive.spacing[2],
+    },
+    savingsTitle: {
+      ...theme.typography.styles.h3,
+      color: colors.text,
+      textAlign: 'center',
+      marginBottom: responsive.spacing[1],
+    },
+    savingsSubtitle: {
+      ...theme.typography.styles.body,
+      color: colors.textSecondary,
+      textAlign: 'center',
+    },
+    editButton: {
+      marginBottom: responsive.spacing[2],
+    },
+  });
+
   return (
-    <Screen noPadding backgroundColor={theme.colors.background.secondary}>
+    <Screen noPadding backgroundColor={colors.backgroundSecondary}>
+      <StatusBar barStyle={isDark ? 'light-content' : 'dark-content'} />
       {/* Header */}
       <View style={styles.header}>
         <TouchableOpacity
           style={styles.backButton}
           onPress={() => router.back()}
         >
-          <Ionicons name="chevron-back" size={24} color={theme.colors.primary[600]} />
+          <Ionicons name="chevron-back" size={24} color={colors.primary} />
         </TouchableOpacity>
         <Text style={styles.headerTitle}>Review Budget</Text>
         <View style={styles.placeholder} />
@@ -122,143 +285,3 @@ export default function BudgetSummary() {
     </Screen>
   );
 }
-
-const styles = StyleSheet.create({
-  header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    paddingHorizontal: responsive.spacing[4],
-    paddingVertical: responsive.spacing[2],
-    backgroundColor: theme.colors.background.primary,
-    borderBottomWidth: 1,
-    borderBottomColor: theme.colors.border.light,
-  },
-  backButton: {
-    padding: responsive.spacing[2],
-  },
-  headerTitle: {
-    ...theme.typography.styles.h3,
-    fontSize: responsive.fontSize.lg,
-    lineHeight: responsive.fontSize.lg * 1.5,
-  },
-  placeholder: {
-    width: 40,
-  },
-  content: {
-    padding: responsive.spacing[6],
-    paddingBottom: responsive.spacing[8],
-  },
-  card: {
-    backgroundColor: theme.colors.background.primary,
-    borderRadius: theme.borderRadius.xl,
-    padding: responsive.spacing[4],
-    marginBottom: responsive.spacing[4],
-    ...theme.shadows.sm,
-  },
-  cardLabel: {
-    ...theme.typography.styles.label,
-    fontSize: responsive.fontSize.xs,
-    lineHeight: responsive.fontSize.xs * 1.5,
-    color: theme.colors.text.tertiary,
-    fontWeight: '600',
-    marginBottom: responsive.spacing[2],
-  },
-  periodText: {
-    ...theme.typography.styles.h4,
-    marginBottom: responsive.spacing[2],
-  },
-  badge: {
-    backgroundColor: theme.colors.primary[100],
-    borderRadius: theme.borderRadius.lg,
-    paddingHorizontal: responsive.spacing[2],
-    paddingVertical: 4,
-    alignSelf: 'flex-start',
-  },
-  badgeText: {
-    ...theme.typography.styles.caption,
-    color: theme.colors.primary[700],
-    fontSize: responsive.fontSize.xs,
-    lineHeight: responsive.fontSize.xs * 1.5,
-    fontWeight: '500',
-  },
-  summaryRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    paddingVertical: responsive.spacing[2],
-    borderBottomWidth: 1,
-    borderBottomColor: theme.colors.border.light,
-  },
-  lastRow: {
-    borderBottomWidth: 0,
-  },
-  summaryLabel: {
-    ...theme.typography.styles.body,
-    color: theme.colors.text.secondary,
-  },
-  summaryValue: {
-    ...theme.typography.styles.body,
-    fontWeight: '600',
-  },
-  savingsLabel: {
-    ...theme.typography.styles.body,
-    color: theme.colors.success.main,
-    fontWeight: '500',
-  },
-  savingsValue: {
-    ...theme.typography.styles.body,
-    color: theme.colors.success.main,
-    fontWeight: '600',
-  },
-  categoriesContainer: {
-    gap: responsive.spacing[2],
-  },
-  categoryRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-  },
-  categoryLeft: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    flex: 1,
-  },
-  categoryIcon: {
-    fontSize: responsive.fontSize.xl,
-    lineHeight: responsive.fontSize.xl * 1.5,
-    marginRight: responsive.spacing[2],
-  },
-  categoryName: {
-    ...theme.typography.styles.body,
-    fontWeight: '500',
-  },
-  categoryAmount: {
-    ...theme.typography.styles.body,
-    fontWeight: '600',
-  },
-  savingsCard: {
-    backgroundColor: theme.colors.primary[50],
-    borderRadius: theme.borderRadius.xl,
-    padding: responsive.spacing[6],
-    marginBottom: responsive.spacing[6],
-    alignItems: 'center',
-  },
-  savingsIcon: {
-    fontSize: responsive.fontSize.display,
-    lineHeight: responsive.fontSize.display * 1.5,
-    marginBottom: responsive.spacing[2],
-  },
-  savingsTitle: {
-    ...theme.typography.styles.h3,
-    textAlign: 'center',
-    marginBottom: responsive.spacing[1],
-  },
-  savingsSubtitle: {
-    ...theme.typography.styles.body,
-    color: theme.colors.text.secondary,
-    textAlign: 'center',
-  },
-  editButton: {
-    marginBottom: responsive.spacing[2],
-  },
-});

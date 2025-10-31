@@ -2,7 +2,8 @@ import React, { useState } from 'react';
 import { View, Text, StyleSheet, ScrollView, Switch, TouchableOpacity } from 'react-native';
 import { Screen } from '@/components/layout/Screen';
 import { ScreenHeader } from '@/components/layout/ScreenHeader';
-import { theme } from '@/constants/theme';
+import { getTheme } from '@/constants/theme';
+import { useTheme } from '@/contexts/ThemeContext';
 import { responsive, ms } from '@/constants/responsive';
 import { Ionicons } from '@expo/vector-icons';
 import { settingsTypography, settingsFontWeights, settingsTextStyles } from './typography';
@@ -19,6 +20,9 @@ interface NotificationItem {
 }
 
 export default function NotificationsSettings() {
+  const { theme: themeMode } = useTheme();
+  const theme = getTheme(themeMode);
+
   const [masterToggle, setMasterToggle] = useState(true);
   const [alertTiming, setAlertTiming] = useState<AlertTiming>('immediate');
 
@@ -125,6 +129,308 @@ export default function NotificationsSettings() {
       </View>
     </View>
   );
+
+  const styles = StyleSheet.create({
+    content: {
+      padding: responsive.spacing[4],
+      paddingBottom: responsive.spacing[8],
+    },
+    masterToggleCard: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'space-between',
+      backgroundColor: theme.colors.background.primary,
+      borderRadius: theme.borderRadius.xl,
+      padding: responsive.spacing[4],
+      marginBottom: responsive.spacing[6],
+      ...theme.shadows.sm,
+    },
+    masterToggleLeft: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: responsive.spacing[3],
+      flex: 1,
+    },
+    masterIcon: {
+      width: ms(48),
+      height: ms(48),
+      borderRadius: ms(24),
+      backgroundColor: theme.colors.background.tertiary,
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
+    masterToggleTitle: {
+      ...theme.typography.styles.body,
+      fontSize: settingsTypography.primary,
+      lineHeight: settingsTypography.primary * 1.5,
+      fontWeight: settingsFontWeights.semibold,
+      marginBottom: 4,
+    },
+    masterToggleSubtitle: {
+      ...theme.typography.styles.bodySmall,
+      fontSize: settingsTypography.secondary,
+      lineHeight: settingsTypography.secondary * 1.5,
+      color: theme.colors.text.secondary,
+    },
+    section: {
+      marginBottom: responsive.spacing[6],
+    },
+    sectionTitle: {
+      ...theme.typography.styles.label,
+      fontSize: responsive.fontSize.xs,
+      lineHeight: responsive.fontSize.xs * 1.5,
+      color: theme.colors.text.tertiary,
+      fontWeight: settingsFontWeights.bold,
+      letterSpacing: 1.2,
+      marginBottom: responsive.spacing[3],
+    },
+    cardContainer: {
+      backgroundColor: theme.colors.background.primary,
+      borderRadius: theme.borderRadius.xl,
+      padding: responsive.spacing[4],
+      ...theme.shadows.sm,
+    },
+    notificationCard: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'space-between',
+      paddingVertical: responsive.spacing[3],
+      gap: responsive.spacing[3],
+    },
+    cardDivider: {
+      height: 1,
+      backgroundColor: theme.colors.border.light,
+      marginVertical: responsive.spacing[3],
+    },
+    cardContent: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: responsive.spacing[3],
+      flex: 1,
+    },
+    notificationIconContainer: {
+      width: ms(48),
+      height: ms(48),
+      borderRadius: ms(24),
+      backgroundColor: theme.colors.background.tertiary,
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
+    cardTextContainer: {
+      flex: 1,
+      gap: responsive.spacing[0.5],
+    },
+    cardTitleRow: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: responsive.spacing[1.5],
+    },
+    cardTitle: {
+      ...theme.typography.styles.body,
+      fontSize: settingsTypography.primary,
+      lineHeight: settingsTypography.primary * 1.5,
+      fontWeight: settingsFontWeights.semibold,
+    },
+    cardSubtitle: {
+      ...theme.typography.styles.bodySmall,
+      fontSize: settingsTypography.secondary,
+      lineHeight: settingsTypography.secondary * 1.5,
+      color: theme.colors.text.secondary,
+    },
+    premiumBadgeSmall: {
+      backgroundColor: theme.colors.warning.light,
+      borderRadius: theme.borderRadius.sm,
+      paddingHorizontal: 4,
+      paddingVertical: 1,
+    },
+    premiumBadgeTextSmall: {
+      ...theme.typography.styles.caption,
+      color: theme.colors.warning.dark,
+      fontSize: settingsTypography.badge,
+      lineHeight: 12,
+      fontWeight: settingsFontWeights.semibold,
+    },
+    premiumBadge: {
+      backgroundColor: theme.colors.warning.light,
+      borderRadius: theme.borderRadius.full,
+      paddingHorizontal: responsive.spacing[2],
+      paddingVertical: 2,
+    },
+    premiumBadgeText: {
+      ...theme.typography.styles.caption,
+      color: theme.colors.warning.dark,
+      fontSize: settingsTypography.badge,
+      lineHeight: 14,
+      fontWeight: settingsFontWeights.semibold,
+    },
+    timingContainer: {
+      gap: responsive.spacing[2],
+    },
+    timingOption: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      backgroundColor: theme.colors.background.primary,
+      borderRadius: theme.borderRadius.xl,
+      padding: responsive.spacing[4],
+      borderWidth: 2,
+      borderColor: theme.colors.border.light,
+      ...theme.shadows.sm,
+    },
+    timingOptionSelected: {
+      backgroundColor: theme.colors.primary[50],
+      borderColor: theme.colors.primary[500],
+    },
+    radioCircle: {
+      width: 20,
+      height: 20,
+      borderRadius: 10,
+      borderWidth: 2,
+      borderColor: theme.colors.border.main,
+      alignItems: 'center',
+      justifyContent: 'center',
+      marginRight: responsive.spacing[2],
+    },
+    radioCircleInner: {
+      width: 10,
+      height: 10,
+      borderRadius: 5,
+      backgroundColor: theme.colors.primary[600],
+    },
+    timingTextContainer: {
+      flex: 1,
+    },
+    timingTitle: {
+      ...theme.typography.styles.body,
+      fontSize: settingsTypography.primary,
+      lineHeight: settingsTypography.primary * 1.5,
+      fontWeight: settingsFontWeights.semibold,
+      marginBottom: 4,
+    },
+    timingSubtitle: {
+      ...theme.typography.styles.bodySmall,
+      fontSize: settingsTypography.secondary,
+      lineHeight: settingsTypography.secondary * 1.5,
+      color: theme.colors.text.secondary,
+    },
+    deliveryCard: {
+      backgroundColor: theme.colors.background.primary,
+      borderRadius: theme.borderRadius.xl,
+      padding: responsive.spacing[4],
+      ...theme.shadows.sm,
+    },
+    deliveryRow: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'space-between',
+      paddingVertical: responsive.spacing[2],
+    },
+    deliveryLeft: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      flex: 1,
+      marginRight: responsive.spacing[2],
+      gap: responsive.spacing[3],
+    },
+    deliveryIconContainer: {
+      width: ms(48),
+      height: ms(48),
+      borderRadius: ms(24),
+      backgroundColor: theme.colors.background.tertiary,
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
+    deliveryTextContainer: {
+      flex: 1,
+    },
+    deliveryTitleRow: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: responsive.spacing[2],
+    },
+    deliveryTitle: {
+      ...theme.typography.styles.body,
+      fontSize: settingsTypography.primary,
+      lineHeight: settingsTypography.primary * 1.5,
+      fontWeight: settingsFontWeights.semibold,
+      marginBottom: 4,
+    },
+    deliverySubtitle: {
+      ...theme.typography.styles.bodySmall,
+      fontSize: settingsTypography.secondary,
+      lineHeight: settingsTypography.secondary * 1.5,
+      color: theme.colors.text.secondary,
+    },
+    divider: {
+      height: 1,
+      backgroundColor: theme.colors.border.light,
+      marginVertical: responsive.spacing[2],
+    },
+    switchContainer: {
+      transform: [{ scaleX: 1.1 }, { scaleY: 1.1 }],
+    },
+    exampleCard: {
+      backgroundColor: theme.colors.background.primary,
+      borderRadius: theme.borderRadius.xl,
+      padding: responsive.spacing[4],
+      borderWidth: 1,
+      borderColor: theme.colors.warning.light,
+      ...theme.shadows.sm,
+    },
+    exampleHeader: {
+      flexDirection: 'row',
+      alignItems: 'flex-start',
+    },
+    exampleIconContainer: {
+      width: ms(48),
+      height: ms(48),
+      backgroundColor: theme.colors.background.tertiary,
+      borderRadius: ms(24),
+      alignItems: 'center',
+      justifyContent: 'center',
+      marginRight: responsive.spacing[2],
+    },
+    exampleContent: {
+      flex: 1,
+    },
+    exampleTitle: {
+      ...theme.typography.styles.body,
+      fontSize: settingsTypography.primary,
+      lineHeight: settingsTypography.primary * 1.5,
+      fontWeight: settingsFontWeights.semibold,
+      marginBottom: responsive.spacing[1],
+    },
+    exampleMessage: {
+      ...theme.typography.styles.bodySmall,
+      fontSize: settingsTypography.secondary,
+      lineHeight: settingsTypography.secondary * 1.5,
+      color: theme.colors.text.secondary,
+      marginBottom: responsive.spacing[2],
+    },
+    exampleTime: {
+      ...theme.typography.styles.caption,
+      fontSize: settingsTypography.tertiary,
+      lineHeight: settingsTypography.tertiary * 1.5,
+      color: theme.colors.text.tertiary,
+    },
+    infoBox: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      backgroundColor: theme.colors.info.light,
+      borderWidth: 1,
+      borderColor: theme.colors.info.main,
+      borderRadius: theme.borderRadius.xl,
+      padding: responsive.spacing[4],
+      marginTop: responsive.spacing[4],
+    },
+    infoText: {
+      ...theme.typography.styles.bodySmall,
+      fontSize: settingsTypography.secondary,
+      lineHeight: settingsTypography.secondary * 1.5,
+      color: theme.colors.info.dark,
+      marginLeft: responsive.spacing[2],
+      flex: 1,
+    },
+  });
 
   return (
     <Screen noPadding backgroundColor={theme.colors.background.secondary} edges={['top', 'bottom']}>
@@ -357,312 +663,3 @@ export default function NotificationsSettings() {
     </Screen>
   );
 }
-
-const styles = StyleSheet.create({
-  content: {
-    padding: responsive.spacing[4],
-    paddingBottom: responsive.spacing[8],
-  },
-  // Master Toggle Card
-  masterToggleCard: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    backgroundColor: theme.colors.background.primary,
-    borderRadius: theme.borderRadius.xl,
-    padding: responsive.spacing[4],
-    marginBottom: responsive.spacing[6],
-    ...theme.shadows.sm,
-  },
-  masterToggleLeft: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: responsive.spacing[3],
-    flex: 1,
-  },
-  masterIcon: {
-    width: ms(48),
-    height: ms(48),
-    borderRadius: ms(24),
-    backgroundColor: theme.colors.background.tertiary,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  masterToggleTitle: {
-    ...theme.typography.styles.body,
-    fontSize: settingsTypography.primary,
-    lineHeight: settingsTypography.primary * 1.5,
-    fontWeight: settingsFontWeights.semibold,
-    marginBottom: 4,
-  },
-  masterToggleSubtitle: {
-    ...theme.typography.styles.bodySmall,
-    fontSize: settingsTypography.secondary,
-    lineHeight: settingsTypography.secondary * 1.5,
-    color: theme.colors.text.secondary,
-  },
-  // Section
-  section: {
-    marginBottom: responsive.spacing[6],
-  },
-  sectionTitle: {
-    ...theme.typography.styles.label,
-    fontSize: responsive.fontSize.xs,
-    lineHeight: responsive.fontSize.xs * 1.5,
-    color: theme.colors.text.tertiary,
-    fontWeight: settingsFontWeights.bold,
-    letterSpacing: 1.2,
-    marginBottom: responsive.spacing[3],
-  },
-  cardContainer: {
-    backgroundColor: theme.colors.background.primary,
-    borderRadius: theme.borderRadius.xl,
-    padding: responsive.spacing[4],
-    ...theme.shadows.sm,
-  },
-  // Notification Card
-  notificationCard: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    paddingVertical: responsive.spacing[3],
-    gap: responsive.spacing[3],
-  },
-  cardDivider: {
-    height: 1,
-    backgroundColor: theme.colors.border.light,
-    marginVertical: responsive.spacing[3],
-  },
-  cardContent: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: responsive.spacing[3],
-    flex: 1,
-  },
-  notificationIconContainer: {
-    width: ms(48),
-    height: ms(48),
-    borderRadius: ms(24),
-    backgroundColor: theme.colors.background.tertiary,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  cardTextContainer: {
-    flex: 1,
-    gap: responsive.spacing[0.5],
-  },
-  cardTitleRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: responsive.spacing[1.5],
-  },
-  cardTitle: {
-    ...theme.typography.styles.body,
-    fontSize: settingsTypography.primary,
-    lineHeight: settingsTypography.primary * 1.5,
-    fontWeight: settingsFontWeights.semibold,
-  },
-  cardSubtitle: {
-    ...theme.typography.styles.bodySmall,
-    fontSize: settingsTypography.secondary,
-    lineHeight: settingsTypography.secondary * 1.5,
-    color: theme.colors.text.secondary,
-  },
-  premiumBadgeSmall: {
-    backgroundColor: theme.colors.warning.light,
-    borderRadius: theme.borderRadius.sm,
-    paddingHorizontal: 4,
-    paddingVertical: 1,
-  },
-  premiumBadgeTextSmall: {
-    ...theme.typography.styles.caption,
-    color: theme.colors.warning.dark,
-    fontSize: settingsTypography.badge,
-    lineHeight: 12,
-    fontWeight: settingsFontWeights.semibold,
-  },
-  premiumBadge: {
-    backgroundColor: theme.colors.warning.light,
-    borderRadius: theme.borderRadius.full,
-    paddingHorizontal: responsive.spacing[2],
-    paddingVertical: 2,
-  },
-  premiumBadgeText: {
-    ...theme.typography.styles.caption,
-    color: theme.colors.warning.dark,
-    fontSize: settingsTypography.badge,
-    lineHeight: 14,
-    fontWeight: settingsFontWeights.semibold,
-  },
-  // Timing Section
-  timingContainer: {
-    gap: responsive.spacing[2],
-  },
-  timingOption: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: theme.colors.background.primary,
-    borderRadius: theme.borderRadius.xl,
-    padding: responsive.spacing[4],
-    borderWidth: 2,
-    borderColor: theme.colors.border.light,
-    ...theme.shadows.sm,
-  },
-  timingOptionSelected: {
-    backgroundColor: theme.colors.primary[50],
-    borderColor: theme.colors.primary[500],
-  },
-  radioCircle: {
-    width: 20,
-    height: 20,
-    borderRadius: 10,
-    borderWidth: 2,
-    borderColor: theme.colors.border.main,
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginRight: responsive.spacing[2],
-  },
-  radioCircleInner: {
-    width: 10,
-    height: 10,
-    borderRadius: 5,
-    backgroundColor: theme.colors.primary[600],
-  },
-  timingTextContainer: {
-    flex: 1,
-  },
-  timingTitle: {
-    ...theme.typography.styles.body,
-    fontSize: settingsTypography.primary,
-    lineHeight: settingsTypography.primary * 1.5,
-    fontWeight: settingsFontWeights.semibold,
-    marginBottom: 4,
-  },
-  timingSubtitle: {
-    ...theme.typography.styles.bodySmall,
-    fontSize: settingsTypography.secondary,
-    lineHeight: settingsTypography.secondary * 1.5,
-    color: theme.colors.text.secondary,
-  },
-  // Delivery Method
-  deliveryCard: {
-    backgroundColor: theme.colors.background.primary,
-    borderRadius: theme.borderRadius.xl,
-    padding: responsive.spacing[4],
-    ...theme.shadows.sm,
-  },
-  deliveryRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    paddingVertical: responsive.spacing[2],
-  },
-  deliveryLeft: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    flex: 1,
-    marginRight: responsive.spacing[2],
-    gap: responsive.spacing[3],
-  },
-  deliveryIconContainer: {
-    width: ms(48),
-    height: ms(48),
-    borderRadius: ms(24),
-    backgroundColor: theme.colors.background.tertiary,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  deliveryTextContainer: {
-    flex: 1,
-  },
-  deliveryTitleRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: responsive.spacing[2],
-  },
-  deliveryTitle: {
-    ...theme.typography.styles.body,
-    fontSize: settingsTypography.primary,
-    lineHeight: settingsTypography.primary * 1.5,
-    fontWeight: settingsFontWeights.semibold,
-    marginBottom: 4,
-  },
-  deliverySubtitle: {
-    ...theme.typography.styles.bodySmall,
-    fontSize: settingsTypography.secondary,
-    lineHeight: settingsTypography.secondary * 1.5,
-    color: theme.colors.text.secondary,
-  },
-  divider: {
-    height: 1,
-    backgroundColor: theme.colors.border.light,
-    marginVertical: responsive.spacing[2],
-  },
-  switchContainer: {
-    transform: [{ scaleX: 1.1 }, { scaleY: 1.1 }],
-  },
-  // Example Card
-  exampleCard: {
-    backgroundColor: theme.colors.background.primary,
-    borderRadius: theme.borderRadius.xl,
-    padding: responsive.spacing[4],
-    borderWidth: 1,
-    borderColor: theme.colors.warning.light,
-    ...theme.shadows.sm,
-  },
-  exampleHeader: {
-    flexDirection: 'row',
-    alignItems: 'flex-start',
-  },
-  exampleIconContainer: {
-    width: ms(48),
-    height: ms(48),
-    backgroundColor: theme.colors.background.tertiary,
-    borderRadius: ms(24),
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginRight: responsive.spacing[2],
-  },
-  exampleContent: {
-    flex: 1,
-  },
-  exampleTitle: {
-    ...theme.typography.styles.body,
-    fontSize: settingsTypography.primary,
-    lineHeight: settingsTypography.primary * 1.5,
-    fontWeight: settingsFontWeights.semibold,
-    marginBottom: responsive.spacing[1],
-  },
-  exampleMessage: {
-    ...theme.typography.styles.bodySmall,
-    fontSize: settingsTypography.secondary,
-    lineHeight: settingsTypography.secondary * 1.5,
-    color: theme.colors.text.secondary,
-    marginBottom: responsive.spacing[2],
-  },
-  exampleTime: {
-    ...theme.typography.styles.caption,
-    fontSize: settingsTypography.tertiary,
-    lineHeight: settingsTypography.tertiary * 1.5,
-    color: theme.colors.text.tertiary,
-  },
-  // Info Box
-  infoBox: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: theme.colors.info.light,
-    borderWidth: 1,
-    borderColor: theme.colors.info.main,
-    borderRadius: theme.borderRadius.xl,
-    padding: responsive.spacing[4],
-    marginTop: responsive.spacing[4],
-  },
-  infoText: {
-    ...theme.typography.styles.bodySmall,
-    fontSize: settingsTypography.secondary,
-    lineHeight: settingsTypography.secondary * 1.5,
-    color: theme.colors.info.dark,
-    marginLeft: responsive.spacing[2],
-    flex: 1,
-  },
-});

@@ -1,8 +1,9 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { View, Text, StyleSheet, Animated } from 'react-native';
+import { View, Text, StyleSheet, Animated, StatusBar } from 'react-native';
 import { useRouter } from 'expo-router';
 import { Screen } from '@/components/layout/Screen';
-import { theme } from '@/constants/theme';
+import { getTheme } from '@/constants/theme';
+import { useTheme } from '@/contexts/ThemeContext';
 import { responsive, ms } from '@/constants/responsive';
 import { Ionicons } from '@expo/vector-icons';
 
@@ -11,6 +12,106 @@ export default function SyncingInProgress() {
   const [progress, setProgress] = useState(0);
   const spinAnim = useRef(new Animated.Value(0)).current;
   const pulseAnim = useRef(new Animated.Value(1)).current;
+  const { theme: themeMode } = useTheme();
+  const theme = getTheme(themeMode);
+
+  const colors = {
+    background: theme.colors.background.primary,
+    backgroundTertiary: theme.colors.background.tertiary,
+    textPrimary: theme.colors.text.primary,
+    textSecondary: theme.colors.text.secondary,
+    textTertiary: theme.colors.text.tertiary,
+    primary: theme.colors.primary[500],
+    primaryDark: theme.colors.primary[600],
+    primaryLight: theme.colors.primary[200],
+  };
+
+  const styles = StyleSheet.create({
+    container: {
+      flex: 1,
+      justifyContent: 'center',
+      alignItems: 'center',
+      paddingHorizontal: responsive.spacing[6],
+    },
+    iconContainer: {
+      position: 'relative',
+      marginBottom: responsive.spacing[8],
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
+    pulseCircle: {
+      position: 'absolute',
+      width: 128,
+      height: 128,
+      borderRadius: 64,
+      borderWidth: 4,
+      borderColor: colors.primaryLight,
+    },
+    iconCircle: {
+      width: 128,
+      height: 128,
+      borderRadius: 64,
+      backgroundColor: colors.primary,
+      alignItems: 'center',
+      justifyContent: 'center',
+      ...theme.shadows.lg,
+    },
+    title: {
+      ...theme.typography.styles.h1,
+      fontSize: responsive.fontSize.md,
+      lineHeight: responsive.fontSize.md * 1.5,
+      textAlign: 'center',
+      marginBottom: responsive.spacing[8],
+      color: colors.textPrimary,
+    },
+    progressContainer: {
+      width: '100%',
+      maxWidth: 300,
+      marginBottom: responsive.spacing[6],
+    },
+    progressBar: {
+      width: '100%',
+      height: 12,
+      backgroundColor: colors.backgroundTertiary,
+      borderRadius: theme.borderRadius.full,
+      overflow: 'hidden',
+    },
+    progressFill: {
+      height: '100%',
+      backgroundColor: colors.primaryDark,
+      borderRadius: theme.borderRadius.full,
+    },
+    progressText: {
+      ...theme.typography.styles.bodySmall,
+      color: colors.textSecondary,
+      textAlign: 'center',
+      marginTop: responsive.spacing[2],
+    },
+    statusContainer: {
+      alignItems: 'center',
+    },
+    statusText: {
+      ...theme.typography.styles.body,
+      color: colors.textSecondary,
+      textAlign: 'center',
+      marginBottom: responsive.spacing[2],
+    },
+    statusSubtext: {
+      ...theme.typography.styles.bodySmall,
+      color: colors.textTertiary,
+      textAlign: 'center',
+    },
+    footer: {
+      paddingHorizontal: responsive.spacing[6],
+      paddingBottom: responsive.spacing[8],
+      alignItems: 'center',
+    },
+    footerText: {
+      ...theme.typography.styles.caption,
+      color: colors.textTertiary,
+      textAlign: 'center',
+    },
+  });
 
   // Spinning animation
   useEffect(() => {
@@ -66,7 +167,8 @@ export default function SyncingInProgress() {
   });
 
   return (
-    <Screen backgroundColor={theme.colors.background.primary}>
+    <Screen backgroundColor={colors.background}>
+      <StatusBar barStyle={themeMode === 'dark' ? 'light-content' : 'dark-content'} backgroundColor={colors.background} />
       <View style={styles.container}>
         {/* Animated Icon */}
         <View style={styles.iconContainer}>
@@ -121,90 +223,3 @@ export default function SyncingInProgress() {
     </Screen>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    paddingHorizontal: responsive.spacing[6],
-  },
-  iconContainer: {
-    position: 'relative',
-    marginBottom: responsive.spacing[8],
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  pulseCircle: {
-    position: 'absolute',
-    width: 128,
-    height: 128,
-    borderRadius: 64,
-    borderWidth: 4,
-    borderColor: theme.colors.primary[200],
-  },
-  iconCircle: {
-    width: 128,
-    height: 128,
-    borderRadius: 64,
-    backgroundColor: theme.colors.primary[500],
-    alignItems: 'center',
-    justifyContent: 'center',
-    ...theme.shadows.lg,
-  },
-  title: {
-    ...theme.typography.styles.h1,
-    fontSize: responsive.fontSize.md,
-    lineHeight: responsive.fontSize.md * 1.5,
-    textAlign: 'center',
-    marginBottom: responsive.spacing[8],
-    color: theme.colors.text.primary,
-  },
-  progressContainer: {
-    width: '100%',
-    maxWidth: 300,
-    marginBottom: responsive.spacing[6],
-  },
-  progressBar: {
-    width: '100%',
-    height: 12,
-    backgroundColor: theme.colors.background.tertiary,
-    borderRadius: theme.borderRadius.full,
-    overflow: 'hidden',
-  },
-  progressFill: {
-    height: '100%',
-    backgroundColor: theme.colors.primary[600],
-    borderRadius: theme.borderRadius.full,
-  },
-  progressText: {
-    ...theme.typography.styles.bodySmall,
-    color: theme.colors.text.secondary,
-    textAlign: 'center',
-    marginTop: responsive.spacing[2],
-  },
-  statusContainer: {
-    alignItems: 'center',
-  },
-  statusText: {
-    ...theme.typography.styles.body,
-    color: theme.colors.text.secondary,
-    textAlign: 'center',
-    marginBottom: responsive.spacing[2],
-  },
-  statusSubtext: {
-    ...theme.typography.styles.bodySmall,
-    color: theme.colors.text.tertiary,
-    textAlign: 'center',
-  },
-  footer: {
-    paddingHorizontal: responsive.spacing[6],
-    paddingBottom: responsive.spacing[8],
-    alignItems: 'center',
-  },
-  footerText: {
-    ...theme.typography.styles.caption,
-    color: theme.colors.text.tertiary,
-    textAlign: 'center',
-  },
-});

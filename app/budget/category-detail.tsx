@@ -1,9 +1,9 @@
 import React from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, ScrollView } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, ScrollView, StatusBar } from 'react-native';
 import { useRouter } from 'expo-router';
 import { Screen } from '@/components/layout/Screen';
 import { Button } from '@/components/ui/Button';
-import { theme } from '@/constants/theme';
+import { getTheme, useTheme } from '@/constants/theme';
 import { responsive, ms } from '@/constants/responsive';
 import { Ionicons } from '@expo/vector-icons';
 
@@ -33,23 +33,290 @@ const months = ['Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov'];
 
 export default function CategoryDetail() {
   const router = useRouter();
+  const { currentTheme, isDark } = useTheme();
+  const theme = getTheme(currentTheme);
+
+  const colors = {
+    background: theme.colors.background.primary,
+    backgroundSecondary: theme.colors.background.secondary,
+    backgroundTertiary: theme.colors.background.tertiary,
+    text: theme.colors.text.primary,
+    textSecondary: theme.colors.text.secondary,
+    textTertiary: theme.colors.text.tertiary,
+    primary: theme.colors.primary[600],
+    primaryColor: theme.colors.primary[500],
+    border: theme.colors.border.light,
+    success: theme.colors.success.main,
+    danger: theme.colors.danger.main,
+    warning: theme.colors.warning.main,
+    warningLight: theme.colors.warning.light,
+    warningDark: theme.colors.warning.dark,
+  };
+
+  const styles = StyleSheet.create({
+    header: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'space-between',
+      paddingHorizontal: responsive.spacing[4],
+      paddingVertical: responsive.spacing[2],
+      backgroundColor: colors.background,
+      borderBottomWidth: 1,
+      borderBottomColor: colors.border,
+    },
+    headerButton: {
+      padding: responsive.spacing[2],
+    },
+    headerCenter: {
+      flex: 1,
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
+    headerIcon: {
+      fontSize: responsive.fontSize.xl,
+      lineHeight: responsive.fontSize.xl * 1.5,
+      marginRight: responsive.spacing[2],
+    },
+    headerTitle: {
+      ...theme.typography.styles.h3,
+      fontSize: responsive.fontSize.lg,
+      lineHeight: responsive.fontSize.lg * 1.5,
+      color: colors.text,
+    },
+    overviewCard: {
+      backgroundColor: colors.background,
+      paddingHorizontal: responsive.spacing[6],
+      paddingVertical: responsive.spacing[8],
+      borderBottomWidth: 1,
+      borderBottomColor: colors.border,
+    },
+    periodText: {
+      ...theme.typography.styles.bodySmall,
+      color: colors.textTertiary,
+      marginBottom: responsive.spacing[2],
+    },
+    amountText: {
+      fontSize: responsive.fontSize.h1,
+      lineHeight: responsive.fontSize.h1 * 1.5,
+      fontWeight: '700',
+      color: colors.text,
+      marginBottom: responsive.spacing[2],
+    },
+    progressBar: {
+      height: 8,
+      backgroundColor: colors.backgroundTertiary,
+      borderRadius: theme.borderRadius.full,
+      overflow: 'hidden',
+      marginBottom: responsive.spacing[2],
+    },
+    progressFill: {
+      height: '100%',
+    },
+    overviewFooter: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'space-between',
+    },
+    remainingText: {
+      ...theme.typography.styles.body,
+      color: colors.success,
+      fontWeight: '600',
+    },
+    percentageText: {
+      ...theme.typography.styles.body,
+      color: colors.textSecondary,
+    },
+    content: {
+      padding: responsive.spacing[6],
+    },
+    card: {
+      backgroundColor: colors.background,
+      borderRadius: theme.borderRadius.xl,
+      padding: responsive.spacing[4],
+      marginBottom: responsive.spacing[4],
+      ...theme.shadows.sm,
+    },
+    cardTitle: {
+      ...theme.typography.styles.body,
+      color: colors.text,
+      fontWeight: '600',
+      marginBottom: responsive.spacing[4],
+    },
+    cardHeader: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'space-between',
+      marginBottom: responsive.spacing[4],
+    },
+    viewAllText: {
+      ...theme.typography.styles.bodySmall,
+      color: colors.primary,
+      fontWeight: '500',
+    },
+    chartContainer: {
+      flexDirection: 'row',
+      alignItems: 'flex-end',
+      justifyContent: 'space-between',
+      height: 128,
+      marginBottom: responsive.spacing[4],
+    },
+    chartBar: {
+      flex: 1,
+      alignItems: 'center',
+      marginHorizontal: 2,
+    },
+    chartBarFill: {
+      width: '100%',
+      backgroundColor: colors.primaryColor,
+      borderTopLeftRadius: theme.borderRadius.md,
+      borderTopRightRadius: theme.borderRadius.md,
+    },
+    chartLabel: {
+      ...theme.typography.styles.caption,
+      color: colors.textTertiary,
+      marginTop: responsive.spacing[1],
+    },
+    statsRow: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      borderTopWidth: 1,
+      borderTopColor: colors.border,
+      paddingTop: responsive.spacing[2],
+    },
+    statItem: {
+      flex: 1,
+    },
+    statLabel: {
+      ...theme.typography.styles.caption,
+      color: colors.textTertiary,
+      marginBottom: responsive.spacing[1],
+    },
+    statValue: {
+      ...theme.typography.styles.body,
+      color: colors.text,
+      fontWeight: '600',
+    },
+    transactionsContainer: {
+      gap: responsive.spacing[2],
+    },
+    dateLabel: {
+      ...theme.typography.styles.caption,
+      color: colors.textTertiary,
+      fontWeight: '600',
+      marginBottom: responsive.spacing[2],
+    },
+    transactionRow: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'space-between',
+      paddingVertical: responsive.spacing[2],
+    },
+    merchantName: {
+      ...theme.typography.styles.body,
+      color: colors.text,
+      flex: 1,
+    },
+    transactionAmount: {
+      ...theme.typography.styles.body,
+      fontWeight: '600',
+      color: colors.danger,
+    },
+    merchantsContainer: {
+      gap: responsive.spacing[2],
+    },
+    merchantRow: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'space-between',
+    },
+    merchantLeft: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      flex: 1,
+    },
+    rankBadge: {
+      width: 32,
+      height: 32,
+      backgroundColor: colors.backgroundTertiary,
+      borderRadius: 16,
+      alignItems: 'center',
+      justifyContent: 'center',
+      marginRight: responsive.spacing[2],
+    },
+    rankText: {
+      ...theme.typography.styles.body,
+      fontWeight: '600',
+      color: colors.textSecondary,
+    },
+    merchantAmount: {
+      ...theme.typography.styles.body,
+      color: colors.text,
+      fontWeight: '600',
+    },
+    actionsContainer: {
+      gap: responsive.spacing[2],
+      marginBottom: responsive.spacing[6],
+    },
+    actionButton: {
+      marginBottom: 0,
+    },
+    premiumAction: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'space-between',
+      borderWidth: 2,
+      borderColor: theme.colors.border.main,
+      borderRadius: theme.borderRadius.xl,
+      padding: responsive.spacing[4],
+    },
+    premiumActionText: {
+      ...theme.typography.styles.button,
+      color: colors.textSecondary,
+    },
+    premiumBadge: {
+      backgroundColor: colors.warningLight,
+      borderRadius: theme.borderRadius.full,
+      paddingHorizontal: responsive.spacing[2],
+      paddingVertical: 4,
+    },
+    premiumBadgeText: {
+      ...theme.typography.styles.caption,
+      color: colors.warningDark,
+      fontSize: responsive.fontSize.xs,
+      lineHeight: responsive.fontSize.xs * 1.5,
+      fontWeight: '500',
+    },
+    secondaryAction: {
+      borderWidth: 2,
+      borderColor: theme.colors.border.main,
+      borderRadius: theme.borderRadius.xl,
+      padding: responsive.spacing[4],
+      alignItems: 'center',
+    },
+    secondaryActionText: {
+      ...theme.typography.styles.button,
+      color: colors.textSecondary,
+    },
+  });
 
   return (
-    <Screen noPadding backgroundColor={theme.colors.background.secondary}>
+    <Screen noPadding backgroundColor={colors.backgroundSecondary}>
+      <StatusBar barStyle={isDark ? 'light-content' : 'dark-content'} />
       {/* Header */}
       <View style={styles.header}>
         <TouchableOpacity
           style={styles.headerButton}
           onPress={() => router.back()}
         >
-          <Ionicons name="chevron-back" size={24} color={theme.colors.primary[600]} />
+          <Ionicons name="chevron-back" size={24} color={colors.primary} />
         </TouchableOpacity>
         <View style={styles.headerCenter}>
           <Text style={styles.headerIcon}>{categoryData.icon}</Text>
           <Text style={styles.headerTitle}>{categoryData.name}</Text>
         </View>
         <TouchableOpacity style={styles.headerButton}>
-          <Ionicons name="ellipsis-vertical" size={24} color={theme.colors.text.secondary} />
+          <Ionicons name="ellipsis-vertical" size={24} color={colors.textSecondary} />
         </TouchableOpacity>
       </View>
 
@@ -69,8 +336,8 @@ export default function CategoryDetail() {
                 {
                   width: `${categoryData.percentage}%`,
                   backgroundColor: categoryData.percentage > 80
-                    ? theme.colors.warning.main
-                    : theme.colors.success.main,
+                    ? colors.warning
+                    : colors.success,
                 },
               ]}
             />
@@ -117,7 +384,7 @@ export default function CategoryDetail() {
                 <Text style={styles.statLabel}>vs average</Text>
                 <Text style={[
                   styles.statValue,
-                  { color: categoryData.variance < 0 ? theme.colors.success.main : theme.colors.danger.main }
+                  { color: categoryData.variance < 0 ? colors.success : colors.danger }
                 ]}>
                   {categoryData.variance > 0 ? '↑' : '↓'} {Math.abs(categoryData.variance)}%
                 </Text>
@@ -197,245 +464,3 @@ export default function CategoryDetail() {
     </Screen>
   );
 }
-
-const styles = StyleSheet.create({
-  header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    paddingHorizontal: responsive.spacing[4],
-    paddingVertical: responsive.spacing[2],
-    backgroundColor: theme.colors.background.primary,
-    borderBottomWidth: 1,
-    borderBottomColor: theme.colors.border.light,
-  },
-  headerButton: {
-    padding: responsive.spacing[2],
-  },
-  headerCenter: {
-    flex: 1,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  headerIcon: {
-    fontSize: responsive.fontSize.xl,
-    lineHeight: responsive.fontSize.xl * 1.5,
-    marginRight: responsive.spacing[2],
-  },
-  headerTitle: {
-    ...theme.typography.styles.h3,
-    fontSize: responsive.fontSize.lg,
-    lineHeight: responsive.fontSize.lg * 1.5,
-  },
-  overviewCard: {
-    backgroundColor: theme.colors.background.primary,
-    paddingHorizontal: responsive.spacing[6],
-    paddingVertical: responsive.spacing[8],
-    borderBottomWidth: 1,
-    borderBottomColor: theme.colors.border.light,
-  },
-  periodText: {
-    ...theme.typography.styles.bodySmall,
-    color: theme.colors.text.tertiary,
-    marginBottom: responsive.spacing[2],
-  },
-  amountText: {
-    fontSize: responsive.fontSize.h1,
-    lineHeight: responsive.fontSize.h1 * 1.5,
-    fontWeight: '700',
-    color: theme.colors.text.primary,
-    marginBottom: responsive.spacing[2],
-  },
-  progressBar: {
-    height: 8,
-    backgroundColor: theme.colors.background.tertiary,
-    borderRadius: theme.borderRadius.full,
-    overflow: 'hidden',
-    marginBottom: responsive.spacing[2],
-  },
-  progressFill: {
-    height: '100%',
-  },
-  overviewFooter: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-  },
-  remainingText: {
-    ...theme.typography.styles.body,
-    color: theme.colors.success.main,
-    fontWeight: '600',
-  },
-  percentageText: {
-    ...theme.typography.styles.body,
-    color: theme.colors.text.secondary,
-  },
-  content: {
-    padding: responsive.spacing[6],
-  },
-  card: {
-    backgroundColor: theme.colors.background.primary,
-    borderRadius: theme.borderRadius.xl,
-    padding: responsive.spacing[4],
-    marginBottom: responsive.spacing[4],
-    ...theme.shadows.sm,
-  },
-  cardTitle: {
-    ...theme.typography.styles.body,
-    fontWeight: '600',
-    marginBottom: responsive.spacing[4],
-  },
-  cardHeader: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    marginBottom: responsive.spacing[4],
-  },
-  viewAllText: {
-    ...theme.typography.styles.bodySmall,
-    color: theme.colors.primary[600],
-    fontWeight: '500',
-  },
-  chartContainer: {
-    flexDirection: 'row',
-    alignItems: 'flex-end',
-    justifyContent: 'space-between',
-    height: 128,
-    marginBottom: responsive.spacing[4],
-  },
-  chartBar: {
-    flex: 1,
-    alignItems: 'center',
-    marginHorizontal: 2,
-  },
-  chartBarFill: {
-    width: '100%',
-    backgroundColor: theme.colors.primary[500],
-    borderTopLeftRadius: theme.borderRadius.md,
-    borderTopRightRadius: theme.borderRadius.md,
-  },
-  chartLabel: {
-    ...theme.typography.styles.caption,
-    color: theme.colors.text.tertiary,
-    marginTop: responsive.spacing[1],
-  },
-  statsRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    borderTopWidth: 1,
-    borderTopColor: theme.colors.border.light,
-    paddingTop: responsive.spacing[2],
-  },
-  statItem: {
-    flex: 1,
-  },
-  statLabel: {
-    ...theme.typography.styles.caption,
-    color: theme.colors.text.tertiary,
-    marginBottom: responsive.spacing[1],
-  },
-  statValue: {
-    ...theme.typography.styles.body,
-    fontWeight: '600',
-  },
-  transactionsContainer: {
-    gap: responsive.spacing[2],
-  },
-  dateLabel: {
-    ...theme.typography.styles.caption,
-    color: theme.colors.text.tertiary,
-    fontWeight: '600',
-    marginBottom: responsive.spacing[2],
-  },
-  transactionRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    paddingVertical: responsive.spacing[2],
-  },
-  merchantName: {
-    ...theme.typography.styles.body,
-    flex: 1,
-  },
-  transactionAmount: {
-    ...theme.typography.styles.body,
-    fontWeight: '600',
-    color: theme.colors.danger.main,
-  },
-  merchantsContainer: {
-    gap: responsive.spacing[2],
-  },
-  merchantRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-  },
-  merchantLeft: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    flex: 1,
-  },
-  rankBadge: {
-    width: 32,
-    height: 32,
-    backgroundColor: theme.colors.background.tertiary,
-    borderRadius: 16,
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginRight: responsive.spacing[2],
-  },
-  rankText: {
-    ...theme.typography.styles.body,
-    fontWeight: '600',
-    color: theme.colors.text.secondary,
-  },
-  merchantAmount: {
-    ...theme.typography.styles.body,
-    fontWeight: '600',
-  },
-  actionsContainer: {
-    gap: responsive.spacing[2],
-    marginBottom: responsive.spacing[6],
-  },
-  actionButton: {
-    marginBottom: 0,
-  },
-  premiumAction: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    borderWidth: 2,
-    borderColor: theme.colors.border.main,
-    borderRadius: theme.borderRadius.xl,
-    padding: responsive.spacing[4],
-  },
-  premiumActionText: {
-    ...theme.typography.styles.button,
-    color: theme.colors.text.secondary,
-  },
-  premiumBadge: {
-    backgroundColor: theme.colors.warning.light,
-    borderRadius: theme.borderRadius.full,
-    paddingHorizontal: responsive.spacing[2],
-    paddingVertical: 4,
-  },
-  premiumBadgeText: {
-    ...theme.typography.styles.caption,
-    color: theme.colors.warning.dark,
-    fontSize: responsive.fontSize.xs,
-    lineHeight: responsive.fontSize.xs * 1.5,
-    fontWeight: '500',
-  },
-  secondaryAction: {
-    borderWidth: 2,
-    borderColor: theme.colors.border.main,
-    borderRadius: theme.borderRadius.xl,
-    padding: responsive.spacing[4],
-    alignItems: 'center',
-  },
-  secondaryActionText: {
-    ...theme.typography.styles.button,
-    color: theme.colors.text.secondary,
-  },
-});

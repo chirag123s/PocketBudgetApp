@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, ScrollView } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, ScrollView, StatusBar } from 'react-native';
 import { useRouter } from 'expo-router';
 import { Screen } from '@/components/layout/Screen';
 import { Button } from '@/components/ui/Button';
-import { theme } from '@/constants/theme';
+import { getTheme } from '@/constants/theme';
+import { useTheme } from '@/contexts/ThemeContext';
 import { responsive, ms } from '@/constants/responsive';
 import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
@@ -62,6 +63,9 @@ const sampleSubscriptions: Subscription[] = [
 
 export default function SubscriptionAuditTool() {
   const router = useRouter();
+  const { theme: themeMode } = useTheme();
+  const theme = getTheme(themeMode);
+
   const [subscriptions] = useState<Subscription[]>(sampleSubscriptions);
 
   const totalSubscriptions = subscriptions.length;
@@ -71,12 +75,281 @@ export default function SubscriptionAuditTool() {
   const yearlySavings = potentialSavings * 12;
   const activeSubscriptions = subscriptions.filter((sub) => sub.status === 'active');
 
+  const colors = {
+    neutralBg: theme.colors.background.secondary,
+    cardBg: theme.colors.background.primary,
+    primaryText: theme.colors.text.primary,
+    secondaryText: theme.colors.text.secondary,
+    tertiaryText: theme.colors.text.tertiary,
+    borderColor: theme.colors.border.light,
+    inputBg: theme.colors.background.tertiary,
+    dangerMain: theme.colors.danger.main,
+    primaryColor: theme.colors.primary[600],
+    successMain: theme.colors.success.main,
+    successLight: theme.colors.success.light,
+    warningLight: theme.colors.warning.light,
+    warningDark: theme.colors.warning.dark,
+    dangerLight: '#FEF2F2',
+    warningBorder: '#FEF3C7',
+  };
+
+  const styles = StyleSheet.create({
+    header: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'space-between',
+      paddingHorizontal: responsive.spacing[4],
+      paddingVertical: responsive.spacing[2],
+      backgroundColor: colors.cardBg,
+      borderBottomWidth: 1,
+      borderBottomColor: colors.borderColor,
+    },
+    headerButton: {
+      padding: responsive.spacing[2],
+    },
+    headerTitle: {
+      ...theme.typography.styles.h3,
+      fontSize: responsive.fontSize.lg,
+      lineHeight: responsive.fontSize.lg * 1.5,
+    },
+    placeholder: {
+      width: 40,
+    },
+    content: {
+      padding: responsive.spacing[6],
+      paddingBottom: responsive.spacing[8],
+    },
+    summaryCard: {
+      borderRadius: theme.borderRadius.xl,
+      padding: responsive.spacing[6],
+      marginBottom: responsive.spacing[6],
+      ...theme.shadows.lg,
+    },
+    summarySubtitle: {
+      fontSize: responsive.fontSize.sm,
+      lineHeight: responsive.fontSize.sm * 1.5,
+      color: '#FFFFFF',
+      opacity: 0.9,
+      marginBottom: responsive.spacing[4],
+    },
+    statsRow: {
+      flexDirection: 'row',
+      gap: responsive.spacing[4],
+    },
+    statItem: {
+      flex: 1,
+    },
+    statNumber: {
+      fontSize: responsive.fontSize.h3,
+      lineHeight: responsive.fontSize.h3 * 1.5,
+      fontWeight: '700',
+      color: '#FFFFFF',
+      marginBottom: 4,
+    },
+    statLabel: {
+      fontSize: responsive.fontSize.xs,
+      lineHeight: responsive.fontSize.xs * 1.5,
+      color: '#FFFFFF',
+      opacity: 0.9,
+    },
+    section: {
+      marginBottom: responsive.spacing[6],
+    },
+    sectionHeader: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+      marginBottom: responsive.spacing[4],
+    },
+    sectionTitleRow: {
+      flexDirection: 'row',
+      alignItems: 'center',
+    },
+    sectionEmoji: {
+      fontSize: responsive.fontSize.h4,
+      lineHeight: responsive.fontSize.h4 * 1.5,
+      marginRight: responsive.spacing[2],
+    },
+    sectionTitle: {
+      ...theme.typography.styles.h3,
+      fontSize: responsive.fontSize.lg,
+      lineHeight: responsive.fontSize.lg * 1.5,
+    },
+    badge: {
+      paddingHorizontal: responsive.spacing[2],
+      paddingVertical: 4,
+      backgroundColor: colors.warningLight,
+      borderRadius: theme.borderRadius.full,
+    },
+    badgeText: {
+      ...theme.typography.styles.bodySmall,
+      fontWeight: '700',
+      color: colors.warningDark,
+    },
+    badgeGreen: {
+      backgroundColor: colors.successLight,
+    },
+    badgeTextGreen: {
+      color: theme.colors.success.dark,
+    },
+    warningCard: {
+      backgroundColor: colors.cardBg,
+      borderRadius: theme.borderRadius.xl,
+      padding: responsive.spacing[4],
+      marginBottom: responsive.spacing[4],
+      borderWidth: 2,
+      borderColor: colors.warningBorder,
+      ...theme.shadows.sm,
+    },
+    subscriptionInfo: {
+      marginBottom: responsive.spacing[2],
+    },
+    subscriptionName: {
+      ...theme.typography.styles.h3,
+      fontSize: responsive.fontSize.lg,
+      lineHeight: responsive.fontSize.lg * 1.5,
+      marginBottom: responsive.spacing[1],
+    },
+    subscriptionAmount: {
+      fontSize: responsive.fontSize.h4,
+      lineHeight: responsive.fontSize.h4 * 1.5,
+      fontWeight: '700',
+      color: colors.dangerMain,
+      marginBottom: responsive.spacing[2],
+    },
+    lastUsedText: {
+      ...theme.typography.styles.bodySmall,
+      color: colors.secondaryText,
+    },
+    lastUsedHighlight: {
+      fontWeight: '700',
+      color: colors.warningDark,
+    },
+    actionButtons: {
+      flexDirection: 'row',
+      gap: responsive.spacing[2],
+    },
+    cancelButton: {
+      flex: 1,
+      paddingVertical: responsive.spacing[2],
+      backgroundColor: colors.dangerLight,
+      borderRadius: theme.borderRadius.xl,
+      alignItems: 'center',
+    },
+    cancelButtonText: {
+      ...theme.typography.styles.button,
+      fontWeight: '700',
+      color: colors.dangerMain,
+    },
+    keepButton: {
+      flex: 1,
+      paddingVertical: responsive.spacing[2],
+      backgroundColor: colors.inputBg,
+      borderRadius: theme.borderRadius.xl,
+      alignItems: 'center',
+    },
+    keepButtonText: {
+      ...theme.typography.styles.button,
+      fontWeight: '700',
+      color: colors.secondaryText,
+    },
+    activeCard: {
+      backgroundColor: colors.cardBg,
+      borderRadius: theme.borderRadius.xl,
+      padding: responsive.spacing[4],
+      marginBottom: responsive.spacing[2],
+      ...theme.shadows.sm,
+    },
+    activeCardContent: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+    },
+    activeCardLeft: {
+      flex: 1,
+    },
+    activeCardName: {
+      ...theme.typography.styles.h3,
+      fontSize: responsive.fontSize.lg,
+      lineHeight: responsive.fontSize.lg * 1.5,
+      marginBottom: responsive.spacing[1],
+    },
+    activeCardLastUsed: {
+      ...theme.typography.styles.bodySmall,
+      color: colors.tertiaryText,
+    },
+    activeCardLastUsedGreen: {
+      fontWeight: '600',
+      color: colors.successMain,
+    },
+    activeCardAmount: {
+      fontSize: responsive.fontSize.xl,
+      lineHeight: responsive.fontSize.xl * 1.5,
+      fontWeight: '700',
+      color: colors.primaryText,
+    },
+    savingsCard: {
+      borderRadius: theme.borderRadius.xl,
+      padding: responsive.spacing[6],
+      marginBottom: responsive.spacing[4],
+      ...theme.shadows.lg,
+    },
+    savingsHeader: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      alignItems: 'flex-start',
+      marginBottom: responsive.spacing[4],
+    },
+    savingsInfo: {
+      flex: 1,
+    },
+    savingsLabel: {
+      fontSize: responsive.fontSize.sm,
+      lineHeight: responsive.fontSize.sm * 1.5,
+      color: '#FFFFFF',
+      opacity: 0.9,
+      marginBottom: responsive.spacing[2],
+    },
+    savingsAmount: {
+      fontSize: responsive.fontSize.h2,
+      lineHeight: responsive.fontSize.h2 * 1.5,
+      fontWeight: '700',
+      color: '#FFFFFF',
+      marginBottom: responsive.spacing[1],
+    },
+    savingsSubtext: {
+      fontSize: responsive.fontSize.sm,
+      lineHeight: responsive.fontSize.sm * 1.5,
+      color: '#FFFFFF',
+      opacity: 0.9,
+    },
+    savingsExamples: {
+      backgroundColor: 'rgba(255, 255, 255, 0.1)',
+      borderRadius: theme.borderRadius.xl,
+      padding: responsive.spacing[4],
+    },
+    savingsExamplesTitle: {
+      fontSize: responsive.fontSize.sm,
+      lineHeight: responsive.fontSize.sm * 1.5,
+      color: '#FFFFFF',
+      marginBottom: responsive.spacing[2],
+    },
+    savingsExampleItem: {
+      fontSize: responsive.fontSize.sm,
+      lineHeight: responsive.fontSize.sm * 1.5,
+      color: '#FFFFFF',
+      opacity: 0.9,
+      marginBottom: 4,
+    },
+  });
+
   return (
-    <Screen noPadding backgroundColor={theme.colors.background.secondary}>
+    <Screen noPadding backgroundColor={colors.neutralBg}>
+      <StatusBar barStyle={themeMode === 'dark' ? 'light-content' : 'dark-content'} backgroundColor={colors.neutralBg} />
       {/* Header */}
       <View style={styles.header}>
         <TouchableOpacity style={styles.headerButton} onPress={() => router.back()}>
-          <Ionicons name="chevron-back" size={24} color={theme.colors.primary[600]} />
+          <Ionicons name="chevron-back" size={24} color={colors.primaryColor} />
         </TouchableOpacity>
         <Text style={styles.headerTitle}>Subscription Audit</Text>
         <View style={styles.placeholder} />
@@ -172,7 +445,7 @@ export default function SubscriptionAuditTool() {
 
         {/* Potential Savings Card */}
         <LinearGradient
-          colors={[theme.colors.success.main, '#059669']}
+          colors={[colors.successMain, '#059669']}
           style={styles.savingsCard}
         >
           <View style={styles.savingsHeader}>
@@ -202,253 +475,3 @@ export default function SubscriptionAuditTool() {
     </Screen>
   );
 }
-
-const styles = StyleSheet.create({
-  header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    paddingHorizontal: responsive.spacing[4],
-    paddingVertical: responsive.spacing[2],
-    backgroundColor: theme.colors.background.primary,
-    borderBottomWidth: 1,
-    borderBottomColor: theme.colors.border.light,
-  },
-  headerButton: {
-    padding: responsive.spacing[2],
-  },
-  headerTitle: {
-    ...theme.typography.styles.h3,
-    fontSize: responsive.fontSize.lg,
-    lineHeight: responsive.fontSize.lg * 1.5,
-  },
-  placeholder: {
-    width: 40,
-  },
-  content: {
-    padding: responsive.spacing[6],
-    paddingBottom: responsive.spacing[8],
-  },
-  summaryCard: {
-    borderRadius: theme.borderRadius.xl,
-    padding: responsive.spacing[6],
-    marginBottom: responsive.spacing[6],
-    ...theme.shadows.lg,
-  },
-  summarySubtitle: {
-    fontSize: responsive.fontSize.sm,
-    lineHeight: responsive.fontSize.sm * 1.5,
-    color: '#FFFFFF',
-    opacity: 0.9,
-    marginBottom: responsive.spacing[4],
-  },
-  statsRow: {
-    flexDirection: 'row',
-    gap: responsive.spacing[4],
-  },
-  statItem: {
-    flex: 1,
-  },
-  statNumber: {
-    fontSize: responsive.fontSize.h3,
-    lineHeight: responsive.fontSize.h3 * 1.5,
-    fontWeight: '700',
-    color: '#FFFFFF',
-    marginBottom: 4,
-  },
-  statLabel: {
-    fontSize: responsive.fontSize.xs,
-    lineHeight: responsive.fontSize.xs * 1.5,
-    color: '#FFFFFF',
-    opacity: 0.9,
-  },
-  section: {
-    marginBottom: responsive.spacing[6],
-  },
-  sectionHeader: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: responsive.spacing[4],
-  },
-  sectionTitleRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  sectionEmoji: {
-    fontSize: responsive.fontSize.h4,
-    lineHeight: responsive.fontSize.h4 * 1.5,
-    marginRight: responsive.spacing[2],
-  },
-  sectionTitle: {
-    ...theme.typography.styles.h3,
-    fontSize: responsive.fontSize.lg,
-    lineHeight: responsive.fontSize.lg * 1.5,
-  },
-  badge: {
-    paddingHorizontal: responsive.spacing[2],
-    paddingVertical: 4,
-    backgroundColor: theme.colors.warning.light,
-    borderRadius: theme.borderRadius.full,
-  },
-  badgeText: {
-    ...theme.typography.styles.bodySmall,
-    fontWeight: '700',
-    color: theme.colors.warning.dark,
-  },
-  badgeGreen: {
-    backgroundColor: theme.colors.success.light,
-  },
-  badgeTextGreen: {
-    color: theme.colors.success.dark,
-  },
-  warningCard: {
-    backgroundColor: theme.colors.background.primary,
-    borderRadius: theme.borderRadius.xl,
-    padding: responsive.spacing[4],
-    marginBottom: responsive.spacing[4],
-    borderWidth: 2,
-    borderColor: '#FEF3C7',
-    ...theme.shadows.sm,
-  },
-  subscriptionInfo: {
-    marginBottom: responsive.spacing[2],
-  },
-  subscriptionName: {
-    ...theme.typography.styles.h3,
-    fontSize: responsive.fontSize.lg,
-    lineHeight: responsive.fontSize.lg * 1.5,
-    marginBottom: responsive.spacing[1],
-  },
-  subscriptionAmount: {
-    fontSize: responsive.fontSize.h4,
-    lineHeight: responsive.fontSize.h4 * 1.5,
-    fontWeight: '700',
-    color: theme.colors.danger.main,
-    marginBottom: responsive.spacing[2],
-  },
-  lastUsedText: {
-    ...theme.typography.styles.bodySmall,
-    color: theme.colors.text.secondary,
-  },
-  lastUsedHighlight: {
-    fontWeight: '700',
-    color: theme.colors.warning.dark,
-  },
-  actionButtons: {
-    flexDirection: 'row',
-    gap: responsive.spacing[2],
-  },
-  cancelButton: {
-    flex: 1,
-    paddingVertical: responsive.spacing[2],
-    backgroundColor: '#FEF2F2',
-    borderRadius: theme.borderRadius.xl,
-    alignItems: 'center',
-  },
-  cancelButtonText: {
-    ...theme.typography.styles.button,
-    fontWeight: '700',
-    color: theme.colors.danger.main,
-  },
-  keepButton: {
-    flex: 1,
-    paddingVertical: responsive.spacing[2],
-    backgroundColor: theme.colors.background.tertiary,
-    borderRadius: theme.borderRadius.xl,
-    alignItems: 'center',
-  },
-  keepButtonText: {
-    ...theme.typography.styles.button,
-    fontWeight: '700',
-    color: theme.colors.text.secondary,
-  },
-  activeCard: {
-    backgroundColor: theme.colors.background.primary,
-    borderRadius: theme.borderRadius.xl,
-    padding: responsive.spacing[4],
-    marginBottom: responsive.spacing[2],
-    ...theme.shadows.sm,
-  },
-  activeCardContent: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-  },
-  activeCardLeft: {
-    flex: 1,
-  },
-  activeCardName: {
-    ...theme.typography.styles.h3,
-    fontSize: responsive.fontSize.lg,
-    lineHeight: responsive.fontSize.lg * 1.5,
-    marginBottom: responsive.spacing[1],
-  },
-  activeCardLastUsed: {
-    ...theme.typography.styles.bodySmall,
-    color: theme.colors.text.tertiary,
-  },
-  activeCardLastUsedGreen: {
-    fontWeight: '600',
-    color: theme.colors.success.main,
-  },
-  activeCardAmount: {
-    fontSize: responsive.fontSize.xl,
-    lineHeight: responsive.fontSize.xl * 1.5,
-    fontWeight: '700',
-    color: theme.colors.text.primary,
-  },
-  savingsCard: {
-    borderRadius: theme.borderRadius.xl,
-    padding: responsive.spacing[6],
-    marginBottom: responsive.spacing[4],
-    ...theme.shadows.lg,
-  },
-  savingsHeader: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'flex-start',
-    marginBottom: responsive.spacing[4],
-  },
-  savingsInfo: {
-    flex: 1,
-  },
-  savingsLabel: {
-    fontSize: responsive.fontSize.sm,
-    lineHeight: responsive.fontSize.sm * 1.5,
-    color: '#FFFFFF',
-    opacity: 0.9,
-    marginBottom: responsive.spacing[2],
-  },
-  savingsAmount: {
-    fontSize: responsive.fontSize.h2,
-    lineHeight: responsive.fontSize.h2 * 1.5,
-    fontWeight: '700',
-    color: '#FFFFFF',
-    marginBottom: responsive.spacing[1],
-  },
-  savingsSubtext: {
-    fontSize: responsive.fontSize.sm,
-    lineHeight: responsive.fontSize.sm * 1.5,
-    color: '#FFFFFF',
-    opacity: 0.9,
-  },
-  savingsExamples: {
-    backgroundColor: 'rgba(255, 255, 255, 0.1)',
-    borderRadius: theme.borderRadius.xl,
-    padding: responsive.spacing[4],
-  },
-  savingsExamplesTitle: {
-    fontSize: responsive.fontSize.sm,
-    lineHeight: responsive.fontSize.sm * 1.5,
-    color: '#FFFFFF',
-    marginBottom: responsive.spacing[2],
-  },
-  savingsExampleItem: {
-    fontSize: responsive.fontSize.sm,
-    lineHeight: responsive.fontSize.sm * 1.5,
-    color: '#FFFFFF',
-    opacity: 0.9,
-    marginBottom: 4,
-  },
-});

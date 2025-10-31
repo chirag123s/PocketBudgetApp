@@ -2,7 +2,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, ScrollView, Alert, StatusBar } from 'react-native';
 import { useRouter, useFocusEffect } from 'expo-router';
 import { Screen } from '@/components/layout/Screen';
-import { theme } from '@/constants/theme';
+import { getTheme } from '@/constants/theme';
 import { responsive, ms } from '@/constants/responsive';
 import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
@@ -10,6 +10,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import { clearAllStorage, checkStorageState } from '@/scripts/clearStorage';
 import { loadAvatarColor, getAvatarGradientSync } from '@/utils/avatar';
 import { getInitials } from '@/utils/helpers';
+import { useTheme } from '@/contexts/ThemeContext';
 
 interface SettingsItem {
   title: string;
@@ -19,30 +20,32 @@ interface SettingsItem {
   hasToggle?: boolean;
 }
 
-// Color Palette - Using theme colors
-const colors = {
-  // Primary Palette
-  primaryDark: theme.colors.info.dark,
-  primary: theme.colors.info.main,
-  primaryLight: theme.colors.info.light,
-
-  // Neutral Palette
-  neutralBg: theme.colors.background.secondary,
-  neutralWhite: theme.colors.background.primary,
-  neutralDarkest: theme.colors.text.primary,
-  neutralDark: theme.colors.text.secondary,
-  neutralMedium: theme.colors.text.tertiary,
-
-  // Functional Palette
-  functionalSuccess: theme.colors.success.main,
-  functionalWarning: theme.colors.warning.main,
-  functionalError: theme.colors.danger.main,
-};
-
 export default function SettingsTab() {
   const router = useRouter();
+  const { theme: themeMode } = useTheme();
+  const theme = getTheme(themeMode);
   const { clearAllData } = useAuth();
   const [avatarColorId, setAvatarColorId] = useState('blue');
+
+  // Color Palette - Using theme colors
+  const colors = {
+    // Primary Palette
+    primaryDark: theme.colors.info.dark,
+    primary: theme.colors.info.main,
+    primaryLight: theme.colors.info.light,
+
+    // Neutral Palette
+    neutralBg: theme.colors.background.secondary,
+    neutralWhite: theme.colors.background.primary,
+    neutralDarkest: theme.colors.text.primary,
+    neutralDark: theme.colors.text.secondary,
+    neutralMedium: theme.colors.text.tertiary,
+
+    // Functional Palette
+    functionalSuccess: theme.colors.success.main,
+    functionalWarning: theme.colors.warning.main,
+    functionalError: theme.colors.danger.main,
+  };
 
   // User data (in real app, this would come from auth context)
   const userName = 'Alex Johnson';
@@ -109,9 +112,199 @@ export default function SettingsTab() {
     Alert.alert('Storage State', 'Check console logs for storage details');
   };
 
+  const styles = StyleSheet.create({
+    scrollView: {
+      flex: 1,
+    },
+    header: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+      paddingHorizontal: responsive.spacing[4],
+      paddingVertical: responsive.spacing[3],
+      backgroundColor: colors.neutralBg,
+    },
+    headerTitle: {
+      fontSize: responsive.fontSize.xl,
+      fontWeight: '700',
+      color: colors.neutralDarkest,
+    },
+    profileCard: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      backgroundColor: colors.neutralWhite,
+      borderRadius: theme.borderRadius.xl,
+      padding: responsive.spacing[4],
+      marginHorizontal: responsive.spacing[4],
+      marginTop: responsive.spacing[4],
+      marginBottom: responsive.spacing[4],
+      ...theme.shadows.sm,
+    },
+    avatar: {
+      width: ms(56),
+      height: ms(56),
+      borderRadius: ms(28),
+      alignItems: 'center',
+      justifyContent: 'center',
+      marginRight: responsive.spacing[3],
+    },
+    avatarText: {
+      fontSize: responsive.fontSize.xl,
+      fontWeight: '700',
+      color: colors.neutralWhite,
+    },
+    profileInfo: {
+      flex: 1,
+    },
+    profileName: {
+      fontSize: responsive.fontSize.lg,
+      fontWeight: '700',
+      color: colors.neutralDarkest,
+      marginBottom: responsive.spacing[1],
+    },
+    profileEmail: {
+      fontSize: responsive.fontSize.sm,
+      color: colors.neutralDark,
+    },
+    upgradeCard: {
+      marginHorizontal: responsive.spacing[4],
+      marginBottom: responsive.spacing[4],
+      borderRadius: theme.borderRadius.xl,
+      overflow: 'hidden',
+      ...theme.shadows.md,
+    },
+    upgradeGradient: {
+      borderRadius: theme.borderRadius.xl,
+    },
+    upgradeContent: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+      padding: responsive.spacing[5],
+    },
+    upgradeLeft: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      flex: 1,
+      gap: responsive.spacing[3],
+    },
+    upgradeIconContainer: {
+      width: ms(48),
+      height: ms(48),
+      borderRadius: ms(24),
+      backgroundColor: 'rgba(255, 255, 255, 0.2)',
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
+    upgradeIcon: {
+      fontSize: responsive.fontSize.h3,
+    },
+    upgradeTextContainer: {
+      flex: 1,
+    },
+    upgradeTitle: {
+      fontSize: responsive.fontSize.lg,
+      fontWeight: '700',
+      color: colors.neutralWhite,
+      marginBottom: responsive.spacing[1],
+    },
+    upgradeSubtitle: {
+      fontSize: responsive.fontSize.sm,
+      color: colors.neutralWhite,
+      opacity: 0.9,
+    },
+    section: {
+      marginBottom: responsive.spacing[4],
+    },
+    sectionTitle: {
+      fontSize: responsive.fontSize.xs,
+      fontWeight: '700',
+      color: colors.neutralDark,
+      letterSpacing: 0.5,
+      marginBottom: responsive.spacing[3],
+      paddingHorizontal: responsive.spacing[4],
+    },
+    card: {
+      backgroundColor: colors.neutralWhite,
+      borderRadius: theme.borderRadius.xl,
+      marginHorizontal: responsive.spacing[4],
+      overflow: 'hidden',
+      ...theme.shadows.sm,
+    },
+    settingsItem: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+      padding: responsive.spacing[4],
+    },
+    settingsItemLeft: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      flex: 1,
+      gap: responsive.spacing[3],
+    },
+    iconContainer: {
+      width: ms(40),
+      height: ms(40),
+      borderRadius: ms(20),
+      backgroundColor: `${colors.primary}15`,
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
+    settingsItemText: {
+      fontSize: responsive.fontSize.md,
+      fontWeight: '600',
+      color: colors.neutralDarkest,
+    },
+    settingsItemRight: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: responsive.spacing[2],
+    },
+    badge: {
+      backgroundColor: `${colors.functionalWarning}20`,
+      paddingHorizontal: responsive.spacing[3],
+      paddingVertical: responsive.spacing[1],
+      borderRadius: theme.borderRadius.md,
+    },
+    badgeText: {
+      fontSize: responsive.fontSize.xs,
+      fontWeight: '700',
+      color: colors.functionalWarning,
+    },
+    divider: {
+      height: 1,
+      backgroundColor: colors.neutralBg,
+      marginLeft: responsive.spacing[4] + ms(40) + responsive.spacing[3],
+    },
+    logoutButton: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'center',
+      backgroundColor: colors.neutralWhite,
+      borderRadius: theme.borderRadius.xl,
+      padding: responsive.spacing[4],
+      marginHorizontal: responsive.spacing[4],
+      marginBottom: responsive.spacing[4],
+      gap: responsive.spacing[2],
+      ...theme.shadows.sm,
+    },
+    logoutText: {
+      fontSize: responsive.fontSize.md,
+      fontWeight: '600',
+      color: colors.functionalError,
+    },
+    versionText: {
+      fontSize: responsive.fontSize.sm,
+      color: colors.neutralMedium,
+      textAlign: 'center',
+      marginBottom: responsive.spacing[2],
+    },
+  });
+
   return (
     <Screen scrollable={false} noPadding backgroundColor={colors.neutralBg} edges={['top']}>
-      <StatusBar barStyle="dark-content" backgroundColor={colors.neutralBg} />
+      <StatusBar barStyle={themeMode === 'dark' ? 'light-content' : 'dark-content'} backgroundColor={colors.neutralBg} />
 
       {/* Header */}
       <View style={styles.header}>
@@ -420,193 +613,3 @@ export default function SettingsTab() {
     </Screen>
   );
 }
-
-const styles = StyleSheet.create({
-  scrollView: {
-    flex: 1,
-  },
-  header: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    paddingHorizontal: responsive.spacing[4],
-    paddingVertical: responsive.spacing[3],
-    backgroundColor: colors.neutralBg,
-  },
-  headerTitle: {
-    fontSize: responsive.fontSize.xl,
-    fontWeight: '700',
-    color: colors.neutralDarkest,
-  },
-  profileCard: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: colors.neutralWhite,
-    borderRadius: theme.borderRadius.xl,
-    padding: responsive.spacing[4],
-    marginHorizontal: responsive.spacing[4],
-    marginTop: responsive.spacing[4],
-    marginBottom: responsive.spacing[4],
-    ...theme.shadows.sm,
-  },
-  avatar: {
-    width: ms(56),
-    height: ms(56),
-    borderRadius: ms(28),
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginRight: responsive.spacing[3],
-  },
-  avatarText: {
-    fontSize: responsive.fontSize.xl,
-    fontWeight: '700',
-    color: colors.neutralWhite,
-  },
-  profileInfo: {
-    flex: 1,
-  },
-  profileName: {
-    fontSize: responsive.fontSize.lg,
-    fontWeight: '700',
-    color: colors.neutralDarkest,
-    marginBottom: responsive.spacing[1],
-  },
-  profileEmail: {
-    fontSize: responsive.fontSize.sm,
-    color: colors.neutralDark,
-  },
-  upgradeCard: {
-    marginHorizontal: responsive.spacing[4],
-    marginBottom: responsive.spacing[4],
-    borderRadius: theme.borderRadius.xl,
-    overflow: 'hidden',
-    ...theme.shadows.md,
-  },
-  upgradeGradient: {
-    borderRadius: theme.borderRadius.xl,
-  },
-  upgradeContent: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    padding: responsive.spacing[5],
-  },
-  upgradeLeft: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    flex: 1,
-    gap: responsive.spacing[3],
-  },
-  upgradeIconContainer: {
-    width: ms(48),
-    height: ms(48),
-    borderRadius: ms(24),
-    backgroundColor: 'rgba(255, 255, 255, 0.2)',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  upgradeIcon: {
-    fontSize: responsive.fontSize.h3,
-  },
-  upgradeTextContainer: {
-    flex: 1,
-  },
-  upgradeTitle: {
-    fontSize: responsive.fontSize.lg,
-    fontWeight: '700',
-    color: colors.neutralWhite,
-    marginBottom: responsive.spacing[1],
-  },
-  upgradeSubtitle: {
-    fontSize: responsive.fontSize.sm,
-    color: colors.neutralWhite,
-    opacity: 0.9,
-  },
-  section: {
-    marginBottom: responsive.spacing[4],
-  },
-  sectionTitle: {
-    fontSize: responsive.fontSize.xs,
-    fontWeight: '700',
-    color: colors.neutralDark,
-    letterSpacing: 0.5,
-    marginBottom: responsive.spacing[3],
-    paddingHorizontal: responsive.spacing[4],
-  },
-  card: {
-    backgroundColor: colors.neutralWhite,
-    borderRadius: theme.borderRadius.xl,
-    marginHorizontal: responsive.spacing[4],
-    overflow: 'hidden',
-    ...theme.shadows.sm,
-  },
-  settingsItem: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    padding: responsive.spacing[4],
-  },
-  settingsItemLeft: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    flex: 1,
-    gap: responsive.spacing[3],
-  },
-  iconContainer: {
-    width: ms(40),
-    height: ms(40),
-    borderRadius: ms(20),
-    backgroundColor: `${colors.primary}15`,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  settingsItemText: {
-    fontSize: responsive.fontSize.md,
-    fontWeight: '600',
-    color: colors.neutralDarkest,
-  },
-  settingsItemRight: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: responsive.spacing[2],
-  },
-  badge: {
-    backgroundColor: `${colors.functionalWarning}20`,
-    paddingHorizontal: responsive.spacing[3],
-    paddingVertical: responsive.spacing[1],
-    borderRadius: theme.borderRadius.md,
-  },
-  badgeText: {
-    fontSize: responsive.fontSize.xs,
-    fontWeight: '700',
-    color: colors.functionalWarning,
-  },
-  divider: {
-    height: 1,
-    backgroundColor: colors.neutralBg,
-    marginLeft: responsive.spacing[4] + ms(40) + responsive.spacing[3],
-  },
-  logoutButton: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: colors.neutralWhite,
-    borderRadius: theme.borderRadius.xl,
-    padding: responsive.spacing[4],
-    marginHorizontal: responsive.spacing[4],
-    marginBottom: responsive.spacing[4],
-    gap: responsive.spacing[2],
-    ...theme.shadows.sm,
-  },
-  logoutText: {
-    fontSize: responsive.fontSize.md,
-    fontWeight: '600',
-    color: colors.functionalError,
-  },
-  versionText: {
-    fontSize: responsive.fontSize.sm,
-    color: colors.neutralMedium,
-    textAlign: 'center',
-    marginBottom: responsive.spacing[2],
-  },
-});

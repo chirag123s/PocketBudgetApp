@@ -4,8 +4,9 @@ import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Screen } from '@/components/layout/Screen';
-import { theme } from '@/constants/theme';
+import { getTheme } from '@/constants/theme';
 import { responsive, wp, hp, ms } from '@/constants/responsive';
+import { useTheme } from '@/contexts/ThemeContext';
 
 interface OptionCardProps {
   icon: keyof typeof Ionicons.glyphMap;
@@ -32,6 +33,73 @@ const OptionCard = ({
   borderColor,
   onPress,
 }: OptionCardProps) => {
+  const { theme: themeMode } = useTheme();
+  const theme = getTheme(themeMode);
+
+  const styles = StyleSheet.create({
+    card: {
+      backgroundColor: theme.colors.background.primary,
+      borderRadius: ms(20),
+      padding: responsive.spacing[6],
+      borderWidth: 2,
+      borderColor: theme.colors.border.light,
+    },
+    recommendedCard: {
+      borderRadius: ms(20),
+      padding: responsive.spacing[6],
+      borderWidth: 2,
+      borderColor: theme.colors.primary[500],
+      position: 'relative',
+    },
+    badge: {
+      position: 'absolute',
+      top: responsive.spacing[4],
+      right: responsive.spacing[4],
+      backgroundColor: theme.colors.primary[600],
+      paddingHorizontal: responsive.spacing[2],
+      paddingVertical: responsive.spacing[1],
+      borderRadius: ms(16),
+    },
+    badgeText: {
+      ...theme.typography.styles.caption,
+      fontSize: responsive.fontSize.xs,
+      lineHeight: responsive.fontSize.xs * 1.4,
+      color: 'white',
+      fontWeight: 'bold',
+    },
+    cardContent: {
+      flexDirection: 'row',
+      alignItems: 'flex-start',
+      gap: responsive.spacing[4],
+    },
+    iconContainer: {
+      width: ms(56),
+      height: ms(56),
+      borderRadius: ms(16),
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
+    cardTextContainer: {
+      flex: 1,
+      paddingTop: responsive.spacing[1],
+    },
+    cardTitle: {
+      ...theme.typography.styles.h3,
+      fontSize: responsive.fontSize.h4,
+      lineHeight: responsive.fontSize.h4 * 1.3,
+      marginBottom: responsive.spacing[2],
+    },
+    cardSubtitle: {
+      ...theme.typography.styles.bodySmall,
+      fontSize: responsive.fontSize.sm,
+      lineHeight: responsive.fontSize.sm * 1.5,
+      color: theme.colors.text.secondary,
+    },
+    chevron: {
+      marginTop: responsive.spacing[2],
+    },
+  });
+
   const Container = gradientColors ? LinearGradient : View;
   const containerProps = gradientColors
     ? { colors: gradientColors }
@@ -71,6 +139,43 @@ const OptionCard = ({
 
 export default function OnboardingChoiceScreen() {
   const router = useRouter();
+  const { theme: themeMode } = useTheme();
+  const theme = getTheme(themeMode);
+
+  const styles = StyleSheet.create({
+    container: {
+      flex: 1,
+      padding: responsive.spacing[6],
+      maxWidth: responsive.layout.maxContentWidth,
+      width: '100%',
+      alignSelf: 'center',
+    },
+    title: {
+      ...theme.typography.styles.h1,
+      fontSize: responsive.fontSize.h2,
+      lineHeight: responsive.fontSize.h2 * 1.3,
+      marginBottom: responsive.spacing[2],
+    },
+    description: {
+      ...theme.typography.styles.body,
+      fontSize: responsive.fontSize.base,
+      lineHeight: responsive.fontSize.base * 1.5,
+      color: theme.colors.text.secondary,
+      marginBottom: responsive.spacing[6],
+    },
+    optionsContainer: {
+      flex: 1,
+      gap: responsive.spacing[4],
+    },
+    helpText: {
+      ...theme.typography.styles.bodySmall,
+      fontSize: responsive.fontSize.sm,
+      lineHeight: responsive.fontSize.sm * 1.5,
+      color: theme.colors.text.secondary,
+      textAlign: 'center',
+      marginTop: responsive.spacing[4],
+    },
+  });
 
   return (
     <Screen>
@@ -129,99 +234,3 @@ export default function OnboardingChoiceScreen() {
     </Screen>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    padding: responsive.spacing[6],
-    maxWidth: responsive.layout.maxContentWidth,
-    width: '100%',
-    alignSelf: 'center',
-  },
-  title: {
-    ...theme.typography.styles.h1,
-    fontSize: responsive.fontSize.h2,
-    lineHeight: responsive.fontSize.h2 * 1.3,
-    marginBottom: responsive.spacing[2],
-  },
-  description: {
-    ...theme.typography.styles.body,
-    fontSize: responsive.fontSize.base,
-    lineHeight: responsive.fontSize.base * 1.5,
-    color: theme.colors.text.secondary,
-    marginBottom: responsive.spacing[6],
-  },
-  optionsContainer: {
-    flex: 1,
-    gap: responsive.spacing[4],
-  },
-  card: {
-    backgroundColor: theme.colors.background.primary,
-    borderRadius: ms(20),
-    padding: responsive.spacing[6],
-    borderWidth: 2,
-    borderColor: theme.colors.border.light,
-  },
-  recommendedCard: {
-    borderRadius: ms(20),
-    padding: responsive.spacing[6],
-    borderWidth: 2,
-    borderColor: theme.colors.primary[500],
-    position: 'relative',
-  },
-  badge: {
-    position: 'absolute',
-    top: responsive.spacing[4],
-    right: responsive.spacing[4],
-    backgroundColor: theme.colors.primary[600],
-    paddingHorizontal: responsive.spacing[2],
-    paddingVertical: responsive.spacing[1],
-    borderRadius: ms(16),
-  },
-  badgeText: {
-    ...theme.typography.styles.caption,
-    fontSize: responsive.fontSize.xs,
-    lineHeight: responsive.fontSize.xs * 1.4,
-    color: 'white',
-    fontWeight: 'bold',
-  },
-  cardContent: {
-    flexDirection: 'row',
-    alignItems: 'flex-start',
-    gap: responsive.spacing[4],
-  },
-  iconContainer: {
-    width: ms(56),
-    height: ms(56),
-    borderRadius: ms(16),
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  cardTextContainer: {
-    flex: 1,
-    paddingTop: responsive.spacing[1],
-  },
-  cardTitle: {
-    ...theme.typography.styles.h3,
-    fontSize: responsive.fontSize.h4,
-    lineHeight: responsive.fontSize.h4 * 1.3,
-    marginBottom: responsive.spacing[2],
-  },
-  cardSubtitle: {
-    ...theme.typography.styles.bodySmall,
-    fontSize: responsive.fontSize.sm,
-    lineHeight: responsive.fontSize.sm * 1.5,
-    color: theme.colors.text.secondary,
-  },
-  chevron: {
-    marginTop: responsive.spacing[2],
-  },
-  helpText: {
-    ...theme.typography.styles.bodySmall,
-    fontSize: responsive.fontSize.sm,
-    lineHeight: responsive.fontSize.sm * 1.5,
-    color: theme.colors.text.secondary,
-    textAlign: 'center',
-    marginTop: responsive.spacing[4],
-  },
-});

@@ -12,31 +12,12 @@ import {
 } from 'react-native';
 import { useRouter } from 'expo-router';
 import { Screen } from '@/components/layout/Screen';
-import { theme } from '@/constants/theme';
+import { getTheme } from '@/constants/theme';
 import { responsive, ms } from '@/constants/responsive';
 import { Ionicons } from '@expo/vector-icons';
 import Svg, { Circle } from 'react-native-svg';
 import { BottomButton } from '@/components/ui/BottomButton';
-
-// Color Palette - Using theme colors
-const colors = {
-  // Primary Palette
-  primaryDark: theme.colors.info.dark,
-  primary: theme.colors.info.main,
-  primaryLight: theme.colors.info.light,
-
-  // Neutral Palette
-  neutralBg: theme.colors.background.secondary,
-  neutralWhite: theme.colors.background.primary,
-  neutralDarkest: theme.colors.text.primary,
-  neutralDark: theme.colors.text.secondary,
-  neutralMedium: theme.colors.text.tertiary,
-
-  // Functional Palette
-  functionalSuccess: theme.colors.success.main,
-  functionalWarning: theme.colors.warning.main,
-  functionalError: theme.colors.danger.main,
-};
+import { useTheme } from '@/contexts/ThemeContext';
 
 interface Account {
   id: string;
@@ -61,7 +42,29 @@ interface AccountTypeOption {
 
 const AccountsInsightsScreen: React.FC = () => {
   const router = useRouter();
+  const { theme: themeMode } = useTheme();
+  const theme = getTheme(themeMode);
   const [showAddModal, setShowAddModal] = useState(false);
+
+  // Color Palette - Using theme colors
+  const colors = {
+    // Primary Palette
+    primaryDark: theme.colors.info.dark,
+    primary: theme.colors.info.main,
+    primaryLight: theme.colors.info.light,
+
+    // Neutral Palette
+    neutralBg: theme.colors.background.secondary,
+    neutralWhite: theme.colors.background.primary,
+    neutralDarkest: theme.colors.text.primary,
+    neutralDark: theme.colors.text.secondary,
+    neutralMedium: theme.colors.text.tertiary,
+
+    // Functional Palette
+    functionalSuccess: theme.colors.success.main,
+    functionalWarning: theme.colors.warning.main,
+    functionalError: theme.colors.danger.main,
+  };
 
   const accountTypeOptions: AccountTypeOption[] = [
     {
@@ -183,9 +186,272 @@ const AccountsInsightsScreen: React.FC = () => {
     </TouchableOpacity>
   );
 
+  const styles = StyleSheet.create({
+    scrollView: {
+      flex: 1,
+    },
+    header: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+      paddingHorizontal: responsive.spacing[4],
+      paddingVertical: responsive.spacing[3],
+      backgroundColor: colors.neutralBg,
+    },
+    headerTitle: {
+      fontSize: responsive.fontSize.xl,
+      fontWeight: '700',
+      color: colors.neutralDarkest,
+    },
+    headerButton: {
+      width: ms(40),
+      height: ms(40),
+      justifyContent: 'center',
+      alignItems: 'center',
+    },
+    content: {
+      padding: responsive.spacing[4],
+    },
+    netWorthCard: {
+      padding: responsive.spacing[5],
+      backgroundColor: colors.neutralWhite,
+      borderRadius: theme.borderRadius.xl,
+      gap: responsive.spacing[2],
+      marginBottom: responsive.spacing[4],
+      ...theme.shadows.sm,
+    },
+    netWorthLabel: {
+      fontSize: responsive.fontSize.md,
+      fontWeight: '500',
+      color: colors.neutralDark,
+    },
+    netWorthValue: {
+      fontSize: responsive.fontSize.h2,
+      fontWeight: '700',
+      color: colors.neutralDarkest,
+    },
+    netWorthChange: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: responsive.spacing[1],
+    },
+    changeText: {
+      fontSize: responsive.fontSize.md,
+      fontWeight: '500',
+      color: colors.functionalSuccess,
+    },
+    section: {
+      marginBottom: responsive.spacing[6],
+    },
+    sectionHeader: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+      marginBottom: responsive.spacing[4],
+    },
+    sectionTitle: {
+      fontSize: responsive.fontSize.lg,
+      fontWeight: '700',
+      color: colors.neutralDarkest,
+    },
+    viewAllText: {
+      fontSize: responsive.fontSize.sm,
+      fontWeight: '600',
+      color: colors.primary,
+    },
+    accountsList: {
+      gap: responsive.spacing[3],
+    },
+    accountCard: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      alignItems: 'flex-start',
+      minHeight: ms(80),
+      padding: responsive.spacing[4],
+      backgroundColor: colors.neutralWhite,
+      borderRadius: theme.borderRadius.xl,
+      gap: responsive.spacing[3],
+      ...theme.shadows.sm,
+    },
+    accountLeft: {
+      flexDirection: 'row',
+      alignItems: 'flex-start',
+      gap: responsive.spacing[3],
+      flex: 1,
+      minWidth: 0,
+    },
+    accountLogo: {
+      width: ms(48),
+      height: ms(48),
+      borderRadius: theme.borderRadius.md,
+      flexShrink: 0,
+    },
+    accountInfo: {
+      gap: responsive.spacing[1],
+      flex: 1,
+      minWidth: 0,
+    },
+    accountName: {
+      fontSize: responsive.fontSize.md,
+      fontWeight: '600',
+      color: colors.neutralDarkest,
+      flexWrap: 'wrap',
+    },
+    bankNameText: {
+      fontSize: responsive.fontSize.sm,
+      fontWeight: '500',
+      color: colors.neutralDark,
+      flexWrap: 'wrap',
+    },
+    accountUpdate: {
+      fontSize: responsive.fontSize.xs,
+      color: colors.neutralMedium,
+      flexWrap: 'wrap',
+    },
+    accountRight: {
+      alignItems: 'flex-end',
+      gap: responsive.spacing[1],
+      minWidth: ms(100),
+      flexShrink: 0,
+    },
+    balanceContainer: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: responsive.spacing[2],
+      flexWrap: 'wrap',
+      justifyContent: 'flex-end',
+    },
+    accountBalance: {
+      fontSize: responsive.fontSize.md,
+      fontWeight: '500',
+      color: colors.neutralDarkest,
+    },
+    negativeBalance: {
+      color: colors.functionalError,
+    },
+    dueDot: {
+      width: ms(10),
+      height: ms(10),
+      borderRadius: ms(5),
+      backgroundColor: colors.functionalError,
+    },
+    changePositive: {
+      fontSize: responsive.fontSize.sm,
+      fontWeight: '500',
+      color: colors.functionalSuccess,
+    },
+    chartCard: {
+      marginTop: responsive.spacing[3],
+      padding: responsive.spacing[4],
+      backgroundColor: colors.neutralWhite,
+      borderRadius: theme.borderRadius.xl,
+      ...theme.shadows.sm,
+    },
+    chartTitle: {
+      fontSize: responsive.fontSize.md,
+      fontWeight: '600',
+      color: colors.neutralDarkest,
+      marginBottom: responsive.spacing[3],
+    },
+    chartContainer: {
+      flexDirection: 'row',
+      gap: responsive.spacing[4],
+    },
+    pieChart: {
+      width: ms(96),
+      height: ms(96),
+    },
+    legend: {
+      flex: 1,
+      gap: responsive.spacing[2],
+      justifyContent: 'center',
+    },
+    legendItem: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: responsive.spacing[2],
+    },
+    legendDot: {
+      width: ms(10),
+      height: ms(10),
+      borderRadius: ms(5),
+    },
+    legendText: {
+      fontSize: responsive.fontSize.sm,
+      color: colors.neutralDark,
+    },
+    // Modal Styles
+    modalOverlay: {
+      flex: 1,
+      backgroundColor: 'rgba(0, 0, 0, 0.5)',
+      justifyContent: 'flex-end',
+    },
+    modalContent: {
+      backgroundColor: colors.neutralWhite,
+      borderTopLeftRadius: theme.borderRadius.xl * 2,
+      borderTopRightRadius: theme.borderRadius.xl * 2,
+      paddingBottom: responsive.spacing[6],
+      maxHeight: '80%',
+    },
+    modalHeader: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+      paddingHorizontal: responsive.spacing[5],
+      paddingVertical: responsive.spacing[4],
+      borderBottomWidth: 1,
+      borderBottomColor: `${colors.neutralMedium}20`,
+    },
+    modalTitle: {
+      fontSize: responsive.fontSize.xl,
+      fontWeight: '700',
+      color: colors.neutralDarkest,
+    },
+    closeButton: {
+      width: ms(40),
+      height: ms(40),
+      justifyContent: 'center',
+      alignItems: 'center',
+      borderRadius: ms(20),
+    },
+    modalOptions: {
+      padding: responsive.spacing[5],
+      gap: responsive.spacing[3],
+    },
+    optionCard: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      padding: responsive.spacing[4],
+      backgroundColor: colors.neutralBg,
+      borderRadius: theme.borderRadius.xl,
+      gap: responsive.spacing[3],
+    },
+    optionIcon: {
+      width: ms(48),
+      height: ms(48),
+      borderRadius: ms(24),
+      justifyContent: 'center',
+      alignItems: 'center',
+      flexShrink: 0,
+    },
+    optionText: {
+      flex: 1,
+      gap: responsive.spacing[1],
+    },
+    optionTitle: {
+      fontSize: responsive.fontSize.md,
+      fontWeight: '600',
+      color: colors.neutralDarkest,
+    },
+    optionDescription: {
+      fontSize: responsive.fontSize.sm,
+      color: colors.neutralDark,
+    },
+  });
+
   return (
     <Screen scrollable={false} noPadding backgroundColor={colors.neutralBg} edges={['top']}>
-      <StatusBar barStyle="dark-content" backgroundColor={colors.neutralBg} />
+      <StatusBar barStyle={themeMode === 'dark' ? 'light-content' : 'dark-content'} backgroundColor={colors.neutralBg} />
 
       {/* Header */}
       <View style={styles.header}>
@@ -365,268 +631,5 @@ const AccountsInsightsScreen: React.FC = () => {
     </Screen>
   );
 };
-
-const styles = StyleSheet.create({
-  scrollView: {
-    flex: 1,
-  },
-  header: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    paddingHorizontal: responsive.spacing[4],
-    paddingVertical: responsive.spacing[3],
-    backgroundColor: colors.neutralBg,
-  },
-  headerTitle: {
-    fontSize: responsive.fontSize.xl,
-    fontWeight: '700',
-    color: colors.neutralDarkest,
-  },
-  headerButton: {
-    width: ms(40),
-    height: ms(40),
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  content: {
-    padding: responsive.spacing[4],
-  },
-  netWorthCard: {
-    padding: responsive.spacing[5],
-    backgroundColor: colors.neutralWhite,
-    borderRadius: theme.borderRadius.xl,
-    gap: responsive.spacing[2],
-    marginBottom: responsive.spacing[4],
-    ...theme.shadows.sm,
-  },
-  netWorthLabel: {
-    fontSize: responsive.fontSize.md,
-    fontWeight: '500',
-    color: colors.neutralDark,
-  },
-  netWorthValue: {
-    fontSize: responsive.fontSize.h2,
-    fontWeight: '700',
-    color: colors.neutralDarkest,
-  },
-  netWorthChange: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: responsive.spacing[1],
-  },
-  changeText: {
-    fontSize: responsive.fontSize.md,
-    fontWeight: '500',
-    color: colors.functionalSuccess,
-  },
-  section: {
-    marginBottom: responsive.spacing[6],
-  },
-  sectionHeader: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: responsive.spacing[4],
-  },
-  sectionTitle: {
-    fontSize: responsive.fontSize.lg,
-    fontWeight: '700',
-    color: colors.neutralDarkest,
-  },
-  viewAllText: {
-    fontSize: responsive.fontSize.sm,
-    fontWeight: '600',
-    color: colors.primary,
-  },
-  accountsList: {
-    gap: responsive.spacing[3],
-  },
-  accountCard: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'flex-start',
-    minHeight: ms(80),
-    padding: responsive.spacing[4],
-    backgroundColor: colors.neutralWhite,
-    borderRadius: theme.borderRadius.xl,
-    gap: responsive.spacing[3],
-    ...theme.shadows.sm,
-  },
-  accountLeft: {
-    flexDirection: 'row',
-    alignItems: 'flex-start',
-    gap: responsive.spacing[3],
-    flex: 1,
-    minWidth: 0,
-  },
-  accountLogo: {
-    width: ms(48),
-    height: ms(48),
-    borderRadius: theme.borderRadius.md,
-    flexShrink: 0,
-  },
-  accountInfo: {
-    gap: responsive.spacing[1],
-    flex: 1,
-    minWidth: 0,
-  },
-  accountName: {
-    fontSize: responsive.fontSize.md,
-    fontWeight: '600',
-    color: colors.neutralDarkest,
-    flexWrap: 'wrap',
-  },
-  bankNameText: {
-    fontSize: responsive.fontSize.sm,
-    fontWeight: '500',
-    color: colors.neutralDark,
-    flexWrap: 'wrap',
-  },
-  accountUpdate: {
-    fontSize: responsive.fontSize.xs,
-    color: colors.neutralMedium,
-    flexWrap: 'wrap',
-  },
-  accountRight: {
-    alignItems: 'flex-end',
-    gap: responsive.spacing[1],
-    minWidth: ms(100),
-    flexShrink: 0,
-  },
-  balanceContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: responsive.spacing[2],
-    flexWrap: 'wrap',
-    justifyContent: 'flex-end',
-  },
-  accountBalance: {
-    fontSize: responsive.fontSize.md,
-    fontWeight: '500',
-    color: colors.neutralDarkest,
-  },
-  negativeBalance: {
-    color: colors.functionalError,
-  },
-  dueDot: {
-    width: ms(10),
-    height: ms(10),
-    borderRadius: ms(5),
-    backgroundColor: colors.functionalError,
-  },
-  changePositive: {
-    fontSize: responsive.fontSize.sm,
-    fontWeight: '500',
-    color: colors.functionalSuccess,
-  },
-  chartCard: {
-    marginTop: responsive.spacing[3],
-    padding: responsive.spacing[4],
-    backgroundColor: colors.neutralWhite,
-    borderRadius: theme.borderRadius.xl,
-    ...theme.shadows.sm,
-  },
-  chartTitle: {
-    fontSize: responsive.fontSize.md,
-    fontWeight: '600',
-    color: colors.neutralDarkest,
-    marginBottom: responsive.spacing[3],
-  },
-  chartContainer: {
-    flexDirection: 'row',
-    gap: responsive.spacing[4],
-  },
-  pieChart: {
-    width: ms(96),
-    height: ms(96),
-  },
-  legend: {
-    flex: 1,
-    gap: responsive.spacing[2],
-    justifyContent: 'center',
-  },
-  legendItem: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: responsive.spacing[2],
-  },
-  legendDot: {
-    width: ms(10),
-    height: ms(10),
-    borderRadius: ms(5),
-  },
-  legendText: {
-    fontSize: responsive.fontSize.sm,
-    color: colors.neutralDark,
-  },
-  // Modal Styles
-  modalOverlay: {
-    flex: 1,
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
-    justifyContent: 'flex-end',
-  },
-  modalContent: {
-    backgroundColor: colors.neutralWhite,
-    borderTopLeftRadius: theme.borderRadius.xl * 2,
-    borderTopRightRadius: theme.borderRadius.xl * 2,
-    paddingBottom: responsive.spacing[6],
-    maxHeight: '80%',
-  },
-  modalHeader: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    paddingHorizontal: responsive.spacing[5],
-    paddingVertical: responsive.spacing[4],
-    borderBottomWidth: 1,
-    borderBottomColor: `${colors.neutralMedium}20`,
-  },
-  modalTitle: {
-    fontSize: responsive.fontSize.xl,
-    fontWeight: '700',
-    color: colors.neutralDarkest,
-  },
-  closeButton: {
-    width: ms(40),
-    height: ms(40),
-    justifyContent: 'center',
-    alignItems: 'center',
-    borderRadius: ms(20),
-  },
-  modalOptions: {
-    padding: responsive.spacing[5],
-    gap: responsive.spacing[3],
-  },
-  optionCard: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    padding: responsive.spacing[4],
-    backgroundColor: colors.neutralBg,
-    borderRadius: theme.borderRadius.xl,
-    gap: responsive.spacing[3],
-  },
-  optionIcon: {
-    width: ms(48),
-    height: ms(48),
-    borderRadius: ms(24),
-    justifyContent: 'center',
-    alignItems: 'center',
-    flexShrink: 0,
-  },
-  optionText: {
-    flex: 1,
-    gap: responsive.spacing[1],
-  },
-  optionTitle: {
-    fontSize: responsive.fontSize.md,
-    fontWeight: '600',
-    color: colors.neutralDarkest,
-  },
-  optionDescription: {
-    fontSize: responsive.fontSize.sm,
-    color: colors.neutralDark,
-  },
-});
 
 export default AccountsInsightsScreen;

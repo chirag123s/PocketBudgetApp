@@ -1,9 +1,14 @@
 import { Tabs } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { theme } from '@/constants/theme';
+import { getTheme } from '@/constants/theme';
+import { useTheme } from '@/contexts/ThemeContext';
 
 export default function TabsLayout() {
+  // Get theme
+  const { theme: themeMode } = useTheme();
+  const theme = getTheme(themeMode);
+
   // Get safe area insets for proper bottom spacing on Android/iOS
   const insets = useSafeAreaInsets();
 
@@ -23,7 +28,7 @@ export default function TabsLayout() {
     <Tabs
       screenOptions={{
         headerShown: headerShown,
-        tabBarActiveTintColor: theme.colors.primary[600],
+        tabBarActiveTintColor: theme.colors.info.main,
         tabBarInactiveTintColor: theme.colors.text.tertiary,
         tabBarStyle: {
           backgroundColor: theme.colors.background.primary,

@@ -1,14 +1,17 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, ScrollView, TextInput } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, ScrollView, TextInput, StatusBar } from 'react-native';
 import { Screen } from '@/components/layout/Screen';
 import { ScreenHeader } from '@/components/layout/ScreenHeader';
 import { Button } from '@/components/ui/Button';
-import { theme } from '@/constants/theme';
+import { getTheme } from '@/constants/theme';
+import { useTheme } from '@/contexts/ThemeContext';
 import { responsive, ms } from '@/constants/responsive';
 import { Ionicons } from '@expo/vector-icons';
 import { settingsTypography, settingsFontWeights, settingsTextStyles } from './typography';
 
 export default function ContactSupport() {
+  const { theme: themeMode } = useTheme();
+  const theme = getTheme(themeMode);
   const [issueType, setIssueType] = useState('technical');
   const [subject, setSubject] = useState('');
   const [description, setDescription] = useState('');
@@ -17,8 +20,100 @@ export default function ContactSupport() {
     // Send support message logic
   };
 
+  const styles = StyleSheet.create({
+    content: {
+      padding: responsive.spacing[6],
+      paddingBottom: responsive.spacing[8],
+    },
+    card: {
+      backgroundColor: theme.colors.background.primary,
+      borderRadius: theme.borderRadius.xl,
+      padding: responsive.spacing[6],
+      marginBottom: responsive.spacing[4],
+      ...theme.shadows.sm,
+    },
+    label: {
+      ...theme.typography.styles.bodySmall,
+      color: theme.colors.text.secondary,
+      marginBottom: responsive.spacing[2],
+      marginTop: responsive.spacing[4],
+    },
+    selectButton: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'space-between',
+      backgroundColor: theme.colors.background.tertiary,
+      borderRadius: theme.borderRadius.xl,
+      padding: responsive.spacing[2],
+      marginBottom: responsive.spacing[4],
+    },
+    selectButtonText: {
+      ...theme.typography.styles.body,
+      textTransform: 'capitalize',
+    },
+    input: {
+      borderWidth: 1,
+      borderColor: theme.colors.border.main,
+      borderRadius: theme.borderRadius.xl,
+      padding: responsive.spacing[2],
+      ...theme.typography.styles.body,
+      color: theme.colors.text.primary,
+      marginBottom: responsive.spacing[4],
+    },
+    textArea: {
+      minHeight: 120,
+      paddingTop: responsive.spacing[2],
+    },
+    attachButton: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'center',
+      backgroundColor: theme.colors.background.tertiary,
+      borderRadius: theme.borderRadius.xl,
+      padding: responsive.spacing[2],
+      marginBottom: responsive.spacing[4],
+    },
+    attachButtonText: {
+      ...theme.typography.styles.button,
+      marginLeft: responsive.spacing[2],
+      fontWeight: settingsFontWeights.semibold,
+    },
+    emailBox: {
+      backgroundColor: theme.colors.background.tertiary,
+      borderRadius: theme.borderRadius.xl,
+      padding: responsive.spacing[4],
+      marginBottom: responsive.spacing[4],
+    },
+    emailLabel: {
+      ...theme.typography.styles.bodySmall,
+      color: theme.colors.text.secondary,
+      marginBottom: 4,
+    },
+    emailText: {
+      ...theme.typography.styles.body,
+      fontWeight: settingsFontWeights.semibold,
+    },
+    infoCard: {
+      backgroundColor: theme.colors.info.light,
+      borderRadius: theme.borderRadius.xl,
+      padding: responsive.spacing[6],
+      alignItems: 'center',
+    },
+    infoLabel: {
+      ...theme.typography.styles.bodySmall,
+      color: theme.colors.info.dark,
+      marginBottom: responsive.spacing[2],
+    },
+    infoText: {
+      ...theme.typography.styles.body,
+      fontWeight: settingsFontWeights.semibold,
+      color: theme.colors.info.dark,
+    },
+  });
+
   return (
     <Screen noPadding backgroundColor={theme.colors.background.secondary} edges={['top', 'bottom']}>
+      <StatusBar barStyle={themeMode === 'dark' ? 'light-content' : 'dark-content'} backgroundColor={theme.colors.background.secondary} />
       <ScreenHeader title="Contact Support" />
 
       <ScrollView contentContainerStyle={styles.content}>
@@ -86,94 +181,3 @@ export default function ContactSupport() {
     </Screen>
   );
 }
-
-const styles = StyleSheet.create({
-  content: {
-    padding: responsive.spacing[6],
-    paddingBottom: responsive.spacing[8],
-  },
-  card: {
-    backgroundColor: theme.colors.background.primary,
-    borderRadius: theme.borderRadius.xl,
-    padding: responsive.spacing[6],
-    marginBottom: responsive.spacing[4],
-    ...theme.shadows.sm,
-  },
-  label: {
-    ...theme.typography.styles.bodySmall,
-    color: theme.colors.text.secondary,
-    marginBottom: responsive.spacing[2],
-    marginTop: responsive.spacing[4],
-  },
-  selectButton: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    backgroundColor: theme.colors.background.tertiary,
-    borderRadius: theme.borderRadius.xl,
-    padding: responsive.spacing[2],
-    marginBottom: responsive.spacing[4],
-  },
-  selectButtonText: {
-    ...theme.typography.styles.body,
-    textTransform: 'capitalize',
-  },
-  input: {
-    borderWidth: 1,
-    borderColor: theme.colors.border.main,
-    borderRadius: theme.borderRadius.xl,
-    padding: responsive.spacing[2],
-    ...theme.typography.styles.body,
-    color: theme.colors.text.primary,
-    marginBottom: responsive.spacing[4],
-  },
-  textArea: {
-    minHeight: 120,
-    paddingTop: responsive.spacing[2],
-  },
-  attachButton: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: theme.colors.background.tertiary,
-    borderRadius: theme.borderRadius.xl,
-    padding: responsive.spacing[2],
-    marginBottom: responsive.spacing[4],
-  },
-  attachButtonText: {
-    ...theme.typography.styles.button,
-    marginLeft: responsive.spacing[2],
-    fontWeight: settingsFontWeights.semibold,
-  },
-  emailBox: {
-    backgroundColor: theme.colors.background.tertiary,
-    borderRadius: theme.borderRadius.xl,
-    padding: responsive.spacing[4],
-    marginBottom: responsive.spacing[4],
-  },
-  emailLabel: {
-    ...theme.typography.styles.bodySmall,
-    color: theme.colors.text.secondary,
-    marginBottom: 4,
-  },
-  emailText: {
-    ...theme.typography.styles.body,
-    fontWeight: settingsFontWeights.semibold,
-  },
-  infoCard: {
-    backgroundColor: theme.colors.info.light,
-    borderRadius: theme.borderRadius.xl,
-    padding: responsive.spacing[6],
-    alignItems: 'center',
-  },
-  infoLabel: {
-    ...theme.typography.styles.bodySmall,
-    color: theme.colors.info.dark,
-    marginBottom: responsive.spacing[2],
-  },
-  infoText: {
-    ...theme.typography.styles.body,
-    fontWeight: settingsFontWeights.semibold,
-    color: theme.colors.info.dark,
-  },
-});
