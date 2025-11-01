@@ -1,10 +1,11 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Modal } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { getTheme } from '@/constants/theme';
 import { responsive, ms } from '@/constants/responsive';
 import { formatCurrencyCompact } from '@/utils/currency';
 import { useTheme } from '@/contexts/ThemeContext';
+import { InlineDropdown, DropdownOption } from '@/components/ui';
 
 export interface CategoryData {
   id?: string;
@@ -41,27 +42,19 @@ export const CategoryBreakdownWidget: React.FC<CategoryBreakdownWidgetProps> = (
     functionalError: theme.colors.danger.main,
   };
 
-  const [showPeriodSelector, setShowPeriodSelector] = useState(false);
   const [selectedPeriod, setSelectedPeriod] = useState<'week' | 'month' | 'year'>('month');
 
-  const handlePeriodSelect = (period: 'week' | 'month' | 'year') => {
-    setSelectedPeriod(period);
-    setShowPeriodSelector(false);
-    onPeriodSelect?.(period);
+  const handlePeriodChange = (period: string) => {
+    const typedPeriod = period as 'week' | 'month' | 'year';
+    setSelectedPeriod(typedPeriod);
+    onPeriodSelect?.(typedPeriod);
   };
 
-  const getPeriodLabel = () => {
-    switch (selectedPeriod) {
-      case 'week':
-        return 'This Week';
-      case 'month':
-        return 'This Month';
-      case 'year':
-        return 'This Year';
-      default:
-        return 'This Month';
-    }
-  };
+  const periodOptions: DropdownOption[] = [
+    { value: 'week', label: 'This Week' },
+    { value: 'month', label: 'This Month' },
+    { value: 'year', label: 'This Year' },
+  ];
 
   // Map icon strings to Ionicons names
   const getIconName = (icon: string): keyof typeof Ionicons.glyphMap => {
@@ -100,16 +93,6 @@ export const CategoryBreakdownWidget: React.FC<CategoryBreakdownWidgetProps> = (
       fontSize: responsive.fontSize.lg,
       fontWeight: '700',
       color: colors.neutralDarkest,
-    },
-    periodButton: {
-      flexDirection: 'row',
-      alignItems: 'center',
-      gap: responsive.spacing[1],
-    },
-    periodText: {
-      fontSize: responsive.fontSize.sm,
-      fontWeight: '500',
-      color: colors.primary,
     },
 
     // Categories List
@@ -160,68 +143,20 @@ export const CategoryBreakdownWidget: React.FC<CategoryBreakdownWidgetProps> = (
       height: '100%',
       borderRadius: ms(4),
     },
-
-    // Modal
-    modalOverlay: {
-      flex: 1,
-      backgroundColor: 'rgba(0, 0, 0, 0.5)',
-      justifyContent: 'center',
-      alignItems: 'center',
-      padding: responsive.spacing[4],
-    },
-    periodModal: {
-      backgroundColor: colors.neutralWhite,
-      borderRadius: theme.borderRadius.xl,
-      padding: responsive.spacing[6],
-      width: '100%',
-      maxWidth: 320,
-      ...theme.shadows.md,
-    },
-    modalTitle: {
-      fontSize: responsive.fontSize.xl,
-      fontWeight: '700',
-      color: colors.neutralDarkest,
-      marginBottom: responsive.spacing[4],
-      textAlign: 'center',
-    },
-    periodOption: {
-      flexDirection: 'row',
-      alignItems: 'center',
-      justifyContent: 'space-between',
-      paddingVertical: responsive.spacing[4],
-      paddingHorizontal: responsive.spacing[4],
-      borderRadius: theme.borderRadius.lg,
-      marginBottom: responsive.spacing[2],
-      backgroundColor: colors.neutralBg,
-    },
-    periodOptionActive: {
-      backgroundColor: `${colors.primary}15`,
-    },
-    periodOptionText: {
-      fontSize: responsive.fontSize.md,
-      fontWeight: '500',
-      color: colors.neutralDark,
-    },
-    periodOptionTextActive: {
-      color: colors.primary,
-      fontWeight: '600',
-    },
   });
 
   return (
-    <>
-      <View style={styles.card}>
-        {/* Header */}
-        <View style={styles.header}>
-          <Text style={styles.title}>Top Spending</Text>
-          <TouchableOpacity
-            style={styles.periodButton}
-            onPress={() => setShowPeriodSelector(true)}
-          >
-            <Text style={styles.periodText}>{getPeriodLabel()}</Text>
-            <Ionicons name="chevron-down" size={18} color={colors.primary} />
-          </TouchableOpacity>
-        </View>
+    <View style={styles.card}>
+      {/* Header */}
+      <View style={styles.header}>
+        <Text style={styles.title}>Top Spending</Text>
+        <InlineDropdown
+          options={periodOptions}
+          selectedValue={selectedPeriod}
+          onSelect={handlePeriodChange}
+          align="right"
+        />
+      </View>
 
         {/* Categories List */}
         <View style={styles.categoriesList}>
@@ -274,82 +209,6 @@ export const CategoryBreakdownWidget: React.FC<CategoryBreakdownWidgetProps> = (
             );
           })}
         </View>
-      </View>
-
-      {/* Period Selector Modal */}
-      <Modal
-        visible={showPeriodSelector}
-        transparent
-        animationType="fade"
-        onRequestClose={() => setShowPeriodSelector(false)}
-      >
-        <TouchableOpacity
-          style={styles.modalOverlay}
-          activeOpacity={1}
-          onPress={() => setShowPeriodSelector(false)}
-        >
-          <View style={styles.periodModal}>
-            <Text style={styles.modalTitle}>Select Period</Text>
-            <TouchableOpacity
-              style={[
-                styles.periodOption,
-                selectedPeriod === 'week' && styles.periodOptionActive,
-              ]}
-              onPress={() => handlePeriodSelect('week')}
-            >
-              <Text
-                style={[
-                  styles.periodOptionText,
-                  selectedPeriod === 'week' && styles.periodOptionTextActive,
-                ]}
-              >
-                This Week
-              </Text>
-              {selectedPeriod === 'week' && (
-                <Ionicons name="checkmark" size={20} color={colors.primary} />
-              )}
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={[
-                styles.periodOption,
-                selectedPeriod === 'month' && styles.periodOptionActive,
-              ]}
-              onPress={() => handlePeriodSelect('month')}
-            >
-              <Text
-                style={[
-                  styles.periodOptionText,
-                  selectedPeriod === 'month' && styles.periodOptionTextActive,
-                ]}
-              >
-                This Month
-              </Text>
-              {selectedPeriod === 'month' && (
-                <Ionicons name="checkmark" size={20} color={colors.primary} />
-              )}
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={[
-                styles.periodOption,
-                selectedPeriod === 'year' && styles.periodOptionActive,
-              ]}
-              onPress={() => handlePeriodSelect('year')}
-            >
-              <Text
-                style={[
-                  styles.periodOptionText,
-                  selectedPeriod === 'year' && styles.periodOptionTextActive,
-                ]}
-              >
-                This Year
-              </Text>
-              {selectedPeriod === 'year' && (
-                <Ionicons name="checkmark" size={20} color={colors.primary} />
-              )}
-            </TouchableOpacity>
-          </View>
-        </TouchableOpacity>
-      </Modal>
-    </>
+    </View>
   );
 };

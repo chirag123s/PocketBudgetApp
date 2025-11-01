@@ -7,6 +7,7 @@ import {
   Switch,
   StyleSheet,
   StatusBar,
+  Alert,
 } from 'react-native';
 import { useRouter } from 'expo-router';
 import { Screen } from '@/components/layout/Screen';
@@ -16,6 +17,7 @@ import { useTheme } from '@/contexts/ThemeContext';
 import { responsive, ms } from '@/constants/responsive';
 import { settingsTypography, settingsFontWeights, settingsTextStyles } from './typography';
 import { Ionicons } from '@expo/vector-icons';
+import { getSettingsStyles, SETTINGS_CONSTANTS } from './settingsStyles';
 
 interface SettingItemProps {
   icon: string;
@@ -35,9 +37,18 @@ interface SettingToggleProps {
 }
 
 export default function CurrencyRegionSettings() {
-  const { theme: themeMode } = useTheme();
-  const theme = getTheme(themeMode);
+  const { theme: themeMode, customBackgroundColor, customCardColor } = useTheme();
+  const theme = getTheme(themeMode, customBackgroundColor, customCardColor);
+  const settingsStyles = getSettingsStyles(themeMode, customBackgroundColor, customCardColor);
   const router = useRouter();
+
+  // State variables
+  const [country, setCountry] = useState('Australia');
+  const [currency, setCurrency] = useState('AUD');
+  const [dateFormat, setDateFormat] = useState('DD/MM/YYYY');
+  const [timeFormat, setTimeFormat] = useState('12-hour (am/pm)');
+  const [numberFormat, setNumberFormat] = useState('1,000.00');
+  const [financialYearStart, setFinancialYearStart] = useState('July 1st');
   const [taxGuidanceEnabled, setTaxGuidanceEnabled] = useState(true);
 
   // Color Palette - Using theme colors
@@ -71,37 +82,35 @@ export default function CurrencyRegionSettings() {
     onPress,
     isLast = false
   }) => (
-    <TouchableOpacity
-      style={[
-        styles.settingItem,
-        !isLast && styles.settingItemBorder,
-      ]}
-      onPress={onPress}
-      activeOpacity={0.7}
-    >
-      <View style={styles.settingLeft}>
-        <View style={styles.iconContainer}>
+    <React.Fragment>
+      <TouchableOpacity
+        style={settingsStyles.menuItem}
+        onPress={onPress}
+        activeOpacity={0.7}
+      >
+        <View style={settingsStyles.iconContainer}>
           <Ionicons
             name={icon as any}
-            size={20}
+            size={SETTINGS_CONSTANTS.ICON_SIZE}
             color={colors.neutralDarkest}
           />
         </View>
-        <Text style={styles.settingLabel}>
-          {label}
-        </Text>
-      </View>
-      <View style={styles.settingRight}>
-        <Text style={styles.settingValue}>
-          {value}
-        </Text>
+        <View style={styles.settingContent}>
+          <Text style={settingsStyles.menuText}>
+            {label}
+          </Text>
+          <Text style={styles.settingValue}>
+            {value}
+          </Text>
+        </View>
         <Ionicons
           name="chevron-forward"
-          size={20}
+          size={SETTINGS_CONSTANTS.CHEVRON_SIZE}
           color={colors.neutralMedium}
         />
-      </View>
-    </TouchableOpacity>
+      </TouchableOpacity>
+      {!isLast && <View style={settingsStyles.menuItemDivider} />}
+    </React.Fragment>
   );
 
   const SettingToggle: React.FC<SettingToggleProps> = ({
@@ -112,134 +121,90 @@ export default function CurrencyRegionSettings() {
     onValueChange,
     isLast = false
   }) => (
-    <View
-      style={[
-        styles.settingItem,
-        !isLast && styles.settingItemBorder
-      ]}
-    >
-      <View style={styles.settingLeftFlex}>
-        <View style={styles.iconContainer}>
+    <React.Fragment>
+      <View style={settingsStyles.menuItem}>
+        <View style={settingsStyles.iconContainer}>
           <Ionicons
             name={icon as any}
-            size={20}
+            size={SETTINGS_CONSTANTS.ICON_SIZE}
             color={colors.neutralDarkest}
           />
         </View>
         <View style={styles.toggleTextContainer}>
-          <Text style={styles.settingLabel}>
+          <Text style={settingsStyles.menuText}>
             {label}
           </Text>
           {description && (
-            <Text style={styles.settingDescription}>
+            <Text style={settingsStyles.menuSubtitle}>
               {description}
             </Text>
           )}
         </View>
+        <View style={styles.switchContainer}>
+          <Switch
+            value={value}
+            onValueChange={onValueChange}
+            trackColor={{
+              false: colors.border,
+              true: colors.functionalSuccess
+            }}
+            thumbColor="#FFFFFF"
+          />
+        </View>
       </View>
-      <View style={styles.switchContainer}>
-        <Switch
-          value={value}
-          onValueChange={onValueChange}
-          trackColor={{
-            false: colors.border,
-            true: colors.functionalSuccess
-          }}
-          thumbColor="#FFFFFF"
-        />
-      </View>
-    </View>
+      {!isLast && <View style={settingsStyles.menuItemDivider} />}
+    </React.Fragment>
   );
 
+  // Handlers
+  const handleSelectCountry = () => {
+    Alert.alert('Select Country', 'Country selection coming soon');
+  };
+
+  const handleSelectCurrency = () => {
+    Alert.alert('Select Currency', 'Currency selection coming soon');
+  };
+
+  const handleSelectDateFormat = () => {
+    Alert.alert('Select Date Format', 'Date format selection coming soon');
+  };
+
+  const handleSelectTimeFormat = () => {
+    Alert.alert('Select Time Format', 'Time format selection coming soon');
+  };
+
+  const handleSelectNumberFormat = () => {
+    Alert.alert('Select Number Format', 'Number format selection coming soon');
+  };
+
+  const handleSelectFinancialYearStart = () => {
+    Alert.alert('Select Financial Year Start', 'Financial year selection coming soon');
+  };
+
   const handleSave = () => {
-    console.log('Saving currency and region settings');
-    // Save settings logic here
-    router.back();
+    Alert.alert(
+      'Settings Saved',
+      'Your currency and region settings have been updated successfully.',
+      [{ text: 'OK', onPress: () => router.back() }]
+    );
   };
 
   const styles = StyleSheet.create({
-    scrollView: {
+    settingContent: {
       flex: 1,
-    },
-    scrollContent: {
-      paddingHorizontal: responsive.spacing[4],
-      paddingTop: responsive.spacing[4],
-      paddingBottom: ms(100),
-    },
-    section: {
-      marginBottom: responsive.spacing[5],
-    },
-    sectionHeader: {
-      fontSize: settingsTypography.tertiary,
-      lineHeight: settingsTypography.tertiary * 1.5,
-      fontWeight: settingsFontWeights.bold,
-      letterSpacing: 1,
-      textTransform: 'uppercase',
-      color: colors.neutralMedium,
-      marginBottom: responsive.spacing[3],
-    },
-    settingsCard: {
-      backgroundColor: colors.neutralWhite,
-      borderRadius: theme.borderRadius.xl,
-      overflow: 'hidden',
-      ...theme.shadows.sm,
-    },
-    settingItem: {
       flexDirection: 'row',
       alignItems: 'center',
       justifyContent: 'space-between',
-      paddingVertical: responsive.spacing[3],
-      paddingHorizontal: responsive.spacing[4],
-      minHeight: ms(56),
-    },
-    settingItemBorder: {
-      borderBottomWidth: 1,
-      borderBottomColor: colors.border,
-    },
-    settingLeft: {
-      flexDirection: 'row',
-      alignItems: 'center',
       gap: responsive.spacing[3],
-    },
-    settingLeftFlex: {
-      flexDirection: 'row',
-      alignItems: 'center',
-      gap: responsive.spacing[3],
-      flex: 1,
-    },
-    iconContainer: {
-      width: ms(48),
-      height: ms(48),
-      borderRadius: ms(24),
-      backgroundColor: colors.iconBg,
-      alignItems: 'center',
-      justifyContent: 'center',
-    },
-    settingLabel: {
-      fontSize: settingsTypography.secondary,
-      lineHeight: settingsTypography.secondary * 1.5,
-      fontWeight: settingsFontWeights.semibold,
-      color: colors.neutralDarkest,
     },
     toggleTextContainer: {
       flex: 1,
-    },
-    settingDescription: {
-      fontSize: settingsTypography.tertiary,
-      lineHeight: settingsTypography.tertiary * 1.5,
-      color: colors.neutralDark,
-      marginTop: 2,
-    },
-    settingRight: {
-      flexDirection: 'row',
-      alignItems: 'center',
-      gap: responsive.spacing[2],
     },
     settingValue: {
       fontSize: settingsTypography.secondary,
       lineHeight: settingsTypography.secondary * 1.5,
       fontWeight: settingsFontWeights.medium,
-      color: colors.primary,
+      color: colors.neutralDark,
     },
     switchContainer: {
       transform: [{ scaleX: 1.1 }, { scaleY: 1.1 }],
@@ -268,9 +233,9 @@ export default function CurrencyRegionSettings() {
       bottom: 0,
       left: 0,
       right: 0,
-      backgroundColor: colors.neutralWhite,
+      backgroundColor: theme.colors.background.primary,
       borderTopWidth: 1,
-      borderTopColor: colors.border,
+      borderTopColor: theme.colors.border.light,
       paddingHorizontal: responsive.spacing[4],
       paddingTop: responsive.spacing[3],
       paddingBottom: responsive.spacing[3],
@@ -287,7 +252,7 @@ export default function CurrencyRegionSettings() {
       fontSize: settingsTypography.button,
       lineHeight: settingsTypography.button * 1.5,
       fontWeight: settingsFontWeights.bold,
-      color: colors.neutralWhite,
+      color: '#FFFFFF',
       letterSpacing: 0.3,
     },
   });
@@ -298,71 +263,70 @@ export default function CurrencyRegionSettings() {
       <ScreenHeader title="Currency & Region" />
 
       <ScrollView
-        style={styles.scrollView}
-        contentContainerStyle={styles.scrollContent}
+        contentContainerStyle={settingsStyles.content}
         showsVerticalScrollIndicator={false}
       >
         {/* Location Section */}
-        <View style={styles.section}>
-          <Text style={styles.sectionHeader}>
+        <View style={settingsStyles.section}>
+          <Text style={settingsStyles.sectionTitle}>
             LOCATION
           </Text>
-          <View style={styles.settingsCard}>
+          <View style={settingsStyles.card}>
             <SettingItem
               icon="globe-outline"
               label="Country"
-              value="Australia"
-              onPress={() => console.log('Select country')}
+              value={country}
+              onPress={handleSelectCountry}
             />
             <SettingItem
               icon="cash-outline"
               label="Primary Currency"
-              value="AUD"
-              onPress={() => console.log('Select currency')}
+              value={currency}
+              onPress={handleSelectCurrency}
               isLast
             />
           </View>
         </View>
 
         {/* Formats Section */}
-        <View style={styles.section}>
-          <Text style={styles.sectionHeader}>
+        <View style={settingsStyles.section}>
+          <Text style={settingsStyles.sectionTitle}>
             FORMATS
           </Text>
-          <View style={styles.settingsCard}>
+          <View style={settingsStyles.card}>
             <SettingItem
               icon="calendar-outline"
               label="Date Format"
-              value="DD/MM/YYYY"
-              onPress={() => console.log('Select date format')}
+              value={dateFormat}
+              onPress={handleSelectDateFormat}
             />
             <SettingItem
               icon="clock-outline"
               label="Time Format"
-              value="12-hour (am/pm)"
-              onPress={() => console.log('Select time format')}
+              value={timeFormat}
+              onPress={handleSelectTimeFormat}
             />
             <SettingItem
               icon="calculator-outline"
               label="Number Format"
-              value="1,000.00"
-              onPress={() => console.log('Select number format')}
+              value={numberFormat}
+              onPress={handleSelectNumberFormat}
               isLast
             />
           </View>
         </View>
 
         {/* Regional Options Section */}
-        <View style={styles.section}>
-          <Text style={styles.sectionHeader}>
+        <View style={settingsStyles.section}>
+          <Text style={settingsStyles.sectionTitle}>
             REGIONAL OPTIONS
           </Text>
-          <View style={styles.settingsCard}>
+          <View style={settingsStyles.card}>
             <SettingItem
               icon="calendar-outline"
               label="Financial Year Start"
-              value="July 1st"
-              onPress={() => console.log('Select financial year start')}
+              value={financialYearStart}
+              onPress={handleSelectFinancialYearStart}
             />
             <SettingToggle
               icon="receipt-outline"
@@ -379,7 +343,7 @@ export default function CurrencyRegionSettings() {
         <View style={styles.infoBox}>
           <Ionicons
             name="information-circle"
-            size={20}
+            size={ms(20)}
             color={colors.primary}
           />
           <Text style={styles.infoText}>

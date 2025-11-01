@@ -24,8 +24,8 @@ const TAB_ORDER: InsightsTab[] = ['spending', 'income', 'networth'];
 
 export default function InsightsTab() {
   const router = useRouter();
-  const { theme: themeMode } = useTheme();
-  const theme = getTheme(themeMode);
+  const { theme: themeMode, customBackgroundColor, customCardColor } = useTheme();
+  const theme = getTheme(themeMode, customBackgroundColor, customCardColor);
   const [selectedTab, setSelectedTab] = useState<InsightsTab>('spending');
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [dateRange, setDateRange] = useState<DateRange>({

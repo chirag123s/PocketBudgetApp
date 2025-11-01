@@ -7,7 +7,8 @@ import { useTheme } from '@/contexts/ThemeContext';
 import { responsive, ms } from '@/constants/responsive';
 import { Ionicons } from '@expo/vector-icons';
 import { BudgetMateLogo } from '@/app/auth/BudgetMateLogo';
-import { settingsTypography, settingsFontWeights, settingsTextStyles } from './typography';
+import { settingsTypography, settingsFontWeights } from './typography';
+import { getSettingsStyles, SETTINGS_CONSTANTS } from './settingsStyles';
 
 interface SettingRowProps {
   icon: string;
@@ -21,6 +22,7 @@ interface SettingRowProps {
 export default function AboutApp() {
   const { theme: themeMode } = useTheme();
   const theme = getTheme(themeMode);
+  const settingsStyles = getSettingsStyles(themeMode);
 
   // Color Palette - Using theme colors
   const colors = {
@@ -54,37 +56,35 @@ export default function AboutApp() {
     rightIcon = 'chevron',
     isLast = false,
   }) => (
-    <TouchableOpacity
-      style={[
-        styles.settingRow,
-        !isLast && { borderBottomWidth: 1, borderBottomColor: colors.border }
-      ]}
-      onPress={onPress}
-      activeOpacity={0.7}
-    >
-      <View style={styles.settingLeft}>
-        <View style={styles.iconContainer}>
-          <Ionicons name={icon as any} size={ms(24)} color={colors.neutralDarkest} />
+    <React.Fragment>
+      <TouchableOpacity
+        style={settingsStyles.menuItem}
+        onPress={onPress}
+        activeOpacity={0.7}
+      >
+        <View style={settingsStyles.iconContainer}>
+          <Ionicons name={icon as any} size={SETTINGS_CONSTANTS.ICON_SIZE} color={colors.neutralDarkest} />
         </View>
-        <View style={{ flex: 1 }}>
-          <Text style={styles.settingTitle}>
+        <View style={styles.textContainer}>
+          <Text style={settingsStyles.menuText}>
             {title}
           </Text>
           {subtitle && (
-            <Text style={styles.settingSubtitle}>
+            <Text style={settingsStyles.menuSubtitle}>
               {subtitle}
             </Text>
           )}
         </View>
-      </View>
 
-      {rightIcon === 'chevron' && (
-        <Ionicons name="chevron-forward" size={20} color={colors.neutralMedium} />
-      )}
-      {rightIcon === 'external' && (
-        <Ionicons name="open-outline" size={20} color={colors.neutralMedium} />
-      )}
-    </TouchableOpacity>
+        {rightIcon === 'chevron' && (
+          <Ionicons name="chevron-forward" size={SETTINGS_CONSTANTS.CHEVRON_SIZE} color={colors.neutralMedium} />
+        )}
+        {rightIcon === 'external' && (
+          <Ionicons name="open-outline" size={SETTINGS_CONSTANTS.CHEVRON_SIZE} color={colors.neutralMedium} />
+        )}
+      </TouchableOpacity>
+      {!isLast && <View style={settingsStyles.menuItemDivider} />}
+    </React.Fragment>
   );
 
   const handleOpenURL = (url: string) => {
@@ -92,8 +92,8 @@ export default function AboutApp() {
   };
 
   const styles = StyleSheet.create({
-    content: {
-      paddingHorizontal: responsive.spacing[6],
+    textContainer: {
+      flex: 1,
     },
     // App Info Card
     appInfoCard: {
@@ -134,61 +134,6 @@ export default function AboutApp() {
       color: colors.neutralDark,
       fontStyle: 'italic',
       textAlign: 'center',
-    },
-    // Section
-    section: {
-      marginTop: responsive.spacing[4],
-    },
-    sectionHeader: {
-      fontSize: settingsTypography.tertiary,
-      lineHeight: settingsTypography.tertiary * 1.5,
-      fontWeight: settingsFontWeights.bold,
-      letterSpacing: 1,
-      textTransform: 'uppercase',
-      color: colors.neutralMedium,
-      paddingBottom: responsive.spacing[2],
-      paddingTop: responsive.spacing[4],
-    },
-    card: {
-      backgroundColor: colors.neutralWhite,
-      borderRadius: theme.borderRadius.xl,
-      overflow: 'hidden',
-      ...theme.shadows.sm,
-    },
-    // Setting Row
-    settingRow: {
-      flexDirection: 'row',
-      alignItems: 'center',
-      justifyContent: 'space-between',
-      paddingVertical: responsive.spacing[3],
-      paddingHorizontal: responsive.spacing[4],
-      minHeight: ms(64),
-    },
-    settingLeft: {
-      flexDirection: 'row',
-      alignItems: 'center',
-      gap: responsive.spacing[4],
-      flex: 1,
-    },
-    iconContainer: {
-      width: ms(48),
-      height: ms(48),
-      borderRadius: ms(24),
-      alignItems: 'center',
-      justifyContent: 'center',
-      backgroundColor: colors.iconBg,
-    },
-    settingTitle: {
-      fontSize: settingsTypography.primary,
-      lineHeight: settingsTypography.primary * 1.5,
-      fontWeight: settingsFontWeights.medium,
-      color: colors.neutralDarkest,
-    },
-    settingSubtitle: {
-      fontSize: settingsTypography.secondary,
-      lineHeight: settingsTypography.secondary * 1.5,
-      color: colors.neutralDark,
-      marginTop: 2,
     },
     // Social Grid
     socialGrid: {
@@ -262,12 +207,12 @@ export default function AboutApp() {
   });
 
   return (
-    <Screen noPadding backgroundColor={colors.neutralBg} edges={['top', 'bottom']}>
+    <Screen scrollable={false} noPadding backgroundColor={colors.neutralBg} edges={['top', 'bottom']}>
       <StatusBar barStyle={themeMode === 'dark' ? 'light-content' : 'dark-content'} backgroundColor={colors.neutralBg} />
-      <ScreenHeader title="About" />
+      <ScreenHeader title="About" backgroundColor={colors.neutralBg} />
 
       <ScrollView
-        contentContainerStyle={styles.content}
+        contentContainerStyle={settingsStyles.content}
         showsVerticalScrollIndicator={false}
       >
         {/* App Info Card */}
@@ -288,9 +233,9 @@ export default function AboutApp() {
         </View>
 
         {/* Legal */}
-        <View style={styles.section}>
-          <Text style={styles.sectionHeader}>LEGAL</Text>
-          <View style={styles.card}>
+        <View style={settingsStyles.section}>
+          <Text style={settingsStyles.sectionTitle}>LEGAL</Text>
+          <View style={settingsStyles.card}>
             <SettingRow
               icon="document-text-outline"
               title="Terms of Service"
@@ -311,9 +256,9 @@ export default function AboutApp() {
         </View>
 
         {/* Community */}
-        <View style={styles.section}>
-          <Text style={styles.sectionHeader}>COMMUNITY</Text>
-          <View style={styles.card}>
+        <View style={settingsStyles.section}>
+          <Text style={settingsStyles.sectionTitle}>COMMUNITY</Text>
+          <View style={settingsStyles.card}>
             <SettingRow
               icon="star"
               title="Rate PocketBudget"
@@ -321,7 +266,7 @@ export default function AboutApp() {
               onPress={() => {}}
             />
             <SettingRow
-              icon="share-variant"
+              icon="share-social-outline"
               title="Share with Friends"
               subtitle="Help others save money"
               onPress={() => {}}
@@ -331,8 +276,8 @@ export default function AboutApp() {
         </View>
 
         {/* Get in Touch */}
-        <View style={styles.section}>
-          <Text style={styles.sectionHeader}>GET IN TOUCH</Text>
+        <View style={settingsStyles.section}>
+          <Text style={settingsStyles.sectionTitle}>GET IN TOUCH</Text>
           <View style={styles.socialGrid}>
             <TouchableOpacity
               style={styles.socialItem}

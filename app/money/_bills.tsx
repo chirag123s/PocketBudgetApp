@@ -27,8 +27,8 @@ interface Bill {
 type FilterTab = 'upcoming' | 'overdue' | 'paid' | 'all';
 
 export default function BillsScreen() {
-  const { theme: themeMode } = useTheme();
-  const theme = getTheme(themeMode);
+  const { theme: themeMode, customBackgroundColor } = useTheme();
+  const theme = getTheme(themeMode, customBackgroundColor);
   const [activeFilter, setActiveFilter] = useState<FilterTab>('upcoming');
 
   const colors = {

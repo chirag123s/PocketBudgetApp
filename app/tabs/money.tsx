@@ -20,8 +20,8 @@ const TAB_ORDER: MoneyTab[] = ['accounts', 'transactions', 'bills'];
 
 export default function MoneyTab() {
   const router = useRouter();
-  const { theme: themeMode } = useTheme();
-  const theme = getTheme(themeMode);
+  const { theme: themeMode, customBackgroundColor } = useTheme();
+  const theme = getTheme(themeMode, customBackgroundColor);
   const [selectedTab, setSelectedTab] = useState<MoneyTab>('accounts');
   const [showAddAccountModal, setShowAddAccountModal] = useState(false);
   const [showAddTransactionModal, setShowAddTransactionModal] = useState(false);

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, ScrollView, Switch, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, Switch, TouchableOpacity, StatusBar } from 'react-native';
 import { Screen } from '@/components/layout/Screen';
 import { ScreenHeader } from '@/components/layout/ScreenHeader';
 import { getTheme } from '@/constants/theme';
@@ -7,6 +7,7 @@ import { useTheme } from '@/contexts/ThemeContext';
 import { responsive, ms } from '@/constants/responsive';
 import { Ionicons } from '@expo/vector-icons';
 import { settingsTypography, settingsFontWeights, settingsTextStyles } from './typography';
+import { SETTINGS_CONSTANTS } from './settingsStyles';
 
 type AlertTiming = 'immediate' | 'daily' | 'weekly';
 
@@ -85,7 +86,7 @@ export default function NotificationsSettings() {
         <View style={styles.notificationIconContainer}>
           <Ionicons
             name={item.icon}
-            size={ms(24)}
+            size={SETTINGS_CONSTANTS.ICON_SIZE}
             color={theme.colors.text.primary}
           />
         </View>
@@ -187,7 +188,7 @@ export default function NotificationsSettings() {
     cardContainer: {
       backgroundColor: theme.colors.background.primary,
       borderRadius: theme.borderRadius.xl,
-      padding: responsive.spacing[4],
+      overflow: 'hidden',
       ...theme.shadows.sm,
     },
     notificationCard: {
@@ -195,12 +196,14 @@ export default function NotificationsSettings() {
       alignItems: 'center',
       justifyContent: 'space-between',
       paddingVertical: responsive.spacing[3],
+      paddingHorizontal: responsive.spacing[4],
       gap: responsive.spacing[3],
+      minHeight: ms(72),
     },
     cardDivider: {
       height: 1,
       backgroundColor: theme.colors.border.light,
-      marginVertical: responsive.spacing[3],
+      marginLeft: ms(72),
     },
     cardContent: {
       flexDirection: 'row',
@@ -434,6 +437,7 @@ export default function NotificationsSettings() {
 
   return (
     <Screen noPadding backgroundColor={theme.colors.background.secondary} edges={['top', 'bottom']}>
+      <StatusBar barStyle={themeMode === 'dark' ? 'light-content' : 'dark-content'} backgroundColor={theme.colors.background.secondary} />
       <ScreenHeader title="Notifications" />
 
       <ScrollView
@@ -444,7 +448,7 @@ export default function NotificationsSettings() {
         <View style={styles.masterToggleCard}>
           <View style={styles.masterToggleLeft}>
             <View style={styles.masterIcon}>
-              <Ionicons name="notifications" size={ms(24)} color={theme.colors.text.primary} />
+              <Ionicons name="notifications" size={SETTINGS_CONSTANTS.ICON_SIZE} color={theme.colors.text.primary} />
             </View>
             <View>
               <Text style={styles.masterToggleTitle}>All Notifications</Text>
@@ -538,7 +542,7 @@ export default function NotificationsSettings() {
             <View style={styles.deliveryRow}>
               <View style={styles.deliveryLeft}>
                 <View style={styles.deliveryIconContainer}>
-                  <Ionicons name="phone-portrait-outline" size={ms(24)} color={theme.colors.text.primary} />
+                  <Ionicons name="phone-portrait-outline" size={SETTINGS_CONSTANTS.ICON_SIZE} color={theme.colors.text.primary} />
                 </View>
                 <View style={styles.deliveryTextContainer}>
                   <Text style={styles.deliveryTitle}>Push Notifications</Text>
@@ -560,7 +564,7 @@ export default function NotificationsSettings() {
             <View style={styles.deliveryRow}>
               <View style={styles.deliveryLeft}>
                 <View style={styles.deliveryIconContainer}>
-                  <Ionicons name="mail-outline" size={ms(24)} color={theme.colors.text.primary} />
+                  <Ionicons name="mail-outline" size={SETTINGS_CONSTANTS.ICON_SIZE} color={theme.colors.text.primary} />
                 </View>
                 <View style={styles.deliveryTextContainer}>
                   <Text style={styles.deliveryTitle}>Email Notifications</Text>
@@ -582,7 +586,7 @@ export default function NotificationsSettings() {
             <View style={styles.deliveryRow}>
               <View style={styles.deliveryLeft}>
                 <View style={styles.deliveryIconContainer}>
-                  <Ionicons name="chatbubble-outline" size={ms(24)} color={theme.colors.text.primary} />
+                  <Ionicons name="chatbubble-outline" size={SETTINGS_CONSTANTS.ICON_SIZE} color={theme.colors.text.primary} />
                 </View>
                 <View style={styles.deliveryTextContainer}>
                   <View style={styles.deliveryTitleRow}>
@@ -610,7 +614,7 @@ export default function NotificationsSettings() {
             <View style={styles.deliveryRow}>
               <View style={styles.deliveryLeft}>
                 <View style={styles.deliveryIconContainer}>
-                  <Ionicons name="moon-outline" size={ms(24)} color={theme.colors.text.primary} />
+                  <Ionicons name="moon-outline" size={SETTINGS_CONSTANTS.ICON_SIZE} color={theme.colors.text.primary} />
                 </View>
                 <View style={styles.deliveryTextContainer}>
                   <Text style={styles.deliveryTitle}>Quiet Hours</Text>
@@ -636,7 +640,7 @@ export default function NotificationsSettings() {
           <View style={styles.exampleCard}>
             <View style={styles.exampleHeader}>
               <View style={styles.exampleIconContainer}>
-                <Ionicons name="notifications" size={ms(24)} color={theme.colors.text.primary} />
+                <Ionicons name="notifications" size={SETTINGS_CONSTANTS.ICON_SIZE} color={theme.colors.text.primary} />
               </View>
               <View style={styles.exampleContent}>
                 <Text style={styles.exampleTitle}>Budget Alert: Groceries</Text>
@@ -651,7 +655,7 @@ export default function NotificationsSettings() {
 
         {/* Info Box */}
         <View style={styles.infoBox}>
-          <Ionicons name="information-circle" size={20} color={theme.colors.info.main} />
+          <Ionicons name="information-circle" size={ms(20)} color={theme.colors.info.main} />
           <Text style={styles.infoText}>
             Notification preferences are saved automatically. Critical alerts like bank connection issues will always be sent immediately.
           </Text>

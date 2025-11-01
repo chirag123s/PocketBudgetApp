@@ -73,8 +73,8 @@ const DashboardScreen: React.FC = () => {
   const [isEditMode, setIsEditMode] = useState(false);
 
   // Theme
-  const { theme: themeMode } = useTheme();
-  const theme = getTheme(themeMode);
+  const { theme: themeMode, customBackgroundColor, customCardColor } = useTheme();
+  const theme = getTheme(themeMode, customBackgroundColor, customCardColor);
 
   // Color Palette - Using theme colors
   const colors = {
@@ -570,7 +570,7 @@ const DashboardScreen: React.FC = () => {
 
   // Render normal widget item
   const renderWidgetItem: ListRenderItem<string> = ({ item: widgetId }) => (
-    <View style={{ marginBottom: responsive.spacing[4] }}>
+    <View style={{ marginBottom: responsive.spacing[3] }}>
       <WidgetContainer>
         {renderWidget(widgetId)}
       </WidgetContainer>
@@ -751,7 +751,7 @@ const DashboardScreen: React.FC = () => {
   draggableWidget: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: responsive.spacing[4],
+    marginBottom: responsive.spacing[3],
     gap: responsive.spacing[2],
   },
   draggingWidget: {

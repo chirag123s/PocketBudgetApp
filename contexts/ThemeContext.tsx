@@ -9,12 +9,20 @@ interface ThemeContextType {
   theme: Theme;
   themeMode: ThemeMode;
   setThemeMode: (mode: ThemeMode) => void;
+  customBackgroundColor: string | null;
+  setCustomBackgroundColor: (color: string | null) => void;
+  customCardColor: string | null;
+  setCustomCardColor: (color: string | null) => void;
 }
 
 const ThemeContext = createContext<ThemeContextType>({
   theme: 'light',
   themeMode: 'system',
   setThemeMode: () => {},
+  customBackgroundColor: null,
+  setCustomBackgroundColor: () => {},
+  customCardColor: null,
+  setCustomCardColor: () => {},
 });
 
 export const useTheme = () => {
@@ -32,6 +40,8 @@ interface ThemeProviderProps {
 export const ThemeProvider: React.FC<ThemeProviderProps> = ({ children }) => {
   const systemTheme = useColorScheme() as Theme;
   const [themeMode, setThemeModeState] = useState<ThemeMode>('system');
+  const [customBackgroundColor, setCustomBackgroundColorState] = useState<string | null>(null);
+  const [customCardColor, setCustomCardColorState] = useState<string | null>(null);
   const [isReady, setIsReady] = useState(false);
 
   // Load saved theme preference on mount
@@ -41,9 +51,22 @@ export const ThemeProvider: React.FC<ThemeProviderProps> = ({ children }) => {
 
   const loadThemePreference = async () => {
     try {
-      const savedTheme = await AsyncStorage.getItem('themeMode');
+      const [savedTheme, savedBgColor, savedCardColor] = await Promise.all([
+        AsyncStorage.getItem('themeMode'),
+        AsyncStorage.getItem('customBackgroundColor'),
+        AsyncStorage.getItem('customCardColor'),
+      ]);
+
       if (savedTheme && (savedTheme === 'light' || savedTheme === 'dark' || savedTheme === 'system')) {
         setThemeModeState(savedTheme as ThemeMode);
+      }
+
+      if (savedBgColor) {
+        setCustomBackgroundColorState(savedBgColor);
+      }
+
+      if (savedCardColor) {
+        setCustomCardColorState(savedCardColor);
       }
     } catch (error) {
       console.error('Error loading theme preference:', error);
@@ -67,13 +90,41 @@ export const ThemeProvider: React.FC<ThemeProviderProps> = ({ children }) => {
     }
   };
 
+  // Update custom background color and persist to storage
+  const setCustomBackgroundColor = async (color: string | null) => {
+    try {
+      if (color) {
+        await AsyncStorage.setItem('customBackgroundColor', color);
+      } else {
+        await AsyncStorage.removeItem('customBackgroundColor');
+      }
+      setCustomBackgroundColorState(color);
+    } catch (error) {
+      console.error('Error saving custom background color:', error);
+    }
+  };
+
+  // Update custom card color and persist to storage
+  const setCustomCardColor = async (color: string | null) => {
+    try {
+      if (color) {
+        await AsyncStorage.setItem('customCardColor', color);
+      } else {
+        await AsyncStorage.removeItem('customCardColor');
+      }
+      setCustomCardColorState(color);
+    } catch (error) {
+      console.error('Error saving custom card color:', error);
+    }
+  };
+
   // Don't render until theme is loaded
   if (!isReady) {
     return null;
   }
 
   return (
-    <ThemeContext.Provider value={{ theme, themeMode, setThemeMode }}>
+    <ThemeContext.Provider value={{ theme, themeMode, setThemeMode, customBackgroundColor, setCustomBackgroundColor, customCardColor, setCustomCardColor }}>
       {children}
     </ThemeContext.Provider>
   );

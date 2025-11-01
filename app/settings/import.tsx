@@ -3,9 +3,10 @@ import {
   View,
   Text,
   StyleSheet,
-  Pressable,
+  TouchableOpacity,
   ScrollView,
   StatusBar,
+  Alert,
 } from 'react-native';
 import { Screen } from '@/components/layout/Screen';
 import { ScreenHeader } from '@/components/layout/ScreenHeader';
@@ -14,6 +15,7 @@ import { useTheme } from '@/contexts/ThemeContext';
 import { responsive, ms } from '@/constants/responsive';
 import { Ionicons } from '@expo/vector-icons';
 import { settingsTypography, settingsFontWeights, settingsTextStyles } from './typography';
+import { getSettingsStyles, SETTINGS_CONSTANTS } from './settingsStyles';
 
 interface ImportOption {
   id: string;
@@ -26,6 +28,7 @@ interface ImportOption {
 export default function ImportData() {
   const { theme: themeMode } = useTheme();
   const theme = getTheme(themeMode);
+  const settingsStyles = getSettingsStyles(themeMode);
 
   // Color Palette - Using theme colors
   const colors = {
@@ -75,89 +78,19 @@ export default function ImportData() {
     },
   ];
 
-  const handleImport = (optionId: string) => {
-    console.log('Import from:', optionId);
-    // Navigate to specific import flow
+  const handleImport = (optionId: string, title: string) => {
+    Alert.alert(title, 'Import feature coming soon');
   };
 
   const styles = StyleSheet.create({
-    scrollView: {
-      flex: 1,
-    },
-    scrollContent: {
-      paddingHorizontal: responsive.spacing[4],
-      paddingTop: responsive.spacing[6],
-      paddingBottom: responsive.spacing[8],
-    },
-    section: {
-      marginBottom: responsive.spacing[4],
-    },
-    sectionHeader: {
-      fontSize: settingsTypography.tertiary,
-      lineHeight: settingsTypography.tertiary * 1.5,
-      fontWeight: settingsFontWeights.bold,
-      letterSpacing: 1,
-      textTransform: 'uppercase',
-      color: colors.neutralMedium,
-      marginBottom: responsive.spacing[3],
-    },
-    importOption: {
-      flexDirection: 'row',
-      alignItems: 'center',
-      backgroundColor: colors.neutralWhite,
-      borderRadius: theme.borderRadius.xl,
-      padding: responsive.spacing[4],
-      marginBottom: responsive.spacing[3],
-      ...theme.shadows.sm,
-    },
-    importOptionPressed: {
-      opacity: 0.7,
-    },
-    iconContainer: {
-      width: ms(48),
-      height: ms(48),
-      borderRadius: ms(24),
-      backgroundColor: colors.iconBg,
-      alignItems: 'center',
-      justifyContent: 'center',
-      marginRight: responsive.spacing[3],
-    },
     optionContent: {
       flex: 1,
-      gap: 2,
     },
-    optionTitle: {
-      fontSize: settingsTypography.primary,
-      lineHeight: settingsTypography.primary * 1.5,
-      fontWeight: settingsFontWeights.semibold,
-      color: colors.neutralDarkest,
-    },
-    optionDescription: {
-      fontSize: settingsTypography.secondary,
-      lineHeight: settingsTypography.secondary * 1.5,
-      color: colors.neutralDark,
-      marginTop: 2,
-    },
-    card: {
-      backgroundColor: colors.neutralWhite,
+    guidelinesCard: {
+      backgroundColor: theme.colors.background.primary,
       borderRadius: theme.borderRadius.xl,
-      padding: responsive.spacing[6],
-      marginBottom: responsive.spacing[4],
+      padding: responsive.spacing[5],
       ...theme.shadows.sm,
-    },
-    cardHeader: {
-      flexDirection: 'row',
-      alignItems: 'center',
-      gap: responsive.spacing[3],
-      marginBottom: responsive.spacing[4],
-    },
-    cardTitle: {
-      fontSize: settingsTypography.sectionHeading,
-      lineHeight: settingsTypography.sectionHeading * 1.5,
-      fontWeight: settingsFontWeights.bold,
-      color: colors.neutralDarkest,
-    },
-    guidelinesList: {
       gap: responsive.spacing[4],
     },
     guidelineItem: {
@@ -198,9 +131,8 @@ export default function ImportData() {
     infoText: {
       flex: 1,
       fontSize: settingsTypography.secondary,
-      lineHeight: settingsTypography.secondary * 1.6,
+      lineHeight: settingsTypography.secondary * 1.5,
       color: colors.neutralDarkest,
-      fontWeight: settingsFontWeights.regular,
     },
   });
 
@@ -213,46 +145,43 @@ export default function ImportData() {
       />
 
       <ScrollView
-        style={styles.scrollView}
-        contentContainerStyle={styles.scrollContent}
+        contentContainerStyle={settingsStyles.content}
         showsVerticalScrollIndicator={false}
       >
         {/* Import Options */}
-        <View style={styles.section}>
-          <Text style={styles.sectionHeader}>IMPORT FROM</Text>
-          {importOptions.map((option) => (
-            <Pressable
-              key={option.id}
-              style={({ pressed }) => [
-                styles.importOption,
-                pressed && styles.importOptionPressed,
-              ]}
-              onPress={() => handleImport(option.id)}
-            >
-              <View style={styles.iconContainer}>
-                <Ionicons
-                  name={option.icon as any}
-                  size={ms(24)}
-                  color={colors.neutralDarkest}
-                />
-              </View>
-              <View style={styles.optionContent}>
-                <Text style={styles.optionTitle}>{option.title}</Text>
-                <Text style={styles.optionDescription}>{option.description}</Text>
-              </View>
-              <Ionicons name="chevron-forward" size={ms(20)} color={colors.neutralMedium} />
-            </Pressable>
-          ))}
+        <View style={settingsStyles.section}>
+          <Text style={settingsStyles.sectionTitle}>IMPORT FROM</Text>
+          <View style={settingsStyles.card}>
+            {importOptions.map((option, index) => (
+              <React.Fragment key={option.id}>
+                <TouchableOpacity
+                  style={settingsStyles.menuItem}
+                  onPress={() => handleImport(option.id, option.title)}
+                  activeOpacity={0.7}
+                >
+                  <View style={settingsStyles.iconContainer}>
+                    <Ionicons
+                      name={option.icon as any}
+                      size={SETTINGS_CONSTANTS.ICON_SIZE}
+                      color={colors.neutralDarkest}
+                    />
+                  </View>
+                  <View style={styles.optionContent}>
+                    <Text style={settingsStyles.menuText}>{option.title}</Text>
+                    <Text style={settingsStyles.menuSubtitle}>{option.description}</Text>
+                  </View>
+                  <Ionicons name="chevron-forward" size={SETTINGS_CONSTANTS.CHEVRON_SIZE} color={colors.neutralMedium} />
+                </TouchableOpacity>
+                {index < importOptions.length - 1 && <View style={settingsStyles.menuItemDivider} />}
+              </React.Fragment>
+            ))}
+          </View>
         </View>
 
-        {/* Guidelines Card */}
-        <View style={styles.card}>
-          <View style={styles.cardHeader}>
-            <Ionicons name="information-circle" size={ms(24)} color={colors.primary} />
-            <Text style={styles.cardTitle}>Import Guidelines</Text>
-          </View>
-
-          <View style={styles.guidelinesList}>
+        {/* Import Guidelines Section */}
+        <View style={settingsStyles.section}>
+          <Text style={settingsStyles.sectionTitle}>IMPORT GUIDELINES</Text>
+          <View style={styles.guidelinesCard}>
             <View style={styles.guidelineItem}>
               <View style={styles.guidelineBullet}>
                 <Text style={styles.guidelineBulletText}>1</Text>
@@ -293,9 +222,6 @@ export default function ImportData() {
             Your data is processed securely on your device. We never send your financial information to external servers during import.
           </Text>
         </View>
-
-        {/* Bottom spacing */}
-        <View style={{ height: responsive.spacing[8] }} />
       </ScrollView>
     </Screen>
   );

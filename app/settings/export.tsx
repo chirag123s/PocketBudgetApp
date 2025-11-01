@@ -3,7 +3,7 @@ import {
   View,
   Text,
   StyleSheet,
-  Pressable,
+  TouchableOpacity,
   ScrollView,
   Alert,
   StatusBar,
@@ -15,6 +15,8 @@ import { useTheme } from '@/contexts/ThemeContext';
 import { responsive, ms } from '@/constants/responsive';
 import { Ionicons } from '@expo/vector-icons';
 import { settingsTypography, settingsFontWeights, settingsTextStyles } from './typography';
+import { getSettingsStyles, SETTINGS_CONSTANTS } from './settingsStyles';
+import { DateRangePicker, DateRange } from '@/components/ui/DateRangePicker';
 
 type FormatType = 'csv' | 'pdf' | 'json';
 
@@ -43,6 +45,7 @@ interface RecentExport {
 export default function ExportData() {
   const { theme: themeMode } = useTheme();
   const theme = getTheme(themeMode);
+  const settingsStyles = getSettingsStyles(themeMode);
 
   // Color Palette - Using theme colors
   const colors = {
@@ -76,8 +79,17 @@ export default function ExportData() {
     personalInfo: false,
   });
   const [format, setFormat] = useState<FormatType>('csv');
-  const [dateFrom] = useState('Jan 1, 2025');
-  const [dateTo] = useState('Oct 29, 2025');
+
+  // Initialize with last 30 days
+  const today = new Date();
+  const thirtyDaysAgo = new Date();
+  thirtyDaysAgo.setDate(today.getDate() - 30);
+
+  const [dateRange, setDateRange] = useState<DateRange>({
+    startDate: thirtyDaysAgo,
+    endDate: today,
+  });
+  const [showDatePicker, setShowDatePicker] = useState(false);
 
   const formatOptions: FormatOption[] = [
     {
@@ -128,6 +140,18 @@ export default function ExportData() {
     Alert.alert('Download', `Downloading ${filename}...`, [{ text: 'OK' }]);
   };
 
+  const handleDateRangeSelect = (range: DateRange) => {
+    setDateRange(range);
+  };
+
+  const formatDate = (date: Date): string => {
+    return date.toLocaleDateString('en-AU', {
+      day: 'numeric',
+      month: 'short',
+      year: 'numeric',
+    });
+  };
+
   const getFileIcon = (type: FormatType): { name: keyof typeof Ionicons.glyphMap; color: string } => {
     switch (type) {
       case 'pdf':
@@ -142,195 +166,32 @@ export default function ExportData() {
   };
 
   const styles = StyleSheet.create({
-    scrollView: {
+    dateContent: {
       flex: 1,
     },
-    scrollContent: {
-      paddingHorizontal: responsive.spacing[4],
-      paddingTop: responsive.spacing[4],
-      paddingBottom: responsive.spacing[8],
-    },
-    card: {
-      backgroundColor: colors.neutralWhite,
-      borderRadius: theme.borderRadius.xl,
-      padding: responsive.spacing[6],
-      marginBottom: responsive.spacing[4],
-      ...theme.shadows.sm,
-    },
-    sectionTitle: {
-      fontSize: settingsTypography.subsectionHeading,
-      fontWeight: settingsFontWeights.semibold,
-      color: colors.neutralDarkest,
-      marginBottom: responsive.spacing[3],
-    },
-    checkboxGroup: {
-      gap: responsive.spacing[3],
-      marginBottom: responsive.spacing[6],
-      borderTopWidth: 1,
-      borderTopColor: colors.border,
-      paddingTop: responsive.spacing[3],
-    },
-    checkboxRow: {
-      flexDirection: 'row',
-      alignItems: 'center',
-      paddingVertical: responsive.spacing[1],
-    },
-    checkbox: {
-      width: ms(20),
-      height: ms(20),
-      borderWidth: 2,
-      borderColor: colors.border,
-      borderRadius: theme.borderRadius.sm,
-      marginRight: responsive.spacing[3],
-      alignItems: 'center',
-      justifyContent: 'center',
-    },
-    checkboxChecked: {
-      backgroundColor: colors.primary,
-      borderColor: colors.primary,
-    },
-    checkboxText: {
-      fontSize: settingsTypography.primary,
-      color: colors.neutralDarkest,
-      fontWeight: settingsFontWeights.regular,
-    },
-    dateRow: {
-      flexDirection: 'row',
-      gap: responsive.spacing[3],
-      marginBottom: responsive.spacing[6],
-    },
-    dateField: {
+    formatContent: {
       flex: 1,
-    },
-    label: {
-      fontSize: settingsTypography.secondary,
-      fontWeight: settingsFontWeights.medium,
-      color: colors.neutralDark,
-      marginBottom: responsive.spacing[2],
-    },
-    selectButton: {
-      flexDirection: 'row',
-      alignItems: 'center',
-      justifyContent: 'space-between',
-      height: ms(48),
-      backgroundColor: colors.iconBg,
-      borderRadius: theme.borderRadius.lg,
-      borderWidth: 1,
-      borderColor: colors.border,
-      paddingHorizontal: responsive.spacing[4],
-    },
-    selectButtonText: {
-      fontSize: settingsTypography.primary,
-      color: colors.neutralDarkest,
-      fontWeight: settingsFontWeights.regular,
-    },
-    formatList: {
-      gap: responsive.spacing[3],
-      marginBottom: responsive.spacing[6],
-    },
-    formatOption: {
-      flexDirection: 'row',
-      alignItems: 'center',
-      justifyContent: 'space-between',
-      borderWidth: 2,
-      borderColor: colors.border,
-      borderRadius: theme.borderRadius.lg,
-      padding: responsive.spacing[4],
-      backgroundColor: colors.neutralWhite,
-    },
-    formatOptionSelected: {
-      backgroundColor: `${colors.primary}15`,
-      borderColor: colors.primary,
-    },
-    formatOptionLeft: {
-      flexDirection: 'row',
-      alignItems: 'center',
-      gap: responsive.spacing[3],
-      flex: 1,
-    },
-    formatOptionContent: {
-      flex: 1,
-    },
-    formatOptionTitle: {
-      fontSize: settingsTypography.primary,
-      fontWeight: settingsFontWeights.semibold,
-      color: colors.neutralDarkest,
-      marginBottom: responsive.spacing[0.5],
-    },
-    formatOptionDescription: {
-      fontSize: settingsTypography.secondary,
-      color: colors.neutralDark,
-    },
-    radioCircle: {
-      width: ms(20),
-      height: ms(20),
-      borderRadius: ms(10),
-      borderWidth: 2,
-      borderColor: colors.border,
-      alignItems: 'center',
-      justifyContent: 'center',
-    },
-    radioCircleInner: {
-      width: ms(10),
-      height: ms(10),
-      borderRadius: ms(5),
-      backgroundColor: colors.primary,
     },
     generateButton: {
-      height: ms(48),
-      borderRadius: theme.borderRadius.lg,
-      backgroundColor: colors.functionalSuccess,
+      flexDirection: 'row',
       alignItems: 'center',
       justifyContent: 'center',
+      gap: responsive.spacing[2],
+      paddingVertical: responsive.spacing[4],
+      paddingHorizontal: responsive.spacing[6],
+      borderRadius: theme.borderRadius.xl,
+      backgroundColor: colors.primary,
       ...theme.shadows.md,
     },
-    generateButtonPressed: {
-      opacity: 0.9,
-    },
     generateButtonText: {
-      fontSize: settingsTypography.primary,
+      fontSize: responsive.fontSize.md,
+      lineHeight: responsive.fontSize.md * 1.5,
       fontWeight: settingsFontWeights.bold,
-      color: colors.neutralWhite,
+      color: '#FFFFFF',
       letterSpacing: 0.3,
-    },
-    exportsList: {
-      gap: responsive.spacing[3],
-    },
-    exportItem: {
-      flexDirection: 'row',
-      alignItems: 'center',
-      justifyContent: 'space-between',
-      backgroundColor: colors.iconBg,
-      borderRadius: theme.borderRadius.lg,
-      padding: responsive.spacing[4],
-      gap: responsive.spacing[3],
-    },
-    exportItemLeft: {
-      flexDirection: 'row',
-      alignItems: 'center',
-      gap: responsive.spacing[3],
-      flex: 1,
-    },
-    exportIconContainer: {
-      width: ms(48),
-      height: ms(48),
-      borderRadius: ms(24),
-      backgroundColor: colors.iconBg,
-      alignItems: 'center',
-      justifyContent: 'center',
     },
     exportItemContent: {
       flex: 1,
-    },
-    exportName: {
-      fontSize: settingsTypography.secondary,
-      fontWeight: settingsFontWeights.semibold,
-      color: colors.neutralDarkest,
-      marginBottom: responsive.spacing[0.5],
-    },
-    exportDate: {
-      fontSize: settingsTypography.tertiary,
-      color: colors.neutralDark,
     },
     downloadButton: {
       paddingHorizontal: responsive.spacing[4],
@@ -339,24 +200,21 @@ export default function ExportData() {
       backgroundColor: colors.primary,
       ...theme.shadows.sm,
     },
-    downloadButtonPressed: {
-      opacity: 0.9,
-    },
     downloadButtonText: {
       fontSize: settingsTypography.secondary,
       fontWeight: settingsFontWeights.bold,
-      color: colors.neutralWhite,
+      color: '#FFFFFF',
     },
-    emptyState: {
-      paddingVertical: responsive.spacing[8],
+    emptyCard: {
+      backgroundColor: theme.colors.background.primary,
+      borderRadius: theme.borderRadius.xl,
+      padding: responsive.spacing[8],
       alignItems: 'center',
+      ...theme.shadows.sm,
     },
     emptyStateText: {
       fontSize: settingsTypography.primary,
       color: colors.neutralMedium,
-    },
-    bottomSpacer: {
-      height: responsive.spacing[4],
     },
   });
 
@@ -369,182 +227,210 @@ export default function ExportData() {
       />
 
       <ScrollView
-        style={styles.scrollView}
-        contentContainerStyle={styles.scrollContent}
+        contentContainerStyle={settingsStyles.content}
         showsVerticalScrollIndicator={false}
       >
-        {/* What to export */}
-        <View style={styles.card}>
-          <Text style={styles.sectionTitle}>What to export</Text>
-
-          <View style={styles.checkboxGroup}>
-            <Pressable
-              style={styles.checkboxRow}
+        {/* Data to Export */}
+        <View style={settingsStyles.section}>
+          <Text style={settingsStyles.sectionTitle}>DATA TO EXPORT</Text>
+          <View style={settingsStyles.card}>
+            <TouchableOpacity
+              style={settingsStyles.menuItem}
               onPress={() => toggleOption('transactions')}
+              activeOpacity={0.7}
             >
-              <View style={[styles.checkbox, exportOptions.transactions && styles.checkboxChecked]}>
-                {exportOptions.transactions && (
-                  <Ionicons name="checkmark" size={16} color="#FFFFFF" />
-                )}
+              <View style={settingsStyles.iconContainer}>
+                <Ionicons name="swap-horizontal-outline" size={SETTINGS_CONSTANTS.ICON_SIZE} color={colors.neutralDarkest} />
               </View>
-              <Text style={styles.checkboxText}>Transactions</Text>
-            </Pressable>
+              <Text style={settingsStyles.menuText}>Transactions</Text>
+              {exportOptions.transactions && (
+                <Ionicons name="checkmark-circle" size={SETTINGS_CONSTANTS.ICON_SIZE} color={colors.functionalSuccess} />
+              )}
+            </TouchableOpacity>
 
-            <Pressable
-              style={styles.checkboxRow}
+            <View style={settingsStyles.menuItemDivider} />
+
+            <TouchableOpacity
+              style={settingsStyles.menuItem}
               onPress={() => toggleOption('budgets')}
+              activeOpacity={0.7}
             >
-              <View style={[styles.checkbox, exportOptions.budgets && styles.checkboxChecked]}>
-                {exportOptions.budgets && (
-                  <Ionicons name="checkmark" size={16} color="#FFFFFF" />
-                )}
+              <View style={settingsStyles.iconContainer}>
+                <Ionicons name="wallet-outline" size={SETTINGS_CONSTANTS.ICON_SIZE} color={colors.neutralDarkest} />
               </View>
-              <Text style={styles.checkboxText}>Budgets</Text>
-            </Pressable>
+              <Text style={settingsStyles.menuText}>Budgets</Text>
+              {exportOptions.budgets && (
+                <Ionicons name="checkmark-circle" size={SETTINGS_CONSTANTS.ICON_SIZE} color={colors.functionalSuccess} />
+              )}
+            </TouchableOpacity>
 
-            <Pressable
-              style={styles.checkboxRow}
+            <View style={settingsStyles.menuItemDivider} />
+
+            <TouchableOpacity
+              style={settingsStyles.menuItem}
               onPress={() => toggleOption('categories')}
+              activeOpacity={0.7}
             >
-              <View style={[styles.checkbox, exportOptions.categories && styles.checkboxChecked]}>
-                {exportOptions.categories && (
-                  <Ionicons name="checkmark" size={16} color="#FFFFFF" />
-                )}
+              <View style={settingsStyles.iconContainer}>
+                <Ionicons name="pricetags-outline" size={SETTINGS_CONSTANTS.ICON_SIZE} color={colors.neutralDarkest} />
               </View>
-              <Text style={styles.checkboxText}>Categories</Text>
-            </Pressable>
+              <Text style={settingsStyles.menuText}>Categories</Text>
+              {exportOptions.categories && (
+                <Ionicons name="checkmark-circle" size={SETTINGS_CONSTANTS.ICON_SIZE} color={colors.functionalSuccess} />
+              )}
+            </TouchableOpacity>
 
-            <Pressable
-              style={styles.checkboxRow}
+            <View style={settingsStyles.menuItemDivider} />
+
+            <TouchableOpacity
+              style={settingsStyles.menuItem}
               onPress={() => toggleOption('accountDetails')}
+              activeOpacity={0.7}
             >
-              <View style={[styles.checkbox, exportOptions.accountDetails && styles.checkboxChecked]}>
-                {exportOptions.accountDetails && (
-                  <Ionicons name="checkmark" size={16} color="#FFFFFF" />
-                )}
+              <View style={settingsStyles.iconContainer}>
+                <Ionicons name="card-outline" size={SETTINGS_CONSTANTS.ICON_SIZE} color={colors.neutralDarkest} />
               </View>
-              <Text style={styles.checkboxText}>Account details</Text>
-            </Pressable>
+              <Text style={settingsStyles.menuText}>Account Details</Text>
+              {exportOptions.accountDetails && (
+                <Ionicons name="checkmark-circle" size={SETTINGS_CONSTANTS.ICON_SIZE} color={colors.functionalSuccess} />
+              )}
+            </TouchableOpacity>
 
-            <Pressable
-              style={styles.checkboxRow}
+            <View style={settingsStyles.menuItemDivider} />
+
+            <TouchableOpacity
+              style={settingsStyles.menuItem}
               onPress={() => toggleOption('personalInfo')}
+              activeOpacity={0.7}
             >
-              <View style={[styles.checkbox, exportOptions.personalInfo && styles.checkboxChecked]}>
-                {exportOptions.personalInfo && (
-                  <Ionicons name="checkmark" size={16} color="#FFFFFF" />
-                )}
+              <View style={settingsStyles.iconContainer}>
+                <Ionicons name="person-outline" size={SETTINGS_CONSTANTS.ICON_SIZE} color={colors.neutralDarkest} />
               </View>
-              <Text style={styles.checkboxText}>Personal info</Text>
-            </Pressable>
+              <Text style={settingsStyles.menuText}>Personal Info</Text>
+              {exportOptions.personalInfo && (
+                <Ionicons name="checkmark-circle" size={SETTINGS_CONSTANTS.ICON_SIZE} color={colors.functionalSuccess} />
+              )}
+            </TouchableOpacity>
           </View>
+        </View>
 
-          {/* Date Range */}
-          <Text style={styles.sectionTitle}>Date Range</Text>
-          <View style={styles.dateRow}>
-            <View style={styles.dateField}>
-              <Text style={styles.label}>From</Text>
-              <Pressable style={styles.selectButton}>
-                <Text style={styles.selectButtonText}>{dateFrom}</Text>
-                <Ionicons name="calendar-outline" size={ms(16)} color={colors.neutralMedium} />
-              </Pressable>
-            </View>
-            <View style={styles.dateField}>
-              <Text style={styles.label}>To</Text>
-              <Pressable style={styles.selectButton}>
-                <Text style={styles.selectButtonText}>{dateTo}</Text>
-                <Ionicons name="calendar-outline" size={ms(16)} color={colors.neutralMedium} />
-              </Pressable>
-            </View>
+        {/* Date Range */}
+        <View style={settingsStyles.section}>
+          <Text style={settingsStyles.sectionTitle}>DATE RANGE</Text>
+          <View style={settingsStyles.card}>
+            <TouchableOpacity
+              style={settingsStyles.menuItem}
+              onPress={() => setShowDatePicker(true)}
+              activeOpacity={0.7}
+            >
+              <View style={settingsStyles.iconContainer}>
+                <Ionicons name="calendar-outline" size={SETTINGS_CONSTANTS.ICON_SIZE} color={colors.neutralDarkest} />
+              </View>
+              <View style={styles.dateContent}>
+                <Text style={settingsStyles.menuText}>Date Range</Text>
+                <Text style={settingsStyles.menuSubtitle}>
+                  {formatDate(dateRange.startDate)} - {formatDate(dateRange.endDate)}
+                </Text>
+              </View>
+              <Ionicons name="chevron-forward" size={SETTINGS_CONSTANTS.CHEVRON_SIZE} color={colors.neutralMedium} />
+            </TouchableOpacity>
           </View>
+        </View>
 
-          {/* Format */}
-          <Text style={styles.sectionTitle}>Format</Text>
-          <View style={styles.formatList}>
-            {formatOptions.map((formatOption) => (
-              <Pressable
-                key={formatOption.id}
-                style={[
-                  styles.formatOption,
-                  format === formatOption.id && styles.formatOptionSelected,
-                ]}
-                onPress={() => setFormat(formatOption.id)}
-              >
-                <View style={styles.formatOptionLeft}>
-                  <View style={styles.radioCircle}>
-                    {format === formatOption.id && <View style={styles.radioCircleInner} />}
+        {/* Format */}
+        <View style={settingsStyles.section}>
+          <Text style={settingsStyles.sectionTitle}>FORMAT</Text>
+          <View style={settingsStyles.card}>
+            {formatOptions.map((formatOption, index) => (
+              <React.Fragment key={formatOption.id}>
+                <TouchableOpacity
+                  style={settingsStyles.menuItem}
+                  onPress={() => setFormat(formatOption.id)}
+                  activeOpacity={0.7}
+                >
+                  <View style={settingsStyles.iconContainer}>
+                    <Ionicons
+                      name={formatOption.icon as any}
+                      size={SETTINGS_CONSTANTS.ICON_SIZE}
+                      color={colors.neutralDarkest}
+                    />
                   </View>
-                  <View style={styles.formatOptionContent}>
-                    <Text style={styles.formatOptionTitle}>{formatOption.title}</Text>
-                    <Text style={styles.formatOptionDescription}>{formatOption.description}</Text>
+                  <View style={styles.formatContent}>
+                    <Text style={settingsStyles.menuText}>{formatOption.title}</Text>
+                    <Text style={settingsStyles.menuSubtitle}>{formatOption.description}</Text>
                   </View>
-                </View>
-                <Ionicons
-                  name={formatOption.icon as any}
-                  size={ms(24)}
-                  color={format === formatOption.id ? colors.primary : colors.neutralMedium}
-                />
-              </Pressable>
+                  {format === formatOption.id && (
+                    <Ionicons name="checkmark-circle" size={SETTINGS_CONSTANTS.ICON_SIZE} color={colors.primary} />
+                  )}
+                </TouchableOpacity>
+                {index < formatOptions.length - 1 && <View style={settingsStyles.menuItemDivider} />}
+              </React.Fragment>
             ))}
           </View>
+        </View>
 
-          <Pressable
-            style={({ pressed }) => [
-              styles.generateButton,
-              pressed && styles.generateButtonPressed,
-            ]}
+        {/* Generate Export Action */}
+        <View style={settingsStyles.section}>
+          <TouchableOpacity
+            style={styles.generateButton}
             onPress={handleGenerateExport}
+            activeOpacity={0.9}
           >
+            <Ionicons name="download-outline" size={SETTINGS_CONSTANTS.ICON_SIZE} color="#FFFFFF" />
             <Text style={styles.generateButtonText}>Generate Export</Text>
-          </Pressable>
+          </TouchableOpacity>
         </View>
 
         {/* Recent Exports */}
-        <View style={styles.card}>
-          <Text style={styles.sectionTitle}>Recent Exports</Text>
+        <View style={settingsStyles.section}>
+          <Text style={settingsStyles.sectionTitle}>RECENT EXPORTS</Text>
 
           {recentExports.length > 0 ? (
-            <View style={styles.exportsList}>
-              {recentExports.map((item) => {
+            <View style={settingsStyles.card}>
+              {recentExports.map((item, index) => {
                 const fileIcon = getFileIcon(item.type);
                 return (
-                  <View key={item.id} style={styles.exportItem}>
-                    <View style={styles.exportItemLeft}>
-                      <View style={styles.exportIconContainer}>
+                  <React.Fragment key={item.id}>
+                    <View style={settingsStyles.menuItem}>
+                      <View style={settingsStyles.iconContainer}>
                         <Ionicons
                           name={fileIcon.name}
-                          size={ms(24)}
-                          color={colors.neutralDarkest}
+                          size={SETTINGS_CONSTANTS.ICON_SIZE}
+                          color={fileIcon.color}
                         />
                       </View>
                       <View style={styles.exportItemContent}>
-                        <Text style={styles.exportName}>{item.filename}</Text>
-                        <Text style={styles.exportDate}>Generated: {item.date}</Text>
+                        <Text style={settingsStyles.menuText}>{item.filename}</Text>
+                        <Text style={settingsStyles.menuSubtitle}>Generated: {item.date}</Text>
                       </View>
+                      <TouchableOpacity
+                        style={styles.downloadButton}
+                        onPress={() => handleDownload(item.filename)}
+                        activeOpacity={0.9}
+                      >
+                        <Text style={styles.downloadButtonText}>Download</Text>
+                      </TouchableOpacity>
                     </View>
-                    <Pressable
-                      style={({ pressed }) => [
-                        styles.downloadButton,
-                        pressed && styles.downloadButtonPressed,
-                      ]}
-                      onPress={() => handleDownload(item.filename)}
-                    >
-                      <Text style={styles.downloadButtonText}>Download</Text>
-                    </Pressable>
-                  </View>
+                    {index < recentExports.length - 1 && <View style={settingsStyles.menuItemDivider} />}
+                  </React.Fragment>
                 );
               })}
             </View>
           ) : (
-            <View style={styles.emptyState}>
+            <View style={styles.emptyCard}>
               <Text style={styles.emptyStateText}>You have no recent exports.</Text>
             </View>
           )}
         </View>
-
-        {/* Bottom spacing */}
-        <View style={styles.bottomSpacer} />
       </ScrollView>
+
+      {/* Date Range Picker Modal */}
+      <DateRangePicker
+        visible={showDatePicker}
+        onClose={() => setShowDatePicker(false)}
+        onSelectRange={handleDateRangeSelect}
+        initialRange={dateRange}
+      />
     </Screen>
   );
 }

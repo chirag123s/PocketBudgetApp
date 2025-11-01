@@ -1,181 +1,245 @@
-import React, { useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, ScrollView, TextInput, StatusBar } from 'react-native';
+import React from 'react';
+import { View, Text, StyleSheet, TouchableOpacity, ScrollView, StatusBar, Alert, Linking } from 'react-native';
 import { Screen } from '@/components/layout/Screen';
 import { ScreenHeader } from '@/components/layout/ScreenHeader';
-import { Button } from '@/components/ui/Button';
 import { getTheme } from '@/constants/theme';
 import { useTheme } from '@/contexts/ThemeContext';
 import { responsive, ms } from '@/constants/responsive';
 import { Ionicons } from '@expo/vector-icons';
-import { settingsTypography, settingsFontWeights, settingsTextStyles } from './typography';
+import { settingsTypography, settingsFontWeights } from './typography';
+import { getSettingsStyles, SETTINGS_CONSTANTS } from './settingsStyles';
 
 export default function ContactSupport() {
   const { theme: themeMode } = useTheme();
   const theme = getTheme(themeMode);
-  const [issueType, setIssueType] = useState('technical');
-  const [subject, setSubject] = useState('');
-  const [description, setDescription] = useState('');
+  const settingsStyles = getSettingsStyles(themeMode);
 
-  const handleSend = () => {
-    // Send support message logic
+  // Color Palette - Using theme colors
+  const colors = {
+    primaryDark: theme.colors.info.dark,
+    primary: theme.colors.info.main,
+    primaryLight: theme.colors.info.light,
+    neutralBg: theme.colors.background.secondary,
+    neutralWhite: theme.colors.background.primary,
+    neutralDarkest: theme.colors.text.primary,
+    neutralDark: theme.colors.text.secondary,
+    neutralMedium: theme.colors.text.tertiary,
+    functionalSuccess: theme.colors.success.main,
+    functionalWarning: theme.colors.warning.main,
+    functionalError: theme.colors.danger.main,
+    border: theme.colors.border.light,
+  };
+
+  const handleEmailSupport = () => {
+    const email = 'support@pocketbudget.com.au';
+    const subject = 'Support Request';
+    Linking.openURL(`mailto:${email}?subject=${encodeURIComponent(subject)}`).catch(() => {
+      Alert.alert('Error', 'Unable to open email client');
+    });
+  };
+
+  const handleLiveChat = () => {
+    Alert.alert('Live Chat', 'Live chat feature coming soon');
+  };
+
+  const handleFAQs = () => {
+    Alert.alert('FAQs', 'Frequently Asked Questions coming soon');
+  };
+
+  const handleReportBug = () => {
+    const email = 'bugs@pocketbudget.com.au';
+    const subject = 'Bug Report';
+    Linking.openURL(`mailto:${email}?subject=${encodeURIComponent(subject)}`).catch(() => {
+      Alert.alert('Error', 'Unable to open email client');
+    });
+  };
+
+  const handleFeatureRequest = () => {
+    const email = 'feedback@pocketbudget.com.au';
+    const subject = 'Feature Request';
+    Linking.openURL(`mailto:${email}?subject=${encodeURIComponent(subject)}`).catch(() => {
+      Alert.alert('Error', 'Unable to open email client');
+    });
+  };
+
+  const handleWebsite = () => {
+    Linking.openURL('https://pocketbudget.com.au').catch(() => {
+      Alert.alert('Error', 'Unable to open website');
+    });
+  };
+
+  const handleTwitter = () => {
+    Linking.openURL('https://twitter.com/pocketbudget').catch(() => {
+      Alert.alert('Error', 'Unable to open Twitter');
+    });
   };
 
   const styles = StyleSheet.create({
-    content: {
-      padding: responsive.spacing[6],
-      paddingBottom: responsive.spacing[8],
+    textContainer: {
+      flex: 1,
     },
-    card: {
-      backgroundColor: theme.colors.background.primary,
-      borderRadius: theme.borderRadius.xl,
-      padding: responsive.spacing[6],
-      marginBottom: responsive.spacing[4],
-      ...theme.shadows.sm,
-    },
-    label: {
-      ...theme.typography.styles.bodySmall,
-      color: theme.colors.text.secondary,
-      marginBottom: responsive.spacing[2],
-      marginTop: responsive.spacing[4],
-    },
-    selectButton: {
+    infoBox: {
       flexDirection: 'row',
-      alignItems: 'center',
-      justifyContent: 'space-between',
-      backgroundColor: theme.colors.background.tertiary,
-      borderRadius: theme.borderRadius.xl,
-      padding: responsive.spacing[2],
-      marginBottom: responsive.spacing[4],
-    },
-    selectButtonText: {
-      ...theme.typography.styles.body,
-      textTransform: 'capitalize',
-    },
-    input: {
-      borderWidth: 1,
-      borderColor: theme.colors.border.main,
-      borderRadius: theme.borderRadius.xl,
-      padding: responsive.spacing[2],
-      ...theme.typography.styles.body,
-      color: theme.colors.text.primary,
-      marginBottom: responsive.spacing[4],
-    },
-    textArea: {
-      minHeight: 120,
-      paddingTop: responsive.spacing[2],
-    },
-    attachButton: {
-      flexDirection: 'row',
-      alignItems: 'center',
-      justifyContent: 'center',
-      backgroundColor: theme.colors.background.tertiary,
-      borderRadius: theme.borderRadius.xl,
-      padding: responsive.spacing[2],
-      marginBottom: responsive.spacing[4],
-    },
-    attachButtonText: {
-      ...theme.typography.styles.button,
-      marginLeft: responsive.spacing[2],
-      fontWeight: settingsFontWeights.semibold,
-    },
-    emailBox: {
-      backgroundColor: theme.colors.background.tertiary,
-      borderRadius: theme.borderRadius.xl,
+      alignItems: 'flex-start',
+      gap: responsive.spacing[3],
       padding: responsive.spacing[4],
-      marginBottom: responsive.spacing[4],
-    },
-    emailLabel: {
-      ...theme.typography.styles.bodySmall,
-      color: theme.colors.text.secondary,
-      marginBottom: 4,
-    },
-    emailText: {
-      ...theme.typography.styles.body,
-      fontWeight: settingsFontWeights.semibold,
-    },
-    infoCard: {
-      backgroundColor: theme.colors.info.light,
       borderRadius: theme.borderRadius.xl,
-      padding: responsive.spacing[6],
-      alignItems: 'center',
-    },
-    infoLabel: {
-      ...theme.typography.styles.bodySmall,
-      color: theme.colors.info.dark,
-      marginBottom: responsive.spacing[2],
+      backgroundColor: colors.primaryLight,
+      borderWidth: 1,
+      borderColor: colors.primary,
     },
     infoText: {
-      ...theme.typography.styles.body,
-      fontWeight: settingsFontWeights.semibold,
-      color: theme.colors.info.dark,
+      flex: 1,
+      fontSize: settingsTypography.secondary,
+      lineHeight: settingsTypography.secondary * 1.5,
+      color: colors.primaryDark,
     },
   });
 
   return (
-    <Screen noPadding backgroundColor={theme.colors.background.secondary} edges={['top', 'bottom']}>
-      <StatusBar barStyle={themeMode === 'dark' ? 'light-content' : 'dark-content'} backgroundColor={theme.colors.background.secondary} />
-      <ScreenHeader title="Contact Support" />
+    <Screen scrollable={false} noPadding backgroundColor={colors.neutralBg} edges={['top', 'bottom']}>
+      <StatusBar barStyle={themeMode === 'dark' ? 'light-content' : 'dark-content'} backgroundColor={colors.neutralBg} />
+      <ScreenHeader title="Contact Support" backgroundColor={colors.neutralBg} />
 
-      <ScrollView contentContainerStyle={styles.content}>
-        <View style={styles.card}>
-          {/* Issue Type */}
-          <Text style={styles.label}>What can we help with?</Text>
-          <TouchableOpacity style={styles.selectButton}>
-            <Text style={styles.selectButtonText}>{issueType}</Text>
-            <Ionicons name="chevron-down" size={16} color={theme.colors.text.tertiary} />
-          </TouchableOpacity>
+      <ScrollView
+        contentContainerStyle={settingsStyles.content}
+        showsVerticalScrollIndicator={false}
+      >
+        {/* Support Channels Section */}
+        <View style={settingsStyles.section}>
+          <Text style={settingsStyles.sectionTitle}>SUPPORT CHANNELS</Text>
+          <View style={settingsStyles.card}>
+            {/* Email Support */}
+            <TouchableOpacity
+              style={settingsStyles.menuItem}
+              onPress={handleEmailSupport}
+              activeOpacity={0.7}
+            >
+              <View style={settingsStyles.iconContainer}>
+                <Ionicons name="mail-outline" size={SETTINGS_CONSTANTS.ICON_SIZE} color={colors.neutralDarkest} />
+              </View>
+              <View style={styles.textContainer}>
+                <Text style={settingsStyles.menuText}>Email Support</Text>
+                <Text style={settingsStyles.menuSubtitle}>support@pocketbudget.com.au</Text>
+              </View>
+              <Ionicons name="chevron-forward" size={SETTINGS_CONSTANTS.CHEVRON_SIZE} color={colors.neutralMedium} />
+            </TouchableOpacity>
 
-          {/* Subject */}
-          <Text style={styles.label}>Subject</Text>
-          <TextInput
-            style={styles.input}
-            value={subject}
-            onChangeText={setSubject}
-            placeholder="Brief description of your issue"
-            placeholderTextColor={theme.colors.text.tertiary}
-          />
+            <View style={settingsStyles.menuItemDivider} />
 
-          {/* Description */}
-          <Text style={styles.label}>Description</Text>
-          <TextInput
-            style={[styles.input, styles.textArea]}
-            value={description}
-            onChangeText={setDescription}
-            placeholder="Please provide as much detail as possible..."
-            placeholderTextColor={theme.colors.text.tertiary}
-            multiline
-            numberOfLines={6}
-            textAlignVertical="top"
-          />
-
-          {/* Attach Screenshot */}
-          <TouchableOpacity style={styles.attachButton}>
-            <Ionicons name="attach" size={20} color={theme.colors.text.primary} />
-            <Text style={styles.attachButtonText}>Attach screenshot</Text>
-          </TouchableOpacity>
-
-          {/* Email Display */}
-          <View style={styles.emailBox}>
-            <Text style={styles.emailLabel}>Your email:</Text>
-            <Text style={styles.emailText}>john@email.com</Text>
+            {/* Live Chat */}
+            <TouchableOpacity
+              style={settingsStyles.menuItem}
+              onPress={handleLiveChat}
+              activeOpacity={0.7}
+            >
+              <View style={settingsStyles.iconContainer}>
+                <Ionicons name="chatbubble-ellipses-outline" size={SETTINGS_CONSTANTS.ICON_SIZE} color={colors.neutralDarkest} />
+              </View>
+              <View style={styles.textContainer}>
+                <Text style={settingsStyles.menuText}>Live Chat</Text>
+                <Text style={settingsStyles.menuSubtitle}>Available Mon-Fri, 9am-5pm AEST</Text>
+              </View>
+              <Ionicons name="chevron-forward" size={SETTINGS_CONSTANTS.CHEVRON_SIZE} color={colors.neutralMedium} />
+            </TouchableOpacity>
           </View>
-
-          {/* Send Button */}
-          <Button
-            variant="primary"
-            fullWidth
-            size="large"
-            onPress={handleSend}
-          >
-            Send Message
-          </Button>
         </View>
 
-        {/* Response Time Info */}
-        <View style={styles.infoCard}>
-          <Text style={styles.infoLabel}>📧 Average response time</Text>
-          <Text style={styles.infoText}>Premium: 4 hours</Text>
-          <Text style={styles.infoText}>Free: 24 hours</Text>
+        {/* Help Resources Section */}
+        <View style={settingsStyles.section}>
+          <Text style={settingsStyles.sectionTitle}>HELP RESOURCES</Text>
+          <View style={settingsStyles.card}>
+            {/* FAQs */}
+            <TouchableOpacity
+              style={settingsStyles.menuItem}
+              onPress={handleFAQs}
+              activeOpacity={0.7}
+            >
+              <View style={settingsStyles.iconContainer}>
+                <Ionicons name="help-circle-outline" size={SETTINGS_CONSTANTS.ICON_SIZE} color={colors.neutralDarkest} />
+              </View>
+              <Text style={settingsStyles.menuText}>FAQs</Text>
+              <Ionicons name="chevron-forward" size={SETTINGS_CONSTANTS.CHEVRON_SIZE} color={colors.neutralMedium} />
+            </TouchableOpacity>
+
+            <View style={settingsStyles.menuItemDivider} />
+
+            {/* Report a Bug */}
+            <TouchableOpacity
+              style={settingsStyles.menuItem}
+              onPress={handleReportBug}
+              activeOpacity={0.7}
+            >
+              <View style={settingsStyles.iconContainer}>
+                <Ionicons name="bug-outline" size={SETTINGS_CONSTANTS.ICON_SIZE} color={colors.neutralDarkest} />
+              </View>
+              <Text style={settingsStyles.menuText}>Report a Bug</Text>
+              <Ionicons name="chevron-forward" size={SETTINGS_CONSTANTS.CHEVRON_SIZE} color={colors.neutralMedium} />
+            </TouchableOpacity>
+
+            <View style={settingsStyles.menuItemDivider} />
+
+            {/* Feature Request */}
+            <TouchableOpacity
+              style={settingsStyles.menuItem}
+              onPress={handleFeatureRequest}
+              activeOpacity={0.7}
+            >
+              <View style={settingsStyles.iconContainer}>
+                <Ionicons name="bulb-outline" size={SETTINGS_CONSTANTS.ICON_SIZE} color={colors.neutralDarkest} />
+              </View>
+              <Text style={settingsStyles.menuText}>Feature Request</Text>
+              <Ionicons name="chevron-forward" size={SETTINGS_CONSTANTS.CHEVRON_SIZE} color={colors.neutralMedium} />
+            </TouchableOpacity>
+          </View>
+        </View>
+
+        {/* Connect With Us Section */}
+        <View style={settingsStyles.section}>
+          <Text style={settingsStyles.sectionTitle}>CONNECT WITH US</Text>
+          <View style={settingsStyles.card}>
+            {/* Website */}
+            <TouchableOpacity
+              style={settingsStyles.menuItem}
+              onPress={handleWebsite}
+              activeOpacity={0.7}
+            >
+              <View style={settingsStyles.iconContainer}>
+                <Ionicons name="globe-outline" size={SETTINGS_CONSTANTS.ICON_SIZE} color={colors.neutralDarkest} />
+              </View>
+              <View style={styles.textContainer}>
+                <Text style={settingsStyles.menuText}>Website</Text>
+                <Text style={settingsStyles.menuSubtitle}>pocketbudget.com.au</Text>
+              </View>
+              <Ionicons name="chevron-forward" size={SETTINGS_CONSTANTS.CHEVRON_SIZE} color={colors.neutralMedium} />
+            </TouchableOpacity>
+
+            <View style={settingsStyles.menuItemDivider} />
+
+            {/* Twitter */}
+            <TouchableOpacity
+              style={settingsStyles.menuItem}
+              onPress={handleTwitter}
+              activeOpacity={0.7}
+            >
+              <View style={settingsStyles.iconContainer}>
+                <Ionicons name="logo-twitter" size={SETTINGS_CONSTANTS.ICON_SIZE} color={colors.neutralDarkest} />
+              </View>
+              <View style={styles.textContainer}>
+                <Text style={settingsStyles.menuText}>Twitter</Text>
+                <Text style={settingsStyles.menuSubtitle}>@pocketbudget</Text>
+              </View>
+              <Ionicons name="chevron-forward" size={SETTINGS_CONSTANTS.CHEVRON_SIZE} color={colors.neutralMedium} />
+            </TouchableOpacity>
+          </View>
+        </View>
+
+        {/* Info Box */}
+        <View style={styles.infoBox}>
+          <Ionicons name="time-outline" size={ms(20)} color={colors.primary} />
+          <Text style={styles.infoText}>
+            Average response time: Premium users 4 hours, Free users 24 hours. We aim to respond to all inquiries within one business day.
+          </Text>
         </View>
       </ScrollView>
     </Screen>

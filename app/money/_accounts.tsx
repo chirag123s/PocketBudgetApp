@@ -35,8 +35,8 @@ interface Account {
 
 export default function AccountsScreen() {
   const router = useRouter();
-  const { theme: themeMode } = useTheme();
-  const theme = getTheme(themeMode);
+  const { theme: themeMode, customBackgroundColor } = useTheme();
+  const theme = getTheme(themeMode, customBackgroundColor);
 
   const colors = {
     primary: theme.colors.info.main,

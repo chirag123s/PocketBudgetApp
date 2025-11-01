@@ -16,10 +16,12 @@ import { useTheme } from '@/contexts/ThemeContext';
 import { responsive, ms } from '@/constants/responsive';
 import { Ionicons } from '@expo/vector-icons';
 import { settingsTypography, settingsFontWeights, settingsTextStyles } from './typography';
+import { getSettingsStyles, SETTINGS_CONSTANTS } from './settingsStyles';
 
 export default function BackupRestoreScreen() {
   const { theme: themeMode } = useTheme();
   const theme = getTheme(themeMode);
+  const settingsStyles = getSettingsStyles(themeMode);
   const [cloudBackupEnabled, setCloudBackupEnabled] = useState(true);
 
   // Color Palette - Using theme colors
@@ -89,149 +91,17 @@ export default function BackupRestoreScreen() {
   };
 
   const styles = StyleSheet.create({
-    scrollView: {
+    textContainer: {
       flex: 1,
     },
-    content: {
-      padding: responsive.spacing[6],
-      gap: responsive.spacing[6],
-    },
-    card: {
-      backgroundColor: colors.neutralWhite,
-      borderRadius: theme.borderRadius.xl,
-      padding: responsive.spacing[6],
-      ...theme.shadows.sm,
-    },
-    cardTitle: {
-      fontSize: settingsTypography.sectionHeading,
-      lineHeight: settingsTypography.sectionHeading * 1.5,
-      fontWeight: settingsFontWeights.bold,
-      color: colors.neutralDarkest,
-      marginBottom: responsive.spacing[4],
-    },
-    row: {
-      flexDirection: 'row',
-      alignItems: 'center',
-      justifyContent: 'space-between',
-      minHeight: ms(56),
-      paddingVertical: responsive.spacing[2],
-    },
-    rowLeft: {
-      flexDirection: 'row',
-      alignItems: 'center',
-      gap: responsive.spacing[3],
-      flex: 1,
-    },
-    iconContainer: {
-      width: ms(48),
-      height: ms(48),
-      borderRadius: ms(24),
-      backgroundColor: colors.iconBg,
-      alignItems: 'center',
-      justifyContent: 'center',
-    },
-    rowContent: {
-      flex: 1,
-      gap: 2,
-    },
-    rowTitle: {
-      fontSize: settingsTypography.primary,
-      lineHeight: settingsTypography.primary * 1.5,
-      fontWeight: settingsFontWeights.medium,
-      color: colors.neutralDarkest,
-    },
-    rowSubtitle: {
+    valueText: {
       fontSize: settingsTypography.secondary,
       lineHeight: settingsTypography.secondary * 1.5,
-      fontWeight: settingsFontWeights.regular,
+      fontWeight: settingsFontWeights.medium,
       color: colors.neutralDark,
-      marginTop: 2,
-    },
-    rowValue: {
-      fontSize: settingsTypography.primary,
-      lineHeight: settingsTypography.primary * 1.5,
-      fontWeight: settingsFontWeights.regular,
-      color: colors.neutralDarkest,
-    },
-    linkText: {
-      fontSize: settingsTypography.primary,
-      lineHeight: settingsTypography.primary * 1.5,
-      fontWeight: settingsFontWeights.semibold,
-      color: colors.primary,
     },
     switchContainer: {
       transform: [{ scaleX: 1.1 }, { scaleY: 1.1 }],
-    },
-    divider: {
-      height: 1,
-      backgroundColor: colors.border,
-      marginVertical: responsive.spacing[2],
-    },
-    buttonRow: {
-      flexDirection: 'row',
-      gap: responsive.spacing[3],
-      marginTop: responsive.spacing[2],
-    },
-    actionButton: {
-      flex: 1,
-      borderRadius: theme.borderRadius.lg,
-      paddingVertical: responsive.spacing[3],
-      alignItems: 'center',
-      justifyContent: 'center',
-    },
-    actionButtonPrimary: {
-      backgroundColor: `${colors.primary}20`,
-    },
-    actionButtonDanger: {
-      backgroundColor: `${colors.functionalError}20`,
-    },
-    actionButtonTextPrimary: {
-      fontSize: settingsTypography.secondary,
-      lineHeight: settingsTypography.secondary * 1.5,
-      fontWeight: settingsFontWeights.bold,
-      color: colors.primary,
-    },
-    actionButtonTextDanger: {
-      fontSize: settingsTypography.secondary,
-      lineHeight: settingsTypography.secondary * 1.5,
-      fontWeight: settingsFontWeights.bold,
-      color: colors.functionalError,
-    },
-    historyItem: {
-      flexDirection: 'row',
-      alignItems: 'center',
-      justifyContent: 'space-between',
-      minHeight: ms(56),
-      paddingVertical: responsive.spacing[2],
-    },
-    historyLeft: {
-      flexDirection: 'row',
-      alignItems: 'center',
-      gap: responsive.spacing[3],
-      flex: 1,
-    },
-    historyContent: {
-      flex: 1,
-      gap: 2,
-    },
-    historyTitle: {
-      fontSize: settingsTypography.primary,
-      lineHeight: settingsTypography.primary * 1.5,
-      fontWeight: settingsFontWeights.medium,
-      color: colors.neutralDarkest,
-    },
-    historySubtitle: {
-      fontSize: settingsTypography.secondary,
-      lineHeight: settingsTypography.secondary * 1.5,
-      fontWeight: settingsFontWeights.regular,
-      color: colors.neutralDark,
-      marginTop: 2,
-    },
-    historySize: {
-      fontSize: settingsTypography.secondary,
-      lineHeight: settingsTypography.secondary * 1.5,
-      fontWeight: settingsFontWeights.semibold,
-      color: colors.neutralMedium,
     },
     infoBox: {
       flexDirection: 'row',
@@ -245,8 +115,8 @@ export default function BackupRestoreScreen() {
     },
     infoText: {
       flex: 1,
-      fontSize: settingsTypography.tertiary,
-      lineHeight: settingsTypography.tertiary * 1.6,
+      fontSize: settingsTypography.secondary,
+      lineHeight: settingsTypography.secondary * 1.5,
       color: colors.primaryDark,
     },
   });
@@ -257,171 +127,180 @@ export default function BackupRestoreScreen() {
       <ScreenHeader title="Backup & Restore" backgroundColor={colors.neutralBg} />
 
       <ScrollView
-        style={styles.scrollView}
-        contentContainerStyle={styles.content}
+        contentContainerStyle={settingsStyles.content}
         showsVerticalScrollIndicator={false}
       >
-        {/* Backup & Sync Card */}
-        <View style={styles.card}>
-          <Text style={styles.cardTitle}>Cloud Backup</Text>
-
-          {/* Cloud Backup Toggle */}
-          <View style={styles.row}>
-            <View style={styles.rowLeft}>
-              <View style={styles.iconContainer}>
-                <Ionicons name="cloud-upload-outline" size={ms(20)} color={colors.primary} />
+        {/* Cloud Backup Section */}
+        <View style={settingsStyles.section}>
+          <Text style={settingsStyles.sectionTitle}>CLOUD BACKUP</Text>
+          <View style={settingsStyles.card}>
+            {/* Auto Backup Toggle */}
+            <View style={settingsStyles.menuItem}>
+              <View style={settingsStyles.iconContainer}>
+                <Ionicons name="cloud-upload-outline" size={SETTINGS_CONSTANTS.ICON_SIZE} color={colors.neutralDarkest} />
               </View>
-              <Text style={styles.rowTitle}>Auto Backup</Text>
+              <Text style={settingsStyles.menuText}>Auto Backup</Text>
+              <View style={styles.switchContainer}>
+                <Switch
+                  value={cloudBackupEnabled}
+                  onValueChange={handleBackupToggle}
+                  trackColor={{ false: colors.border, true: colors.functionalSuccess }}
+                  thumbColor="#FFFFFF"
+                />
+              </View>
             </View>
-            <View style={styles.switchContainer}>
-              <Switch
-                value={cloudBackupEnabled}
-                onValueChange={handleBackupToggle}
-                trackColor={{ false: colors.border, true: colors.functionalSuccess }}
-                thumbColor="#FFFFFF"
-              />
-            </View>
-          </View>
 
-          <View style={styles.divider} />
+            <View style={settingsStyles.menuItemDivider} />
 
-          {/* Backup Frequency */}
-          <TouchableOpacity
-            style={styles.row}
-            onPress={() => console.log('Change backup frequency')}
-            activeOpacity={0.7}
-          >
-            <View style={styles.rowContent}>
-              <Text style={styles.rowTitle}>Backup Frequency</Text>
-              <Text style={styles.rowSubtitle}>Daily</Text>
-            </View>
-            <Text style={styles.linkText}>Change</Text>
-          </TouchableOpacity>
-
-          {/* Last Backup */}
-          <View style={styles.row}>
-            <View style={styles.rowContent}>
-              <Text style={styles.rowTitle}>Last Backup</Text>
-              <Text style={styles.rowSubtitle}>2 hours ago</Text>
-            </View>
-            <Text style={styles.rowValue}>3.2 MB</Text>
-          </View>
-
-          <View style={styles.divider} />
-
-          {/* Action Buttons */}
-          <View style={styles.buttonRow}>
+            {/* Backup Frequency */}
             <TouchableOpacity
-              style={[styles.actionButton, styles.actionButtonPrimary]}
+              style={settingsStyles.menuItem}
+              onPress={() => Alert.alert('Backup Frequency', 'Feature coming soon')}
+              activeOpacity={0.7}
+            >
+              <View style={settingsStyles.iconContainer}>
+                <Ionicons name="time-outline" size={SETTINGS_CONSTANTS.ICON_SIZE} color={colors.neutralDarkest} />
+              </View>
+              <View style={styles.textContainer}>
+                <Text style={settingsStyles.menuText}>Backup Frequency</Text>
+                <Text style={settingsStyles.menuSubtitle}>Daily</Text>
+              </View>
+              <Ionicons name="chevron-forward" size={SETTINGS_CONSTANTS.CHEVRON_SIZE} color={colors.neutralMedium} />
+            </TouchableOpacity>
+
+            <View style={settingsStyles.menuItemDivider} />
+
+            {/* Last Backup */}
+            <View style={settingsStyles.menuItem}>
+              <View style={settingsStyles.iconContainer}>
+                <Ionicons name="checkmark-circle-outline" size={SETTINGS_CONSTANTS.ICON_SIZE} color={colors.neutralDarkest} />
+              </View>
+              <View style={styles.textContainer}>
+                <Text style={settingsStyles.menuText}>Last Backup</Text>
+                <Text style={settingsStyles.menuSubtitle}>2 hours ago</Text>
+              </View>
+              <Text style={styles.valueText}>3.2 MB</Text>
+            </View>
+          </View>
+        </View>
+
+        {/* Backup Actions Section */}
+        <View style={settingsStyles.section}>
+          <Text style={settingsStyles.sectionTitle}>ACTIONS</Text>
+          <View style={settingsStyles.card}>
+            {/* Backup Now */}
+            <TouchableOpacity
+              style={settingsStyles.menuItem}
               onPress={handleBackupNow}
               activeOpacity={0.7}
             >
-              <Text style={styles.actionButtonTextPrimary}>Backup Now</Text>
+              <View style={settingsStyles.iconContainer}>
+                <Ionicons name="cloud-upload" size={SETTINGS_CONSTANTS.ICON_SIZE} color={colors.neutralDarkest} />
+              </View>
+              <Text style={settingsStyles.menuText}>Backup Now</Text>
+              <Ionicons name="chevron-forward" size={SETTINGS_CONSTANTS.CHEVRON_SIZE} color={colors.neutralMedium} />
             </TouchableOpacity>
+
+            <View style={settingsStyles.menuItemDivider} />
+
+            {/* Restore */}
             <TouchableOpacity
-              style={[styles.actionButton, styles.actionButtonPrimary]}
+              style={settingsStyles.menuItem}
               onPress={handleRestore}
               activeOpacity={0.7}
             >
-              <Text style={styles.actionButtonTextPrimary}>Restore</Text>
+              <View style={settingsStyles.iconContainer}>
+                <Ionicons name="cloud-download-outline" size={SETTINGS_CONSTANTS.ICON_SIZE} color={colors.neutralDarkest} />
+              </View>
+              <Text style={settingsStyles.menuText}>Restore from Backup</Text>
+              <Ionicons name="chevron-forward" size={SETTINGS_CONSTANTS.CHEVRON_SIZE} color={colors.neutralMedium} />
             </TouchableOpacity>
           </View>
         </View>
 
-        {/* Backup History Card */}
-        <View style={styles.card}>
-          <Text style={styles.cardTitle}>Backup History</Text>
-
-          {/* Recent Backup 1 */}
-          <View style={styles.historyItem}>
-            <View style={styles.historyLeft}>
-              <View style={styles.iconContainer}>
-                <Ionicons name="checkmark-circle" size={ms(24)} color={colors.neutralDarkest} />
+        {/* Backup History Section */}
+        <View style={settingsStyles.section}>
+          <Text style={settingsStyles.sectionTitle}>BACKUP HISTORY</Text>
+          <View style={settingsStyles.card}>
+            {/* Recent Backup 1 */}
+            <View style={settingsStyles.menuItem}>
+              <View style={settingsStyles.iconContainer}>
+                <Ionicons name="checkmark-circle" size={SETTINGS_CONSTANTS.ICON_SIZE} color={colors.functionalSuccess} />
               </View>
-              <View style={styles.historyContent}>
-                <Text style={styles.historyTitle}>Today at 10:30 AM</Text>
-                <Text style={styles.historySubtitle}>Full backup completed</Text>
+              <View style={styles.textContainer}>
+                <Text style={settingsStyles.menuText}>Today at 10:30 AM</Text>
+                <Text style={settingsStyles.menuSubtitle}>Full backup completed</Text>
               </View>
+              <Text style={styles.valueText}>3.2 MB</Text>
             </View>
-            <Text style={styles.historySize}>3.2 MB</Text>
-          </View>
 
-          <View style={styles.divider} />
+            <View style={settingsStyles.menuItemDivider} />
 
-          {/* Recent Backup 2 */}
-          <View style={styles.historyItem}>
-            <View style={styles.historyLeft}>
-              <View style={styles.iconContainer}>
-                <Ionicons name="checkmark-circle" size={ms(24)} color={colors.neutralDarkest} />
+            {/* Recent Backup 2 */}
+            <View style={settingsStyles.menuItem}>
+              <View style={settingsStyles.iconContainer}>
+                <Ionicons name="checkmark-circle" size={SETTINGS_CONSTANTS.ICON_SIZE} color={colors.functionalSuccess} />
               </View>
-              <View style={styles.historyContent}>
-                <Text style={styles.historyTitle}>Yesterday at 10:30 AM</Text>
-                <Text style={styles.historySubtitle}>Full backup completed</Text>
+              <View style={styles.textContainer}>
+                <Text style={settingsStyles.menuText}>Yesterday at 10:30 AM</Text>
+                <Text style={settingsStyles.menuSubtitle}>Full backup completed</Text>
               </View>
+              <Text style={styles.valueText}>3.1 MB</Text>
             </View>
-            <Text style={styles.historySize}>3.1 MB</Text>
-          </View>
 
-          <View style={styles.divider} />
+            <View style={settingsStyles.menuItemDivider} />
 
-          {/* Recent Backup 3 */}
-          <View style={styles.historyItem}>
-            <View style={styles.historyLeft}>
-              <View style={styles.iconContainer}>
-                <Ionicons name="checkmark-circle" size={ms(24)} color={colors.neutralDarkest} />
+            {/* Recent Backup 3 */}
+            <View style={settingsStyles.menuItem}>
+              <View style={settingsStyles.iconContainer}>
+                <Ionicons name="checkmark-circle" size={SETTINGS_CONSTANTS.ICON_SIZE} color={colors.functionalSuccess} />
               </View>
-              <View style={styles.historyContent}>
-                <Text style={styles.historyTitle}>2 days ago at 10:30 AM</Text>
-                <Text style={styles.historySubtitle}>Full backup completed</Text>
+              <View style={styles.textContainer}>
+                <Text style={settingsStyles.menuText}>2 days ago at 10:30 AM</Text>
+                <Text style={settingsStyles.menuSubtitle}>Full backup completed</Text>
               </View>
+              <Text style={styles.valueText}>2.9 MB</Text>
             </View>
-            <Text style={styles.historySize}>2.9 MB</Text>
           </View>
         </View>
 
-        {/* Storage & Cache Card */}
-        <View style={styles.card}>
-          <Text style={styles.cardTitle}>Storage & Cache</Text>
-
-          {/* App Storage Size */}
-          <View style={styles.row}>
-            <View style={styles.rowLeft}>
-              <View style={styles.iconContainer}>
-                <Ionicons name="phone-portrait-outline" size={ms(24)} color={colors.neutralDarkest} />
+        {/* Storage & Cache Section */}
+        <View style={settingsStyles.section}>
+          <Text style={settingsStyles.sectionTitle}>STORAGE & CACHE</Text>
+          <View style={settingsStyles.card}>
+            {/* App Storage Size */}
+            <View style={settingsStyles.menuItem}>
+              <View style={settingsStyles.iconContainer}>
+                <Ionicons name="phone-portrait-outline" size={SETTINGS_CONSTANTS.ICON_SIZE} color={colors.neutralDarkest} />
               </View>
-              <Text style={styles.rowTitle}>App Storage Size</Text>
+              <Text style={settingsStyles.menuText}>App Storage Size</Text>
+              <Text style={styles.valueText}>45 MB</Text>
             </View>
-            <Text style={styles.rowValue}>45 MB</Text>
-          </View>
 
-          {/* Cache Size */}
-          <View style={styles.row}>
-            <View style={styles.rowLeft}>
-              <View style={styles.iconContainer}>
-                <Ionicons name="archive-outline" size={ms(24)} color={colors.neutralDarkest} />
+            <View style={settingsStyles.menuItemDivider} />
+
+            {/* Cache Size */}
+            <View style={settingsStyles.menuItem}>
+              <View style={settingsStyles.iconContainer}>
+                <Ionicons name="archive-outline" size={SETTINGS_CONSTANTS.ICON_SIZE} color={colors.neutralDarkest} />
               </View>
-              <Text style={styles.rowTitle}>Cache Size</Text>
+              <Text style={settingsStyles.menuText}>Cache Size</Text>
+              <Text style={styles.valueText}>12 MB</Text>
             </View>
-            <Text style={styles.rowValue}>12 MB</Text>
-          </View>
 
-          <View style={styles.divider} />
+            <View style={settingsStyles.menuItemDivider} />
 
-          {/* Action Buttons */}
-          <View style={styles.buttonRow}>
+            {/* Clear Cache */}
             <TouchableOpacity
-              style={[styles.actionButton, styles.actionButtonDanger]}
+              style={settingsStyles.menuItem}
               onPress={handleClearCache}
               activeOpacity={0.7}
             >
-              <Text style={styles.actionButtonTextDanger}>Clear Cache</Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={[styles.actionButton, styles.actionButtonPrimary]}
-              onPress={() => console.log('Optimize storage')}
-              activeOpacity={0.7}
-            >
-              <Text style={styles.actionButtonTextPrimary}>Optimize Storage</Text>
+              <View style={settingsStyles.iconContainer}>
+                <Ionicons name="trash-outline" size={SETTINGS_CONSTANTS.ICON_SIZE} color={colors.functionalError} />
+              </View>
+              <Text style={[settingsStyles.menuText, { color: colors.functionalError }]}>Clear Cache</Text>
+              <Ionicons name="chevron-forward" size={SETTINGS_CONSTANTS.CHEVRON_SIZE} color={colors.neutralMedium} />
             </TouchableOpacity>
           </View>
         </View>
@@ -433,9 +312,6 @@ export default function BackupRestoreScreen() {
             Backups are encrypted and stored securely in the cloud. You can restore your data at any time from any device.
           </Text>
         </View>
-
-        {/* Bottom Spacing */}
-        <View style={{ height: responsive.spacing[8] }} />
       </ScrollView>
     </Screen>
   );

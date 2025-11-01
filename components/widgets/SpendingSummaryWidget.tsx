@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
-import { Ionicons } from '@expo/vector-icons';
+import { View, Text, StyleSheet } from 'react-native';
 import { getTheme } from '@/constants/theme';
-import { responsive, ms } from '@/constants/responsive';
+import { responsive } from '@/constants/responsive';
 import { formatCurrencyCompact } from '@/utils/currency';
 import { GaugeChart, GaugeChartSegment } from '@/components/charts';
 import { useTheme } from '@/contexts/ThemeContext';
+import { InlineDropdown, DropdownOption } from '@/components/ui';
 
 export interface SpendingSummaryWidgetProps {
   gaugeChartData: GaugeChartSegment[];
@@ -33,18 +33,17 @@ export const SpendingSummaryWidget: React.FC<SpendingSummaryWidgetProps> = ({
 
   const [selectedPeriod, setSelectedPeriod] = useState<'week' | 'month' | 'year'>('month');
 
-  const getPeriodLabel = () => {
-    switch (selectedPeriod) {
-      case 'week':
-        return 'This Week';
-      case 'month':
-        return 'This Month';
-      case 'year':
-        return 'This Year';
-      default:
-        return 'This Month';
-    }
+  const handlePeriodChange = (period: string) => {
+    const typedPeriod = period as 'week' | 'month' | 'year';
+    setSelectedPeriod(typedPeriod);
+    onPeriodSelect?.(typedPeriod);
   };
+
+  const periodOptions: DropdownOption[] = [
+    { value: 'week', label: 'This Week' },
+    { value: 'month', label: 'This Month' },
+    { value: 'year', label: 'This Year' },
+  ];
 
   const styles = StyleSheet.create({
     spendingCard: {
@@ -66,16 +65,6 @@ export const SpendingSummaryWidget: React.FC<SpendingSummaryWidgetProps> = ({
       fontWeight: '700',
       color: colors.neutralDarkest,
     },
-    dropdownButton: {
-      flexDirection: 'row',
-      alignItems: 'center',
-      gap: responsive.spacing[1],
-    },
-    dropdownText: {
-      fontSize: responsive.fontSize.sm,
-      fontWeight: '500',
-      color: colors.primary,
-    },
     circleAmount: {
       fontSize: responsive.fontSize.xl,
       fontWeight: '700',
@@ -93,13 +82,12 @@ export const SpendingSummaryWidget: React.FC<SpendingSummaryWidgetProps> = ({
     <View style={[styles.spendingCard, styles.cardShadow]}>
       <View style={styles.spendingHeader}>
         <Text style={styles.sectionTitle}>Spending</Text>
-        <TouchableOpacity
-          style={styles.dropdownButton}
-          onPress={() => onPeriodSelect?.(selectedPeriod)}
-        >
-          <Text style={styles.dropdownText}>{getPeriodLabel()}</Text>
-          <Ionicons name="chevron-down" size={16} color={colors.primary} />
-        </TouchableOpacity>
+        <InlineDropdown
+          options={periodOptions}
+          selectedValue={selectedPeriod}
+          onSelect={handlePeriodChange}
+          align="right"
+        />
       </View>
 
       {(() => {

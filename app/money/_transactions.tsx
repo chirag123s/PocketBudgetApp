@@ -31,8 +31,8 @@ type FilterTab = 'all' | 'income' | 'expense';
 
 export default function TransactionsScreen() {
   const router = useRouter();
-  const { theme: themeMode } = useTheme();
-  const theme = getTheme(themeMode);
+  const { theme: themeMode, customBackgroundColor } = useTheme();
+  const theme = getTheme(themeMode, customBackgroundColor);
   const [expandedTransaction, setExpandedTransaction] = useState<string | null>(null);
   const [activeFilter, setActiveFilter] = useState<FilterTab>('all');
   const [showFilterModal, setShowFilterModal] = useState(false);

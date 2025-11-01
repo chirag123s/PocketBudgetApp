@@ -43,8 +43,8 @@ interface Category {
 }
 
 export default function BudgetTab() {
-  const { theme: themeMode } = useTheme();
-  const theme = getTheme(themeMode);
+  const { theme: themeMode, customBackgroundColor, customCardColor } = useTheme();
+  const theme = getTheme(themeMode, customBackgroundColor, customCardColor);
 
   const [activeTab, setActiveTab] = useState<TabType>('goals');
   const [showCategoryModal, setShowCategoryModal] = useState(false);
@@ -384,8 +384,6 @@ export default function BudgetTab() {
     goalCard: {
       backgroundColor: colors.neutralWhite,
       borderRadius: theme.borderRadius.md,
-      borderWidth: 1,
-      borderColor: colors.borderLight,
       padding: responsive.spacing[4],
       gap: responsive.spacing[3],
       ...theme.shadows.sm,
@@ -516,8 +514,6 @@ export default function BudgetTab() {
     categoryCard: {
       backgroundColor: colors.neutralWhite,
       borderRadius: theme.borderRadius.md,
-      borderWidth: 1,
-      borderColor: colors.borderLight,
       padding: responsive.spacing[4],
       gap: responsive.spacing[3],
       ...theme.shadows.sm,

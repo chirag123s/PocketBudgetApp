@@ -129,9 +129,26 @@ export const darkTheme = {
   },
 };
 
-// Helper function to get theme based on mode
-export const getTheme = (mode: 'light' | 'dark') => {
-  return mode === 'dark' ? darkTheme : theme;
+// Helper function to get theme based on mode with optional custom background and card color
+export const getTheme = (mode: 'light' | 'dark', customBackgroundColor?: string | null, customCardColor?: string | null) => {
+  const baseTheme = mode === 'dark' ? darkTheme : theme;
+
+  // If custom colors are provided, override them
+  if (customBackgroundColor || customCardColor) {
+    return {
+      ...baseTheme,
+      colors: {
+        ...baseTheme.colors,
+        background: {
+          ...baseTheme.colors.background,
+          ...(customBackgroundColor ? { secondary: customBackgroundColor } : {}),
+          ...(customCardColor ? { primary: customCardColor } : {}),
+        },
+      },
+    };
+  }
+
+  return baseTheme;
 };
 
 export type Theme = typeof theme;

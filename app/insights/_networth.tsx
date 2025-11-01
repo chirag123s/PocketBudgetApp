@@ -6,7 +6,7 @@ import { getTheme } from '@/constants/theme';
 import { useTheme } from '@/contexts/ThemeContext';
 import { responsive, ms } from '@/constants/responsive';
 import { Ionicons } from '@expo/vector-icons';
-import { TabSelector, ChartTypeModal } from '@/components/ui';
+import { TabSelector, BottomSheetModal, InlineDropdown, DropdownOption } from '@/components/ui';
 import { DonutChart, DonutChartSegment } from '@/components/charts';
 
 interface Asset {
@@ -33,8 +33,8 @@ interface PortfolioItem {
 type TimePeriod = 'week' | 'month' | 'year';
 
 export default function NetWorthScreen() {
-  const { theme: themeMode } = useTheme();
-  const theme = getTheme(themeMode);
+  const { theme: themeMode, customBackgroundColor, customCardColor } = useTheme();
+  const theme = getTheme(themeMode, customBackgroundColor, customCardColor);
 
   const [selectedTimeframe, setSelectedTimeframe] = useState<'1M' | '6M' | '1Y' | 'All'>('1Y');
   const [assetsExpanded, setAssetsExpanded] = useState(false);
@@ -42,7 +42,6 @@ export default function NetWorthScreen() {
   const [chartType, setChartType] = useState<'donut' | 'bar'>('donut');
   const [showChartModal, setShowChartModal] = useState(false);
   const [timePeriod, setTimePeriod] = useState<TimePeriod>('month');
-  const [showPeriodModal, setShowPeriodModal] = useState(false);
 
   const colors = {
     primary: theme.colors.info.main,
@@ -99,36 +98,11 @@ export default function NetWorthScreen() {
     },
   ];
 
-  const periodOptions = [
-    {
-      value: 'week',
-      label: 'This Week',
-      icon: 'calendar-outline' as keyof typeof Ionicons.glyphMap,
-    },
-    {
-      value: 'month',
-      label: 'This Month',
-      icon: 'calendar-outline' as keyof typeof Ionicons.glyphMap,
-    },
-    {
-      value: 'year',
-      label: 'This Year',
-      icon: 'calendar-outline' as keyof typeof Ionicons.glyphMap,
-    },
+  const periodOptions: DropdownOption[] = [
+    { value: 'week', label: 'This Week' },
+    { value: 'month', label: 'This Month' },
+    { value: 'year', label: 'This Year' },
   ];
-
-  const getPeriodLabel = () => {
-    switch (timePeriod) {
-      case 'week':
-        return 'This Week';
-      case 'month':
-        return 'This Month';
-      case 'year':
-        return 'This Year';
-      default:
-        return 'This Month';
-    }
-  };
 
   // Net worth chart data points (mock data)
   const chartWidth = ms(280);
@@ -295,6 +269,41 @@ export default function NetWorthScreen() {
       fontWeight: '700',
       color: colors.neutralDarkest,
     },
+    optionCard: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      padding: responsive.spacing[3],
+      borderRadius: theme.borderRadius.lg,
+      borderWidth: 2,
+      borderColor: colors.neutralBg,
+      gap: responsive.spacing[3],
+      marginBottom: responsive.spacing[2],
+    },
+    optionCardSelected: {
+      borderColor: colors.primary,
+      backgroundColor: `${colors.primary}0D`,
+    },
+    optionIcon: {
+      width: ms(40),
+      height: ms(40),
+      borderRadius: ms(20),
+      justifyContent: 'center',
+      alignItems: 'center',
+    },
+    optionLabel: {
+      flex: 1,
+      fontSize: responsive.fontSize.sm,
+      fontWeight: '600',
+      color: colors.neutralDarkest,
+    },
+    checkIcon: {
+      width: ms(24),
+      height: ms(24),
+      borderRadius: ms(12),
+      justifyContent: 'center',
+      alignItems: 'center',
+      backgroundColor: colors.primary,
+    },
   });
 
   return (
@@ -453,12 +462,12 @@ export default function NetWorthScreen() {
         <Pressable style={styles.chartCard} onLongPress={handleChartLongPress}>
           <View style={styles.chartHeader}>
             <Text style={styles.sectionTitle}>Portfolio Allocation</Text>
-            <Pressable onPress={() => setShowPeriodModal(true)}>
-              <View style={{ flexDirection: 'row', alignItems: 'center', gap: responsive.spacing[1] }}>
-                <Text style={{ fontSize: responsive.fontSize.sm, fontWeight: '500', color: colors.neutralDark }}>{getPeriodLabel()}</Text>
-                <Ionicons name="chevron-down" size={16} color={colors.neutralDark} />
-              </View>
-            </Pressable>
+            <InlineDropdown
+              options={periodOptions}
+              selectedValue={timePeriod}
+              onSelect={(value) => setTimePeriod(value as TimePeriod)}
+              align="right"
+            />
           </View>
           <Text style={{ fontSize: responsive.fontSize.xs, color: colors.neutralMedium, marginBottom: responsive.spacing[2] }}>
             Long press to change chart type
@@ -514,22 +523,55 @@ export default function NetWorthScreen() {
       </View>
 
       {/* Chart Type Modal */}
-      <ChartTypeModal
+      <BottomSheetModal
         visible={showChartModal}
         onClose={() => setShowChartModal(false)}
-        currentType={chartType}
-        options={chartTypeOptions}
-        onSelectType={(type) => setChartType(type as 'donut' | 'bar')}
-      />
+        title="Select Chart Type"
+        scrollable={false}
+        maxHeight="50%"
+      >
+        {chartTypeOptions.map((option) => {
+          const isSelected = option.value === chartType;
+          return (
+            <TouchableOpacity
+              key={option.value}
+              style={[
+                styles.optionCard,
+                isSelected && styles.optionCardSelected,
+              ]}
+              onPress={() => {
+                setChartType(option.value as 'donut' | 'bar');
+                setShowChartModal(false);
+              }}
+              activeOpacity={0.7}
+            >
+              <View
+                style={[
+                  styles.optionIcon,
+                  {
+                    backgroundColor: isSelected
+                      ? `${colors.primary}20`
+                      : colors.neutralBg,
+                  },
+                ]}
+              >
+                <Ionicons
+                  name={option.icon}
+                  size={20}
+                  color={isSelected ? colors.primary : colors.neutralDark}
+                />
+              </View>
+              <Text style={styles.optionLabel}>{option.label}</Text>
+              {isSelected && (
+                <View style={styles.checkIcon}>
+                  <Ionicons name="checkmark" size={16} color={colors.neutralWhite} />
+                </View>
+              )}
+            </TouchableOpacity>
+          );
+        })}
+      </BottomSheetModal>
 
-      {/* Period Selector Modal */}
-      <ChartTypeModal
-        visible={showPeriodModal}
-        onClose={() => setShowPeriodModal(false)}
-        currentType={timePeriod}
-        options={periodOptions}
-        onSelectType={(type) => setTimePeriod(type as TimePeriod)}
-      />
     </ScrollView>
   );
 }

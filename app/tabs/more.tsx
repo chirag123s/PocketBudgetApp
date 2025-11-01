@@ -6,6 +6,8 @@ import { getTheme } from '@/constants/theme';
 import { useTheme } from '@/contexts/ThemeContext';
 import { responsive, ms } from '@/constants/responsive';
 import { Ionicons } from '@expo/vector-icons';
+import { settingsTypography, settingsFontWeights } from '@/app/settings/typography';
+import { getSettingsStyles, SETTINGS_CONSTANTS } from '@/app/settings/settingsStyles';
 
 interface MenuItem {
   id: string;
@@ -23,8 +25,9 @@ interface MenuSection {
 
 export default function MoreTab() {
   const router = useRouter();
-  const { theme: themeMode } = useTheme();
-  const theme = getTheme(themeMode);
+  const { theme: themeMode, customBackgroundColor, customCardColor } = useTheme();
+  const theme = getTheme(themeMode, customBackgroundColor, customCardColor);
+  const settingsStyles = getSettingsStyles(themeMode, customBackgroundColor, customCardColor);
 
   const colors = {
     primary: theme.colors.info.main,
@@ -152,14 +155,12 @@ export default function MoreTab() {
 
   const styles = StyleSheet.create({
     header: {
-      backgroundColor: colors.neutralWhite,
+      backgroundColor: colors.neutralBg,
       paddingHorizontal: responsive.spacing[4],
       paddingVertical: responsive.spacing[3],
-      borderBottomWidth: 1,
-      borderBottomColor: theme.colors.border.light,
     },
     headerTitle: {
-      fontSize: responsive.fontSize.xl,
+      fontSize: responsive.fontSize.lg,
       fontWeight: '700',
       color: colors.neutralDarkest,
     },
@@ -172,13 +173,14 @@ export default function MoreTab() {
       paddingHorizontal: responsive.spacing[4],
     },
     sectionTitle: {
+      ...theme.typography.styles.label,
       fontSize: responsive.fontSize.xs,
-      fontWeight: '700',
-      color: colors.neutralDark,
-      textTransform: 'uppercase',
+      lineHeight: responsive.fontSize.xs * 1.5,
+      color: theme.colors.text.tertiary,
+      fontWeight: settingsFontWeights.bold,
       letterSpacing: 1.2,
-      paddingVertical: responsive.spacing[2],
-      marginBottom: responsive.spacing[2],
+      textTransform: 'uppercase',
+      marginBottom: responsive.spacing[3],
     },
     card: {
       backgroundColor: colors.neutralWhite,
@@ -191,26 +193,28 @@ export default function MoreTab() {
       alignItems: 'center',
       paddingVertical: responsive.spacing[3],
       paddingHorizontal: responsive.spacing[4],
-      minHeight: ms(56),
+      gap: responsive.spacing[3],
+      minHeight: ms(72),
     },
     menuItemDivider: {
       height: 1,
-      backgroundColor: colors.neutralBg,
-      marginLeft: ms(56),
+      backgroundColor: theme.colors.border.light,
+      marginLeft: ms(72),
     },
     iconContainer: {
-      width: ms(40),
-      height: ms(40),
-      borderRadius: ms(20),
+      width: ms(48),
+      height: ms(48),
+      borderRadius: ms(24),
       alignItems: 'center',
       justifyContent: 'center',
-      marginRight: responsive.spacing[3],
     },
     menuText: {
+      ...theme.typography.styles.body,
+      fontSize: settingsTypography.primary,
+      lineHeight: settingsTypography.primary * 1.5,
+      fontWeight: settingsFontWeights.semibold,
+      color: theme.colors.text.primary,
       flex: 1,
-      fontSize: responsive.fontSize.md,
-      fontWeight: '500',
-      color: colors.neutralDarkest,
     },
     badge: {
       backgroundColor: colors.functionalWarning,
@@ -259,7 +263,7 @@ export default function MoreTab() {
                     <View style={[styles.iconContainer, { backgroundColor: `${item.iconColor}20` }]}>
                       <Ionicons
                         name={item.icon}
-                        size={24}
+                        size={SETTINGS_CONSTANTS.ICON_SIZE}
                         color={item.iconColor}
                       />
                     </View>
@@ -274,7 +278,7 @@ export default function MoreTab() {
 
                     <Ionicons
                       name="chevron-forward"
-                      size={20}
+                      size={SETTINGS_CONSTANTS.CHEVRON_SIZE}
                       color={colors.neutralMedium}
                       style={styles.chevron}
                     />
