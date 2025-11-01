@@ -5,11 +5,17 @@ import { Screen } from '@/components/layout/Screen';
 import { getTheme } from '@/constants/theme';
 import { useTheme } from '@/contexts/ThemeContext';
 import { responsive, ms } from '@/constants/responsive';
-import { TabSelector, DateRangePicker, DateRange } from '@/components/ui';
+import { TabSelector } from '@/components/ui';
+import { DateRangePickerModal } from '@/components/transaction';
 import { Ionicons } from '@expo/vector-icons';
 import SpendingScreen from '@/app/insights/_spending';
 import IncomeScreen from '@/app/insights/_income';
 import NetWorthScreen from '@/app/insights/_networth';
+
+interface DateRange {
+  startDate: Date;
+  endDate: Date;
+}
 
 type InsightsTab = 'spending' | 'income' | 'networth';
 
@@ -57,37 +63,41 @@ export default function InsightsTab() {
 
   const styles = StyleSheet.create({
     header: {
-      paddingHorizontal: responsive.spacing[4],
-      paddingTop: responsive.spacing[3],
-      paddingBottom: responsive.spacing[3],
-      backgroundColor: colors.neutralBg,
-    },
-    headerRow: {
       flexDirection: 'row',
       justifyContent: 'space-between',
       alignItems: 'center',
-      marginBottom: responsive.spacing[1],
+      paddingHorizontal: responsive.spacing[4],
+      paddingVertical: responsive.spacing[3],
+      backgroundColor: colors.neutralBg,
     },
     headerTitle: {
       fontSize: responsive.fontSize.lg,
       fontWeight: '700',
       color: colors.neutralDarkest,
     },
-    headerButton: {
-      width: ms(40),
-      height: ms(40),
-      justifyContent: 'center',
+    dateRangeRow: {
+      flexDirection: 'row',
       alignItems: 'center',
+      gap: responsive.spacing[2],
     },
-    dateRangeContainer: {
+    dateRangeButton: {
       flexDirection: 'row',
       alignItems: 'center',
       gap: responsive.spacing[1.5],
+      paddingHorizontal: responsive.spacing[3],
+      paddingVertical: responsive.spacing[1],
+      borderRadius: theme.borderRadius.full,
+      backgroundColor: `${colors.primary}10`,
     },
     dateRangeText: {
       fontSize: responsive.fontSize.sm,
       fontWeight: '600',
       color: colors.primary,
+    },
+    calendarButton: {
+      width: ms(40),
+      justifyContent: 'center',
+      alignItems: 'center',
     },
     tabContainer: {
       paddingHorizontal: responsive.spacing[4],
@@ -103,24 +113,24 @@ export default function InsightsTab() {
 
       {/* Header */}
       <View style={styles.header}>
-        <View style={styles.headerRow}>
-          <Text style={styles.headerTitle}>Insights</Text>
+        <Text style={styles.headerTitle}>Insights</Text>
+        <View style={styles.dateRangeRow}>
           <TouchableOpacity
-            style={styles.headerButton}
+            style={styles.dateRangeButton}
+            onPress={() => setShowDatePicker(true)}
+            activeOpacity={0.7}
+          >
+            <Ionicons name="time-outline" size={16} color={colors.primary} />
+            <Text style={styles.dateRangeText}>{formatDateRangeDisplay()}</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={styles.calendarButton}
             onPress={() => setShowDatePicker(true)}
             activeOpacity={0.7}
           >
             <Ionicons name="calendar-outline" size={24} color={colors.neutralDarkest} />
           </TouchableOpacity>
         </View>
-        <TouchableOpacity
-          style={styles.dateRangeContainer}
-          onPress={() => setShowDatePicker(true)}
-          activeOpacity={0.7}
-        >
-          <Ionicons name="time-outline" size={16} color={colors.primary} />
-          <Text style={styles.dateRangeText}>{formatDateRangeDisplay()}</Text>
-        </TouchableOpacity>
       </View>
 
       {/* Tab Selector */}
@@ -140,14 +150,14 @@ export default function InsightsTab() {
       {renderScreen()}
 
       {/* Date Range Picker */}
-      <DateRangePicker
+      <DateRangePickerModal
         visible={showDatePicker}
         onClose={() => setShowDatePicker(false)}
-        onSelectRange={(range) => {
-          setDateRange(range);
-          setShowDatePicker(false);
+        onApply={(startDate, endDate) => {
+          setDateRange({ startDate, endDate });
         }}
-        initialRange={dateRange}
+        initialStartDate={dateRange.startDate}
+        initialEndDate={dateRange.endDate}
       />
     </Screen>
   );

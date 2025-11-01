@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, StatusBar, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, StatusBar, TouchableOpacity, Alert } from 'react-native';
 import { useRouter } from 'expo-router';
 import { Screen } from '@/components/layout/Screen';
 import { getTheme } from '@/constants/theme';
@@ -7,6 +7,8 @@ import { useTheme } from '@/contexts/ThemeContext';
 import { responsive, ms } from '@/constants/responsive';
 import { TabSelector } from '@/components/ui';
 import { Ionicons } from '@expo/vector-icons';
+import { AddAccountModal, AddBillModal } from '@/components/money';
+import { AddTransactionModal } from '@/components/transaction';
 import AccountsScreen from '@/app/money/_accounts';
 import TransactionsScreen from '@/app/money/_transactions';
 import BillsScreen from '@/app/money/_bills';
@@ -18,12 +20,66 @@ export default function MoneyTab() {
   const { theme: themeMode } = useTheme();
   const theme = getTheme(themeMode);
   const [selectedTab, setSelectedTab] = useState<MoneyTab>('accounts');
+  const [showAddAccountModal, setShowAddAccountModal] = useState(false);
+  const [showAddTransactionModal, setShowAddTransactionModal] = useState(false);
+  const [showAddBillModal, setShowAddBillModal] = useState(false);
+
+  // Handlers for add actions
+  const handleAddAccount = () => {
+    setShowAddAccountModal(true);
+  };
+
+  const handleAddTransaction = () => {
+    setShowAddTransactionModal(true);
+  };
+
+  const handleAddBill = () => {
+    setShowAddBillModal(true);
+  };
+
+  const handleAccountAdded = (accountData: any) => {
+    console.log('Account added:', accountData);
+    // TODO: Save account to state/backend
+  };
+
+  const handleTransactionAdded = (transaction: {
+    type: string;
+    amount: number;
+    merchant: string;
+    category: string;
+    categoryIcon: string;
+    date: Date;
+    accountId: string;
+    notes?: string;
+  }) => {
+    console.log('Transaction added:', transaction);
+    // TODO: Save transaction to state/backend
+    Alert.alert('Success', `${transaction.type === 'income' ? 'Income' : 'Transaction'} of $${transaction.amount} added successfully!`);
+  };
+
+  const handleBillAdded = (bill: {
+    name: string;
+    amount: number;
+    isRecurring: boolean;
+    frequency?: string;
+    dueDate: Date;
+    category: string;
+    categoryIcon: string;
+    accountId: string;
+    notes?: string;
+    reminderEnabled: boolean;
+  }) => {
+    console.log('Bill added:', bill);
+    // TODO: Save bill to state/backend
+    const billType = bill.isRecurring ? `Recurring ${bill.frequency} bill` : 'One-time bill';
+    Alert.alert('Success', `${billType} "${bill.name}" for $${bill.amount} added successfully!`);
+  };
 
   const colors = {
     neutralBg: theme.colors.background.secondary,
     neutralWhite: theme.colors.background.primary,
     neutralDarkest: theme.colors.text.primary,
-    primary: theme.colors.info.main,
+    primary: theme.colors.primary[500],
   };
 
   const renderScreen = () => {
@@ -41,29 +97,32 @@ export default function MoneyTab() {
 
   const styles = StyleSheet.create({
     header: {
-      flexDirection: 'row',
-      justifyContent: 'space-between',
-      alignItems: 'center',
       paddingHorizontal: responsive.spacing[4],
       paddingVertical: responsive.spacing[3],
       backgroundColor: colors.neutralBg,
     },
     headerTitle: {
-      fontSize: responsive.fontSize.xl,
+      fontSize: responsive.fontSize.lg,
       fontWeight: '700',
       color: colors.neutralDarkest,
-    },
-    headerButton: {
-      width: ms(40),
-      height: ms(40),
-      justifyContent: 'center',
-      alignItems: 'center',
     },
     tabContainer: {
       paddingHorizontal: responsive.spacing[4],
       paddingTop: responsive.spacing[2],
       paddingBottom: responsive.spacing[3],
       backgroundColor: colors.neutralBg,
+    },
+    fab: {
+      position: 'absolute',
+      bottom: responsive.spacing[6],
+      right: responsive.spacing[6],
+      width: ms(56),
+      height: ms(56),
+      borderRadius: ms(28),
+      backgroundColor: colors.primary,
+      alignItems: 'center',
+      justifyContent: 'center',
+      ...theme.shadows.primary,
     },
   });
 
@@ -74,9 +133,6 @@ export default function MoneyTab() {
       {/* Header */}
       <View style={styles.header}>
         <Text style={styles.headerTitle}>Money</Text>
-        <TouchableOpacity style={styles.headerButton} onPress={() => router.push('/money/transaction/add')}>
-          <Ionicons name="add-circle" size={24} color={colors.primary} />
-        </TouchableOpacity>
       </View>
 
       {/* Tab Selector */}
@@ -94,6 +150,44 @@ export default function MoneyTab() {
 
       {/* Render Selected Screen */}
       {renderScreen()}
+
+      {/* Context-Aware FAB */}
+      {selectedTab === 'accounts' && (
+        <TouchableOpacity style={styles.fab} onPress={handleAddAccount} activeOpacity={0.8}>
+          <Ionicons name="add" size={ms(28)} color="#ffffff" />
+        </TouchableOpacity>
+      )}
+      {selectedTab === 'transactions' && (
+        <TouchableOpacity style={styles.fab} onPress={handleAddTransaction} activeOpacity={0.8}>
+          <Ionicons name="add" size={ms(28)} color="#ffffff" />
+        </TouchableOpacity>
+      )}
+      {selectedTab === 'bills' && (
+        <TouchableOpacity style={styles.fab} onPress={handleAddBill} activeOpacity={0.8}>
+          <Ionicons name="add" size={ms(28)} color="#ffffff" />
+        </TouchableOpacity>
+      )}
+
+      {/* Add Account Modal */}
+      <AddAccountModal
+        visible={showAddAccountModal}
+        onClose={() => setShowAddAccountModal(false)}
+        onAddAccount={handleAccountAdded}
+      />
+
+      {/* Add Transaction Modal */}
+      <AddTransactionModal
+        visible={showAddTransactionModal}
+        onClose={() => setShowAddTransactionModal(false)}
+        onSave={handleTransactionAdded}
+      />
+
+      {/* Add Bill Modal */}
+      <AddBillModal
+        visible={showAddBillModal}
+        onClose={() => setShowAddBillModal(false)}
+        onSave={handleBillAdded}
+      />
     </Screen>
   );
 }

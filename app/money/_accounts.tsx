@@ -98,7 +98,7 @@ export default function AccountsScreen() {
       institutionName: 'Australian Super',
       accountNumber: '9012',
       balance: 85420.50,
-      change: '+$1,234.56',
+      change: '$1,234.56',
       changePercent: 2.3,
       lastUpdated: '1 day ago',
       logo: 'https://logo.clearbit.com/australiansuper.com',
@@ -264,9 +264,6 @@ export default function AccountsScreen() {
 
     // Section
     sectionHeader: {
-      flexDirection: 'row',
-      justifyContent: 'space-between',
-      alignItems: 'center',
       marginTop: responsive.spacing[4],
       marginBottom: responsive.spacing[2],
     },
@@ -275,10 +272,6 @@ export default function AccountsScreen() {
       fontWeight: '700',
       color: colors.neutralDarkest,
       letterSpacing: -0.3,
-    },
-    sectionCount: {
-      fontSize: responsive.fontSize.sm,
-      color: colors.neutralMedium,
     },
 
     // Account Card
@@ -378,26 +371,6 @@ export default function AccountsScreen() {
       fontSize: responsive.fontSize.xs,
       color: colors.neutralMedium,
     },
-
-    // Add Account Button
-    addButton: {
-      backgroundColor: colors.neutralWhite,
-      borderRadius: theme.borderRadius.xl,
-      padding: responsive.spacing[4],
-      flexDirection: 'row',
-      alignItems: 'center',
-      justifyContent: 'center',
-      gap: responsive.spacing[2],
-      borderWidth: 2,
-      borderColor: theme.colors.border.light,
-      borderStyle: 'dashed',
-      marginTop: responsive.spacing[2],
-    },
-    addButtonText: {
-      fontSize: responsive.fontSize.md,
-      fontWeight: '600',
-      color: colors.primary,
-    },
   });
 
   return (
@@ -433,7 +406,6 @@ export default function AccountsScreen() {
       {/* Bank Accounts */}
       <View style={styles.sectionHeader}>
         <Text style={styles.sectionTitle}>Bank Accounts</Text>
-        <Text style={styles.sectionCount}>{bankAccounts.length}</Text>
       </View>
       {bankAccounts.map(renderAccountCard)}
 
@@ -442,7 +414,6 @@ export default function AccountsScreen() {
         <>
           <View style={styles.sectionHeader}>
             <Text style={styles.sectionTitle}>Credit Cards</Text>
-            <Text style={styles.sectionCount}>{creditCards.length}</Text>
           </View>
           {creditCards.map(renderAccountCard)}
         </>
@@ -453,21 +424,10 @@ export default function AccountsScreen() {
         <>
           <View style={styles.sectionHeader}>
             <Text style={styles.sectionTitle}>Investments</Text>
-            <Text style={styles.sectionCount}>{investments.length}</Text>
           </View>
           {investments.map(renderAccountCard)}
         </>
       )}
-
-      {/* Add Account Button */}
-      <TouchableOpacity
-        style={styles.addButton}
-        activeOpacity={0.7}
-        onPress={() => router.push('/bank/intro')}
-      >
-        <Ionicons name="add-circle-outline" size={24} color={colors.primary} />
-        <Text style={styles.addButtonText}>Add Account</Text>
-      </TouchableOpacity>
     </ScrollView>
   );
 }

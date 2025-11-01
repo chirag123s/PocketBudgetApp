@@ -5,6 +5,7 @@ import {
   ScrollView,
   Pressable,
   StatusBar,
+  Alert,
 } from 'react-native';
 import { useRouter } from 'expo-router';
 import { Screen } from '@/components/layout/Screen';
@@ -13,6 +14,7 @@ import { getTheme } from '@/constants/theme';
 import { useTheme } from '@/contexts/ThemeContext';
 import { responsive, ms } from '@/constants/responsive';
 import { Ionicons } from '@expo/vector-icons';
+import { AddCategoryModal } from '@/components/budget';
 
 interface Category {
   id: string;
@@ -151,6 +153,7 @@ export default function CategoriesScreen() {
   ];
 
   const [customCategories] = useState<Category[]>([]);
+  const [showCategoryModal, setShowCategoryModal] = useState(false);
 
   const handleCategoryPress = (category: Category) => {
     console.log('Category selected:', category.name);
@@ -158,7 +161,13 @@ export default function CategoriesScreen() {
   };
 
   const handleAddCategory = () => {
-    router.push('/budget/add-category');
+    setShowCategoryModal(true);
+  };
+
+  const handleSaveCategory = (category: { name: string; icon: string; color: string }) => {
+    console.log('Saving category:', category);
+    // TODO: Add category to the list
+    Alert.alert('Success', `Category "${category.name}" created successfully!`);
   };
 
   return (
@@ -429,6 +438,13 @@ export default function CategoriesScreen() {
           <Ionicons name="add" size={ms(32)} color={colors.neutralWhite} />
         </Pressable>
       </View>
+
+      {/* Add Category Modal */}
+      <AddCategoryModal
+        visible={showCategoryModal}
+        onClose={() => setShowCategoryModal(false)}
+        onSave={handleSaveCategory}
+      />
     </Screen>
   );
 }

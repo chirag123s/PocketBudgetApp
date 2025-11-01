@@ -4,7 +4,8 @@ import { useRouter } from 'expo-router';
 import { getTheme } from '@/constants/theme';
 import { responsive, ms } from '@/constants/responsive';
 import { Ionicons } from '@expo/vector-icons';
-import { CategorizeModal, AddReceiptModal } from '@/components/transaction';
+import { CategorizeModal, AddReceiptModal, DateRangePickerModal } from '@/components/transaction';
+import { BottomSheetModal } from '@/components/ui';
 import { useTheme } from '@/contexts/ThemeContext';
 
 interface Transaction {
@@ -34,6 +35,12 @@ export default function TransactionsScreen() {
   const theme = getTheme(themeMode);
   const [expandedTransaction, setExpandedTransaction] = useState<string | null>(null);
   const [activeFilter, setActiveFilter] = useState<FilterTab>('all');
+  const [showFilterModal, setShowFilterModal] = useState(false);
+  const [showDateRangePicker, setShowDateRangePicker] = useState(false);
+  const [selectedTimePeriod, setSelectedTimePeriod] = useState<string>('all');
+  const [selectedCategory, setSelectedCategory] = useState<string>('all');
+  const [customStartDate, setCustomStartDate] = useState<Date>(new Date());
+  const [customEndDate, setCustomEndDate] = useState<Date>(new Date());
 
   const colors = {
     primary: theme.colors.info.main,
@@ -130,6 +137,29 @@ export default function TransactionsScreen() {
     { key: 'expense', label: 'Expenses' },
   ];
 
+  const timePeriods = [
+    { key: 'all', label: 'All Time' },
+    { key: 'today', label: 'Today' },
+    { key: 'yesterday', label: 'Yesterday' },
+    { key: 'this-week', label: 'This Week' },
+    { key: 'last-week', label: 'Last Week' },
+    { key: 'this-month', label: 'This Month' },
+    { key: 'last-month', label: 'Last Month' },
+    { key: 'custom', label: 'Custom Date Range' },
+  ];
+
+  const categories = [
+    { key: 'all', label: 'All Categories' },
+    { key: 'groceries', label: 'Groceries' },
+    { key: 'dining', label: 'Dining Out' },
+    { key: 'transport', label: 'Transport' },
+    { key: 'utilities', label: 'Utilities' },
+    { key: 'entertainment', label: 'Entertainment' },
+    { key: 'shopping', label: 'Shopping' },
+    { key: 'health', label: 'Health & Fitness' },
+    { key: 'income', label: 'Income' },
+  ];
+
   // Calculate totals
   const totalIncome = transactionGroups.reduce((sum, group) =>
     sum + group.transactions.filter(t => t.isIncome).reduce((s, t) => s + t.amount, 0), 0
@@ -187,6 +217,44 @@ export default function TransactionsScreen() {
         transactionId: selectedTransaction?.id,
       },
     });
+  };
+
+  const handleApplyFilters = () => {
+    console.log('Applying filters:', { selectedTimePeriod, selectedCategory });
+    // TODO: Apply filters to transaction list
+    setShowFilterModal(false);
+  };
+
+  const handleResetFilters = () => {
+    setSelectedTimePeriod('all');
+    setSelectedCategory('all');
+    setActiveFilter('all');
+  };
+
+  const getActiveFilterCount = () => {
+    let count = 0;
+    if (selectedTimePeriod !== 'all') count++;
+    if (selectedCategory !== 'all') count++;
+    return count;
+  };
+
+  const handleTimePeriodSelect = (periodKey: string) => {
+    if (periodKey === 'custom') {
+      setShowDateRangePicker(true);
+    } else {
+      setSelectedTimePeriod(periodKey);
+    }
+  };
+
+  const handleDateRangeApply = (startDate: Date, endDate: Date) => {
+    setCustomStartDate(startDate);
+    setCustomEndDate(endDate);
+    setSelectedTimePeriod('custom');
+    console.log('Custom date range applied:', { startDate, endDate });
+  };
+
+  const getCustomDateLabel = () => {
+    return `${customStartDate.toLocaleDateString('en-AU', { day: 'numeric', month: 'short' })} - ${customEndDate.toLocaleDateString('en-AU', { day: 'numeric', month: 'short' })}`;
   };
 
   const renderTransaction = (transaction: Transaction) => {
@@ -452,6 +520,81 @@ export default function TransactionsScreen() {
       fontWeight: '600',
       color: colors.primary,
     },
+
+    // Filter Modal Styles
+    resetButton: {
+      paddingVertical: responsive.spacing[2],
+      paddingHorizontal: responsive.spacing[3],
+    },
+    resetButtonText: {
+      fontSize: responsive.fontSize.sm,
+      fontWeight: '600',
+      color: colors.primary,
+    },
+    filterSection: {
+      marginBottom: responsive.spacing[5],
+    },
+    filterSectionTitle: {
+      fontSize: responsive.fontSize.lg,
+      fontWeight: '700',
+      color: colors.neutralDarkest,
+      marginBottom: responsive.spacing[3],
+    },
+    filterOptionsGrid: {
+      flexDirection: 'row',
+      flexWrap: 'wrap',
+      marginHorizontal: -responsive.spacing[1],
+      marginVertical: -responsive.spacing[1],
+    },
+    filterOption: {
+      paddingVertical: responsive.spacing[2],
+      paddingHorizontal: responsive.spacing[4],
+      borderRadius: theme.borderRadius.full,
+      borderWidth: 1,
+      borderColor: theme.colors.border.light,
+      backgroundColor: colors.neutralWhite,
+      margin: responsive.spacing[1],
+    },
+    filterOptionActive: {
+      backgroundColor: colors.primary,
+      borderColor: colors.primary,
+    },
+    filterOptionText: {
+      fontSize: responsive.fontSize.sm,
+      fontWeight: '600',
+      color: colors.neutralDarkest,
+    },
+    filterOptionTextActive: {
+      color: '#ffffff',
+    },
+    applyButton: {
+      backgroundColor: colors.primary,
+      borderRadius: theme.borderRadius.lg,
+      paddingVertical: responsive.spacing[3],
+      alignItems: 'center',
+      ...theme.shadows.sm,
+    },
+    applyButtonText: {
+      fontSize: responsive.fontSize.md,
+      fontWeight: '700',
+      color: '#ffffff',
+    },
+    filterBadge: {
+      position: 'absolute',
+      top: -responsive.spacing[1],
+      right: -responsive.spacing[1],
+      backgroundColor: colors.functionalError,
+      borderRadius: ms(10),
+      width: ms(20),
+      height: ms(20),
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
+    filterBadgeText: {
+      fontSize: responsive.fontSize.xs,
+      fontWeight: '700',
+      color: '#ffffff',
+    },
   });
 
   return (
@@ -489,37 +632,57 @@ export default function TransactionsScreen() {
         </View>
 
         {/* Filter Tabs */}
-        <ScrollView
-          horizontal
-          showsHorizontalScrollIndicator={false}
-          style={styles.filterContainer}
-          contentContainerStyle={styles.filterContent}
-        >
-          {filters.map((filter) => (
-            <TouchableOpacity
-              key={filter.key}
-              style={[
-                styles.filterTab,
-                activeFilter === filter.key
-                  ? styles.filterTabActive
-                  : styles.filterTabInactive,
-              ]}
-              onPress={() => setActiveFilter(filter.key)}
-              activeOpacity={0.7}
-            >
-              <Text
+        <View style={{ flexDirection: 'row', alignItems: 'center', gap: responsive.spacing[2] }}>
+          <ScrollView
+            horizontal
+            showsHorizontalScrollIndicator={false}
+            style={[styles.filterContainer, { flex: 1 }]}
+            contentContainerStyle={styles.filterContent}
+          >
+            {filters.map((filter) => (
+              <TouchableOpacity
+                key={filter.key}
                 style={[
-                  styles.filterTabText,
+                  styles.filterTab,
                   activeFilter === filter.key
-                    ? styles.filterTabTextActive
-                    : styles.filterTabTextInactive,
+                    ? styles.filterTabActive
+                    : styles.filterTabInactive,
                 ]}
+                onPress={() => setActiveFilter(filter.key)}
+                activeOpacity={0.7}
               >
-                {filter.label}
-              </Text>
-            </TouchableOpacity>
-          ))}
-        </ScrollView>
+                <Text
+                  style={[
+                    styles.filterTabText,
+                    activeFilter === filter.key
+                      ? styles.filterTabTextActive
+                      : styles.filterTabTextInactive,
+                  ]}
+                >
+                  {filter.label}
+                </Text>
+              </TouchableOpacity>
+            ))}
+          </ScrollView>
+
+          {/* More Filters Button */}
+          <TouchableOpacity
+            style={[
+              styles.filterTab,
+              styles.filterTabInactive,
+              { position: 'relative' }
+            ]}
+            onPress={() => setShowFilterModal(true)}
+            activeOpacity={0.7}
+          >
+            <Ionicons name="options-outline" size={20} color={colors.neutralDarkest} />
+            {getActiveFilterCount() > 0 && (
+              <View style={styles.filterBadge}>
+                <Text style={styles.filterBadgeText}>{getActiveFilterCount()}</Text>
+              </View>
+            )}
+          </TouchableOpacity>
+        </View>
 
         {/* Transaction Groups */}
         {transactionGroups.map((group) => (
@@ -550,6 +713,98 @@ export default function TransactionsScreen() {
         onClose={() => setShowAddReceiptModal(false)}
         onReceiptSelected={handleReceiptSelected}
       />
+
+      {/* Date Range Picker Modal */}
+      <DateRangePickerModal
+        visible={showDateRangePicker}
+        onClose={() => setShowDateRangePicker(false)}
+        onApply={handleDateRangeApply}
+        initialStartDate={customStartDate}
+        initialEndDate={customEndDate}
+      />
+
+      {/* Filter Modal */}
+      <BottomSheetModal
+        visible={showFilterModal}
+        onClose={() => setShowFilterModal(false)}
+        title="Filters"
+        scrollable={true}
+        maxHeight="80%"
+        headerRight={
+          <TouchableOpacity
+            style={styles.resetButton}
+            onPress={handleResetFilters}
+            activeOpacity={0.7}
+          >
+            <Text style={styles.resetButtonText}>Reset All</Text>
+          </TouchableOpacity>
+        }
+        footer={
+          <TouchableOpacity
+            style={styles.applyButton}
+            onPress={handleApplyFilters}
+            activeOpacity={0.8}
+          >
+            <Text style={styles.applyButtonText}>Apply Filters</Text>
+          </TouchableOpacity>
+        }
+      >
+        {/* Time Period Filter */}
+        <View style={styles.filterSection}>
+          <Text style={styles.filterSectionTitle}>Time Period</Text>
+          <View style={styles.filterOptionsGrid}>
+            {timePeriods.map((period) => (
+              <TouchableOpacity
+                key={period.key}
+                style={[
+                  styles.filterOption,
+                  selectedTimePeriod === period.key && styles.filterOptionActive,
+                ]}
+                onPress={() => handleTimePeriodSelect(period.key)}
+                activeOpacity={0.7}
+              >
+                <Text
+                  style={[
+                    styles.filterOptionText,
+                    selectedTimePeriod === period.key && styles.filterOptionTextActive,
+                  ]}
+                >
+                  {period.key === 'custom' && selectedTimePeriod === 'custom'
+                    ? getCustomDateLabel()
+                    : period.label}
+                </Text>
+              </TouchableOpacity>
+            ))}
+          </View>
+        </View>
+
+        {/* Category Filter */}
+        <View style={styles.filterSection}>
+          <Text style={styles.filterSectionTitle}>Category</Text>
+          <View style={styles.filterOptionsGrid}>
+            {categories.map((category) => (
+              <TouchableOpacity
+                key={category.key}
+                style={[
+                  styles.filterOption,
+                  selectedCategory === category.key && styles.filterOptionActive,
+                ]}
+                onPress={() => setSelectedCategory(category.key)}
+                activeOpacity={0.7}
+              >
+                <Text
+                  style={[
+                    styles.filterOptionText,
+                    selectedCategory === category.key && styles.filterOptionTextActive,
+                  ]}
+                >
+                  {category.label}
+                </Text>
+              </TouchableOpacity>
+            ))}
+          </View>
+        </View>
+      </BottomSheetModal>
     </>
   );
 }

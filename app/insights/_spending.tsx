@@ -30,12 +30,15 @@ interface Insight {
 }
 
 type ChartType = 'gauge' | 'bar';
+type TimePeriod = 'week' | 'month' | 'year';
 
 export default function SpendingScreen() {
   const { theme: themeMode } = useTheme();
   const theme = getTheme(themeMode);
   const [chartType, setChartType] = useState<ChartType>('gauge');
   const [showChartModal, setShowChartModal] = useState(false);
+  const [timePeriod, setTimePeriod] = useState<TimePeriod>('month');
+  const [showPeriodModal, setShowPeriodModal] = useState(false);
 
   const colors = {
     primaryDark: theme.colors.info.dark,
@@ -119,6 +122,37 @@ export default function SpendingScreen() {
     },
   ];
 
+  const periodOptions = [
+    {
+      value: 'week',
+      label: 'This Week',
+      icon: 'calendar-outline' as keyof typeof Ionicons.glyphMap,
+    },
+    {
+      value: 'month',
+      label: 'This Month',
+      icon: 'calendar-outline' as keyof typeof Ionicons.glyphMap,
+    },
+    {
+      value: 'year',
+      label: 'This Year',
+      icon: 'calendar-outline' as keyof typeof Ionicons.glyphMap,
+    },
+  ];
+
+  const getPeriodLabel = () => {
+    switch (timePeriod) {
+      case 'week':
+        return 'This Week';
+      case 'month':
+        return 'This Month';
+      case 'year':
+        return 'This Year';
+      default:
+        return 'This Month';
+    }
+  };
+
   const styles = StyleSheet.create({
     scrollView: {
       flex: 1,
@@ -160,6 +194,7 @@ export default function SpendingScreen() {
       color: colors.neutralDarkest,
     },
     section: {
+      marginTop: responsive.spacing[4],
       marginBottom: responsive.spacing[6],
     },
     sectionHeading: {
@@ -255,7 +290,12 @@ export default function SpendingScreen() {
         <Pressable style={styles.chartCard} onLongPress={handleChartLongPress}>
           <View style={styles.chartHeader}>
             <Text style={styles.sectionTitle}>Spending by Category</Text>
-            <Text style={styles.chartPeriod}>This Month</Text>
+            <Pressable onPress={() => setShowPeriodModal(true)}>
+              <View style={{ flexDirection: 'row', alignItems: 'center', gap: responsive.spacing[1] }}>
+                <Text style={styles.chartPeriod}>{getPeriodLabel()}</Text>
+                <Ionicons name="chevron-down" size={16} color={colors.neutralDark} />
+              </View>
+            </Pressable>
           </View>
           <Text style={{ fontSize: responsive.fontSize.xs, color: colors.neutralMedium, marginBottom: responsive.spacing[2] }}>
             Long press to change chart type
@@ -397,6 +437,15 @@ export default function SpendingScreen() {
         currentType={chartType}
         options={chartTypeOptions}
         onSelectType={(type) => setChartType(type as ChartType)}
+      />
+
+      {/* Period Selector Modal */}
+      <ChartTypeModal
+        visible={showPeriodModal}
+        onClose={() => setShowPeriodModal(false)}
+        currentType={timePeriod}
+        options={periodOptions}
+        onSelectType={(type) => setTimePeriod(type as TimePeriod)}
       />
     </ScrollView>
   );

@@ -30,6 +30,8 @@ interface PortfolioItem {
   color: string;
 }
 
+type TimePeriod = 'week' | 'month' | 'year';
+
 export default function NetWorthScreen() {
   const { theme: themeMode } = useTheme();
   const theme = getTheme(themeMode);
@@ -39,6 +41,8 @@ export default function NetWorthScreen() {
   const [liabilitiesExpanded, setLiabilitiesExpanded] = useState(false);
   const [chartType, setChartType] = useState<'donut' | 'bar'>('donut');
   const [showChartModal, setShowChartModal] = useState(false);
+  const [timePeriod, setTimePeriod] = useState<TimePeriod>('month');
+  const [showPeriodModal, setShowPeriodModal] = useState(false);
 
   const colors = {
     primary: theme.colors.info.main,
@@ -94,6 +98,37 @@ export default function NetWorthScreen() {
       icon: 'stats-chart-outline' as keyof typeof Ionicons.glyphMap,
     },
   ];
+
+  const periodOptions = [
+    {
+      value: 'week',
+      label: 'This Week',
+      icon: 'calendar-outline' as keyof typeof Ionicons.glyphMap,
+    },
+    {
+      value: 'month',
+      label: 'This Month',
+      icon: 'calendar-outline' as keyof typeof Ionicons.glyphMap,
+    },
+    {
+      value: 'year',
+      label: 'This Year',
+      icon: 'calendar-outline' as keyof typeof Ionicons.glyphMap,
+    },
+  ];
+
+  const getPeriodLabel = () => {
+    switch (timePeriod) {
+      case 'week':
+        return 'This Week';
+      case 'month':
+        return 'This Month';
+      case 'year':
+        return 'This Year';
+      default:
+        return 'This Month';
+    }
+  };
 
   // Net worth chart data points (mock data)
   const chartWidth = ms(280);
@@ -205,7 +240,7 @@ export default function NetWorthScreen() {
       alignItems: 'center',
     },
     breakdownTitle: {
-      fontSize: responsive.fontSize.md,
+      fontSize: responsive.fontSize.lg,
       fontWeight: '700',
       color: colors.neutralDarkest,
     },
@@ -416,8 +451,14 @@ export default function NetWorthScreen() {
 
         {/* Portfolio Allocation */}
         <Pressable style={styles.chartCard} onLongPress={handleChartLongPress}>
-          <View style={{ marginBottom: responsive.spacing[1] }}>
+          <View style={styles.chartHeader}>
             <Text style={styles.sectionTitle}>Portfolio Allocation</Text>
+            <Pressable onPress={() => setShowPeriodModal(true)}>
+              <View style={{ flexDirection: 'row', alignItems: 'center', gap: responsive.spacing[1] }}>
+                <Text style={{ fontSize: responsive.fontSize.sm, fontWeight: '500', color: colors.neutralDark }}>{getPeriodLabel()}</Text>
+                <Ionicons name="chevron-down" size={16} color={colors.neutralDark} />
+              </View>
+            </Pressable>
           </View>
           <Text style={{ fontSize: responsive.fontSize.xs, color: colors.neutralMedium, marginBottom: responsive.spacing[2] }}>
             Long press to change chart type
@@ -479,6 +520,15 @@ export default function NetWorthScreen() {
         currentType={chartType}
         options={chartTypeOptions}
         onSelectType={(type) => setChartType(type as 'donut' | 'bar')}
+      />
+
+      {/* Period Selector Modal */}
+      <ChartTypeModal
+        visible={showPeriodModal}
+        onClose={() => setShowPeriodModal(false)}
+        currentType={timePeriod}
+        options={periodOptions}
+        onSelectType={(type) => setTimePeriod(type as TimePeriod)}
       />
     </ScrollView>
   );

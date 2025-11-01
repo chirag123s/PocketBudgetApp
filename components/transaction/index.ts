@@ -3,3 +3,5 @@ export { CategorizeModal } from './CategorizeModal';
 export { SplitTransactionScreen } from './SplitTransactionScreen';
 export { AddReceiptModal } from './AddReceiptModal';
 export { ReceiptPreviewScreen } from './ReceiptPreviewScreen';
+export { DateRangePickerModal } from './DateRangePickerModal';
+export { AddTransactionModal } from './AddTransactionModal';
