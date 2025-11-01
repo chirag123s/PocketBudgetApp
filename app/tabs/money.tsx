@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { View, Text, StyleSheet, StatusBar, TouchableOpacity, Alert } from 'react-native';
 import { useRouter } from 'expo-router';
 import { Screen } from '@/components/layout/Screen';
@@ -12,8 +12,11 @@ import { AddTransactionModal } from '@/components/transaction';
 import AccountsScreen from '@/app/money/_accounts';
 import TransactionsScreen from '@/app/money/_transactions';
 import BillsScreen from '@/app/money/_bills';
+import PagerView from 'react-native-pager-view';
 
 type MoneyTab = 'accounts' | 'transactions' | 'bills';
+
+const TAB_ORDER: MoneyTab[] = ['accounts', 'transactions', 'bills'];
 
 export default function MoneyTab() {
   const router = useRouter();
@@ -23,6 +26,22 @@ export default function MoneyTab() {
   const [showAddAccountModal, setShowAddAccountModal] = useState(false);
   const [showAddTransactionModal, setShowAddTransactionModal] = useState(false);
   const [showAddBillModal, setShowAddBillModal] = useState(false);
+
+  const pagerRef = useRef<PagerView>(null);
+
+  // Handle tab selection from TabSelector
+  const handleTabSelect = (id: string) => {
+    const newTab = id as MoneyTab;
+    setSelectedTab(newTab);
+    const pageIndex = TAB_ORDER.indexOf(newTab);
+    pagerRef.current?.setPage(pageIndex);
+  };
+
+  // Handle page change from swipe gesture
+  const handlePageSelected = (e: any) => {
+    const pageIndex = e.nativeEvent.position;
+    setSelectedTab(TAB_ORDER[pageIndex]);
+  };
 
   // Handlers for add actions
   const handleAddAccount = () => {
@@ -82,19 +101,6 @@ export default function MoneyTab() {
     primary: theme.colors.primary[500],
   };
 
-  const renderScreen = () => {
-    switch (selectedTab) {
-      case 'accounts':
-        return <AccountsScreen />;
-      case 'transactions':
-        return <TransactionsScreen />;
-      case 'bills':
-        return <BillsScreen />;
-      default:
-        return <AccountsScreen />;
-    }
-  };
-
   const styles = StyleSheet.create({
     header: {
       paddingHorizontal: responsive.spacing[4],
@@ -144,12 +150,27 @@ export default function MoneyTab() {
             { id: 'bills', label: 'Bills' },
           ]}
           selectedId={selectedTab}
-          onSelect={(id) => setSelectedTab(id as MoneyTab)}
+          onSelect={handleTabSelect}
         />
       </View>
 
-      {/* Render Selected Screen */}
-      {renderScreen()}
+      {/* Swipeable Content */}
+      <PagerView
+        ref={pagerRef}
+        style={{ flex: 1 }}
+        initialPage={0}
+        onPageSelected={handlePageSelected}
+      >
+        <View key="accounts" style={{ flex: 1 }}>
+          <AccountsScreen />
+        </View>
+        <View key="transactions" style={{ flex: 1 }}>
+          <TransactionsScreen />
+        </View>
+        <View key="bills" style={{ flex: 1 }}>
+          <BillsScreen />
+        </View>
+      </PagerView>
 
       {/* Context-Aware FAB */}
       {selectedTab === 'accounts' && (

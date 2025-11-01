@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import {
   View,
   Text,
@@ -15,9 +15,12 @@ import { responsive, ms } from '@/constants/responsive';
 import { useTheme } from '@/contexts/ThemeContext';
 import { TabSelector } from '@/components/ui';
 import { AddCategoryModal, AddGoalModal } from '@/components/budget';
+import PagerView from 'react-native-pager-view';
 
 // Types
 type TabType = 'goals' | 'categories';
+
+const TAB_ORDER: TabType[] = ['goals', 'categories'];
 
 interface Goal {
   id: string;
@@ -46,6 +49,22 @@ export default function BudgetTab() {
   const [activeTab, setActiveTab] = useState<TabType>('goals');
   const [showCategoryModal, setShowCategoryModal] = useState(false);
   const [showGoalModal, setShowGoalModal] = useState(false);
+
+  const pagerRef = useRef<PagerView>(null);
+
+  // Handle tab selection from TabSelector
+  const handleTabSelect = (id: string) => {
+    const newTab = id as TabType;
+    setActiveTab(newTab);
+    const pageIndex = TAB_ORDER.indexOf(newTab);
+    pagerRef.current?.setPage(pageIndex);
+  };
+
+  // Handle page change from swipe gesture
+  const handlePageSelected = (e: any) => {
+    const pageIndex = e.nativeEvent.position;
+    setActiveTab(TAB_ORDER[pageIndex]);
+  };
 
   const handleAddGoal = () => {
     setShowGoalModal(true);
@@ -594,19 +613,24 @@ export default function BudgetTab() {
             { id: 'categories', label: 'Categories' },
           ]}
           selectedId={activeTab}
-          onSelect={(id) => setActiveTab(id as TabType)}
+          onSelect={handleTabSelect}
         />
       </View>
 
-      {/* Content */}
-      <ScrollView
-        style={styles.scrollView}
-        showsVerticalScrollIndicator={false}
-        contentContainerStyle={styles.content}
+      {/* Swipeable Content */}
+      <PagerView
+        ref={pagerRef}
+        style={{ flex: 1 }}
+        initialPage={0}
+        onPageSelected={handlePageSelected}
       >
         {/* Goals Tab */}
-        {activeTab === 'goals' && (
-          <>
+        <View key="goals" style={{ flex: 1 }}>
+          <ScrollView
+            style={styles.scrollView}
+            showsVerticalScrollIndicator={false}
+            contentContainerStyle={styles.content}
+          >
             {goals.length === 0 ? (
               renderEmptyState(
                 'trophy-outline',
@@ -620,12 +644,16 @@ export default function BudgetTab() {
                 {goals.map(renderGoalCard)}
               </View>
             )}
-          </>
-        )}
+          </ScrollView>
+        </View>
 
         {/* Categories Tab */}
-        {activeTab === 'categories' && (
-          <>
+        <View key="categories" style={{ flex: 1 }}>
+          <ScrollView
+            style={styles.scrollView}
+            showsVerticalScrollIndicator={false}
+            contentContainerStyle={styles.content}
+          >
             {categories.length === 0 ? (
               renderEmptyState(
                 'pricetags-outline',
@@ -639,9 +667,9 @@ export default function BudgetTab() {
                 {categories.map(renderCategoryItem)}
               </View>
             )}
-          </>
-        )}
-      </ScrollView>
+          </ScrollView>
+        </View>
+      </PagerView>
 
       {/* Context-Aware FAB */}
       {activeTab === 'goals' && goals.length > 0 && (

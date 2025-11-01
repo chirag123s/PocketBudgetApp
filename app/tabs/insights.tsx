@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { View, Text, StyleSheet, StatusBar, TouchableOpacity } from 'react-native';
 import { useRouter } from 'expo-router';
 import { Screen } from '@/components/layout/Screen';
@@ -11,6 +11,7 @@ import { Ionicons } from '@expo/vector-icons';
 import SpendingScreen from '@/app/insights/_spending';
 import IncomeScreen from '@/app/insights/_income';
 import NetWorthScreen from '@/app/insights/_networth';
+import PagerView from 'react-native-pager-view';
 
 interface DateRange {
   startDate: Date;
@@ -18,6 +19,8 @@ interface DateRange {
 }
 
 type InsightsTab = 'spending' | 'income' | 'networth';
+
+const TAB_ORDER: InsightsTab[] = ['spending', 'income', 'networth'];
 
 export default function InsightsTab() {
   const router = useRouter();
@@ -29,6 +32,22 @@ export default function InsightsTab() {
     startDate: new Date(new Date().setDate(new Date().getDate() - 30)),
     endDate: new Date(),
   });
+
+  const pagerRef = useRef<PagerView>(null);
+
+  // Handle tab selection from TabSelector
+  const handleTabSelect = (id: string) => {
+    const newTab = id as InsightsTab;
+    setSelectedTab(newTab);
+    const pageIndex = TAB_ORDER.indexOf(newTab);
+    pagerRef.current?.setPage(pageIndex);
+  };
+
+  // Handle page change from swipe gesture
+  const handlePageSelected = (e: any) => {
+    const pageIndex = e.nativeEvent.position;
+    setSelectedTab(TAB_ORDER[pageIndex]);
+  };
 
   const colors = {
     neutralBg: theme.colors.background.secondary,
@@ -46,19 +65,6 @@ export default function InsightsTab() {
       month: 'short',
       year: 'numeric',
     })}`;
-  };
-
-  const renderScreen = () => {
-    switch (selectedTab) {
-      case 'spending':
-        return <SpendingScreen dateRange={dateRange} />;
-      case 'income':
-        return <IncomeScreen dateRange={dateRange} />;
-      case 'networth':
-        return <NetWorthScreen dateRange={dateRange} />;
-      default:
-        return <SpendingScreen dateRange={dateRange} />;
-    }
   };
 
   const styles = StyleSheet.create({
@@ -142,12 +148,27 @@ export default function InsightsTab() {
             { id: 'networth', label: 'Net Worth' },
           ]}
           selectedId={selectedTab}
-          onSelect={(id) => setSelectedTab(id as InsightsTab)}
+          onSelect={handleTabSelect}
         />
       </View>
 
-      {/* Render Selected Screen */}
-      {renderScreen()}
+      {/* Swipeable Content */}
+      <PagerView
+        ref={pagerRef}
+        style={{ flex: 1 }}
+        initialPage={0}
+        onPageSelected={handlePageSelected}
+      >
+        <View key="spending" style={{ flex: 1 }}>
+          <SpendingScreen dateRange={dateRange} />
+        </View>
+        <View key="income" style={{ flex: 1 }}>
+          <IncomeScreen dateRange={dateRange} />
+        </View>
+        <View key="networth" style={{ flex: 1 }}>
+          <NetWorthScreen dateRange={dateRange} />
+        </View>
+      </PagerView>
 
       {/* Date Range Picker */}
       <DateRangePickerModal
