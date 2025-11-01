@@ -102,8 +102,8 @@ export default function BudgetHistory() {
       flex: 1,
     },
     statValue: {
-      fontSize: responsive.fontSize.h3,
-      lineHeight: responsive.fontSize.h3 * 1.5,
+      fontSize: responsive.fontSize.lg,
+      lineHeight: responsive.fontSize.lg * 1.5,
       fontWeight: '700',
       color: colors.success,
     },

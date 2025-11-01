@@ -250,8 +250,8 @@ export default function CategoryDetailsScreen() {
       justifyContent: 'space-between',
     },
     trendTitle: {
-      fontSize: responsive.fontSize.md,
-      fontWeight: '700',
+      fontSize: responsive.fontSize.sm,
+      fontWeight: '600',
       color: colors.neutralDarkest,
     },
     trendBadge: {
@@ -274,12 +274,12 @@ export default function CategoryDetailsScreen() {
       color: colors.primary,
     },
     trendAmount: {
-      fontSize: responsive.fontSize.h2,
+      fontSize: responsive.fontSize.lg,
       fontWeight: '700',
       color: colors.neutralDarkest,
     },
     trendAmountLarge: {
-      fontSize: responsive.fontSize.h1,
+      fontSize: responsive.fontSize.xl,
       fontWeight: '700',
       color: colors.neutralDarkest,
     },
@@ -301,7 +301,7 @@ export default function CategoryDetailsScreen() {
       gap: responsive.spacing[3],
     },
     sectionTitle: {
-      fontSize: responsive.fontSize.md,
+      fontSize: responsive.fontSize.lg,
       fontWeight: '700',
       color: colors.neutralDarkest,
     },
@@ -378,7 +378,7 @@ export default function CategoryDetailsScreen() {
       paddingVertical: responsive.spacing[16],
     },
     emptyText: {
-      fontSize: responsive.fontSize.h3,
+      fontSize: responsive.fontSize.lg,
       fontWeight: '700',
       color: colors.neutralDarkest,
     },
@@ -417,7 +417,7 @@ export default function CategoryDetailsScreen() {
       color: colors.neutralDark,
     },
     amountValue: {
-      fontSize: responsive.fontSize.h1,
+      fontSize: responsive.fontSize.xl,
       fontWeight: '700',
     },
     statsRow: {
@@ -442,7 +442,7 @@ export default function CategoryDetailsScreen() {
       justifyContent: 'center',
     },
     statBoxValue: {
-      fontSize: responsive.fontSize.h3,
+      fontSize: responsive.fontSize.lg,
       fontWeight: '700',
       color: colors.neutralDarkest,
     },
@@ -499,7 +499,7 @@ export default function CategoryDetailsScreen() {
       gap: responsive.spacing[2],
     },
     performanceValue: {
-      fontSize: responsive.fontSize.h2,
+      fontSize: responsive.fontSize.xl,
       fontWeight: '700',
       color: colors.neutralDarkest,
     },
@@ -579,7 +579,7 @@ export default function CategoryDetailsScreen() {
       gap: responsive.spacing[1],
     },
     settingLabel: {
-      fontSize: responsive.fontSize.md,
+      fontSize: responsive.fontSize.sm,
       fontWeight: '600',
       color: colors.neutralDarkest,
     },
@@ -717,7 +717,7 @@ export default function CategoryDetailsScreen() {
           style={styles.viewAllButton}
           onPress={() => {
             router.push({
-              pathname: '/tabs/transactions',
+              pathname: '/tabs/money',
               params: { category: categoryName },
             });
           }}

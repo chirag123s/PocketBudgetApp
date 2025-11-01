@@ -177,8 +177,8 @@ export default function EditBudget() {
       flex: 1,
     },
     itemIcon: {
-      fontSize: responsive.fontSize.h4,
-      lineHeight: responsive.fontSize.h4 * 1.5,
+      fontSize: responsive.fontSize.lg,
+      lineHeight: responsive.fontSize.lg * 1.5,
       marginRight: responsive.spacing[2],
     },
     itemName: {
@@ -210,8 +210,8 @@ export default function EditBudget() {
     },
     amountInput: {
       flex: 1,
-      fontSize: responsive.fontSize.h4,
-      lineHeight: responsive.fontSize.h4 * 1.5,
+      fontSize: responsive.fontSize.lg,
+      lineHeight: responsive.fontSize.lg * 1.5,
       fontWeight: '600',
       color: colors.text,
     },

@@ -44,6 +44,7 @@ export default function TabsLayout() {
         },
       }}
     >
+      {/* 1. Home - Dashboard */}
       <Tabs.Screen
         name="index"
         options={{
@@ -53,6 +54,19 @@ export default function TabsLayout() {
           ),
         }}
       />
+
+      {/* 2. Money - Accounts, Transactions, Bills */}
+      <Tabs.Screen
+        name="money"
+        options={{
+          title: 'Money',
+          tabBarIcon: ({ color, size }) => (
+            <Ionicons name="cash" size={size} color={color} />
+          ),
+        }}
+      />
+
+      {/* 3. Budget - Categories & Goals */}
       <Tabs.Screen
         name="budget"
         options={{
@@ -62,38 +76,26 @@ export default function TabsLayout() {
           ),
         }}
       />
+
+      {/* 4. Insights - Analytics & Reports */}
       <Tabs.Screen
-        name="accounts"
+        name="insights"
         options={{
-          title: 'Accounts',
+          title: 'Insights',
           tabBarIcon: ({ color, size }) => (
-            <Ionicons name="briefcase" size={size} color={color} />
+            <Ionicons name="analytics" size={size} color={color} />
           ),
         }}
       />
+
+      {/* 5. More - Settings & Help */}
       <Tabs.Screen
-        name="transactions"
+        name="more"
         options={{
-          title: 'Trans',
+          title: 'More',
           tabBarIcon: ({ color, size }) => (
-            <Ionicons name="receipt" size={size} color={color} />
+            <Ionicons name="ellipsis-horizontal" size={size} color={color} />
           ),
-        }}
-      />
-      <Tabs.Screen
-        name="settings"
-        options={{
-          title: 'Settings',
-          tabBarIcon: ({ color, size }) => (
-            <Ionicons name="settings" size={size} color={color} />
-          ),
-        }}
-      />
-      {/* Charts - Hidden from tab bar, accessible via navigation */}
-      <Tabs.Screen
-        name="charts"
-        options={{
-          href: null, // Hide from tab bar
         }}
       />
     </Tabs>

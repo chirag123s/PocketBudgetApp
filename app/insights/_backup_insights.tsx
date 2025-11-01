@@ -6,8 +6,6 @@ import {
   TouchableOpacity,
   StyleSheet,
   StatusBar,
-  Pressable,
-  Modal,
 } from 'react-native';
 import { useRouter } from 'expo-router';
 import { Screen } from '@/components/layout/Screen';
@@ -17,6 +15,7 @@ import { Ionicons } from '@expo/vector-icons';
 import Svg, { Circle, Path, Defs, LinearGradient, Stop } from 'react-native-svg';
 import { DonutChart, DonutChartSegment, GaugeChart, GaugeChartSegment } from '@/components/charts';
 import { useTheme } from '@/contexts/ThemeContext';
+import { TabSelector } from '@/components/ui';
 
 interface Category {
   id: string;
@@ -71,7 +70,7 @@ interface PortfolioItem {
 
 type GraphType = 'donut' | 'bar' | 'line' | 'area';
 
-export default function ChartsTab() {
+export default function InsightsTab() {
   const router = useRouter();
   const { theme: themeMode } = useTheme();
   const theme = getTheme(themeMode);
@@ -97,14 +96,6 @@ export default function ChartsTab() {
     functionalError: theme.colors.danger.main,
   };
 
-  // Graph type states for each tab
-  const [spendingGraphType, setSpendingGraphType] = useState<GraphType>('donut');
-  const [incomeGraphType, setIncomeGraphType] = useState<GraphType>('donut');
-  const [networthGraphType, setNetworthGraphType] = useState<GraphType>('line');
-
-  // Graph menu state
-  const [showGraphMenu, setShowGraphMenu] = useState(false);
-  const [menuForTab, setMenuForTab] = useState<'spending' | 'income' | 'networth'>('spending');
 
   const categories: Category[] = [
     { id: '1', name: 'Groceries', icon: 'cart-outline', amount: 650.20, budget: 800, percentage: 81, color: theme.colors.secondary.main },
@@ -204,56 +195,6 @@ export default function ChartsTab() {
   const pathData = `M 0 ${chartHeight * 0.7} L ${chartWidth * 0.2} ${chartHeight * 0.6} L ${chartWidth * 0.4} ${chartHeight * 0.5} L ${chartWidth * 0.6} ${chartHeight * 0.3} L ${chartWidth * 0.8} ${chartHeight * 0.4} L ${chartWidth} ${chartHeight * 0.2}`;
   const pathDataFill = `${pathData} L ${chartWidth} ${chartHeight} L 0 ${chartHeight} Z`;
 
-  // Available graph types for each tab
-  const spendingGraphTypes = [
-    { value: 'donut' as GraphType, label: 'Gauge Chart', icon: 'speedometer-outline' },
-    { value: 'bar' as GraphType, label: 'Bar Chart', icon: 'bar-chart-outline' },
-    { value: 'line' as GraphType, label: 'Line Chart', icon: 'trending-up-outline' },
-  ];
-
-  const incomeGraphTypes = [
-    { value: 'donut' as GraphType, label: 'Donut Chart', icon: 'pie-chart-outline' },
-    { value: 'bar' as GraphType, label: 'Bar Chart', icon: 'bar-chart-outline' },
-    { value: 'line' as GraphType, label: 'Line Chart', icon: 'trending-up-outline' },
-  ];
-
-  const networthGraphTypes = [
-    { value: 'line' as GraphType, label: 'Line Chart', icon: 'trending-up-outline' },
-    { value: 'area' as GraphType, label: 'Area Chart', icon: 'analytics-outline' },
-    { value: 'bar' as GraphType, label: 'Bar Chart', icon: 'bar-chart-outline' },
-  ];
-
-  // Handle long press on chart
-  const handleChartLongPress = (tab: 'spending' | 'income' | 'networth') => {
-    setMenuForTab(tab);
-    setShowGraphMenu(true);
-  };
-
-  // Handle graph type selection
-  const handleGraphTypeSelect = (type: GraphType) => {
-    if (menuForTab === 'spending') {
-      setSpendingGraphType(type);
-    } else if (menuForTab === 'income') {
-      setIncomeGraphType(type);
-    } else if (menuForTab === 'networth') {
-      setNetworthGraphType(type);
-    }
-    setShowGraphMenu(false);
-  };
-
-  // Get available graph types for menu
-  const getAvailableGraphTypes = () => {
-    if (menuForTab === 'spending') return spendingGraphTypes;
-    if (menuForTab === 'income') return incomeGraphTypes;
-    return networthGraphTypes;
-  };
-
-  // Get current selected graph type
-  const getCurrentGraphType = () => {
-    if (menuForTab === 'spending') return spendingGraphType;
-    if (menuForTab === 'income') return incomeGraphType;
-    return networthGraphType;
-  };
 
   const styles = StyleSheet.create({
     scrollView: {
@@ -267,12 +208,6 @@ export default function ChartsTab() {
       paddingVertical: responsive.spacing[3],
       backgroundColor: colors.neutralBg,
     },
-    headerLeft: {
-      flexDirection: 'row',
-      alignItems: 'center',
-      gap: responsive.spacing[2],
-      flex: 1,
-    },
     headerTitle: {
       fontSize: responsive.fontSize.xl,
       fontWeight: '700',
@@ -283,35 +218,6 @@ export default function ChartsTab() {
       height: ms(40),
       justifyContent: 'center',
       alignItems: 'center',
-    },
-    segmentedContainer: {
-      paddingHorizontal: responsive.spacing[4],
-      paddingVertical: responsive.spacing[3],
-    },
-    segmentedControl: {
-      flexDirection: 'row',
-      backgroundColor: colors.neutralWhite,
-      borderRadius: theme.borderRadius.xl * 1.5,
-      padding: responsive.spacing[1],
-      height: ms(48),
-      ...theme.shadows.sm,
-    },
-    segment: {
-      flex: 1,
-      justifyContent: 'center',
-      alignItems: 'center',
-      borderRadius: theme.borderRadius.lg,
-    },
-    segmentActive: {
-      backgroundColor: colors.primary,
-    },
-    segmentText: {
-      fontSize: responsive.fontSize.sm,
-      fontWeight: '600',
-      color: colors.neutralDark,
-    },
-    segmentTextActive: {
-      color: colors.neutralWhite,
     },
     content: {
       paddingHorizontal: responsive.spacing[4],
@@ -603,31 +509,6 @@ export default function ChartsTab() {
       color: colors.neutralDarkest,
       marginBottom: responsive.spacing[2],
     },
-    timeframeContainer: {
-      flexDirection: 'row',
-      gap: responsive.spacing[2],
-      marginBottom: responsive.spacing[4],
-    },
-    timeframeButton: {
-      flex: 1,
-      paddingVertical: responsive.spacing[2],
-      paddingHorizontal: responsive.spacing[3],
-      backgroundColor: colors.neutralWhite,
-      borderRadius: theme.borderRadius.lg,
-      alignItems: 'center',
-      ...theme.shadows.sm,
-    },
-    timeframeButtonActive: {
-      backgroundColor: colors.primary,
-    },
-    timeframeText: {
-      fontSize: responsive.fontSize.sm,
-      fontWeight: '600',
-      color: colors.neutralDark,
-    },
-    timeframeTextActive: {
-      color: colors.neutralWhite,
-    },
     lineChartContainer: {
       paddingVertical: responsive.spacing[4],
       alignItems: 'center',
@@ -872,50 +753,28 @@ export default function ChartsTab() {
   });
 
   return (
-    <Screen scrollable={false} noPadding backgroundColor={colors.neutralBg} edges={['top']}>
+    <Screen scrollable={false} noPadding backgroundColor={colors.neutralBg} edges={['top', 'bottom']}>
       <StatusBar barStyle={themeMode === 'dark' ? 'light-content' : 'dark-content'} backgroundColor={colors.neutralBg} />
 
       {/* Header */}
       <View style={styles.header}>
-        <View style={styles.headerLeft}>
-          <TouchableOpacity style={styles.headerButton} onPress={() => router.back()}>
-            <Ionicons name="arrow-back" size={24} color={colors.neutralDarkest} />
-          </TouchableOpacity>
-          <Text style={styles.headerTitle}>Analytics</Text>
-        </View>
+        <Text style={styles.headerTitle}>Insights</Text>
         <TouchableOpacity style={styles.headerButton}>
           <Ionicons name="calendar-outline" size={24} color={colors.neutralDarkest} />
         </TouchableOpacity>
       </View>
 
-      {/* Segmented Control */}
-      <View style={styles.segmentedContainer}>
-        <View style={styles.segmentedControl}>
-          <TouchableOpacity
-            style={[styles.segment, selectedView === 'spending' && styles.segmentActive]}
-            onPress={() => setSelectedView('spending')}
-          >
-            <Text style={[styles.segmentText, selectedView === 'spending' && styles.segmentTextActive]}>
-              Spending
-            </Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={[styles.segment, selectedView === 'income' && styles.segmentActive]}
-            onPress={() => setSelectedView('income')}
-          >
-            <Text style={[styles.segmentText, selectedView === 'income' && styles.segmentTextActive]}>
-              Income
-            </Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={[styles.segment, selectedView === 'networth' && styles.segmentActive]}
-            onPress={() => setSelectedView('networth')}
-          >
-            <Text style={[styles.segmentText, selectedView === 'networth' && styles.segmentTextActive]}>
-              Net Worth
-            </Text>
-          </TouchableOpacity>
-        </View>
+      {/* View Selector */}
+      <View style={{ paddingHorizontal: responsive.spacing[4], paddingVertical: responsive.spacing[3] }}>
+        <TabSelector
+          options={[
+            { id: 'spending', label: 'Spending' },
+            { id: 'income', label: 'Income' },
+            { id: 'networth', label: 'Net Worth' },
+          ]}
+          selectedId={selectedView}
+          onSelect={(id) => setSelectedView(id as 'spending' | 'income' | 'networth')}
+        />
       </View>
 
       <ScrollView style={styles.scrollView} showsVerticalScrollIndicator={false}>
@@ -924,21 +783,14 @@ export default function ChartsTab() {
           {selectedView === 'spending' && (
             <>
               {/* Chart Display */}
-          <Pressable
-            style={styles.chartCard}
-            onLongPress={() => handleChartLongPress('spending')}
-            delayLongPress={500}
-          >
+          <View style={styles.chartCard}>
             <View style={styles.chartHeader}>
-              <View>
-                <Text style={styles.sectionTitle}>Spending by Category</Text>
-                <Text style={styles.chartHint}>Long press to change chart</Text>
-              </View>
+              <Text style={styles.sectionTitle}>Spending by Category</Text>
               <Text style={styles.chartPeriod}>This Month</Text>
             </View>
 
             {/* Gauge Chart */}
-            {spendingGraphType === 'donut' && (
+            {(
               (() => {
                 const chartSize = responsive.layout.chartSizeLarge;
                 return (
@@ -1062,7 +914,7 @@ export default function ChartsTab() {
                 </View>
               </View>
             )}
-          </Pressable>
+          </View>
 
           {/* Top Categories */}
           <View style={styles.section}>
@@ -1152,21 +1004,14 @@ export default function ChartsTab() {
               </View>
 
               {/* Income Sources Chart */}
-              <Pressable
-                style={styles.chartCard}
-                onLongPress={() => handleChartLongPress('income')}
-                delayLongPress={500}
-              >
+              <View style={styles.chartCard}>
                 <View style={styles.chartHeader}>
-                  <View>
-                    <Text style={styles.sectionTitle}>Income by Source</Text>
-                    <Text style={styles.chartHint}>Long press to change chart</Text>
-                  </View>
+                  <Text style={styles.sectionTitle}>Income by Source</Text>
                   <Text style={styles.chartPeriod}>This Month</Text>
                 </View>
 
                 {/* Donut Chart */}
-                {incomeGraphType === 'donut' && (
+                {(
                   (() => {
                     const chartSize = responsive.layout.chartSizeLarge;
                     return (
@@ -1281,7 +1126,7 @@ export default function ChartsTab() {
                     </View>
                   </View>
                 )}
-              </Pressable>
+              </View>
 
               {/* Income Sources */}
               <Text style={styles.sourcesTitle}>Income Sources</Text>
@@ -1322,43 +1167,25 @@ export default function ChartsTab() {
               </View>
 
               {/* Timeframe Selector */}
-              <View style={styles.timeframeContainer}>
-                {(['1M', '6M', '1Y', 'All'] as const).map((period) => (
-                  <TouchableOpacity
-                    key={period}
-                    style={[
-                      styles.timeframeButton,
-                      selectedTimeframe === period && styles.timeframeButtonActive,
-                    ]}
-                    onPress={() => setSelectedTimeframe(period)}
-                  >
-                    <Text
-                      style={[
-                        styles.timeframeText,
-                        selectedTimeframe === period && styles.timeframeTextActive,
-                      ]}
-                    >
-                      {period}
-                    </Text>
-                  </TouchableOpacity>
-                ))}
-              </View>
+              <TabSelector
+                options={[
+                  { id: '1M', label: '1M' },
+                  { id: '6M', label: '6M' },
+                  { id: '1Y', label: '1Y' },
+                  { id: 'All', label: 'All' },
+                ]}
+                selectedId={selectedTimeframe}
+                onSelect={(id) => setSelectedTimeframe(id as '1M' | '6M' | '1Y' | 'All')}
+              />
 
               {/* Net Worth Chart */}
-              <Pressable
-                style={styles.chartCard}
-                onLongPress={() => handleChartLongPress('networth')}
-                delayLongPress={500}
-              >
+              <View style={styles.chartCard}>
                 <View style={styles.chartHeader}>
-                  <View>
-                    <Text style={styles.sectionTitle}>Net Worth Trend</Text>
-                    <Text style={styles.chartHint}>Long press to change chart</Text>
-                  </View>
+                  <Text style={styles.sectionTitle}>Net Worth Trend</Text>
                 </View>
 
                 {/* Line Chart */}
-                {networthGraphType === 'line' && (
+                {(
                   <View style={styles.lineChartContainer}>
                     <Svg width={chartWidth} height={chartHeight}>
                       <Path
@@ -1423,7 +1250,7 @@ export default function ChartsTab() {
                     })()}
                   </View>
                 )}
-              </Pressable>
+              </View>
 
               {/* Assets and Liabilities Summary */}
               <View style={styles.summaryRow}>
@@ -1563,56 +1390,6 @@ export default function ChartsTab() {
         </View>
       </ScrollView>
 
-      {/* Graph Type Selection Modal */}
-      <Modal
-        visible={showGraphMenu}
-        transparent
-        animationType="fade"
-        onRequestClose={() => setShowGraphMenu(false)}
-      >
-        <Pressable
-          style={styles.modalOverlay}
-          onPress={() => setShowGraphMenu(false)}
-        >
-          <View style={styles.graphMenuContainer}>
-            <Text style={styles.graphMenuTitle}>Select Chart Type</Text>
-            {getAvailableGraphTypes().map((graphType) => (
-              <TouchableOpacity
-                key={graphType.value}
-                style={[
-                  styles.graphMenuItem,
-                  getCurrentGraphType() === graphType.value && styles.graphMenuItemActive,
-                ]}
-                onPress={() => handleGraphTypeSelect(graphType.value)}
-                activeOpacity={0.7}
-              >
-                <View style={styles.graphMenuItemLeft}>
-                  <Ionicons
-                    name={graphType.icon as any}
-                    size={24}
-                    color={
-                      getCurrentGraphType() === graphType.value
-                        ? colors.primary
-                        : colors.neutralDarkest
-                    }
-                  />
-                  <Text
-                    style={[
-                      styles.graphMenuItemText,
-                      getCurrentGraphType() === graphType.value && styles.graphMenuItemTextActive,
-                    ]}
-                  >
-                    {graphType.label}
-                  </Text>
-                </View>
-                {getCurrentGraphType() === graphType.value && (
-                  <Ionicons name="checkmark-circle" size={24} color={colors.primary} />
-                )}
-              </TouchableOpacity>
-            ))}
-          </View>
-        </Pressable>
-      </Modal>
     </Screen>
   );
 }

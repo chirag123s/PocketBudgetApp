@@ -104,8 +104,8 @@ function RootLayoutNav() {
         <Stack.Screen name="budget" options={{ headerShown: false }} />
 
         {/* Other route groups */}
-        <Stack.Screen name="accounts" options={{ headerShown: false }} />
-        <Stack.Screen name="transaction" options={{ headerShown: false }} />
+        <Stack.Screen name="insights" options={{ headerShown: false }} />
+        <Stack.Screen name="money" options={{ headerShown: false }} />
         <Stack.Screen name="settings" options={{ headerShown: false }} />
 
         {/* Index redirect */}

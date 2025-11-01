@@ -122,7 +122,7 @@ export default function AddCategoryScreen() {
   };
 
   return (
-    <Screen scrollable={false} noPadding backgroundColor={colors.neutralBg} edges={['top']}>
+    <Screen scrollable={false} noPadding backgroundColor={colors.neutralBg} edges={['top', 'bottom']}>
       <StatusBar barStyle={themeMode === 'dark' ? 'light-content' : 'dark-content'} />
 
       {/* Header */}

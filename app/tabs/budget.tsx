@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, ScrollView, StatusBar } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, ScrollView, StatusBar, RefreshControl } from 'react-native';
 import { useRouter } from 'expo-router';
 import { Screen } from '@/components/layout/Screen';
 import { getTheme } from '@/constants/theme';
 import { responsive, ms } from '@/constants/responsive';
 import { Ionicons } from '@expo/vector-icons';
-import { Button } from '@/components/ui/Button';
+import { Button, TabSelector } from '@/components/ui';
 import { AdjustBudgetsModal } from '@/components/budget';
 import { CircularProgress } from '@/components/charts';
 import { useTheme } from '@/contexts/ThemeContext';
@@ -23,8 +23,9 @@ export default function BudgetTab() {
   const router = useRouter();
   const { theme: themeMode } = useTheme();
   const theme = getTheme(themeMode);
-  const [selectedPeriod, setSelectedPeriod] = useState<'weekly' | 'monthly' | 'custom'>('monthly');
+  const [selectedPeriod, setSelectedPeriod] = useState<'weekly' | 'monthly' | 'card-cycle'>('monthly');
   const [showAdjustModal, setShowAdjustModal] = useState(false);
+  const [refreshing, setRefreshing] = useState(false);
 
   // Color Palette - Using theme colors
   const colors = {
@@ -71,6 +72,27 @@ export default function BudgetTab() {
     // TODO: Save to backend/database
   };
 
+  const getPeriodLabel = () => {
+    switch (selectedPeriod) {
+      case 'weekly':
+        return 'Jan 27 - Feb 2, 2025';
+      case 'monthly':
+        return 'Jan 1 - Jan 31, 2025';
+      case 'card-cycle':
+        return 'Jan 15 - Feb 14, 2025'; // Card cycle example
+      default:
+        return 'Jan 1 - Jan 31, 2025';
+    }
+  };
+
+  const onRefresh = async () => {
+    setRefreshing(true);
+    // TODO: Fetch latest budget data from API
+    // Simulate API call
+    await new Promise(resolve => setTimeout(resolve, 1500));
+    setRefreshing(false);
+  };
+
   const styles = StyleSheet.create({
     scrollView: {
       flex: 1,
@@ -84,7 +106,7 @@ export default function BudgetTab() {
       backgroundColor: colors.neutralBg,
     },
     headerTitle: {
-      fontSize: responsive.fontSize.xl,
+      fontSize: responsive.fontSize.lg,
       fontWeight: '700',
       color: colors.neutralDarkest,
     },
@@ -98,45 +120,19 @@ export default function BudgetTab() {
       padding: responsive.spacing[4],
       gap: responsive.spacing[4],
     },
-    // Period Selector
-    periodSelector: {
-      flexDirection: 'row',
-      backgroundColor: colors.neutralWhite,
-      borderRadius: theme.borderRadius.xl,
-      padding: responsive.spacing[1],
-      gap: responsive.spacing[1],
-      ...theme.shadows.sm,
-    },
-    periodButton: {
-      flex: 1,
-      paddingVertical: responsive.spacing[2],
-      paddingHorizontal: responsive.spacing[3],
-      borderRadius: theme.borderRadius.lg,
-      alignItems: 'center',
-    },
-    periodButtonActive: {
-      backgroundColor: colors.primary,
-    },
-    periodText: {
-      fontSize: responsive.fontSize.sm,
-      fontWeight: '600',
-      color: colors.neutralDark,
-    },
-    periodTextActive: {
-      color: colors.neutralWhite,
-    },
     // Total Budget Card
     totalCard: {
       backgroundColor: colors.neutralWhite,
       borderRadius: theme.borderRadius.xl,
       padding: responsive.spacing[5],
-      gap: responsive.spacing[4],
+      marginBottom: responsive.spacing[4],
       ...theme.shadows.sm,
     },
     cardHeader: {
       flexDirection: 'row',
       justifyContent: 'space-between',
       alignItems: 'center',
+      marginBottom: responsive.spacing[4],
     },
     cardLabel: {
       fontSize: responsive.fontSize.sm,
@@ -157,6 +153,7 @@ export default function BudgetTab() {
       flexDirection: 'row',
       justifyContent: 'space-between',
       paddingTop: responsive.spacing[3],
+      marginTop: responsive.spacing[3],
       borderTopWidth: 1,
       borderTopColor: `${colors.neutralMedium}20`,
     },
@@ -170,7 +167,7 @@ export default function BudgetTab() {
       marginBottom: responsive.spacing[1],
     },
     budgetStatValue: {
-      fontSize: responsive.fontSize.md,
+      fontSize: responsive.fontSize.lg,
       fontWeight: '700',
       color: colors.neutralDarkest,
     },
@@ -179,6 +176,7 @@ export default function BudgetTab() {
       backgroundColor: colors.neutralBg,
       borderRadius: ms(4),
       overflow: 'hidden',
+      marginTop: responsive.spacing[3],
     },
     progressBarFill: {
       height: '100%',
@@ -232,11 +230,21 @@ export default function BudgetTab() {
     categoryBreakdown: {
       gap: responsive.spacing[3],
     },
+    sectionHeader: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+      marginBottom: responsive.spacing[2],
+    },
     sectionTitle: {
       fontSize: responsive.fontSize.lg,
       fontWeight: '700',
       color: colors.neutralDarkest,
-      marginBottom: responsive.spacing[2],
+    },
+    viewHistoryText: {
+      fontSize: responsive.fontSize.sm,
+      fontWeight: '600',
+      color: colors.primary,
     },
     categoryCard: {
       backgroundColor: colors.neutralWhite,
@@ -267,7 +275,7 @@ export default function BudgetTab() {
       flex: 1,
     },
     categoryName: {
-      fontSize: responsive.fontSize.md,
+      fontSize: responsive.fontSize.sm,
       fontWeight: '600',
       color: colors.neutralDarkest,
       marginBottom: responsive.spacing[1],
@@ -299,6 +307,24 @@ export default function BudgetTab() {
       height: '100%',
       borderRadius: ms(4),
     },
+    addCategoryButton: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'center',
+      backgroundColor: colors.neutralWhite,
+      borderRadius: theme.borderRadius.xl,
+      padding: responsive.spacing[4],
+      gap: responsive.spacing[2],
+      borderWidth: 2,
+      borderColor: colors.primary,
+      borderStyle: 'dashed',
+      ...theme.shadows.sm,
+    },
+    addCategoryText: {
+      fontSize: responsive.fontSize.sm,
+      fontWeight: '600',
+      color: colors.primary,
+    },
   });
 
   return (
@@ -308,47 +334,52 @@ export default function BudgetTab() {
       {/* Header */}
       <View style={styles.header}>
         <Text style={styles.headerTitle}>Budget</Text>
-        <TouchableOpacity style={styles.headerButton}>
-          <Ionicons name="settings-outline" size={24} color={colors.neutralDarkest} />
-        </TouchableOpacity>
+        <View style={{ flexDirection: 'row', gap: responsive.spacing[2] }}>
+          <TouchableOpacity
+            style={styles.headerButton}
+            onPress={() => router.push('/budget/savings-goals')}
+          >
+            <Ionicons name="trophy-outline" size={24} color={colors.neutralDarkest} />
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={styles.headerButton}
+            onPress={() => router.push('/budget/edit')}
+          >
+            <Ionicons name="settings-outline" size={24} color={colors.neutralDarkest} />
+          </TouchableOpacity>
+        </View>
       </View>
 
-      <ScrollView style={styles.scrollView} showsVerticalScrollIndicator={false}>
+      <ScrollView
+        style={styles.scrollView}
+        showsVerticalScrollIndicator={false}
+        refreshControl={
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={onRefresh}
+            tintColor={colors.primary}
+            colors={[colors.primary]}
+          />
+        }
+      >
         <View style={styles.content}>
           {/* Period Selector */}
-          <View style={styles.periodSelector}>
-            <TouchableOpacity
-              style={[styles.periodButton, selectedPeriod === 'weekly' && styles.periodButtonActive]}
-              onPress={() => setSelectedPeriod('weekly')}
-            >
-              <Text style={[styles.periodText, selectedPeriod === 'weekly' && styles.periodTextActive]}>
-                Weekly
-              </Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={[styles.periodButton, selectedPeriod === 'monthly' && styles.periodButtonActive]}
-              onPress={() => setSelectedPeriod('monthly')}
-            >
-              <Text style={[styles.periodText, selectedPeriod === 'monthly' && styles.periodTextActive]}>
-                Monthly
-              </Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={[styles.periodButton, selectedPeriod === 'custom' && styles.periodButtonActive]}
-              onPress={() => setSelectedPeriod('custom')}
-            >
-              <Text style={[styles.periodText, selectedPeriod === 'custom' && styles.periodTextActive]}>
-                Custom
-              </Text>
-            </TouchableOpacity>
-          </View>
+          <TabSelector
+            options={[
+              { id: 'weekly', label: 'Weekly' },
+              { id: 'monthly', label: 'Monthly' },
+              { id: 'card-cycle', label: 'Card Cycle' },
+            ]}
+            selectedId={selectedPeriod}
+            onSelect={(id) => setSelectedPeriod(id as 'weekly' | 'monthly' | 'card-cycle')}
+          />
 
           {/* Total Budget Card */}
           <View style={styles.totalCard}>
             <View style={styles.cardHeader}>
               <View>
                 <Text style={styles.cardLabel}>Total Budget</Text>
-                <Text style={styles.cardPeriod}>Jan 1 - Jan 31, 2025</Text>
+                <Text style={styles.cardPeriod}>{getPeriodLabel()}</Text>
               </View>
               <View style={styles.circularProgress}>
                 <CircularProgress
@@ -420,7 +451,7 @@ export default function BudgetTab() {
             </TouchableOpacity>
             <TouchableOpacity
               style={styles.actionBtn}
-              onPress={() => router.push('/tabs/charts')}
+              onPress={() => router.push('/tabs/insights')}
               activeOpacity={0.7}
             >
               <Ionicons name="stats-chart" size={20} color={colors.primary} />
@@ -430,14 +461,32 @@ export default function BudgetTab() {
 
           {/* Category Breakdown */}
           <View style={styles.categoryBreakdown}>
-            <Text style={styles.sectionTitle}>Category Breakdown</Text>
+            <View style={styles.sectionHeader}>
+              <Text style={styles.sectionTitle}>Category Breakdown</Text>
+              <TouchableOpacity onPress={() => router.push('/budget/history')}>
+                <Text style={styles.viewHistoryText}>View History</Text>
+              </TouchableOpacity>
+            </View>
 
             {categories.map((category) => {
               const categoryPercentage = Math.round((category.spent / category.total) * 100);
               const progressColor = getProgressColor(category.spent, category.total);
 
               return (
-                <TouchableOpacity key={category.id} style={styles.categoryCard}>
+                <TouchableOpacity
+                  key={category.id}
+                  style={styles.categoryCard}
+                  onPress={() => router.push({
+                    pathname: '/budget/category-details',
+                    params: {
+                      category: category.name,
+                      icon: category.icon,
+                      budget: category.total.toString(),
+                      spent: category.spent.toString(),
+                    }
+                  })}
+                  activeOpacity={0.7}
+                >
                   <View style={styles.categoryTop}>
                     <View style={styles.categoryLeft}>
                       <View style={[styles.categoryIconContainer, { backgroundColor: `${category.color}20` }]}>
@@ -472,6 +521,16 @@ export default function BudgetTab() {
                 </TouchableOpacity>
               );
             })}
+
+            {/* Add Category Button */}
+            <TouchableOpacity
+              style={styles.addCategoryButton}
+              onPress={() => router.push('/budget/add-category')}
+              activeOpacity={0.7}
+            >
+              <Ionicons name="add-circle-outline" size={24} color={colors.primary} />
+              <Text style={styles.addCategoryText}>Add Category</Text>
+            </TouchableOpacity>
           </View>
 
           {/* Bottom spacing */}

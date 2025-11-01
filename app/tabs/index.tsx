@@ -163,7 +163,7 @@ const DashboardScreen: React.FC = () => {
   };
 
   const handleViewAllTransactions = () => {
-    router.push('/tabs/transactions');
+    router.push('/tabs/money');
   };
 
   const handleTransactionPress = (transactionId: string) => {
@@ -455,7 +455,7 @@ const DashboardScreen: React.FC = () => {
         return (
           <BankAccountsWidget
             accounts={bankAccounts}
-            onViewAll={() => router.push('/accounts')}
+            onViewAll={() => router.push('/tabs/money')}
             onAccountPress={(account) => {
               console.log('Account pressed:', account);
               // TODO: Navigate to account details
@@ -467,7 +467,7 @@ const DashboardScreen: React.FC = () => {
         return (
           <UpcomingBillsWidget
             bills={upcomingBills}
-            onSeeAllBills={() => router.push('/bills')}
+            onSeeAllBills={() => router.push('/tabs/money')}
             onBillPress={(bill) => {
               console.log('Bill pressed:', bill);
               // TODO: Navigate to bill details
@@ -479,7 +479,7 @@ const DashboardScreen: React.FC = () => {
         return (
           <SavingsGoalWidget
             goals={savingsGoals}
-            onViewAll={() => router.push('/savings-goals')}
+            onViewAll={() => router.push('/budget/savings-goals')}
             onGoalPress={(goal) => {
               console.log('Goal pressed:', goal);
               // TODO: Navigate to goal details
